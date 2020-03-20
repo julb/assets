@@ -1,0 +1,27 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+	implementation project(':libraries:library-dto-messaging')
+	implementation project(':libraries:library-utility-constants')
+	implementation project(':libraries:library-utility-date')
+	implementation project(':libraries:library-utility-identifier')
+	implementation 'org.apache.commons:commons-lang3'
+	
+	api 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
+	
+	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

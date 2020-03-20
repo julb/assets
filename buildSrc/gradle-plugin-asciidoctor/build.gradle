@@ -1,0 +1,3 @@
+dependencies {
+    implementation 'org.asciidoctor:asciidoctor-gradle-plugin:1.6.1'
+}

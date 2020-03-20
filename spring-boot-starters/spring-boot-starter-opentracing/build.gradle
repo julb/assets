@@ -1,0 +1,20 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+	api 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.boot:spring-boot-actuator-autoconfigure'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

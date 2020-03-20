@@ -1,0 +1,20 @@
+plugins {
+	id 'java-library-distribution'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+
+	implementation project(':spring-boot-starters:spring-boot-starter-job')
+	implementation 'com.h2database:h2'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

@@ -1,0 +1,26 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+
+	api 'org.springframework.cloud:spring-cloud-starter-gateway'
+	
+	implementation 'org.json:json'
+//	implementation project(':spring-boot-starters:spring-boot-starter-core')
+	implementation project(':spring-boot-starters:spring-boot-starter-logging')
+	implementation project(':spring-boot-starters:spring-boot-starter-mapping')
+	implementation project(':spring-boot-starters:spring-boot-starter-opentracing')
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

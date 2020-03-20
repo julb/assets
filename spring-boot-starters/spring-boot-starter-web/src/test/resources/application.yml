@@ -1,0 +1,23 @@
+security.internal-jwt:
+  enabled: true
+  audience: apipf.tools
+  issuer: apipf.gateway
+  signature-key: 1.23456789012345E14
+  signature-key-id: XXXX
+  signature-algorithm: HS256
+  
+security.api-keys:
+  enabled: true
+  users:
+    - userName: api-infra
+      headerName: x-apipf-infra-key
+      apiKey: 1234567890
+      roles:
+      - ADMINISTRATOR
+      - ACTUATOR
+    - userName: api-portal
+      headerName: x-apipf-portal-key
+      apiKey: 0987654321
+      roles:
+      - ADMINISTRATOR
+      - ACTUATOR

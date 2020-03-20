@@ -1,0 +1,22 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+	implementation project(':libraries:library-logging-core')
+	implementation 'ch.qos.logback:logback-classic'
+	implementation 'ch.qos.logback.contrib:logback-json-classic'
+	implementation 'ch.qos.logback.contrib:logback-jackson'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

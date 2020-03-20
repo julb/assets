@@ -1,0 +1,33 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+	
+	api 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	api project(':spring-boot-starters:spring-boot-starter-core')
+	
+	implementation project(':libraries:library-utility-constants')
+	implementation project(':libraries:library-utility-exception')
+	implementation project(':libraries:library-utility-data')
+	
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'io.github.openfeign:feign-httpclient'
+	implementation 'org.springframework.data:spring-data-commons'
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.apache.commons:commons-lang3'
+	
+	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

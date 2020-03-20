@@ -1,0 +1,42 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+
+	api 'org.springframework.boot:spring-boot-starter-web'
+	api 'org.springframework.data:spring-data-commons'
+	api 'io.swagger.core.v3:swagger-annotations'
+
+	api project(':libraries:library-dto-http')
+	api project(':libraries:library-dto-simple')
+	api project(':libraries:library-utility-constants')
+	api project(':libraries:library-utility-data')
+	api project(':libraries:library-utility-exception')
+	api project(':libraries:library-utility-http')
+	
+	implementation 'org.apache.commons:commons-lang3'
+	implementation 'org.apache.commons:commons-collections4'
+	implementation 'org.apache.lucene:lucene-queryparser'
+	implementation 'org.springdoc:springdoc-openapi-webmvc-core'
+	implementation 'org.springdoc:springdoc-openapi-data-rest'
+	implementation 'com.google.code.findbugs:jsr305'
+	
+	implementation project(':spring-boot-starters:spring-boot-starter-logging')
+	implementation project(':spring-boot-starters:spring-boot-starter-mapping')
+	implementation project(':spring-boot-starters:spring-boot-starter-opentracing')
+	implementation project(':spring-boot-starters:spring-boot-starter-security')
+	
+	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

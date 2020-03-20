@@ -1,0 +1,21 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer'
+	implementation 'org.apache.commons:commons-text'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}
