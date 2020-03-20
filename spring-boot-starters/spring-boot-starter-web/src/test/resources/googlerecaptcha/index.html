@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>reCAPTCHA demo</title>
+    <script>
+        var onSubmit = function(token) {
+          document.getElementById('reCaptchaToken').textContent = token;
+        };
+
+        var onloadCallback = function() {
+          grecaptcha.render('submit', {
+            'sitekey' : '__SITE_KEY__',
+            'callback' : onSubmit
+          });
+        };
+    </script>
+  </head>
+  <body>
+    <form action="?" method="POST">
+      <input id='submit' type="submit" value="Submit">
+    </form>
+    <strong>ReCaptcha Token:</strong>
+    <div id="reCaptchaToken"></div>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer>
+    </script>
+  </body>
+</html>

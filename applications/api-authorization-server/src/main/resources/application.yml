@@ -1,0 +1,143 @@
+spring:
+  cloud:
+    kubernetes:
+      enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: TEST
+  main:
+    banner-mode: "off"
+    cloud:
+    stream:
+      bindings:
+        default.binder: rabbitmq
+        main-producer:
+          destination: main-exchange-point
+      rabbit:
+        bindings:
+          main-producer:
+            producer:
+              routing-key-expression: headers['routingKey']
+
+# Application
+application:
+  access-token-jwt-forgery:
+    issuer: julb.me
+    validity-in-seconds: 28800
+    signature:
+      algorithm: RS512
+      key-id: sign.test
+      key-path: classpath:/jwt.sign.priv.key.enc
+      key-password: changeit 
+    
+management:
+  endpoints.web.exposure.include: health,prometheus,info
+  endpoint.prometheus.enabled: true
+
+security:
+  api-key:
+    enabled: true
+    header-name: x-api-key
+  internal-api-key:
+    enabled: true
+    header-name: x-api-internal-key
+    header-value: 123456
+  jwt:
+    enabled: true
+    issuer: julb.me
+    signature-key:
+      algorithm: RS512
+      key-id: sign.test
+      key-path: classpath:/jwt.sign.key.pub
+  username-password:
+    enabled: true
+  username-pincode:
+    enabled: true
+  username-totp:
+    enabled: true
+  
+logging:
+  level:
+    root: OFF
+    org.springframework: OFF
+  
+---
+spring:
+  config:
+    activate:
+      on-profile: LOCAL
+  cloud:
+    stream:
+      bindings:
+        default.binder: rabbitmq
+        main-producer:
+          destination: main-exchange-point
+      rabbit:
+        bindings:
+          main-producer:
+            producer:
+              routing-key-expression: headers['routingKey']
+
+#mongodb
+spring.data.mongodb:
+   host: localhost
+   port: 27017
+   database: app1
+   autoIndexCreation: true
+
+# Application
+application:
+  access-token-jwt-forgery:
+    issuer: julb.me
+    validity-in-seconds: 28800
+    signature:
+      algorithm: RS512
+      key-id: sign.test
+      key-path: classpath:/jwt.sign.priv.key.enc
+      key-password: changeit 
+    
+management:
+  endpoints.web.exposure.include: health,prometheus,info
+  endpoint.prometheus.enabled: true
+
+security:
+  api-key:
+    enabled: true
+    header-name: x-api-key
+  internal-api-key:
+    enabled: true
+    header-name: x-api-internal-key
+    header-value: 123456
+  jwt:
+    enabled: true
+    issuer: julb.me
+    signature-key:
+      algorithm: RS512
+      key-id: sign.test
+      key-path: classpath:/jwt.sign.key.pub
+  username-password:
+    enabled: true
+  username-pincode:
+    enabled: true
+  username-totp:
+    enabled: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: DEV,INT,VAL,STG,PROD
+  cloud:
+    kubernetes:
+      enabled: true
+      reload:
+        enabled: true
+      config:
+        sources:
+        - name: api-default-java
+        - name: api-default-backend-java
+        - name: ${APPLICATION_FULL_NAME}

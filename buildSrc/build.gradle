@@ -1,0 +1,23 @@
+dependencies {
+    runtimeOnly subprojects.collect { owner.project(it.path) }
+}
+
+allprojects {
+	repositories {
+	    mavenLocal()
+		mavenCentral()
+	    jcenter()
+	    maven {
+	      url "https://plugins.gradle.org/m2/"
+	    }
+	}
+}
+
+subprojects {
+    apply plugin: 'groovy'
+
+    dependencies {
+        compileOnly gradleApi()
+        compileOnly localGroovy()
+    }
+}

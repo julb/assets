@@ -1,0 +1,59 @@
+plugins {
+    id 'java-library-distribution'
+    id 'io.freefair.lombok'
+    id 'julb-java11'
+    id 'julb-additional-jars'
+    id 'org.springframework.boot'
+    id 'com.github.johnrengelman.shadow'
+}
+
+dependencies {
+    api platform(project(':bom'))
+    
+    implementation 'org.springframework.cloud:spring-cloud-starter-function-web'
+    implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
+    implementation project(':spring-boot-starters:spring-boot-starter-mail')
+    
+    testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+lombok {
+    config['lombok.log.fieldName'] = 'LOGGER'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'me.julb.Application'
+        )
+    }
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+springBoot {
+    buildInfo()
+}
+
+shadowJar {
+    classifier = 'aws'
+    dependencies {
+        exclude(
+            dependency("org.springframework.cloud:spring-cloud-function-web")
+        )
+    }
+    // Required for Spring
+    mergeServiceFiles()
+    append 'META-INF/spring.handlers'
+    append 'META-INF/spring.schemas'
+    append 'META-INF/spring.tooling'
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.PropertiesFileTransformer) {
+        paths = ['META-INF/spring.factories']
+        mergeStrategy = "append"
+    }
+}
+
+assemble.dependsOn = [shadowJar]

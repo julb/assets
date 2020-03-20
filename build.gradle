@@ -1,0 +1,30 @@
+plugins {
+	id 'julb-semantic-versioning'
+}
+
+allprojects {
+	apply plugin: 'eclipse'
+	apply plugin: 'maven-publish'
+	
+	eclipse {
+	   classpath {
+	       downloadSources = true
+           downloadJavadoc = true
+	   }
+	}
+		
+	repositories {
+		mavenLocal()
+	 	mavenCentral()
+	 	jcenter()
+	 	maven {
+            url 'https://repo.spring.io/milestone'
+        }
+	}
+	
+	publishing {
+		repositories {
+			mavenLocal()
+		}
+	}
+}

@@ -1,0 +1,5 @@
+spring:
+  cloud.function.scan.packages: me.julb.functions
+  mail:
+    host: localhost
+    port: 25

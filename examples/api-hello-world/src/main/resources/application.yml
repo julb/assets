@@ -1,0 +1,42 @@
+server:
+   port: 8080
+
+application:
+   names:
+      - Alice
+      - Bob
+      - Charlie
+      - David
+
+google.recaptcha:
+  enabled: true
+  site-key: ${GOOGLE_RECAPTCHA_SITE_KEY}
+  secret-key: ${GOOGLE_RECAPTCHA_SECRET_KEY}
+  action-thresholds:
+    HELLO: 0.5
+
+management.health.probes.enabled: true
+
+spring.servlet.multipart:
+  enabled: false
+
+springdoc:
+   cache.disabled: true
+   api-docs:
+      enabled: true
+   swagger-ui:
+      enabled: false
+   packages-to-scan: me.julb
+   additional-properties:
+      name: test
+      version: 1.0.0-SNAPSHOT
+      description: desc
+      servers:
+         - url: "http://localhost:8080"
+           description: "Hello"
+      authentication:
+         authentication-headers:
+            - display-name: header1
+              header-name: X-Header-1
+            - display-name: header2
+              header-name: X-Header-2

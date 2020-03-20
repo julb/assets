@@ -1,0 +1,51 @@
+plugins {
+    id 'julb-asciidoctor'
+    id 'julb-aggregate-javadoc'
+}
+
+// Aggregate the JavaDoc.
+aggregateJavadoc {
+    title = "${rootProject.name} ${rootProject.version} API"
+}
+
+// AsciiDoctor generation.
+asciidoctor {
+    options doctype: 'book'
+    
+    resources {
+        from('src/docs/resources') into 'resources'
+    }
+}
+
+// Prepare document.
+task docs(type: Copy) {
+    dependsOn 'asciidoctor', 'aggregateJavadoc'
+
+    into("$buildDir/packaged-docs/$version")
+
+    from("${asciidoctor.outputDir}") {
+        exclude 'index-single.html'
+        into 'reference/html'
+    }
+
+    from("${asciidoctor.outputDir}") {
+        include 'index-single.html', 'resources/**'
+        rename ('index-single.html', 'index.html')
+        into 'reference/htmlsingle'
+    }
+	
+    from (aggregateJavadoc.outputDir) {
+        into 'api'
+    }
+}
+
+// Zip all for artifact publication.
+task docsZip(type: Zip) {
+    dependsOn docs
+    from docs.destinationDir
+}
+
+// For Artifact handling.
+artifacts {
+    archives docsZip
+}

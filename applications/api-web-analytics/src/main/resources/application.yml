@@ -1,0 +1,58 @@
+spring:
+  cloud:
+    kubernetes:
+      enabled: false
+      
+---
+spring:
+  config:
+    activate:
+      on-profile: TEST
+  
+  main:
+    banner-mode: "off"
+  
+logging:
+  level:
+    root: OFF
+    org.springframework: OFF
+  
+---
+spring:
+  config:
+    activate:
+      on-profile: LOCAL
+  cloud:
+    stream:
+      bindings:
+        default.binder: rabbitmq
+        main-producer:
+          destination: main-exchange-point
+      rabbit:
+        bindings:
+          main-producer:
+            producer:
+              routing-key-expression: headers['routingKey']
+server:
+  port: 9090
+
+management:
+  endpoints.web.exposure.include: health,prometheus,info
+  endpoint.prometheus.enabled: true
+  
+---
+
+spring:
+  config:
+    activate:
+      on-profile: DEV,INT,VAL,STG,PROD
+  cloud:
+    kubernetes:
+      enabled: true
+      reload:
+        enabled: true
+      config:
+        sources:
+        - name: api-default-java
+        - name: api-default-backend-java
+        - name: ${APPLICATION_FULL_NAME}
