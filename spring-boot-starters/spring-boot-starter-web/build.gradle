@@ -17,6 +17,7 @@ dependencies {
 	api project(':libraries:library-utility-data')
 	api project(':libraries:library-utility-exception')
 	api project(':libraries:library-utility-http')
+	api project(':spring-boot-starters:spring-boot-starter-security')
 	
 	implementation 'org.apache.commons:commons-lang3'
 	implementation 'org.apache.commons:commons-collections4'
@@ -28,7 +29,6 @@ dependencies {
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
 	implementation project(':spring-boot-starters:spring-boot-starter-mapping')
 	implementation project(':spring-boot-starters:spring-boot-starter-opentracing')
-	implementation project(':spring-boot-starters:spring-boot-starter-security')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }

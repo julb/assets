@@ -1,0 +1,25 @@
+plugins {
+	id 'java-library-distribution'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+    api platform(project(':bom'))
+
+    implementation project(':spring-boot-starters:spring-boot-starter-web')
+    implementation project(':spring-boot-starters:spring-boot-starter-messaging')
+    implementation 'org.apache.commons:commons-lang3'
+	
+    testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+    testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
+    testImplementation 'net.javacrumbs.json-unit:json-unit'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

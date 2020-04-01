@@ -1,3 +1,5 @@
+include 'applications:api-web-analytics'
+
 include 'bom'
 include 'docs'
 
