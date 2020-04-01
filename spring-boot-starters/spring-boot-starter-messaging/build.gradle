@@ -7,7 +7,7 @@ plugins {
 dependencies {
 	api platform(project(':bom'))
 	
-	implementation project(':libraries:library-dto-messaging')
+	api project(':libraries:library-dto-messaging')
 	implementation project(':libraries:library-utility-constants')
 	implementation project(':libraries:library-utility-date')
 	implementation project(':libraries:library-utility-identifier')
