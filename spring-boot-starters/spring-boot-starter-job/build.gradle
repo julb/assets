@@ -1,0 +1,24 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+	api 'org.springframework.boot:spring-boot-starter-batch'
+
+//	implementation project(':spring-boot-starters:spring-boot-starter-core')
+	implementation project(':spring-boot-starters:spring-boot-starter-logging')
+//	implementation project(':spring-boot-starters:spring-boot-starter-mapping')
+	implementation project(':spring-boot-starters:spring-boot-starter-opentracing')
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

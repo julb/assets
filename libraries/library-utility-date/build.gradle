@@ -1,0 +1,21 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	implementation platform(project(':bom'))
+	
+	implementation project(':libraries:library-utility-constants')
+	
+	testImplementation 'junit:junit'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

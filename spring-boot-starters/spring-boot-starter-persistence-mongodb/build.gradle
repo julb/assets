@@ -1,0 +1,29 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+	api project(':libraries:library-utility-identifier')
+	api project(':libraries:library-utility-validator')
+	api project(':libraries:library-persistence-mongodb')
+	api project(':spring-boot-starters:spring-boot-starter-persistence-core')
+	api 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+	implementation project(':libraries:library-utility-constants')
+	implementation project(':libraries:library-utility-data')
+	implementation project(':libraries:library-utility-exception')
+	
+	implementation 'org.apache.commons:commons-lang3'
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

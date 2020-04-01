@@ -1,0 +1,21 @@
+plugins {
+	id 'io.freefair.lombok' version '5.0.0-rc6'
+	id 'julb-semantic-versioning'
+}
+
+allprojects {
+	apply plugin: 'eclipse'
+	apply plugin: 'maven-publish'
+		
+	repositories {
+		mavenLocal()
+	 	mavenCentral()
+	 	jcenter()
+	}
+	
+	publishing {
+		repositories {
+			mavenLocal()
+		}
+	}
+}
