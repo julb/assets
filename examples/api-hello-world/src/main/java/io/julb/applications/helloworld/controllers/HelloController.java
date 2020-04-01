@@ -4,6 +4,7 @@ import io.julb.applications.helloworld.configurations.properties.CustomConfigura
 import io.julb.applications.helloworld.services.dto.UserDTO;
 import io.julb.library.dto.simple.message.MessageDTO;
 import io.julb.library.utility.data.search.ISearchable;
+import io.julb.springbootstarter.core.context.TrademarkContextHolder;
 import io.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import io.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
 import io.julb.springbootstarter.web.utility.PageUtility;
@@ -90,6 +91,7 @@ public class HelloController {
     @Operation(summary = "Say hello to someone !")
     @Parameters({@Parameter(name = "name", description = "User name")})
     public MessageDTO sayHelloTo(@Size(max = 3) @Pattern(regexp = "^[0-9]{1,3}$") @PathVariable("name") String name) {
+        LOGGER.info("Current trademark: {}.", TrademarkContextHolder.getTrademark());
         return new MessageDTO(messageSource.getMessage("hello", new String[] {name}, LocaleContextHolder.getLocale()));
     }
 
