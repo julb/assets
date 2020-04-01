@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,23 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.julb.library.utility.constants;
+
+package io.julb.springbootstarter.core.context;
+
+import io.julb.springbootstarter.core.context.mpc.MPC;
 
 /**
- * A class to list custom HTTP headers.
+ * The trademark context holder.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+public final class TrademarkContextHolder {
 
     /**
-     * The header for getting trademark.
+     * The Trademark key in the MPC.
      */
-    public static final String X_JULB_TM = "x-julb-tm";
+    private static final String TM = "tm";
 
     /**
-     * The header for debug purposes.
+     * Gets the trademark.
+     * @return the trademark stored in the context.
      */
-    public static final String X_JULB_HTTP_TRACE_DISABLED = "x-julb-http-trace-disabled";
+    public static String getTrademark() {
+        return MPC.get(TM);
+    }
+
+    /**
+     * Sets the trademark.
+     * @param trademark the trademark.
+     */
+    public static void setTrademark(String trademark) {
+        MPC.put(TM, trademark);
+    }
 
 }

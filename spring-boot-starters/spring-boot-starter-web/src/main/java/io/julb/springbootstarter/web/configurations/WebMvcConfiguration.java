@@ -26,6 +26,7 @@ package io.julb.springbootstarter.web.configurations;
 import io.julb.springbootstarter.security.configurations.SecurityConfiguration;
 import io.julb.springbootstarter.web.configurations.beans.CorsProperties;
 import io.julb.springbootstarter.web.filters.RequestLoggingWebContentInterceptor;
+import io.julb.springbootstarter.web.filters.TrademarkWebContentInterceptor;
 import io.julb.springbootstarter.web.resolvers.page.CustomPageableHandlerMethodArgumentResolver;
 import io.julb.springbootstarter.web.resolvers.page.CustomSortHandlerMethodArgumentResolver;
 import io.julb.springbootstarter.web.resolvers.search.CustomSearchableHandlerMethodArgumentResolver;
@@ -128,6 +129,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new RequestLoggingWebContentInterceptor());
+        registry.addInterceptor(new TrademarkWebContentInterceptor());
     }
 
     /**

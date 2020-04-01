@@ -17,6 +17,7 @@ dependencies {
 	api project(':libraries:library-utility-data')
 	api project(':libraries:library-utility-exception')
 	api project(':libraries:library-utility-http')
+    api project(':spring-boot-starters:spring-boot-starter-core')
 	api project(':spring-boot-starters:spring-boot-starter-security')
 	
 	implementation 'org.apache.commons:commons-lang3'
