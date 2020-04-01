@@ -1,3 +1,10 @@
+pluginManagement {
+    plugins {
+        id 'io.freefair.lombok' version '5.0.0-rc6'
+        id 'com.google.cloud.tools.jib' version '2.1.0'
+    }
+}
+
 include 'applications:api-web-analytics'
 
 include 'bom'

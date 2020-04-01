@@ -1,7 +1,8 @@
 plugins {
-	id 'java-library-distribution'
-	id 'io.freefair.lombok'
-	id 'julb-additional-jars'
+    id 'java-library-distribution'
+    id 'io.freefair.lombok'
+    id 'julb-additional-jars'
+    id 'com.google.cloud.tools.jib'
 }
 
 dependencies {
@@ -16,10 +17,26 @@ dependencies {
     testImplementation 'net.javacrumbs.json-unit:json-unit'
 }
 
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'io.julb.Application'
+        )
+    }
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {
 	        from components.java
+            artifact distZip
+            artifact distTar
 	    }
 	}
+}
+
+jib {
+    container {
+        ports = ['8080']
+    }
 }

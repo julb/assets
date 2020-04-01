@@ -17,3 +17,14 @@ This project is a mono-repo for all assets such as:
 ```bash
 $ ./gradlew build
 ```
+
+### Generate Docker images for Java applications
+```bash
+$ ./gradlew jibDockerBuild \
+    -Djib.from.image=adoptopenjdk:13-openj9 \
+    -Djib.container.creationTime=USE_CURRENT_TIMESTAMP \
+    -Djib.to.tags=latest
+
+$ docker run -ti --rm -p 9090:9090 -e "JAVA_TOOL_OPTIONS=-Dserver.port=9090" <api-name>[:<api-version>]
+```
+
