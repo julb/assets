@@ -58,8 +58,8 @@ public class CollectController {
     private IAsyncMessagePosterService asyncMessagePosterService;
 
     /**
-     * A method used as a response to a ping.
-     * @return a ping response.
+     * This method enables the collection of a navigation event.
+     * @param analyticsRequestParams the params containing the navigation information.
      */
     @Operation(summary = "collect a web analytics event")
     @GetMapping()
