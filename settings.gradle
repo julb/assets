@@ -32,6 +32,7 @@ include 'libraries:library-utility-exception'
 include 'libraries:library-utility-identifier'
 include 'libraries:library-utility-jose-jwt'
 include 'libraries:library-utility-json'
+include 'libraries:library-utility-security'
 include 'libraries:library-utility-size'
 include 'libraries:library-utility-validator'
 
