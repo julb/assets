@@ -28,7 +28,6 @@ import io.julb.applications.webanalytics.controllers.params.AnalyticsRequestPara
 import io.julb.applications.webanalytics.services.dto.WebAnalyticsEventDTO;
 import io.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
 import io.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
-import io.julb.springbootstarter.security.annotations.OnlyForAuthenticated;
 import io.swagger.v3.oas.annotations.Operation;
 
 import javax.validation.Valid;
@@ -36,6 +35,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,7 +64,7 @@ public class CollectController {
     @Operation(summary = "collect a web analytics event")
     @GetMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @OnlyForAuthenticated
+    @PreAuthorize("isAuthenticated()")
     public void collect(@Valid AnalyticsRequestParams analyticsRequestParams) {
         // Builds the event.
         WebAnalyticsEventDTO event = new WebAnalyticsEventDTO();

@@ -1,30 +1,34 @@
 plugins {
-	id 'java-library'
-	id 'io.freefair.lombok'
-	id 'julb-additional-jars'
+    id 'java-library'
+    id 'io.freefair.lombok'
+    id 'julb-additional-jars'
 }
 
 dependencies {
-	api platform(project(':bom'))
+    api platform(project(':bom'))
 
-	implementation project(':libraries:library-dto-http')
-	implementation project(':libraries:library-utility-constants')
-	implementation project(':libraries:library-utility-exception')
-	implementation project(':libraries:library-utility-jose-jwt')
-	implementation project(':libraries:library-utility-http')
-	implementation project(':spring-boot-starters:spring-boot-starter-core')
-	
-	implementation project(':libraries:library-dto-security')
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.apache.commons:commons-lang3'
+    api project(':libraries:library-utility-security')
+
+    api 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation project(':libraries:library-dto-http')
+    implementation project(':libraries:library-dto-security')
+    implementation project(':libraries:library-utility-constants')
+    implementation project(':libraries:library-utility-exception')
+    implementation project(':libraries:library-utility-identifier')
+    implementation project(':libraries:library-utility-jose-jwt')
+    implementation project(':libraries:library-utility-http')
+    implementation project(':spring-boot-starters:spring-boot-starter-core')
+    
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.apache.commons:commons-lang3'
 }
 
 publishing {
-	publications {
-	    JavaPublication(MavenPublication) {
-	        from components.java
-	    }
-	}
+    publications {
+        JavaPublication(MavenPublication) {
+            from components.java
+        }
+    }
 }

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.julb.springbootstarter.security.annotations;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import org.springframework.security.access.prepost.PreAuthorize;
+package io.julb.library.utility.identifier;
 
 /**
- * This annotation is to secure methods that are allowed for administrator only.
+ * The identifiable interface.
  * <P>
  * @author Julb.
  */
-@PreAuthorize("hasRole('ADMINISTRATOR')")
-@Documented
-@Target({ElementType.METHOD, ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface OnlyForAdministrator {
+@FunctionalInterface
+public interface IIdentifiable {
+
+    /**
+     * Gets the ID of the object.
+     * @return the ID of the object.
+     */
+    String getId();
 
 }

@@ -40,7 +40,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -59,7 +58,6 @@ import org.springframework.security.web.authentication.preauth.RequestHeaderAuth
 @EnableWebSecurity
 @Import({SecurityInternalApiKeyConfiguration.class, SecurityInternalJwtConfiguration.class})
 @AutoConfigureAfter({SecurityInternalApiKeyConfiguration.class, SecurityInternalJwtConfiguration.class})
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
@@ -149,4 +147,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         throws Exception {
         auth.authenticationProvider(preAuthenticatedAuthenticationProvider());
     }
+
 }
