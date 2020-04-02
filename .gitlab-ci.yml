@@ -18,5 +18,18 @@ test:
   script:
     - ./gradlew check
 
+pages:
+  script:
+  - ./gradlew docs
+  - mkdir .public
+  - cp -r docs/build/docs/* .public
+  - mv .public public
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+
+
 after_script:
   - echo "End CI"
