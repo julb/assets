@@ -25,8 +25,8 @@ package io.julb.springbootstarter.persistence.jpa.specifications;
 
 import io.julb.library.utility.constants.Chars;
 import io.julb.library.utility.constants.Strings;
-import io.julb.library.utility.data.search.ISearchable;
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import io.julb.library.utility.data.search.Searchable;
+import io.julb.library.utility.data.search.predicates.SearchPredicate;
 import io.julb.library.utility.data.search.predicates.attributes.AbstractAttributePredicate;
 import io.julb.library.utility.data.search.predicates.joins.AbstractJoinPredicate;
 import io.julb.library.utility.data.search.predicates.modifiers.NotPredicate;
@@ -56,7 +56,7 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
      * Constructor.
      * @param searchable the searcheable information.
      */
-    public SearchSpecification(ISearchable searchable) {
+    public SearchSpecification(Searchable searchable) {
         super(searchable);
     }
 
@@ -75,7 +75,7 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
      * @param from the from criteria.
      * @return the JPA predicates.
      */
-    protected Predicate genericToJpaPredicate(IPredicate predicate, CriteriaBuilder criteriaBuilder, Root<T> from) {
+    protected Predicate genericToJpaPredicate(SearchPredicate predicate, CriteriaBuilder criteriaBuilder, Root<T> from) {
         if (predicate instanceof AbstractAttributePredicate) {
             return attributeToJpaPredicate((AbstractAttributePredicate) predicate, criteriaBuilder, from);
         } else if (predicate instanceof AbstractJoinPredicate) {
@@ -97,7 +97,7 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
      */
     protected Predicate joinToJpaPredicate(AbstractJoinPredicate joinPredicate, CriteriaBuilder criteriaBuilder, Root<T> from) {
         List<Predicate> jpaPredicates = new ArrayList<>();
-        for (IPredicate predicate : joinPredicate.getPredicates()) {
+        for (SearchPredicate predicate : joinPredicate.getPredicates()) {
             Predicate jpaPredicate = genericToJpaPredicate(predicate, criteriaBuilder, from);
             if (jpaPredicate != null) {
                 jpaPredicates.add(jpaPredicate);

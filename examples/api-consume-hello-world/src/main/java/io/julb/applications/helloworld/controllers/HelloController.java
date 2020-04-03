@@ -2,7 +2,7 @@ package io.julb.applications.helloworld.controllers;
 
 import io.julb.applications.helloworld.consumers.ApiHelloWorldFeignClient;
 import io.julb.library.dto.simple.message.MessageDTO;
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 import io.julb.springbootstarter.consumer.utility.SearchableAndPageable;
 import io.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import io.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
@@ -44,7 +44,7 @@ public class HelloController {
     @GetMapping
     @OpenApiPageable
     @OpenApiSearchable
-    public Page<MessageDTO> sayHello(ISearchable searchable, Pageable pageable) {
+    public Page<MessageDTO> sayHello(Searchable searchable, Pageable pageable) {
         return apiHelloWorldFeignClient.sayHello(SearchableAndPageable.of(searchable, pageable));
     }
 

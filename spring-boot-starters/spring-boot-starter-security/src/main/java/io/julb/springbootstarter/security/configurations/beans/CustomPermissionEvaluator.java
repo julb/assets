@@ -24,6 +24,7 @@
 package io.julb.springbootstarter.security.configurations.beans;
 
 import io.julb.library.utility.security.ISecurable;
+import io.julb.springbootstarter.core.context.TrademarkContextHolder;
 
 import java.io.Serializable;
 
@@ -95,6 +96,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
      * @return <code>true</code> if the user is allowed to enter, <code>false</code> otherwise.
      */
     private boolean isAllowed(Authentication authentication, ISecurable securableObject, String permission) {
+        String tm = TrademarkContextHolder.getTrademark();
         // FIXME Implement that method.
         return true;
     }

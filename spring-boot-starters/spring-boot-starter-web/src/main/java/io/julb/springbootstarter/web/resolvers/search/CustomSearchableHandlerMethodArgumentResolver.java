@@ -19,7 +19,7 @@ import io.julb.library.utility.constants.Chars;
 import io.julb.library.utility.constants.PageRequestAttributes;
 import io.julb.library.utility.constants.SearchRequestAttributes;
 import io.julb.library.utility.constants.Strings;
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -86,14 +86,14 @@ public class CustomSearchableHandlerMethodArgumentResolver implements HandlerMet
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return ISearchable.class.equals(parameter.getParameterType());
+        return Searchable.class.equals(parameter.getParameterType());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ISearchable resolveArgument(MethodParameter methodParameter, @Nullable ModelAndViewContainer mavContainer, NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) {
+    public Searchable resolveArgument(MethodParameter methodParameter, @Nullable ModelAndViewContainer mavContainer, NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) {
         SearchableAnnotationUtils.assertSearchableUniqueness(methodParameter);
         String searchQuery = webRequest.getParameter(getParameterNameToUse(queryParameterName));
         if (searchQuery != null) {
@@ -117,7 +117,7 @@ public class CustomSearchableHandlerMethodArgumentResolver implements HandlerMet
      * @return
      */
     @Deprecated
-    private ISearchable parseQueryParameters(MethodParameter methodParameter, WebRequest webRequest) {
+    private Searchable parseQueryParameters(MethodParameter methodParameter, WebRequest webRequest) {
         Iterator<String> parameterNamesIterator = webRequest.getParameterNames();
 
         Set<String> stopWords = new HashSet<>();

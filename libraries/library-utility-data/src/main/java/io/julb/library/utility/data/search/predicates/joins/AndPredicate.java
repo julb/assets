@@ -23,7 +23,7 @@
  */
 package io.julb.library.utility.data.search.predicates.joins;
 
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import io.julb.library.utility.data.search.predicates.SearchPredicate;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +41,7 @@ public class AndPredicate extends AbstractJoinPredicate {
      * Constructor.
      * @param predicates the predicates to add.
      */
-    public AndPredicate(IPredicate... predicates) {
+    public AndPredicate(SearchPredicate... predicates) {
         super(predicates);
     }
 

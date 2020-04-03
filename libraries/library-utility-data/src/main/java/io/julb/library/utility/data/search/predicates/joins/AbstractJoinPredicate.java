@@ -26,7 +26,7 @@ package io.julb.library.utility.data.search.predicates.joins;
 import io.julb.library.utility.constants.Chars;
 import io.julb.library.utility.constants.Integers;
 import io.julb.library.utility.constants.Strings;
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import io.julb.library.utility.data.search.predicates.SearchPredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Getter
 @Setter
-public abstract class AbstractJoinPredicate implements IPredicate {
+public abstract class AbstractJoinPredicate implements SearchPredicate {
 
     //@formatter:off
      /**
@@ -57,13 +57,13 @@ public abstract class AbstractJoinPredicate implements IPredicate {
      * @param predicates the value to set.
      */
      //@formatter:on
-    private List<IPredicate> predicates = new ArrayList<>();
+    private List<SearchPredicate> predicates = new ArrayList<>();
 
     /**
      * Constructor.
      * @param predicates the predicates.
      */
-    public AbstractJoinPredicate(IPredicate... predicates) {
+    public AbstractJoinPredicate(SearchPredicate... predicates) {
         if (predicates != null) {
             this.predicates.addAll(Arrays.asList(predicates));
         }
@@ -73,7 +73,7 @@ public abstract class AbstractJoinPredicate implements IPredicate {
      * Adds a predicate to the list.
      * @param predicate the predicate to add.
      */
-    public void addPredicate(IPredicate predicate) {
+    public void addPredicate(SearchPredicate predicate) {
         this.predicates.add(predicate);
     }
 
@@ -110,7 +110,7 @@ public abstract class AbstractJoinPredicate implements IPredicate {
             return predicates.get(0).toString();
         } else {
             List<String> stringPredicates = new ArrayList<String>();
-            for (IPredicate predicate : predicates) {
+            for (SearchPredicate predicate : predicates) {
                 stringPredicates.add(predicate.toString());
             }
             return Strings.LEFT_PARENTHESIS + StringUtils.join(stringPredicates, Chars.SPACE + getSeparator() + Chars.SPACE) + Strings.RIGHT_PARENTHESIS;

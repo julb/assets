@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.julb.library.utility.data.search;
+package io.julb;
 
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * The searchable interface.
+ * Main class to launch the application.
  * <P>
- * @author Julb.
+ * @author Airbus.
  */
-@FunctionalInterface
-public interface ISearchable {
+@SpringBootApplication
+public class Application {
 
     /**
-     * Gets the predicate to search for results.
-     * @return the predicate.
+     * Method to launch the application.
+     * @param args the arguments.
      */
-    IPredicate getSearchPredicate();
-
-    /**
-     * Returns an empty searchable.
-     * @return an empty searchable.
-     */
-    static ISearchable empty() {
-        return new SearchRequest();
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
+
 }

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.julb.library.utility.data.search.predicates;
+
+package io.julb.applications.announcement.services.dto;
 
 /**
- * The predicate interface.
+ * The announcement resource type.
  * <P>
  * @author Julb.
  */
-public interface IPredicate {
+public class ResourceTypes {
+
+    /**
+     * The resource type.
+     */
+    public static final String ANNOUNCEMENT = "announcement";
+
 }

@@ -99,13 +99,13 @@ public class AsyncMessagePosterService implements IAsyncMessagePosterService {
      */
     @Override
     public <T> void postResourceEventMessage(@NotNull ResourceEventAsyncMessageDTO messagingPost) {
-        String routingKey = String.format("resource.%s.%s", messagingPost.getResourceClassSimpleName(), messagingPost.getEventType().toString()).toLowerCase();
+        String routingKey = String.format("resource.%s.%s", messagingPost.getResourceType(), messagingPost.getEventType().toString()).toLowerCase();
         this.postMessage(routingKey, messagingPost);
 
         //@formatter:off
         AuditAsyncMessageDTO<Void> auditMessage = new AuditAsyncMessageBuilder<Void>()
             .level(EventCollectorAsyncMessageLevel.INFO)
-            .objectType(messagingPost.getResourceClassName())
+            .objectType(messagingPost.getResourceType())
             .objectReference(messagingPost.getResourceId())
             .objectName(messagingPost.getResourceName())
             .product("Resource")

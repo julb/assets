@@ -3,7 +3,7 @@ package io.julb.applications.helloworld.controllers;
 import io.julb.applications.helloworld.entities.UserEntity;
 import io.julb.applications.helloworld.repositories.UserRepository;
 import io.julb.library.dto.simple.message.MessageDTO;
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 import io.julb.library.utility.validator.constraints.Identifier;
 import io.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
 
@@ -51,7 +51,7 @@ public class UserController {
      * @return the paged list of users.
      */
     @GetMapping
-    public Page<UserEntity> findAll(ISearchable searchable, Pageable pageable) {
+    public Page<UserEntity> findAll(Searchable searchable, Pageable pageable) {
         return userRepository.findAll(new SearchSpecification<UserEntity>(searchable), pageable);
     }
 

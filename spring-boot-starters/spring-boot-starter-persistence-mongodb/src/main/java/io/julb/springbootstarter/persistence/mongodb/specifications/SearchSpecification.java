@@ -26,8 +26,8 @@ package io.julb.springbootstarter.persistence.mongodb.specifications;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 import io.julb.library.utility.constants.Chars;
-import io.julb.library.utility.data.search.ISearchable;
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import io.julb.library.utility.data.search.Searchable;
+import io.julb.library.utility.data.search.predicates.SearchPredicate;
 import io.julb.library.utility.data.search.predicates.attributes.AbstractAttributePredicate;
 import io.julb.library.utility.data.search.predicates.joins.AbstractJoinPredicate;
 import io.julb.library.utility.data.search.predicates.modifiers.NotPredicate;
@@ -58,7 +58,7 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
      * Default constructor.
      * @param searchable the searchable object.
      */
-    public SearchSpecification(ISearchable searchable) {
+    public SearchSpecification(Searchable searchable) {
         super(searchable);
     }
 
@@ -76,7 +76,7 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
      * @param rootClass the root class.
      * @return the MongoDB criteria definition.
      */
-    private Criteria genericToMongoDbCriteria(IPredicate predicate, Class<T> rootClass) {
+    private Criteria genericToMongoDbCriteria(SearchPredicate predicate, Class<T> rootClass) {
         if (predicate instanceof AbstractAttributePredicate) {
             return attributeToMongoDbCriteria((AbstractAttributePredicate) predicate, rootClass);
         } else if (predicate instanceof AbstractJoinPredicate) {
@@ -97,7 +97,7 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
      */
     protected Criteria joinToMongoDbCriteria(AbstractJoinPredicate joinPredicate, Class<T> rootClass) {
         List<Criteria> criteria = new ArrayList<>();
-        for (IPredicate predicate : joinPredicate.getPredicates()) {
+        for (SearchPredicate predicate : joinPredicate.getPredicates()) {
             Criteria jpaPredicate = genericToMongoDbCriteria(predicate, rootClass);
             if (jpaPredicate != null) {
                 criteria.add(jpaPredicate);

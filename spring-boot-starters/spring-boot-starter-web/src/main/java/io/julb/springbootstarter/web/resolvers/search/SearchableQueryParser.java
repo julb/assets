@@ -16,9 +16,9 @@
 package io.julb.springbootstarter.web.resolvers.search;
 
 import io.julb.library.utility.constants.Chars;
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 import io.julb.library.utility.data.search.SearchRequest;
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import io.julb.library.utility.data.search.predicates.SearchPredicate;
 import io.julb.library.utility.data.search.predicates.attributes.MultipleValuesAttributePredicate;
 import io.julb.library.utility.data.search.predicates.attributes.NoValueAttributePredicate;
 import io.julb.library.utility.data.search.predicates.attributes.OperatorAttributePredicate;
@@ -60,10 +60,10 @@ abstract class SearchableQueryParser {
     private static final Pattern SEARCH_TERM_PATTERN = Pattern.compile("^(?<attributeName>[a-zA-Z0-9\\.]+)(\\|(?<attributeOperator>[a-zA-Z][a-zA-Z]))?$");
 
     /**
-     * Asserts uniqueness of all {@link ISearchable} parameters of the method of the given {@link MethodParameter}.
+     * Asserts uniqueness of all {@link Searchable} parameters of the method of the given {@link MethodParameter}.
      * @param parameter must not be {@literal null}.
      */
-    public static ISearchable parse(String searchQuery) {
+    public static Searchable parse(String searchQuery) {
         try {
             // Empty query => Empty search request.
             if (StringUtils.isBlank(searchQuery)) {
@@ -73,7 +73,7 @@ abstract class SearchableQueryParser {
             // Parse using lucene parser.
             StandardSyntaxParser standardQueryParser = new StandardSyntaxParser();
             QueryNode queryNode = standardQueryParser.parse(searchQuery, null);
-            IPredicate predicate = parseQueryNode(searchQuery, queryNode);
+            SearchPredicate predicate = parseQueryNode(searchQuery, queryNode);
             return new SearchRequest(predicate);
         } catch (QueryNodeParseException e) {
             throw new SearchQueryParseException(searchQuery, e);
@@ -86,7 +86,7 @@ abstract class SearchableQueryParser {
      * @param queryNode the query node.
      * @return the predicate.
      */
-    protected static IPredicate parseQueryNode(String searchQuery, QueryNode queryNode) {
+    protected static SearchPredicate parseQueryNode(String searchQuery, QueryNode queryNode) {
         if (queryNode instanceof FieldQueryNode) {
             FieldQueryNode fieldQueryNode = (FieldQueryNode) queryNode;
             return searchTermToPredicate(searchQuery, fieldQueryNode.getFieldAsString(), fieldQueryNode.getTextAsString());
@@ -107,7 +107,7 @@ abstract class SearchableQueryParser {
             return parseQueryNode(searchQuery, groupQueryNode.getChild());
         } else if (queryNode instanceof ModifierQueryNode) {
             ModifierQueryNode modifierQueryNode = (ModifierQueryNode) queryNode;
-            IPredicate parsedQueryNode = parseQueryNode(searchQuery, modifierQueryNode.getChild());
+            SearchPredicate parsedQueryNode = parseQueryNode(searchQuery, modifierQueryNode.getChild());
             if (modifierQueryNode.getModifier().equals(Modifier.MOD_NOT)) {
                 return new NotPredicate(parsedQueryNode);
             } else {
@@ -125,7 +125,7 @@ abstract class SearchableQueryParser {
      * @param term the search term.
      * @return the attribute predicate.
      */
-    protected static IPredicate searchTermToPredicate(String originalSearchQuery, String fieldName, String fieldValue) {
+    protected static SearchPredicate searchTermToPredicate(String originalSearchQuery, String fieldName, String fieldValue) {
         String term = StringUtils.join(new String[] {fieldName, fieldValue}, Chars.SEMICOLON);
         Matcher matcher = SEARCH_TERM_PATTERN.matcher(fieldName);
         if (matcher.matches()) {
@@ -141,7 +141,7 @@ abstract class SearchableQueryParser {
                 }
             }
 
-            IPredicate predicate = null;
+            SearchPredicate predicate = null;
             switch (operator) {
                 case EQUAL:
                 case NOT_EQUAL:

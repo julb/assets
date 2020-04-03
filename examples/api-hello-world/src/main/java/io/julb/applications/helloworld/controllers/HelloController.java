@@ -3,7 +3,7 @@ package io.julb.applications.helloworld.controllers;
 import io.julb.applications.helloworld.configurations.properties.CustomConfigurationProperties;
 import io.julb.applications.helloworld.services.dto.UserDTO;
 import io.julb.library.dto.simple.message.MessageDTO;
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 import io.julb.springbootstarter.core.context.TrademarkContextHolder;
 import io.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import io.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
@@ -73,7 +73,7 @@ public class HelloController {
     @OpenApiPageable
     @OpenApiSearchable
     @Operation(summary = "Say hello to everyone !")
-    public Page<MessageDTO> sayHello(ISearchable searchable, Pageable pageable) {
+    public Page<MessageDTO> sayHello(Searchable searchable, Pageable pageable) {
         LOGGER.info("Receiving hello request: {}, {}.", searchable, pageable);
         List<MessageDTO> messages = new ArrayList<MessageDTO>();
         for (String name : properties.getNames()) {

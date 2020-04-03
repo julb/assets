@@ -19,6 +19,8 @@ dependencies {
 	api project(':libraries:library-utility-http')
     api project(':spring-boot-starters:spring-boot-starter-core')
 	api project(':spring-boot-starters:spring-boot-starter-security')
+    api project(':spring-boot-starters:spring-boot-starter-mapping')
+    api project(':spring-boot-starters:spring-boot-starter-opentracing')
 	
 	implementation 'org.apache.commons:commons-lang3'
 	implementation 'org.apache.commons:commons-collections4'
@@ -28,8 +30,6 @@ dependencies {
 	implementation 'com.google.code.findbugs:jsr305'
 	
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
-	implementation project(':spring-boot-starters:spring-boot-starter-mapping')
-	implementation project(':spring-boot-starters:spring-boot-starter-opentracing')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }
