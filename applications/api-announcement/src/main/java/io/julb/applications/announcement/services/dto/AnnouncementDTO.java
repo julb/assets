@@ -25,10 +25,14 @@
 package io.julb.applications.announcement.services.dto;
 
 import io.julb.library.dto.simple.audit.AbstractAuditedDTO;
-import io.julb.library.dto.simple.content.ContentDTO;
+import io.julb.library.dto.simple.content.LargeContentDTO;
+import io.julb.library.dto.simple.interval.date.DateTimeIntervalDTO;
+import io.julb.library.dto.simple.user.UserRefDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -53,36 +57,22 @@ public class AnnouncementDTO extends AbstractAuditedDTO {
      * @param id the value to set.
      */
      //@formatter:on
-    @Schema(description = "Unique ID for the announcement", example = "2020-01-01T00:00:00.000Z")
+    @Schema(description = "Unique ID for the announcement")
     private String id;
 
     //@formatter:off
-    /**
-    * The visibilityFromDateTime attribute.
-    * -- GETTER --
-    * Getter for {@link #visibilityFromDateTime} property.
-    * @return the value.
-    * -- SETTER --
-    * Setter for {@link #visibilityFromDateTime} property.
-    * @param visibilityFromDateTime the value to set.
-    */
-    //@formatter:on
-    @Schema(description = "Datetime from which the announcement is visible", example = "2020-01-01T00:00:00.000Z")
-    private String visibilityFromDateTime;
-
-   //@formatter:off
-    /**
-    * The visibilityToDateTime attribute.
-    * -- GETTER --
-    * Getter for {@link #visibilityToDateTime} property.
-    * @return the value.
-    * -- SETTER --
-    * Setter for {@link #visibilityToDateTime} property.
-    * @param visibilityToDateTime the value to set.
-    */
-    //@formatter:on
-    @Schema(description = "Datetime until which the announcement is visible", example = "2020-01-01T00:00:00.000Z")
-    private String visibilityToDateTime;
+     /**
+     * The visibilityDateTime attribute.
+     * -- GETTER --
+     * Getter for {@link #visibilityDateTime} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #visibilityDateTime} property.
+     * @param visibilityDateTime the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Datetime interval in which which the announcement is visible")
+    private DateTimeIntervalDTO visibilityDateTime;
 
    //@formatter:off
     /**
@@ -110,5 +100,33 @@ public class AnnouncementDTO extends AbstractAuditedDTO {
     */
     //@formatter:on
     @Schema(description = "Localized message for the announcement")
-    private Map<String, ContentDTO> localizedMessage;
+    private Map<String, LargeContentDTO> localizedMessage;
+
+    //@formatter:off
+     /**
+     * The user attribute.
+     * -- GETTER --
+     * Getter for {@link #user} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #user} property.
+     * @param user the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Author of the announcement")
+    private UserRefDTO user;
+
+    //@formatter:off
+     /**
+     * The tags attribute.
+     * -- GETTER --
+     * Getter for {@link #tags} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #tags} property.
+     * @param tags the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Tags to associate to the announcement")
+    private SortedSet<String> tags = new TreeSet<String>();
 }

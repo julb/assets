@@ -7,6 +7,8 @@ plugins {
 dependencies {
 	api platform(project(':bom'))
 	
+    api project(':libraries:library-utility-mapping')
+
 	implementation project(':libraries:library-dto-simple')
 	implementation 'org.springframework.boot:spring-boot-autoconfigure'
 	implementation 'org.springframework.data:spring-data-commons'

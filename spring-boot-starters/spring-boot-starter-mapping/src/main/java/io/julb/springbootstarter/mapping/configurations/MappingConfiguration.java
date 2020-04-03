@@ -25,7 +25,7 @@
 package io.julb.springbootstarter.mapping.configurations;
 
 import io.julb.library.dto.simple.identifier.IdentifierDTO;
-import io.julb.springbootstarter.mapping.annotations.ObjectMappingFactory;
+import io.julb.library.mapping.annotations.ObjectMappingFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

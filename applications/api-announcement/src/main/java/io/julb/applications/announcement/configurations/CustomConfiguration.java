@@ -24,10 +24,11 @@
 
 package io.julb.applications.announcement.configurations;
 
-import io.julb.applications.announcement.configurations.properties.CustomConfigurationProperties;
+import io.julb.applications.announcement.configurations.properties.ApplicationProperties;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * The local configuration.
@@ -35,7 +36,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Julb.
  */
 @Configuration
-@EnableConfigurationProperties(CustomConfigurationProperties.class)
+@EnableConfigurationProperties(ApplicationProperties.class)
+@EnableScheduling
 public class CustomConfiguration {
     // ------------------------------------------ Utility methods.
 

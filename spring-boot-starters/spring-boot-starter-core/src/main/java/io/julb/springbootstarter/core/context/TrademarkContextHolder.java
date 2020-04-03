@@ -54,4 +54,11 @@ public final class TrademarkContextHolder {
         MPC.put(TM, trademark);
     }
 
+    /**
+     * Unsets the trademark.
+     */
+    public static void unsetTrademark() {
+        MPC.remove(TM);
+    }
+
 }

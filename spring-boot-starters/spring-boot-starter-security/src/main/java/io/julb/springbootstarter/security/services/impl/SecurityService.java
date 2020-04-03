@@ -25,6 +25,7 @@ package io.julb.springbootstarter.security.services.impl;
 
 import io.julb.library.dto.security.AuthenticatedUserIdentityDTO;
 import io.julb.library.dto.security.AuthenticatedUserRole;
+import io.julb.library.utility.constants.Integers;
 import io.julb.springbootstarter.security.services.ISecurityService;
 import io.julb.springbootstarter.security.services.dto.CustomUserDetails;
 import io.julb.springbootstarter.security.utilities.RoleUtility;
@@ -84,6 +85,14 @@ public class SecurityService implements ISecurityService {
             } else if (userDetails instanceof UserDetails) {
                 // FIXME
                 return new AuthenticatedUserIdentityDTO();
+            } else {
+                // FIXME
+                AuthenticatedUserIdentityDTO anonymousUser = new AuthenticatedUserIdentityDTO();
+                anonymousUser.setFirstName("Anonymous");
+                anonymousUser.setLastName("User");
+                anonymousUser.setId(StringUtils.repeat('0', Integers.THIRTY_TWO));
+                anonymousUser.setMail("anonymous@localhost");
+                return anonymousUser;
             }
         }
         return null;

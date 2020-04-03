@@ -29,19 +29,25 @@ import io.julb.applications.announcement.services.dto.AnnouncementDTO;
 import io.julb.applications.announcement.services.dto.AnnouncementLevel;
 import io.julb.applications.announcement.services.dto.AnnouncementPatchDTO;
 import io.julb.applications.announcement.services.dto.AnnouncementUpdateDTO;
+import io.julb.library.mapping.annotations.ObjectMappingFactory;
 import io.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
-import io.julb.library.utility.identifier.IIdentifiable;
-import io.julb.library.utility.validator.constraints.DateTimeISO8601;
+import io.julb.library.persistence.mongodb.entities.date.DateTimeIntervalEntity;
+import io.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
+import io.julb.library.persistence.mongodb.entities.user.UserEntity;
+import io.julb.library.utility.interfaces.IIdentifiable;
+import io.julb.library.utility.validator.constraints.DateTimeInFuture;
 import io.julb.library.utility.validator.constraints.Identifier;
-import io.julb.springbootstarter.mapping.annotations.ObjectMappingFactory;
+import io.julb.library.utility.validator.constraints.Tag;
+import io.julb.library.utility.validator.constraints.Trademark;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -94,38 +100,24 @@ public class AnnouncementEntity extends AbstractAuditedEntity implements IIdenti
      //@formatter:on
     @NotNull
     @NotBlank
-    @Size(max = 128)
+    @Trademark
     private String tm;
 
     //@formatter:off
      /**
-     * The visibilityFromDateTime attribute.
+     * The visibilityDateTime attribute.
      * -- GETTER --
-     * Getter for {@link #visibilityFromDateTime} property.
+     * Getter for {@link #visibilityDateTime} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #visibilityFromDateTime} property.
-     * @param visibilityFromDateTime the value to set.
+     * Setter for {@link #visibilityDateTime} property.
+     * @param visibilityDateTime the value to set.
      */
      //@formatter:on
     @NotNull
-    @DateTimeISO8601
-    private String visibilityFromDateTime;
-
-    //@formatter:off
-     /**
-     * The visibilityToDateTime attribute.
-     * -- GETTER --
-     * Getter for {@link #visibilityToDateTime} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #visibilityToDateTime} property.
-     * @param visibilityToDateTime the value to set.
-     */
-     //@formatter:on
-    @NotNull
-    @DateTimeISO8601
-    private String visibilityToDateTime;
+    @Valid
+    @DateTimeInFuture
+    private DateTimeIntervalEntity visibilityDateTime;
 
     //@formatter:off
      /**
@@ -143,6 +135,21 @@ public class AnnouncementEntity extends AbstractAuditedEntity implements IIdenti
 
     //@formatter:off
      /**
+     * The user attribute.
+     * -- GETTER --
+     * Getter for {@link #user} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #user} property.
+     * @param user the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @Valid
+    private UserEntity user;
+
+    //@formatter:off
+     /**
      * The localizedMessage attribute.
      * -- GETTER --
      * Getter for {@link #localizedMessage} property.
@@ -154,5 +161,18 @@ public class AnnouncementEntity extends AbstractAuditedEntity implements IIdenti
      //@formatter:on
     @NotNull
     @Valid
-    private Map<String, MessageEntity> localizedMessage = new HashMap<String, MessageEntity>();
+    private Map<String, LargeMessageEntity> localizedMessage = new HashMap<String, LargeMessageEntity>();
+
+    //@formatter:off
+     /**
+     * The tags attribute.
+     * -- GETTER --
+     * Getter for {@link #tags} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #tags} property.
+     * @param tags the value to set.
+     */
+     //@formatter:on
+    private SortedSet<@NotNull @Tag String> tags = new TreeSet<String>();
 }

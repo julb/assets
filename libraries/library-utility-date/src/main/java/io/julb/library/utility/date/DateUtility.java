@@ -30,6 +30,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -171,13 +172,22 @@ public final class DateUtility {
     }
 
     /**
-     * Returns the UTC date time in ISO 8601 format.
-     * <P>
      * Example: <i>2018-08-01T16:14:27.965Z</i>
      * @param datetime the input date.
      * @return the UTC date time serialized in ISO 8601 format.
      */
     public static Date parseDateTime(String datetime) {
         return Date.from(DateTimeFormatter.ofPattern(Temporals.ISO_8601_DATE_TIME).parse(datetime, ZonedDateTime::from).toInstant());
+    }
+
+    /**
+     * Returns the given date time in ISO 8601 format in RFC1123 String in the given timezone.
+     * @param datetime the input date.
+     * @param timeZone the time zone.
+     * @return the given date time in ISO 8601 format in RFC1123 String in the given timezone.
+     */
+    public static String dateTimeToRfc1123(String datetime, TimeZone timeZone) {
+        ZonedDateTime parse = DateTimeFormatter.ofPattern(Temporals.ISO_8601_DATE_TIME).parse(datetime, ZonedDateTime::from);
+        return parse.withZoneSameInstant(timeZone.toZoneId()).format(DateTimeFormatter.RFC_1123_DATE_TIME);
     }
 }

@@ -31,9 +31,11 @@ import io.julb.applications.announcement.services.dto.AnnouncementCreationDTO;
 import io.julb.applications.announcement.services.dto.AnnouncementDTO;
 import io.julb.applications.announcement.services.dto.AnnouncementPatchDTO;
 import io.julb.applications.announcement.services.dto.AnnouncementUpdateDTO;
-import io.julb.applications.announcement.services.dto.ResourceTypes;
+import io.julb.applications.announcement.services.exceptions.AnnouncementAlreadyExistsInIntervalException;
 import io.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import io.julb.library.dto.messaging.events.ResourceEventType;
+import io.julb.library.dto.security.AuthenticatedUserIdentityDTO;
+import io.julb.library.persistence.mongodb.entities.user.UserEntity;
 import io.julb.library.utility.data.search.Searchable;
 import io.julb.library.utility.date.DateUtility;
 import io.julb.library.utility.exceptions.ResourceNotFoundException;
@@ -46,6 +48,7 @@ import io.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
 import io.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
 import io.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
 import io.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import io.julb.springbootstarter.resourcetypes.ResourceTypes;
 import io.julb.springbootstarter.security.services.ISecurityService;
 
 import javax.validation.Valid;
@@ -131,6 +134,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public AnnouncementDTO create(@NotNull @Valid AnnouncementCreationDTO creationDTO) {
+        String tm = TrademarkContextHolder.getTrademark();
+
+        // Check if not overlapping another one.
+        if (announcementRepository.existsByTmAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, creationDTO.getVisibilityDateTime().getFrom(), creationDTO.getVisibilityDateTime().getTo())) {
+            throw new AnnouncementAlreadyExistsInIntervalException(creationDTO.getVisibilityDateTime().getFrom(), creationDTO.getVisibilityDateTime().getTo());
+        }
+
         // Update the entity
         AnnouncementEntity entityToCreate = mappingService.map(creationDTO, AnnouncementEntity.class);
         this.onPersist(entityToCreate);
@@ -153,6 +163,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throw new ResourceNotFoundException(AnnouncementEntity.class, id);
         }
 
+        // Check if not overlapping another one.
+        if (announcementRepository.existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, id, updateDTO.getVisibilityDateTime().getFrom(), updateDTO.getVisibilityDateTime().getTo())) {
+            throw new AnnouncementAlreadyExistsInIntervalException(updateDTO.getVisibilityDateTime().getFrom(), updateDTO.getVisibilityDateTime().getTo());
+        }
+
         // Update the entity
         mappingService.map(updateDTO, existing);
         this.onUpdate(existing);
@@ -173,6 +188,20 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         AnnouncementEntity existing = announcementRepository.findByTmAndId(tm, id);
         if (existing == null) {
             throw new ResourceNotFoundException(AnnouncementEntity.class, id);
+        }
+
+        // Check if not overlapping another one.
+        String from = existing.getVisibilityDateTime().getFrom();
+        if (patchDTO.getVisibilityDateTime() != null && patchDTO.getVisibilityDateTime().getFrom() != null) {
+            from = patchDTO.getVisibilityDateTime().getFrom();
+        }
+        String to = existing.getVisibilityDateTime().getTo();
+        if (patchDTO.getVisibilityDateTime() != null && patchDTO.getVisibilityDateTime().getTo() != null) {
+            to = patchDTO.getVisibilityDateTime().getTo();
+        }
+
+        if (announcementRepository.existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, id, from, to)) {
+            throw new AnnouncementAlreadyExistsInIntervalException(from, to);
         }
 
         // Update the entity
@@ -215,6 +244,15 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         entity.setTm(TrademarkContextHolder.getTrademark());
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+
+        // Add author.
+        AuthenticatedUserIdentityDTO connnectedUser = securityService.getConnectedUserIdentity();
+        entity.setUser(new UserEntity());
+        entity.getUser().setFirstName(connnectedUser.getFirstName());
+        entity.getUser().setId(connnectedUser.getId());
+        entity.getUser().setLastName(connnectedUser.getLastName());
+        entity.getUser().setMail(connnectedUser.getMail());
+
         postResourceEvent(entity, ResourceEventType.CREATED);
     }
 

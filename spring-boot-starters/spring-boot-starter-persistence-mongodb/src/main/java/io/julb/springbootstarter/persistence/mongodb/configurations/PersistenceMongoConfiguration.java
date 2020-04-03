@@ -25,10 +25,13 @@ package io.julb.springbootstarter.persistence.mongodb.configurations;
 
 import io.julb.springbootstarter.persistence.mongodb.configurations.support.CustomMongoRepositoryFactoryBean;
 
+import javax.validation.Validator;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
+import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
@@ -48,5 +51,15 @@ public class PersistenceMongoConfiguration {
     @Bean
     public MongoTransactionManager transactionManager(MongoDbFactory dbFactory) {
         return new MongoTransactionManager(dbFactory);
+    }
+
+    /**
+     * Returns a lister to validate object before insertion.
+     * @param validator the validator.
+     * @return an event listener to validate objects.
+     */
+    @Bean
+    public ValidatingMongoEventListener validatingMongoEventListener(Validator validator) {
+        return new ValidatingMongoEventListener(validator);
     }
 }

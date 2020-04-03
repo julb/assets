@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api platform(project(':bom'))
 
-    api project(':libraries:library-utility-security')
+    api project(':libraries:library-utility-interface')
 
     api 'org.springframework.boot:spring-boot-starter-security'
 
@@ -19,6 +19,7 @@ dependencies {
     implementation project(':libraries:library-utility-jose-jwt')
     implementation project(':libraries:library-utility-http')
     implementation project(':spring-boot-starters:spring-boot-starter-core')
+    implementation project(':spring-boot-starters:spring-boot-starter-resource-types')
     
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
