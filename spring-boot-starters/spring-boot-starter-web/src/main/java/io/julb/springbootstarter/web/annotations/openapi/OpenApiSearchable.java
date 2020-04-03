@@ -19,7 +19,7 @@
 package io.julb.springbootstarter.web.annotations.openapi;
 
 import io.julb.library.utility.constants.SearchRequestAttributes;
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,7 +31,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * OpenAPI annotation for Methods having {@link ISearchable} parameter.
+ * OpenAPI annotation for Methods having {@link Searchable} parameter.
  * <P>
  * @author Julb.
  */

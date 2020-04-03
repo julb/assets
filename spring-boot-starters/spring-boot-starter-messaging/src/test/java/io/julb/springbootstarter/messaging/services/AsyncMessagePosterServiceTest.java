@@ -40,9 +40,13 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.messaging.Message;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -52,6 +56,10 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@EnableAutoConfiguration
+@SpringBootConfiguration
+@ActiveProfiles("TEST")
+@ComponentScan(basePackages = "io.julb.springbootstarter.messaging")
 public class AsyncMessagePosterServiceTest {
 
     /**

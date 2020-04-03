@@ -27,6 +27,7 @@ package io.julb.springbootstarter.persistence.mongodb.specifications;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.lang.Nullable;
 
 /**
  * A specification interface for MongoDB queries.
@@ -41,5 +42,15 @@ public interface ISpecification<T> {
      * @return the criteria.
      */
     Optional<Criteria> toCriteria(Class<T> clazz);
+
+    /**
+     * ANDs the given {@link ISpecification} to the current one.
+     * @param other can be {@literal null}.
+     * @return The conjunction of the specifications
+     */
+    @Nullable
+    default ISpecification<T> and(@Nullable ISpecification<T> other) {
+        return new AndSpecification<T>(this, other);
+    }
 
 }

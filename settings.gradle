@@ -5,6 +5,7 @@ pluginManagement {
     }
 }
 
+include 'applications:api-announcement'
 include 'applications:api-web-analytics'
 
 include 'bom'

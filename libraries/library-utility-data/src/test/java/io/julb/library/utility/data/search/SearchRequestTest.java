@@ -47,7 +47,7 @@ public class SearchRequestTest {
      */
     @Test
     public void whenToStringEmpty_thenReturnsEmptyString() {
-        Assert.assertEquals(StringUtils.EMPTY, ISearchable.empty().toString());
+        Assert.assertEquals(StringUtils.EMPTY, Searchable.empty().toString());
     }
 
     /**

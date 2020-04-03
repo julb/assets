@@ -18,6 +18,7 @@ dependencies {
 	implementation project(':libraries:library-utility-exception')
 	
 	implementation 'org.apache.commons:commons-lang3'
+    implementation 'com.google.code.findbugs:jsr305'
 }
 
 publishing {

@@ -23,7 +23,7 @@
  */
 package io.julb.library.utility.data.search;
 
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import io.julb.library.utility.data.search.predicates.SearchPredicate;
 import io.julb.library.utility.data.search.predicates.joins.AndPredicate;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
  * <P>
  * @author Julb.
  */
-public class SearchRequest implements ISearchable {
+public class SearchRequest implements Searchable {
 
     //@formatter:off
      /**
@@ -47,13 +47,13 @@ public class SearchRequest implements ISearchable {
      * @param searchPredicate the value to set.
      */
      //@formatter:on
-    private IPredicate searchPredicate;
+    private SearchPredicate searchPredicate;
 
     /**
      * Constructor.
      * @param predicates the predicates.
      */
-    public SearchRequest(IPredicate... predicates) {
+    public SearchRequest(SearchPredicate... predicates) {
         if (ArrayUtils.isEmpty(predicates)) {
             this.searchPredicate = new AndPredicate();
         } else if (ArrayUtils.getLength(predicates) == 1) {
@@ -67,7 +67,7 @@ public class SearchRequest implements ISearchable {
      * {@inheritDoc}
      */
     @Override
-    public IPredicate getSearchPredicate() {
+    public SearchPredicate getSearchPredicate() {
         return searchPredicate;
     }
 

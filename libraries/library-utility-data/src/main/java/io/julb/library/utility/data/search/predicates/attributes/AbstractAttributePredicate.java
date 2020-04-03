@@ -24,7 +24,7 @@
 package io.julb.library.utility.data.search.predicates.attributes;
 
 import io.julb.library.utility.constants.Chars;
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import io.julb.library.utility.data.search.predicates.SearchPredicate;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,7 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"name", "operator"})
-public abstract class AbstractAttributePredicate implements IPredicate {
+public abstract class AbstractAttributePredicate implements SearchPredicate {
     //@formatter:off
      /**
      * The name attribute.

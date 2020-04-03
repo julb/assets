@@ -15,7 +15,7 @@
  */
 package io.julb.springbootstarter.web.resolvers.search;
 
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -39,7 +39,7 @@ abstract class SearchableAnnotationUtils {
     }
 
     /**
-     * Asserts uniqueness of all {@link ISearchable} parameters of the method of the given {@link MethodParameter}.
+     * Asserts uniqueness of all {@link Searchable} parameters of the method of the given {@link MethodParameter}.
      * @param parameter must not be {@literal null}.
      */
     public static void assertSearchableUniqueness(MethodParameter parameter) {
@@ -57,7 +57,7 @@ abstract class SearchableAnnotationUtils {
     }
 
     /**
-     * Returns whether the given {@link Method} has more than one {@link ISearchable} parameter.
+     * Returns whether the given {@link Method} has more than one {@link Searchable} parameter.
      * @param method must not be {@literal null}.
      * @return
      */
@@ -67,11 +67,11 @@ abstract class SearchableAnnotationUtils {
 
         for (Class<?> type : method.getParameterTypes()) {
 
-            if (pageableFound && type.equals(ISearchable.class)) {
+            if (pageableFound && type.equals(Searchable.class)) {
                 return true;
             }
 
-            if (type.equals(ISearchable.class)) {
+            if (type.equals(Searchable.class)) {
                 pageableFound = true;
             }
         }
@@ -103,7 +103,7 @@ abstract class SearchableAnnotationUtils {
     }
 
     /**
-     * Asserts that every {@link ISearchable} parameter of the given parameters carries an {@link Qualifier} annotation to distinguish them from each other.
+     * Asserts that every {@link Searchable} parameter of the given parameters carries an {@link Qualifier} annotation to distinguish them from each other.
      * @param parameterTypes must not be {@literal null}.
      * @param annotations must not be {@literal null}.
      */
@@ -113,7 +113,7 @@ abstract class SearchableAnnotationUtils {
 
         for (int i = 0; i < annotations.length; i++) {
 
-            if (ISearchable.class.equals(parameterTypes[i])) {
+            if (Searchable.class.equals(parameterTypes[i])) {
 
                 Qualifier qualifier = findAnnotation(annotations[i]);
 

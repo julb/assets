@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,20 @@
  * SOFTWARE.
  */
 
-package io.julb.springbootstarter.messaging;
+package io.julb.applications.announcement.configurations.properties;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import lombok.Getter;
+import lombok.Setter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * A class for unit tests.
+ * The local configuration properties.
  * <P>
  * @author Julb.
  */
-@SpringBootApplication
-public class UnitTestApplication {
-
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "application")
+public class CustomConfigurationProperties {
 }

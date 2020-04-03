@@ -23,7 +23,7 @@
  */
 package io.julb.springbootstarter.persistence.core.specifications;
 
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 import io.julb.library.utility.data.search.predicates.attributes.AbstractAttributePredicate;
 import io.julb.library.utility.data.search.predicates.attributes.MultipleValuesAttributePredicate;
 import io.julb.library.utility.data.search.predicates.attributes.NoValueAttributePredicate;
@@ -42,13 +42,13 @@ public abstract class AbstractSearchSpecification<T> {
     /**
      * The searchable.
      */
-    protected ISearchable searchable;
+    protected Searchable searchable;
 
     /**
      * Constructor.
      * @param searchable the searcheable information.
      */
-    public AbstractSearchSpecification(ISearchable searchable) {
+    public AbstractSearchSpecification(Searchable searchable) {
         this.searchable = searchable;
     }
 

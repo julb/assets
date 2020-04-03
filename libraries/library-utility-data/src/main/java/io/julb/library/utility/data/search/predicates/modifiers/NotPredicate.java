@@ -24,7 +24,7 @@
 package io.julb.library.utility.data.search.predicates.modifiers;
 
 import io.julb.library.utility.constants.Chars;
-import io.julb.library.utility.data.search.predicates.IPredicate;
+import io.julb.library.utility.data.search.predicates.SearchPredicate;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +38,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Getter
 @Setter
-public class NotPredicate implements IPredicate {
+public class NotPredicate implements SearchPredicate {
 
     //@formatter:off
      /**
@@ -51,13 +51,13 @@ public class NotPredicate implements IPredicate {
      * @param predicate the value to set.
      */
      //@formatter:on
-    private IPredicate predicate = null;
+    private SearchPredicate predicate = null;
 
     /**
      * Constructor.
      * @param predicate the predicate.
      */
-    public NotPredicate(IPredicate predicate) {
+    public NotPredicate(SearchPredicate predicate) {
         this.predicate = predicate;
     }
 

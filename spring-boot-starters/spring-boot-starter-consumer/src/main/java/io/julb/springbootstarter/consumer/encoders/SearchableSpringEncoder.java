@@ -24,7 +24,7 @@
 package io.julb.springbootstarter.consumer.encoders;
 
 import io.julb.library.utility.constants.SearchRequestAttributes;
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 
 import java.lang.reflect.Type;
 
@@ -77,7 +77,7 @@ public class SearchableSpringEncoder implements Encoder {
         throws EncodeException {
 
         if (supports(object)) {
-            ISearchable searchable = (ISearchable) object;
+            Searchable searchable = (Searchable) object;
             template.query(queryParameter, searchable.toString());
         } else {
             if (delegate != null) {
@@ -94,7 +94,7 @@ public class SearchableSpringEncoder implements Encoder {
      * @return <code>true</code> if the object should be encoded by this encoder, <code>false</code> otherwise.
      */
     protected boolean supports(Object object) {
-        return object instanceof ISearchable;
+        return object instanceof Searchable;
     }
 
 }

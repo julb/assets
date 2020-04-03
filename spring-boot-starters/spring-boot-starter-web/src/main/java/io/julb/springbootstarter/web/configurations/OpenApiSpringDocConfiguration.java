@@ -23,7 +23,7 @@
  */
 package io.julb.springbootstarter.web.configurations;
 
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 import io.julb.springbootstarter.web.configurations.beans.OpenApiSpringDocConfigurationAuthenticationHeaderProperties;
 import io.julb.springbootstarter.web.configurations.beans.OpenApiSpringDocConfigurationProperties;
 import io.julb.springbootstarter.web.configurations.beans.OpenApiSpringDocConfigurationServerProperties;
@@ -58,7 +58,7 @@ public class OpenApiSpringDocConfiguration {
         //@formatter:off
         SpringDocUtils.getConfig()
                 .addRequestWrapperToIgnore(Pageable.class)
-                .addRequestWrapperToIgnore(ISearchable.class);
+                .addRequestWrapperToIgnore(Searchable.class);
         //@formatter:on
     }
 

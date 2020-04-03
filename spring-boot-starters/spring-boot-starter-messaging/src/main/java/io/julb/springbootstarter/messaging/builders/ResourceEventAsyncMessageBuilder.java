@@ -82,42 +82,31 @@ public class ResourceEventAsyncMessageBuilder {
     /**
      * Setter for property object.
      * @param clazz the clazz.
+     * @param trademark the trademark.
      * @param id the id.
      * @param name the name.
      * @return the current builder instance.
      */
-    public ResourceEventAsyncMessageBuilder withObject(Class<?> clazz, String id, String name) {
-        return withObject(clazz, id, name, clazz.getSimpleName(), StringUtils.EMPTY);
+    public ResourceEventAsyncMessageBuilder withObject(Class<?> clazz, String trademark, String id, String name) {
+        return withObject(clazz, trademark, id, name, clazz.getSimpleName());
     }
 
     /**
      * Setter for property object.
      * @param clazz the clazz.
+     * @param trademark the trademark.
      * @param id the id.
      * @param name the name.
      * @param type the type.
      * @return the current builder instance.
      */
-    public ResourceEventAsyncMessageBuilder withObject(Class<?> clazz, String id, String name, String type) {
-        return withObject(clazz, id, name, type, StringUtils.EMPTY);
-    }
-
-    /**
-     * Setter for property object.
-     * @param clazz the clazz.
-     * @param id the id.
-     * @param name the name.
-     * @param path the path.
-     * @param type the type.
-     * @return the current builder instance.
-     */
-    public ResourceEventAsyncMessageBuilder withObject(Class<?> clazz, String id, String name, String type, String path) {
+    public ResourceEventAsyncMessageBuilder withObject(Class<?> clazz, String trademark, String id, String name, String type) {
         this.message.setResourceClassName(clazz.getName());
         this.message.setResourceClassSimpleName(clazz.getSimpleName());
+        this.message.setResourceTrademark(trademark);
         this.message.setResourceId(id);
         this.message.setResourceName(name);
         this.message.setResourceType(type);
-        this.message.setResourcePath(path);
         return this;
     }
 

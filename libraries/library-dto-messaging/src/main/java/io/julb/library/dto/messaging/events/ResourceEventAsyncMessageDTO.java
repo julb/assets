@@ -91,19 +91,6 @@ public class ResourceEventAsyncMessageDTO extends AsyncMessageDTO<Void> {
 
     //@formatter:off
      /**
-     * The resourcePath attribute.
-     * -- GETTER --
-     * Getter for {@link #resourcePath} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #resourcePath} property.
-     * @param resourcePath the value to set.
-     */
-     //@formatter:on
-    private String resourcePath;
-
-    //@formatter:off
-     /**
      * The resourceType attribute.
      * -- GETTER --
      * Getter for {@link #resourceType} property.
@@ -114,6 +101,19 @@ public class ResourceEventAsyncMessageDTO extends AsyncMessageDTO<Void> {
      */
      //@formatter:on
     private String resourceType;
+
+    //@formatter:off
+     /**
+     * The resourceTrademark attribute.
+     * -- GETTER --
+     * Getter for {@link #resourceTrademark} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #resourceTrademark} property.
+     * @param resourceTrademark the value to set.
+     */
+     //@formatter:on
+    private String resourceTrademark;
 
     //@formatter:off
      /**

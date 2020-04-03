@@ -23,7 +23,7 @@
  */
 package io.julb.springbootstarter.consumer.utility;
 
-import io.julb.library.utility.data.search.ISearchable;
+import io.julb.library.utility.data.search.Searchable;
 
 import lombok.Getter;
 
@@ -45,7 +45,7 @@ public final class SearchableAndPageable {
      * @return the value.
      */
      //@formatter:on
-    private final ISearchable searchable;
+    private final Searchable searchable;
 
     //@formatter:off
      /**
@@ -62,7 +62,7 @@ public final class SearchableAndPageable {
      * @param searchable the searchable object.
      * @param pageable the pageable object.
      */
-    private SearchableAndPageable(ISearchable searchable, Pageable pageable) {
+    private SearchableAndPageable(Searchable searchable, Pageable pageable) {
         super();
         this.searchable = searchable;
         this.pageable = pageable;
@@ -74,7 +74,7 @@ public final class SearchableAndPageable {
      * @param pageable the pageable object.
      * @return an instance of searchable / pageable pair.
      */
-    public static SearchableAndPageable of(ISearchable searchable, Pageable pageable) {
+    public static SearchableAndPageable of(Searchable searchable, Pageable pageable) {
         return new SearchableAndPageable(searchable, pageable);
     }
 }
