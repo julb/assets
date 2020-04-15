@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import io.julb.springbootstarter.core.configurations.CoreConfiguration;
 import io.julb.springbootstarter.security.configurations.SecurityConfiguration;
 import io.julb.springbootstarter.web.configurations.WebMvcConfiguration;
 import io.julb.springbootstarter.web.helpers.UnitTestController;
@@ -53,7 +54,8 @@ import org.springframework.test.web.servlet.MockMvc;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest
-@ContextConfiguration(classes = {CaughtExceptionAdviceController.class, UncaughtExceptionAdviceController.class, UncaughtErrorController.class, UnitTestController.class, UnitTestService.class, WebMvcConfiguration.class, SecurityConfiguration.class})
+@ContextConfiguration(classes = {CaughtExceptionAdviceController.class, UncaughtExceptionAdviceController.class, UncaughtErrorController.class, UnitTestController.class, UnitTestService.class, CoreConfiguration.class, WebMvcConfiguration.class,
+    SecurityConfiguration.class})
 public class UncaughtErrorControllerTest {
 
     /**

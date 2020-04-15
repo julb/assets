@@ -16,6 +16,7 @@ dependencies {
 	implementation project(':libraries:library-utility-constants')
 	implementation project(':libraries:library-utility-data')
 	implementation project(':libraries:library-utility-exception')
+    implementation project(':libraries:library-utility-interface')
 	
 	implementation 'org.apache.commons:commons-lang3'
     implementation 'com.google.code.findbugs:jsr305'

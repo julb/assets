@@ -23,6 +23,8 @@
  */
 package io.julb.library.utility.exceptions;
 
+import io.julb.library.utility.constants.Strings;
+
 /**
  * This exception is a base for checked exceptions.
  * <P>
@@ -60,6 +62,22 @@ public class BaseException extends RuntimeException {
      */
     public BaseException(String message, Throwable e) {
         super(message, e);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getMessage() {
+        return new StringBuffer().append(Strings.LEFT_CURLY_BRACKET).append("exceptions").append(Strings.DOT).append(this.getClass().getSimpleName()).append(Strings.RIGHT_CURLY_BRACKET).toString();
+    }
+
+    /**
+     * Gets the message arguments.
+     * @return the arguments
+     */
+    public Object[] getMessageArgs() {
+        return new Object[0];
     }
 
 }

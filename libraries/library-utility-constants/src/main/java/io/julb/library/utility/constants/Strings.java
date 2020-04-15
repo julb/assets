@@ -112,6 +112,16 @@ public class Strings {
     public static final String RIGHT_BRACKET = "]";
 
     /**
+     * The "{" string.
+     */
+    public static final String LEFT_CURLY_BRACKET = "{";
+
+    /**
+     * The "}" string.
+     */
+    public static final String RIGHT_CURLY_BRACKET = "}";
+
+    /**
      * The "OK" string.
      */
     public static final String OK = "OK";

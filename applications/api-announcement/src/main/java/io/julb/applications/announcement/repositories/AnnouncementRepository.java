@@ -28,6 +28,8 @@ import io.julb.applications.announcement.entities.AnnouncementEntity;
 import io.julb.library.utility.validator.constraints.Identifier;
 import io.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -46,5 +48,39 @@ public interface AnnouncementRepository extends MongoRepository<AnnouncementEnti
      * @return the announcement, or <code>null</code> if not exists.
      */
     AnnouncementEntity findByTmAndId(String tm, @NotNull @Identifier String id);
+
+    /**
+     * Checks if an announcement is already visible in the given interval.
+     * @param tm the trademark.
+     * @param from the from date time.
+     * @param to the to date time.
+     * @return <code>true</code> if an announcement exists, <code>false</code> otherwise.
+     */
+    boolean existsByTmAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(String tm, String from, String to);
+
+    /**
+     * Checks if an announcement not having given id is already visible in the given interval.
+     * @param tm the trademark.
+     * @param id the ID to exclude.
+     * @param from the from date time.
+     * @param to the to date time.
+     * @return <code>true</code> if an announcement exists, <code>false</code> otherwise.
+     */
+    boolean existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(String tm, String id, String from, String to);
+
+    /**
+     * Finds the announcements which to date is less or equal than the given date.
+     * @param dateTime the given date time.
+     * @return the announcements.
+     */
+    List<AnnouncementEntity> findByVisibilityDateTime_ToLessThanEqualOrderByTmAsc(String dateTime);
+
+    /**
+     * Finds the announcements expired or visible at the given date.
+     * @param tm the trademark.
+     * @param dateTimeNow the current date time.
+     * @return the announcements.
+     */
+    List<AnnouncementEntity> findByTmAndVisibilityDateTime_FromLessThanEqualOrderByLastUpdatedAtDesc(String tm, String dateTimeNow);
 
 }

@@ -4,6 +4,12 @@ plugins {
 	id 'julb-additional-jars'
 }
 
+dependencies {
+    api platform(project(':bom'))
+    
+    implementation project(':libraries:library-utility-constants')
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

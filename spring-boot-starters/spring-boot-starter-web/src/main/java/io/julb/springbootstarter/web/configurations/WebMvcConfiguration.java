@@ -26,12 +26,15 @@ package io.julb.springbootstarter.web.configurations;
 import io.julb.springbootstarter.security.configurations.SecurityConfiguration;
 import io.julb.springbootstarter.web.configurations.beans.CorsProperties;
 import io.julb.springbootstarter.web.filters.RequestLoggingWebContentInterceptor;
-import io.julb.springbootstarter.web.filters.TrademarkWebContentInterceptor;
+import io.julb.springbootstarter.web.filters.TrademarkFilter;
+import io.julb.springbootstarter.web.resolvers.locale.CustomLocaleContextResolver;
 import io.julb.springbootstarter.web.resolvers.page.CustomPageableHandlerMethodArgumentResolver;
 import io.julb.springbootstarter.web.resolvers.page.CustomSortHandlerMethodArgumentResolver;
 import io.julb.springbootstarter.web.resolvers.search.CustomSearchableHandlerMethodArgumentResolver;
 
 import java.util.List;
+
+import javax.servlet.Filter;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,7 @@ import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.Order;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
@@ -49,7 +53,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 /**
  * The REST API configuration.
@@ -74,7 +77,17 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
      */
     @Bean
     public LocaleResolver localeResolver() {
-        return new AcceptHeaderLocaleResolver();
+        return new CustomLocaleContextResolver();
+    }
+
+    /**
+     * Builds a filter to intercept trademark.
+     * @return the generic filter bean.
+     */
+    @Bean
+    @Order(1)
+    public Filter trademarkFilter() {
+        return new TrademarkFilter();
     }
 
     /**
@@ -129,7 +142,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new RequestLoggingWebContentInterceptor());
-        registry.addInterceptor(new TrademarkWebContentInterceptor());
     }
 
     /**

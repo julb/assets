@@ -26,8 +26,8 @@ package io.julb.springbootstarter.web.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.julb.library.dto.http.error.HttpErrorResponseDTO;
-import io.julb.library.utility.constants.Strings;
 import io.julb.library.utility.exceptions.BadRequestException;
+import io.julb.library.utility.exceptions.BaseException;
 import io.julb.library.utility.exceptions.ConflictException;
 import io.julb.library.utility.exceptions.ForbiddenException;
 import io.julb.library.utility.exceptions.InternalServerErrorException;
@@ -41,10 +41,10 @@ import io.julb.library.utility.exceptions.ResourceNotFoundException;
 import io.julb.library.utility.exceptions.ResourceStillReferencedException;
 import io.julb.library.utility.exceptions.UnauthorizedException;
 import io.julb.library.utility.http.HttpErrorResponseBuilder;
+import io.julb.springbootstarter.core.messages.MessageSourceService;
 import io.julb.springbootstarter.web.resolvers.search.exceptions.SearchTermSearchQueryParseException;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +55,7 @@ import javax.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -90,7 +90,7 @@ public class CaughtExceptionAdviceController {
      * The message resource.
      */
     @Autowired
-    private MessageSource messageSource;
+    private MessageSourceService messageSourceService;
 
     /**
      * Method that handles thrown {@link ConstraintViolationException}.
@@ -104,7 +104,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
 
         // Create the request
         HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
@@ -134,7 +134,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
 
         // Create the request
         HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
@@ -164,7 +164,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
         LOGGER.debug(HttpStatus.BAD_REQUEST.getReasonPhrase(), exception);
 
         // Create the request
@@ -178,7 +178,7 @@ public class CaughtExceptionAdviceController {
         }
 
         // Set the message with the first error
-        errorResponse.setMessage(errors.size() > 0 ? getErrorMessage(errors.iterator().next().getMessage()) : exception.getMessage());
+        errorResponse.setMessage(errors.size() > 0 ? getErrorMessage(errors.iterator().next().getMessage()) : getErrorMessage(exception));
 
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
@@ -196,12 +196,12 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
         LOGGER.debug(HttpStatus.BAD_REQUEST.getReasonPhrase(), exception);
 
         // Create the request
         HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
-        errorResponse.setMessage(new StringBuilder(httpStatus.getReasonPhrase()).append(Strings.DOT).append(Strings.SPACE).append(exception.getMessage()).toString());
+        errorResponse.setMessage(getErrorMessage(exception));
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
@@ -217,12 +217,12 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
         LOGGER.debug(httpStatus.getReasonPhrase(), exception);
 
         // Create the request
         HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
-        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setMessage(getErrorMessage(exception));
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
@@ -238,12 +238,12 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.FORBIDDEN;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
         LOGGER.debug(HttpStatus.FORBIDDEN.getReasonPhrase(), exception);
 
         // Create the request
         HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
-        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setMessage(getErrorMessage(exception));
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
@@ -259,12 +259,12 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
         LOGGER.debug(HttpStatus.NOT_FOUND.getReasonPhrase(), exception);
 
         // Create the request
         HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
-        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setMessage(getErrorMessage(exception));
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
@@ -280,7 +280,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.METHOD_NOT_ALLOWED;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
         LOGGER.debug(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(), exception);
 
         // Create the request
@@ -301,12 +301,12 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.CONFLICT;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
         LOGGER.debug(HttpStatus.CONFLICT.getReasonPhrase(), exception);
 
         // Create the request
         HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
-        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setMessage(getErrorMessage(exception));
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
@@ -322,7 +322,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.UNSUPPORTED_MEDIA_TYPE;
-        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
+        LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
         LOGGER.debug(HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(), exception);
 
         // Create the request
@@ -343,7 +343,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
-        LOGGER.error(exception.getMessage(), exception);
+        LOGGER.error(getErrorMessage(exception), exception);
 
         // Create the request
         HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(internalServerError.value(), internalServerError.getReasonPhrase());
@@ -362,7 +362,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus notImplementedError = HttpStatus.NOT_IMPLEMENTED;
-        LOGGER.error(exception.getMessage(), exception);
+        LOGGER.error(getErrorMessage(exception), exception);
 
         // Create the request
         HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(notImplementedError.value(), notImplementedError.getReasonPhrase());
@@ -381,7 +381,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus badGatewayError = HttpStatus.BAD_GATEWAY;
-        LOGGER.error(exception.getMessage(), exception);
+        LOGGER.error(getErrorMessage(exception), exception);
 
         // Create the request
         HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(badGatewayError.value(), badGatewayError.getReasonPhrase());
@@ -400,7 +400,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus serviceUnavailableStatus = HttpStatus.BAD_GATEWAY;
-        LOGGER.error(exception.getMessage(), exception);
+        LOGGER.error(getErrorMessage(exception), exception);
 
         // Create the request
         HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(serviceUnavailableStatus.value(), serviceUnavailableStatus.getReasonPhrase());
@@ -419,7 +419,7 @@ public class CaughtExceptionAdviceController {
 
         // For this exception, raise this HTTP Status.
         HttpStatus gatewayTimeoutError = HttpStatus.GATEWAY_TIMEOUT;
-        LOGGER.error(exception.getMessage(), exception);
+        LOGGER.error(getErrorMessage(exception), exception);
 
         // Create the request
         HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(gatewayTimeoutError.value(), gatewayTimeoutError.getReasonPhrase());
@@ -427,15 +427,28 @@ public class CaughtExceptionAdviceController {
     }
 
     /**
-     * Translate the message if it's in curly brackets.
-     * @param error the message to translate
-     * @return
+     * Translate the exception message.
+     * @param exception the exception message.
+     * @return the message localized.
      */
-    private String getErrorMessage(String message) {
-        // Remove curly brackets
+    private String getErrorMessage(Exception exception) {
+        if (exception instanceof BaseException) {
+            BaseException e = (BaseException) exception;
+            return getErrorMessage(e.getMessage(), e.getMessageArgs());
+        } else {
+            return getErrorMessage(exception.getMessage());
+        }
+    }
+
+    /**
+     * Translate the message if it's in curly brackets.
+     * @param message the message.
+     * @return the message translated.
+     */
+    private String getErrorMessage(String message, Object... args) {
         if (message.startsWith("{") && message.endsWith("}")) {
-            message = message.substring(1, message.length() - 1);
-            return messageSource.getMessage(message, new Object[] {}, Locale.ENGLISH);
+            String code = message.substring(1, message.length() - 1);
+            return messageSourceService.getMessage(code, args, code, LocaleContextHolder.getLocale());
         } else {
             return message;
         }

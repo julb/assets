@@ -24,11 +24,17 @@
 
 package io.julb.applications.announcement.services.dto;
 
-import io.julb.library.dto.simple.content.ContentPatchDTO;
-import io.julb.library.utility.validator.constraints.DateTimeISO8601;
+import io.julb.library.dto.simple.content.LargeContentPatchDTO;
+import io.julb.library.dto.simple.interval.date.DateTimeIntervalPatchDTO;
+import io.julb.library.utility.validator.constraints.DateTimeInFuture;
+import io.julb.library.utility.validator.constraints.Tag;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Map;
+import java.util.SortedSet;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,35 +47,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnnouncementPatchDTO {
-    //@formatter:off
-    /**
-    * The visibilityFromDateTime attribute.
-    * -- GETTER --
-    * Getter for {@link #visibilityFromDateTime} property.
-    * @return the value.
-    * -- SETTER --
-    * Setter for {@link #visibilityFromDateTime} property.
-    * @param visibilityFromDateTime the value to set.
-    */
-    //@formatter:on
-    @Schema(description = "Datetime from which the announcement is visible", example = "2020-01-01T00:00:00.000Z")
-    @DateTimeISO8601
-    private String visibilityFromDateTime;
 
-   //@formatter:off
-    /**
-    * The visibilityToDateTime attribute.
-    * -- GETTER --
-    * Getter for {@link #visibilityToDateTime} property.
-    * @return the value.
-    * -- SETTER --
-    * Setter for {@link #visibilityToDateTime} property.
-    * @param visibilityToDateTime the value to set.
-    */
-    //@formatter:on
-    @Schema(description = "Datetime until which the announcement is visible", example = "2020-01-01T00:00:00.000Z")
-    @DateTimeISO8601
-    private String visibilityToDateTime;
+    //@formatter:off
+     /**
+     * The visibilityDateTime attribute.
+     * -- GETTER --
+     * Getter for {@link #visibilityDateTime} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #visibilityDateTime} property.
+     * @param visibilityDateTime the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Datetime interval in which which the announcement is visible")
+    @Valid
+    @DateTimeInFuture
+    private DateTimeIntervalPatchDTO visibilityDateTime;
 
    //@formatter:off
     /**
@@ -97,5 +90,20 @@ public class AnnouncementPatchDTO {
     */
     //@formatter:on
     @Schema(description = "Localized message for the announcement")
-    private Map<String, ContentPatchDTO> localizedMessage;
+    @Valid
+    private Map<String, LargeContentPatchDTO> localizedMessage;
+
+    //@formatter:off
+     /**
+     * The tags attribute.
+     * -- GETTER --
+     * Getter for {@link #tags} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #tags} property.
+     * @param tags the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Tags to associate to the announcement")
+    private SortedSet<@NotNull @Tag String> tags;
 }

@@ -12,15 +12,19 @@ dependencies {
 	api 'io.swagger.core.v3:swagger-annotations'
 
 	api project(':libraries:library-dto-http')
+    api project(':libraries:library-dto-icsfeed')
+    api project(':libraries:library-dto-rssfeed')
 	api project(':libraries:library-dto-simple')
 	api project(':libraries:library-utility-constants')
 	api project(':libraries:library-utility-data')
+    api project(':libraries:library-utility-date')
 	api project(':libraries:library-utility-exception')
 	api project(':libraries:library-utility-http')
     api project(':spring-boot-starters:spring-boot-starter-core')
 	api project(':spring-boot-starters:spring-boot-starter-security')
     api project(':spring-boot-starters:spring-boot-starter-mapping')
     api project(':spring-boot-starters:spring-boot-starter-opentracing')
+    api project(':spring-boot-starters:spring-boot-starter-resource-types')
 	
 	implementation 'org.apache.commons:commons-lang3'
 	implementation 'org.apache.commons:commons-collections4'
@@ -28,6 +32,7 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-webmvc-core'
 	implementation 'org.springdoc:springdoc-openapi-data-rest'
 	implementation 'com.google.code.findbugs:jsr305'
+    implementation 'com.rometools:rome'
 	
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
 	

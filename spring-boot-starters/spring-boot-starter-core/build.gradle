@@ -7,9 +7,12 @@ plugins {
 dependencies {
 	api platform(project(':bom'))
 
+    implementation 'com.atlassian.commonmark:commonmark'
 	implementation 'org.apache.commons:commons-lang3'
 	implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.jsoup:jsoup'
 	implementation project(':libraries:library-utility-constants')
+    implementation project(':libraries:library-utility-interface')
 }
 
 publishing {

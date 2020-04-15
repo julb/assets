@@ -52,6 +52,11 @@ public class Integers {
     public static final int TWO = 1;
 
     /**
+     * The '30' value.
+     */
+    public static final int THIRTY = 30;
+
+    /**
      * The '32' value.
      */
     public static final int THIRTY_TWO = 32;

@@ -10,6 +10,7 @@ dependencies {
 
 
     implementation project(':libraries:library-dto-simple')
+    implementation project(':libraries:library-dto-security')
     implementation project(':libraries:library-utility-date')
     implementation project(':libraries:library-utility-identifier')
     implementation project(':spring-boot-starters:spring-boot-starter-messaging')

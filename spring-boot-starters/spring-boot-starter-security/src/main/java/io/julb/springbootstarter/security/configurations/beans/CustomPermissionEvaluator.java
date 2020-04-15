@@ -23,7 +23,7 @@
  */
 package io.julb.springbootstarter.security.configurations.beans;
 
-import io.julb.library.utility.security.ISecurable;
+import io.julb.library.utility.interfaces.ISecurable;
 import io.julb.springbootstarter.core.context.TrademarkContextHolder;
 
 import java.io.Serializable;

@@ -37,6 +37,11 @@ spring.data.mongodb:
    database: app1
    autoIndexCreation: true
 
+# Application
+application:
+  auto-cleaning:
+    announcement-threshold-in-days: 15
+
 management:
   endpoints.web.exposure.include: health,prometheus,info
   endpoint.prometheus.enabled: true

@@ -115,4 +115,5 @@ public class Chars {
      * The exclamation mark character.
      */
     public static final char EXCLAMATION_MARK = '!';
+
 }
