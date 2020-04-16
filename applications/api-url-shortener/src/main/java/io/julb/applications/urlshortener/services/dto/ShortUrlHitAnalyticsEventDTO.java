@@ -21,26 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.julb.applications.webanalytics.services.dto;
+package io.julb.applications.urlshortener.services.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * The web analytics event.
+ * The short URL hit analytics event.
  * <P>
  * @author Julb.
  */
 @Getter
 @Setter
 @ToString
-public class WebAnalyticsEventDTO {
+public class ShortUrlHitAnalyticsEventDTO {
 
     /**
-     * The web-analytics type.
+     * The short-url-hit-analytics type.
      */
-    private static final String TYPE = "web-analytics";
+    private static final String TYPE = "short-url-hit-analytics";
 
     //@formatter:off
      /**
@@ -70,32 +70,6 @@ public class WebAnalyticsEventDTO {
 
     //@formatter:off
      /**
-     * The applicationName attribute.
-     * -- GETTER --
-     * Getter for {@link #applicationName} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #applicationName} property.
-     * @param applicationName the value to set.
-     */
-     //@formatter:on
-    private String applicationName;
-
-    //@formatter:off
-     /**
-     * The applicationVersion attribute.
-     * -- GETTER --
-     * Getter for {@link #applicationVersion} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #applicationVersion} property.
-     * @param applicationVersion the value to set.
-     */
-     //@formatter:on
-    private String applicationVersion;
-
-    //@formatter:off
-     /**
      * The data source (web, app)
      * -- GETTER --
      * Getter for {@link #dataSource} property.
@@ -105,63 +79,11 @@ public class WebAnalyticsEventDTO {
      * @param dataSource the value to set.
      */
      //@formatter:on
-    private String dataSource;
+    private String dataSource = "web";
 
     //@formatter:off
-     /**
-      * The Queue time.
-     * -- GETTER --
-     * Getter for {@link #queueTime} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #queueTime} property.
-     * @param queueTime the value to set.
-     */
-     //@formatter:on
-    private Long queueTime;
-
-    //@formatter:off
-     /**
-      * The visitor ID.
-     * -- GETTER --
-     * Getter for {@link #visitorId} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #visitorId} property.
-     * @param visitorId the value to set.
-     */
-     //@formatter:on
-    private String visitorId;
-
-    //@formatter:off
-     /**
-      * The user agent.
-     * -- GETTER --
-     * Getter for {@link #userAgent} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #userAgent} property.
-     * @param userAgent the value to set.
-     */
-     //@formatter:on
-    private String userAgent;
-
-    //@formatter:off
-     /**
-      * The Geographical indication.
-     * -- GETTER --
-     * Getter for {@link #geographicalLocation} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #geographicalLocation} property.
-     * @param geographicalLocation the value to set.
-     */
-     //@formatter:on
-    private String geographicalLocation;
-
-    //@formatter:off
-     /**
-      * The document location.
+    /**
+     * The document location.
      * -- GETTER --
      * Getter for {@link #documentLocation} property.
      * @return the value.
@@ -213,68 +135,29 @@ public class WebAnalyticsEventDTO {
 
     //@formatter:off
      /**
-     * The document title.
+     * The linkId attribute.
      * -- GETTER --
-     * Getter for {@link #documentTitle} property.
+     * Getter for {@link #linkId} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #documentTitle} property.
-     * @param documentTitle the value to set.
+     * Setter for {@link #linkId} property.
+     * @param linkId the value to set.
      */
      //@formatter:on
-    private String documentTitle;
+    private String linkId;
 
     //@formatter:off
      /**
-     * The document encoding.
+      * The user agent.
      * -- GETTER --
-     * Getter for {@link #documentEncoding} property.
+     * Getter for {@link #userAgent} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #documentEncoding} property.
-     * @param documentEncoding the value to set.
+     * Setter for {@link #userAgent} property.
+     * @param userAgent the value to set.
      */
      //@formatter:on
-    private String documentEncoding;
-
-    //@formatter:off
-     /**
-     * The screen resolution.
-     * -- GETTER --
-     * Getter for {@link #screenResolution} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #screenResolution} property.
-     * @param screenResolution the value to set.
-     */
-     //@formatter:on
-    private String screenResolution;
-
-    //@formatter:off
-     /**
-     * The viewport size.
-     * -- GETTER --
-     * Getter for {@link #viewportSize} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #viewportSize} property.
-     * @param viewportSize the value to set.
-     */
-     //@formatter:on
-    private String viewportSize;
-
-    //@formatter:off
-     /**
-     * The screen color.
-     * -- GETTER --
-     * Getter for {@link #screenColor} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #screenColor} property.
-     * @param screenColor the value to set.
-     */
-     //@formatter:on
-    private String screenColor;
+    private String userAgent;
 
     //@formatter:off
      /**
@@ -313,7 +196,7 @@ public class WebAnalyticsEventDTO {
      * @param hitType the value to set.
      */
      //@formatter:on
-    private String hitType;
+    private String hitType = "click";
 
     //@formatter:off
      /**
@@ -326,5 +209,6 @@ public class WebAnalyticsEventDTO {
      * @param nonInteractionHit the value to set.
      */
      //@formatter:on
-    private Boolean nonInteractionHit;
+    private Boolean nonInteractionHit = Boolean.FALSE;
+
 }

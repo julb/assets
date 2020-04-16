@@ -35,8 +35,13 @@ public class TrademarkFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException,
         ServletException {
-
+        // Trademark from header.
         String trademark = ((HttpServletRequest) request).getHeader(CustomHttpHeaders.X_JULB_TM);
+
+        // Trademark from system.
+        if (StringUtils.isBlank(trademark)) {
+            trademark = System.getProperty("trademark.override");
+        }
 
         if (StringUtils.isNotBlank(trademark)) {
             // Set trademark.

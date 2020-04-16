@@ -40,6 +40,7 @@ import io.julb.library.utility.exceptions.RemoteSystemClientErrorException;
 import io.julb.library.utility.exceptions.RemoteSystemGatewayTimeoutException;
 import io.julb.library.utility.exceptions.RemoteSystemServerErrorException;
 import io.julb.library.utility.exceptions.RemoteSystemServiceUnavailableException;
+import io.julb.library.utility.exceptions.ServiceUnavailableException;
 import io.julb.library.utility.exceptions.UnauthorizedException;
 import io.julb.springbootstarter.core.configurations.CoreConfiguration;
 import io.julb.springbootstarter.security.configurations.SecurityConfiguration;
@@ -242,6 +243,26 @@ public class CaughtExceptionAdviceControllerTest {
 
         //@formatter:off
         Integer expectedStatusCode = HttpStatus.NOT_IMPLEMENTED.value();
+        mockMvc
+            .perform(get("/unit-test").contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().is(expectedStatusCode))
+            .andExpect(jsonPath("$.httpStatus", is(expectedStatusCode)))
+            .andExpect(jsonPath("$.dateTime", notNullValue()))
+            .andExpect(jsonPath("$.message", notNullValue()))
+            .andExpect(jsonPath("$.trace", notNullValue()));
+        //@formatter:on
+    }
+
+    /**
+     * Unit test method.
+     */
+    @Test
+    public void whenServiceUnavailableException_thenReturn503()
+        throws Exception {
+        Mockito.when(unitTestServiceMock.doHello()).thenThrow(new ServiceUnavailableException());
+
+        //@formatter:off
+        Integer expectedStatusCode = HttpStatus.SERVICE_UNAVAILABLE.value();
         mockMvc
             .perform(get("/unit-test").contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(expectedStatusCode))

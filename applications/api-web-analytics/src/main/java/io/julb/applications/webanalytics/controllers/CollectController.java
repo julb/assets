@@ -26,10 +26,13 @@ package io.julb.applications.webanalytics.controllers;
 
 import io.julb.applications.webanalytics.controllers.params.AnalyticsRequestParams;
 import io.julb.applications.webanalytics.services.dto.WebAnalyticsEventDTO;
+import io.julb.library.utility.constants.CustomHttpHeaders;
+import io.julb.springbootstarter.core.context.TrademarkContextHolder;
 import io.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
 import io.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
 import io.swagger.v3.oas.annotations.Operation;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -60,12 +63,13 @@ public class CollectController {
     /**
      * This method enables the collection of a navigation event.
      * @param analyticsRequestParams the params containing the navigation information.
+     * @param httpServletRequest the HTTP servlet request.
      */
     @Operation(summary = "collect a web analytics event")
     @GetMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("isAuthenticated()")
-    public void collect(@Valid AnalyticsRequestParams analyticsRequestParams) {
+    public void collect(@Valid AnalyticsRequestParams analyticsRequestParams, HttpServletRequest httpServletRequest) {
         // Builds the event.
         WebAnalyticsEventDTO event = new WebAnalyticsEventDTO();
         event.setApplicationName(analyticsRequestParams.getAn());
@@ -83,7 +87,9 @@ public class CollectController {
         event.setQueueTime(analyticsRequestParams.getQt());
         event.setScreenResolution(analyticsRequestParams.getSr());
         event.setScreenColor(analyticsRequestParams.getSd());
+        event.setTm(TrademarkContextHolder.getTrademark());
         event.setUserAgent(analyticsRequestParams.getUa());
+        event.setUserIpv4(getUserIpv4Address(httpServletRequest));
         event.setUserLanguage(analyticsRequestParams.getUl());
         event.setViewportSize(analyticsRequestParams.getVp());
         event.setVisitorId(analyticsRequestParams.getUid());
@@ -96,5 +102,21 @@ public class CollectController {
                 .build()
         );
         //@formatter:on
+    }
+
+    /**
+     * Gets the user IPV4 address.
+     * @param httpServletRequest the request.
+     * @return the IPV4 address if available.
+     */
+    private String getUserIpv4Address(HttpServletRequest httpServletRequest) {
+        String ipv4 = httpServletRequest.getHeader(CustomHttpHeaders.X_REAL_IP);
+        if (ipv4 == null) {
+            ipv4 = httpServletRequest.getHeader(CustomHttpHeaders.X_FORWARDED_FOR);
+        }
+        if (ipv4 == null) {
+            ipv4 = httpServletRequest.getRemoteAddr();
+        }
+        return ipv4;
     }
 }

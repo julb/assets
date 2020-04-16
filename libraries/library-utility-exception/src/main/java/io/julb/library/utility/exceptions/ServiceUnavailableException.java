@@ -21,64 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-package io.julb.library.utility.constants;
+package io.julb.library.utility.exceptions;
 
 /**
- * A class to list constants in Numbers format.
+ * This exception is thrown for Service unavailable.
  * <P>
  * @author Julb.
  */
-public class Integers {
+public class ServiceUnavailableException extends BaseException {
 
     /**
-     * The '1' value.
+     * Default message.
      */
-    public static final int MINUS_ONE = -1;
+    private static final String DEFAULT_MESSAGE = "Service unavailable";
 
     /**
-     * The '0' value.
+     * Constructor.
      */
-    public static final int ZERO = 0;
+    public ServiceUnavailableException() {
+        super(DEFAULT_MESSAGE);
+    }
 
     /**
-     * The '1' value.
+     * Constructor with message.
+     * @param message the message.
      */
-    public static final int ONE = 1;
+    public ServiceUnavailableException(String message) {
+        super(message);
+    }
 
     /**
-     * The '2' value.
+     * Constructor with exception.
+     * @param e the cause.
      */
-    public static final int TWO = 2;
+    public ServiceUnavailableException(Throwable e) {
+        super(DEFAULT_MESSAGE, e);
+    }
 
     /**
-     * The '4' value.
+     * Constructor with exception and message.
+     * @param message the message.
+     * @param e the cause.
      */
-    public static final int FOUR = 4;
-
-    /**
-     * The '8' value.
-     */
-    public static final int EIGHT = 8;
-
-    /**
-     * The '30' value.
-     */
-    public static final int THIRTY = 30;
-
-    /**
-     * The '32' value.
-     */
-    public static final int THIRTY_TWO = 32;
-
-    /**
-     * The '45' value.
-     */
-    public static final int FORTY_FIVE = 45;
-
-    /**
-     * The '1000' value.
-     */
-    public static final int ONE_THOUSAND = 1000;
+    public ServiceUnavailableException(String message, Throwable e) {
+        super(message, e);
+    }
 
 }
