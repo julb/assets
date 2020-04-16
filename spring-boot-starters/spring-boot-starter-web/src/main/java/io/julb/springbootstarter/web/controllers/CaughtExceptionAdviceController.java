@@ -39,6 +39,7 @@ import io.julb.library.utility.exceptions.RemoteSystemServerErrorException;
 import io.julb.library.utility.exceptions.RemoteSystemServiceUnavailableException;
 import io.julb.library.utility.exceptions.ResourceNotFoundException;
 import io.julb.library.utility.exceptions.ResourceStillReferencedException;
+import io.julb.library.utility.exceptions.ServiceUnavailableException;
 import io.julb.library.utility.exceptions.UnauthorizedException;
 import io.julb.library.utility.http.HttpErrorResponseBuilder;
 import io.julb.springbootstarter.core.messages.MessageSourceService;
@@ -405,6 +406,25 @@ public class CaughtExceptionAdviceController {
         // Create the request
         HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(serviceUnavailableStatus.value(), serviceUnavailableStatus.getReasonPhrase());
         return new ResponseEntity<>(status, serviceUnavailableStatus);
+    }
+
+    /**
+     * Method that handles thrown {@link ServiceUnavailableException}.
+     * @param exception the exception that occurred.
+     * @param request the HTTP Servlet request.
+     * @return the error response.
+     */
+    @ExceptionHandler(ServiceUnavailableException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public final ResponseEntity<HttpErrorResponseDTO> handleNotImplemented(ServiceUnavailableException exception, HttpServletRequest request) {
+
+        // For this exception, raise this HTTP Status.
+        HttpStatus notImplementedError = HttpStatus.SERVICE_UNAVAILABLE;
+        LOGGER.error(getErrorMessage(exception), exception);
+
+        // Create the request
+        HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(notImplementedError.value(), notImplementedError.getReasonPhrase());
+        return new ResponseEntity<>(status, notImplementedError);
     }
 
     /**

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.julb.library.utility.constants;
+
+package io.julb.applications.urlshortener.configurations;
+
+import io.julb.applications.urlshortener.configurations.properties.ApplicationProperties;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * A class to list custom HTTP headers.
+ * The local configuration.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+@Configuration
+@EnableConfigurationProperties(ApplicationProperties.class)
+public class CustomConfiguration {
+    // ------------------------------------------ Utility methods.
 
-    /**
-     * The header for getting trademark.
-     */
-    public static final String X_JULB_TM = "x-julb-tm";
+    // ------------------------------------------ Read methods.
 
-    /**
-     * The header for debug purposes.
-     */
-    public static final String X_JULB_HTTP_TRACE_DISABLED = "x-julb-http-trace-disabled";
+    // ------------------------------------------ Write methods.
 
-    /**
-     * The header for real IP address.
-     */
-    public static final String X_REAL_IP = "x-real-ip";
-
-    /**
-     * The header for real IP address.
-     */
-    public static final String X_FORWARDED_FOR = "x-forwarded-for";
-
+    // ------------------------------------------ Overridden methods.
 }

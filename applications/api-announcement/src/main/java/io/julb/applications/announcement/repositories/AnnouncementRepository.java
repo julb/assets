@@ -25,12 +25,9 @@
 package io.julb.applications.announcement.repositories;
 
 import io.julb.applications.announcement.entities.AnnouncementEntity;
-import io.julb.library.utility.validator.constraints.Identifier;
 import io.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
 
 import java.util.List;
-
-import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -47,7 +44,7 @@ public interface AnnouncementRepository extends MongoRepository<AnnouncementEnti
      * @param id the id.
      * @return the announcement, or <code>null</code> if not exists.
      */
-    AnnouncementEntity findByTmAndId(String tm, @NotNull @Identifier String id);
+    AnnouncementEntity findByTmAndId(String tm, String id);
 
     /**
      * Checks if an announcement is already visible in the given interval.

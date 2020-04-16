@@ -37,6 +37,16 @@ public class Chars {
     public static final char ZERO = '0';
 
     /**
+     * The '9' character.
+     */
+    public static final char NINE = '9';
+
+    /**
+     * The 'a' character.
+     */
+    public static final char A_LOWERCASE = 'a';
+
+    /**
      * The 'f' character.
      */
     public static final char F_LOWERCASE = 'f';
@@ -110,6 +120,11 @@ public class Chars {
      * The quotation character.
      */
     public static final char QUOTATION_MARK = '"';
+
+    /**
+     * The question mark character.
+     */
+    public static final char QUESTION_MARK = '?';
 
     /**
      * The exclamation mark character.

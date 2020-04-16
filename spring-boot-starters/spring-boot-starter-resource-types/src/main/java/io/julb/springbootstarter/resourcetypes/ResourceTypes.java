@@ -76,4 +76,9 @@ public class ResourceTypes {
      */
     public static final String COMPONENT = "component";
 
+    /**
+     * The "link" resource type.
+     */
+    public static final String LINK = "link";
+
 }
