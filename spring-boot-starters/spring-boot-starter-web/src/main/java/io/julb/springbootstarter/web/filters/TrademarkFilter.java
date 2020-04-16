@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.web.filter.GenericFilterBean;
 
 /**
@@ -47,6 +48,9 @@ public class TrademarkFilter extends GenericFilterBean {
             // Set trademark.
             LOGGER.debug(">>> TM - {}.", trademark);
             TrademarkContextHolder.setTrademark(trademark);
+
+            // Add trademark to MDC.
+            MDC.put("tm", trademark);
         }
 
         // Go on.
