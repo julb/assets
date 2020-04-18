@@ -31,12 +31,12 @@ import io.julb.applications.urlshortener.services.HostService;
 import io.julb.applications.urlshortener.services.dto.ShortUrlHitAnalyticsEventDTO;
 import io.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageLevel;
 import io.julb.library.utility.constants.Chars;
-import io.julb.library.utility.constants.CustomHttpHeaders;
 import io.julb.library.utility.exceptions.InternalServerErrorException;
 import io.julb.library.utility.exceptions.ResourceNotFoundException;
 import io.julb.springbootstarter.core.context.TrademarkContextHolder;
 import io.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
 import io.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
+import io.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 import io.swagger.v3.oas.annotations.Operation;
 
 import java.io.IOException;
@@ -122,7 +122,7 @@ public class RedirectController {
             event.setLinkId(link.getId());
             event.setTm(tm);
             event.setUserAgent(httpServletRequest.getHeader(HttpHeaders.USER_AGENT));
-            event.setUserIpv4(getUserIpv4Address(httpServletRequest));
+            event.setUserIpv4Address(HttpServletRequestUtility.getUserIpv4Address(httpServletRequest));
             event.setUserLanguage(LocaleContextHolder.getLocale().toLanguageTag());
 
             //@formatter:off
@@ -144,19 +144,4 @@ public class RedirectController {
     // ------------------------------------------ Read methods.
     // ------------------------------------------ Private methods.
 
-    /**
-     * Gets the user IPV4 address.
-     * @param httpServletRequest the request.
-     * @return the IPV4 address if available.
-     */
-    private String getUserIpv4Address(HttpServletRequest httpServletRequest) {
-        String ipv4 = httpServletRequest.getHeader(CustomHttpHeaders.X_REAL_IP);
-        if (ipv4 == null) {
-            ipv4 = httpServletRequest.getHeader(CustomHttpHeaders.X_FORWARDED_FOR);
-        }
-        if (ipv4 == null) {
-            ipv4 = httpServletRequest.getRemoteAddr();
-        }
-        return ipv4;
-    }
 }

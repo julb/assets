@@ -174,16 +174,16 @@ public class ShortUrlHitAnalyticsEventDTO {
 
     //@formatter:off
      /**
-     * The userIpv4 attribute.
+     * The userIpv4Address attribute.
      * -- GETTER --
-     * Getter for {@link #userIpv4} property.
+     * Getter for {@link #userIpv4Address} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #userIpv4} property.
-     * @param userIpv4 the value to set.
+     * Setter for {@link #userIpv4Address} property.
+     * @param userIpv4Address the value to set.
      */
      //@formatter:on
-    private String userIpv4;
+    private String userIpv4Address;
 
     //@formatter:off
     /**

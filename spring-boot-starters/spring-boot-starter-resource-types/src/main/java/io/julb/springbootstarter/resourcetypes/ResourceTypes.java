@@ -81,4 +81,14 @@ public class ResourceTypes {
      */
     public static final String LINK = "link";
 
+    /**
+     * The "agreement" resource type.
+     */
+    public static final String AGREEMENT = "agreement";
+
+    /**
+     * The "disclaimer" resource type.
+     */
+    public static final String DISCLAIMER = "disclaimer";
+
 }

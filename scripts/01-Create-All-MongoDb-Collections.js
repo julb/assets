@@ -2,9 +2,11 @@ const collections = [
 	"announcements",
 	"component-categories",
 	"components",
+	"disclaimers",
 	"incidents",
 	"incidents-components",
 	"incidents-history",
+        "links",
 	"planned-maintenances",
 	"planned-maintenances-history",
 	"planned-maintenances-components"
