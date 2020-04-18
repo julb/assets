@@ -6,6 +6,7 @@ pluginManagement {
 }
 
 include 'applications:api-announcement'
+include 'applications:api-disclaimer'
 include 'applications:api-platform-health'
 include 'applications:api-url-shortener'
 include 'applications:api-web-analytics'

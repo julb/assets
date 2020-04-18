@@ -26,10 +26,10 @@ package io.julb.applications.webanalytics.controllers;
 
 import io.julb.applications.webanalytics.controllers.params.AnalyticsRequestParams;
 import io.julb.applications.webanalytics.services.dto.WebAnalyticsEventDTO;
-import io.julb.library.utility.constants.CustomHttpHeaders;
 import io.julb.springbootstarter.core.context.TrademarkContextHolder;
 import io.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
 import io.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
+import io.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 import io.swagger.v3.oas.annotations.Operation;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,7 +89,7 @@ public class CollectController {
         event.setScreenColor(analyticsRequestParams.getSd());
         event.setTm(TrademarkContextHolder.getTrademark());
         event.setUserAgent(analyticsRequestParams.getUa());
-        event.setUserIpv4(getUserIpv4Address(httpServletRequest));
+        event.setUserIpv4Address(HttpServletRequestUtility.getUserIpv4Address(httpServletRequest));
         event.setUserLanguage(analyticsRequestParams.getUl());
         event.setViewportSize(analyticsRequestParams.getVp());
         event.setVisitorId(analyticsRequestParams.getUid());
@@ -104,19 +104,4 @@ public class CollectController {
         //@formatter:on
     }
 
-    /**
-     * Gets the user IPV4 address.
-     * @param httpServletRequest the request.
-     * @return the IPV4 address if available.
-     */
-    private String getUserIpv4Address(HttpServletRequest httpServletRequest) {
-        String ipv4 = httpServletRequest.getHeader(CustomHttpHeaders.X_REAL_IP);
-        if (ipv4 == null) {
-            ipv4 = httpServletRequest.getHeader(CustomHttpHeaders.X_FORWARDED_FOR);
-        }
-        if (ipv4 == null) {
-            ipv4 = httpServletRequest.getRemoteAddr();
-        }
-        return ipv4;
-    }
 }
