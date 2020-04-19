@@ -117,18 +117,28 @@ public class Chars {
     public static final char AND = '&';
 
     /**
-     * The quotation character.
+     * The """ character.
      */
     public static final char QUOTATION_MARK = '"';
 
     /**
-     * The question mark character.
+     * The "?" character.
      */
     public static final char QUESTION_MARK = '?';
 
     /**
-     * The exclamation mark character.
+     * The "!" character.
      */
     public static final char EXCLAMATION_MARK = '!';
+
+    /**
+     * The "^" character.
+     */
+    public static final char CIRCUMFLEX = '^';
+
+    /**
+     * The "$" character.
+     */
+    public static final char DOLLAR = '$';
 
 }

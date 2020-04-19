@@ -53,6 +53,16 @@ public enum OperatorAttributePredicate {
     NOT_LIKE("nl"),
 
     /**
+     * The startsWith operator.
+     */
+    STARTS_WITH("sw"),
+
+    /**
+     * The endsWith operator.
+     */
+    ENDS_WITH("ew"),
+
+    /**
      * The greaterThan operator.
      */
     GREATER_THAN("gt"),

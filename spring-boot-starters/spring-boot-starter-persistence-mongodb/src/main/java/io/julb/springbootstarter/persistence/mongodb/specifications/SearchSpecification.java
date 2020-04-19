@@ -152,6 +152,10 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
                 return where(attributePredicate.getName()).regex(Pattern.compile(StringUtils.lowerCase(convertedValue.toString()), Pattern.CASE_INSENSITIVE));
             case NOT_LIKE:
                 return where(attributePredicate.getName()).not().regex(Pattern.compile(StringUtils.lowerCase(convertedValue.toString()), Pattern.CASE_INSENSITIVE));
+            case STARTS_WITH:
+                return where(attributePredicate.getName()).regex(Pattern.compile(Chars.CIRCUMFLEX + StringUtils.lowerCase(convertedValue.toString()), Pattern.CASE_INSENSITIVE));
+            case ENDS_WITH:
+                return where(attributePredicate.getName()).regex(Pattern.compile(StringUtils.lowerCase(convertedValue.toString()) + Chars.DOLLAR, Pattern.CASE_INSENSITIVE));
             case GREATER_THAN:
                 return where(attributePredicate.getName()).gt(convertedValue);
             case GREATER_OR_EQUAL_THAN:
