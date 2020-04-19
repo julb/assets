@@ -16,8 +16,8 @@
 package io.julb.springbootstarter.web.resolvers.search;
 
 import io.julb.library.utility.constants.Chars;
-import io.julb.library.utility.data.search.Searchable;
 import io.julb.library.utility.data.search.SearchRequest;
+import io.julb.library.utility.data.search.Searchable;
 import io.julb.library.utility.data.search.predicates.SearchPredicate;
 import io.julb.library.utility.data.search.predicates.attributes.MultipleValuesAttributePredicate;
 import io.julb.library.utility.data.search.predicates.attributes.NoValueAttributePredicate;
@@ -149,6 +149,8 @@ abstract class SearchableQueryParser {
                 case GREATER_THAN:
                 case LESS_OR_EQUAL_THAN:
                 case LESS_THAN:
+                case STARTS_WITH:
+                case ENDS_WITH:
                 case LIKE:
                 case NOT_LIKE:
                     if (StringUtils.isBlank(fieldValue)) {

@@ -147,6 +147,10 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
                 return criteriaBuilder.like(criteriaBuilder.lower(field), StringUtils.join(Strings.PERCENT, StringUtils.lowerCase(convertedValue.toString()), Strings.PERCENT));
             case NOT_LIKE:
                 return criteriaBuilder.notLike(criteriaBuilder.lower(field), StringUtils.join(Strings.PERCENT, StringUtils.lowerCase(convertedValue.toString()), Strings.PERCENT));
+            case STARTS_WITH:
+                return criteriaBuilder.like(criteriaBuilder.lower(field), StringUtils.join(StringUtils.lowerCase(convertedValue.toString()), Strings.PERCENT));
+            case ENDS_WITH:
+                return criteriaBuilder.like(criteriaBuilder.lower(field), StringUtils.join(Strings.PERCENT, StringUtils.lowerCase(convertedValue.toString())));
             case GREATER_THAN:
                 return criteriaBuilder.greaterThan(field, (Comparable) convertedValue);
             case GREATER_OR_EQUAL_THAN:
