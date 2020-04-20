@@ -168,6 +168,48 @@ public class LinkServiceImpl implements LinkService {
      * {@inheritDoc}
      */
     @Override
+    public LinkDTO incrementNumberOfHits(@NotNull @Identifier String id) {
+        String tm = TrademarkContextHolder.getTrademark();
+
+        // Check that the link exists
+        LinkEntity existing = linkRepository.findByTmAndId(tm, id);
+        if (existing == null) {
+            throw new ResourceNotFoundException(LinkEntity.class, id);
+        }
+
+        // Update the entity
+        existing.incrementNumberOfHits();
+        this.onUpdate(existing);
+
+        LinkEntity result = linkRepository.save(existing);
+        return mappingService.map(result, LinkDTO.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LinkDTO resetNumberOfHits(@NotNull @Identifier String id) {
+        String tm = TrademarkContextHolder.getTrademark();
+
+        // Check that the link exists
+        LinkEntity existing = linkRepository.findByTmAndId(tm, id);
+        if (existing == null) {
+            throw new ResourceNotFoundException(LinkEntity.class, id);
+        }
+
+        // Update the entity
+        existing.setHits(0);
+        this.onUpdate(existing);
+
+        LinkEntity result = linkRepository.save(existing);
+        return mappingService.map(result, LinkDTO.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public LinkDTO update(@NotNull @Identifier String id, @NotNull @Valid LinkUpdateDTO updateDTO) {
         String tm = TrademarkContextHolder.getTrademark();
@@ -271,6 +313,7 @@ public class LinkServiceImpl implements LinkService {
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
         entity.setEnabled(true);
+        entity.setHits(0);
 
         // Add author.
         AuthenticatedUserIdentityDTO connnectedUser = securityService.getConnectedUserIdentity();

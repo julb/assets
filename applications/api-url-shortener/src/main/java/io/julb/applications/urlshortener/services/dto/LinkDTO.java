@@ -26,8 +26,6 @@ package io.julb.applications.urlshortener.services.dto;
 
 import io.julb.library.dto.simple.audit.AbstractAuditedDTO;
 import io.julb.library.dto.simple.user.UserRefDTO;
-import io.julb.library.utility.constants.Chars;
-import io.julb.library.utility.enums.HttpProtocol;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.SortedSet;
@@ -35,8 +33,6 @@ import java.util.TreeSet;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * The DTO used to return a link.
@@ -89,6 +85,20 @@ public class LinkDTO extends AbstractAuditedDTO {
     @Schema(description = "URI for the link")
     private String uri;
 
+    //@formatter:off
+     /**
+     * The url attribute.
+     * -- GETTER --
+     * Getter for {@link #url} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #url} property.
+     * @param url the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "URL for the link")
+    private String url;
+
    //@formatter:off
     /**
     * The targetUrl attribute.
@@ -119,6 +129,20 @@ public class LinkDTO extends AbstractAuditedDTO {
 
     //@formatter:off
      /**
+     * The hits attribute.
+     * -- GETTER --
+     * Getter for {@link #hits} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #hits} property.
+     * @param hits the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Number of hits for this link")
+    private Integer hits;
+
+    //@formatter:off
+     /**
      * The user attribute.
      * -- GETTER --
      * Getter for {@link #user} property.
@@ -144,12 +168,4 @@ public class LinkDTO extends AbstractAuditedDTO {
      //@formatter:on
     @Schema(description = "Tags to associate to the link")
     private SortedSet<String> tags = new TreeSet<String>();
-
-    /**
-     * Gets the URL of this link.
-     * @return the URL of this link.
-     */
-    public String getUrl() {
-        return StringUtils.join(HttpProtocol.HTTPS.urlPrefix(), host, Chars.SLASH, uri);
-    }
 }

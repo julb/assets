@@ -32,6 +32,8 @@ import io.julb.applications.urlshortener.services.dto.LinkUpdateDTO;
 import io.julb.library.mapping.annotations.ObjectMappingFactory;
 import io.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import io.julb.library.persistence.mongodb.entities.user.UserEntity;
+import io.julb.library.utility.constants.Chars;
+import io.julb.library.utility.enums.HttpProtocol;
 import io.julb.library.utility.interfaces.IIdentifiable;
 import io.julb.library.utility.validator.constraints.DNS;
 import io.julb.library.utility.validator.constraints.HTTPLink;
@@ -43,6 +45,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -52,6 +55,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -150,6 +154,21 @@ public class LinkEntity extends AbstractAuditedEntity implements IIdentifiable {
 
     //@formatter:off
      /**
+     * The hits attribute.
+     * -- GETTER --
+     * Getter for {@link #hits} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #hits} property.
+     * @param hits the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @Min(0)
+    private Integer hits;
+
+    //@formatter:off
+     /**
      * The enabled attribute.
      * -- GETTER --
      * Getter for {@link #enabled} property.
@@ -189,4 +208,23 @@ public class LinkEntity extends AbstractAuditedEntity implements IIdentifiable {
      */
      //@formatter:on
     private SortedSet<@NotNull @Tag String> tags = new TreeSet<String>();
+
+    /**
+     * Gets the URL of this link.
+     * @return the URL of this link.
+     */
+    public String getUrl() {
+        return StringUtils.join(HttpProtocol.HTTPS.urlPrefix(), host, Chars.SLASH, uri);
+    }
+
+    /**
+     * Increments the number of hits by 1.
+     */
+    public void incrementNumberOfHits() {
+        if (this.hits == null) {
+            this.hits = 0;
+        }
+        this.hits++;
+    }
+
 }

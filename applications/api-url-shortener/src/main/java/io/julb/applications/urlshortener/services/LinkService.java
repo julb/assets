@@ -71,6 +71,20 @@ public interface LinkService {
     LinkDTO create(@NotNull @Valid LinkCreationDTO linkCreationDTO);
 
     /**
+     * Increments the number of hits of a link.
+     * @param id the link identifier.
+     * @return the updated link.
+     */
+    LinkDTO incrementNumberOfHits(@NotNull @Identifier String id);
+
+    /**
+     * Resets the number of hits of a link.
+     * @param id the link identifier.
+     * @return the updated link.
+     */
+    LinkDTO resetNumberOfHits(@NotNull @Identifier String id);
+
+    /**
      * Updates a link.
      * @param id the link identifier.
      * @param linkUpdateDTO the DTO to update a link.
