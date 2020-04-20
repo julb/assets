@@ -143,6 +143,18 @@ public class LinkController {
     }
 
     /**
+     * Resets the hits for a link.
+     * @param id the id of the link.
+     */
+    @Operation(summary = "resets the number of hits of a link")
+    @DeleteMapping(path = "/{id}/hits")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasPermission(#id, 'link', 'update')")
+    public void resetNumberOfHits(@PathVariable String id) {
+        linkService.resetNumberOfHits(id);
+    }
+
+    /**
      * Deletes a link.
      * @param id the id of the link to delete.
      */

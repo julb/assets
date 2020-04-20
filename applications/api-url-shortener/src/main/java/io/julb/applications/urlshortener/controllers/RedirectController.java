@@ -28,6 +28,7 @@ import io.julb.applications.urlshortener.annotations.ShortURLURI;
 import io.julb.applications.urlshortener.entities.LinkEntity;
 import io.julb.applications.urlshortener.repositories.LinkRepository;
 import io.julb.applications.urlshortener.services.HostService;
+import io.julb.applications.urlshortener.services.LinkService;
 import io.julb.applications.urlshortener.services.dto.ShortUrlHitAnalyticsEventDTO;
 import io.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageLevel;
 import io.julb.library.utility.constants.Chars;
@@ -73,6 +74,12 @@ public class RedirectController {
      */
     @Autowired
     private HostService hostService;
+
+    /**
+     * The link service.
+     */
+    @Autowired
+    private LinkService linkService;
 
     /**
      * The link repository.
@@ -133,6 +140,9 @@ public class RedirectController {
                     .build()
             );
             //@formatter:on
+
+            // Increment number of hits.
+            linkService.incrementNumberOfHits(link.getId());
 
             // Redirect.
             httpServletResponse.sendRedirect(link.getTargetUrl());
