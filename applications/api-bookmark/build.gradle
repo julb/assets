@@ -1,0 +1,48 @@
+plugins {
+    id 'java-library-distribution'
+    id 'io.freefair.lombok'
+    id 'julb-additional-jars'
+    id 'com.google.cloud.tools.jib'
+}
+
+dependencies {
+    api platform(project(':bom'))
+
+
+    implementation project(':libraries:library-dto-simple')
+    implementation project(':libraries:library-dto-security')
+    implementation project(':libraries:library-utility-date')
+    implementation project(':libraries:library-utility-identifier')
+    implementation project(':spring-boot-starters:spring-boot-starter-messaging')
+    implementation project(':spring-boot-starters:spring-boot-starter-web')
+    implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb')
+    implementation 'org.apache.commons:commons-lang3'
+	
+    testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+    testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
+    testImplementation 'net.javacrumbs.json-unit:json-unit'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'io.julb.Application'
+        )
+    }
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+            artifact distZip
+            artifact distTar
+	    }
+	}
+}
+
+jib {
+    container {
+        ports = ['8080']
+    }
+}

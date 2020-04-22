@@ -91,4 +91,9 @@ public class ResourceTypes {
      */
     public static final String DISCLAIMER = "disclaimer";
 
+    /**
+     * The "bookmark-item" resource type.
+     */
+    public static final String BOOMARK_ITEM = "bookmark-item";
+
 }
