@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -200,6 +201,15 @@ public class SearchSpecification<T> extends AbstractSearchSpecification<T> imple
             if (Collection.class.isAssignableFrom(currentField.getType())) {
                 ParameterizedType parameterizedType = (ParameterizedType) currentField.getGenericType();
                 currentClass = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+            } else if (Map.class.isAssignableFrom(currentField.getType())) {
+                ParameterizedType parameterizedType = (ParameterizedType) currentField.getGenericType();
+                // Skip key because we are not interested in its type.
+                if (fieldIterator.hasNext()) {
+                    fieldIterator.next();
+                }
+
+                // Extract value.
+                currentClass = (Class<?>) parameterizedType.getActualTypeArguments()[1];
             } else {
                 currentClass = currentField.getType();
             }
