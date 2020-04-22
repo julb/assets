@@ -41,6 +41,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,7 +78,7 @@ public class MyAgreementController {
     @GetMapping
     @OpenApiPageable
     @OpenApiSearchable
-    // @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public Page<AgreementDTO> findAll(Searchable searchable, Pageable pageable) {
         return myAgreementService.findAll(searchable, pageable);
     }
@@ -89,7 +90,7 @@ public class MyAgreementController {
      */
     @Operation(summary = "gets the agreement to a disclaimer for the connected user")
     @GetMapping(path = "/{disclaimerId}")
-    // @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public AgreementDTO get(@PathVariable("disclaimerId") @Identifier String disclaimerId) {
         return myAgreementService.findOne(disclaimerId);
     }
@@ -105,7 +106,7 @@ public class MyAgreementController {
     @Operation(summary = "signify the agreement to a disclaimer for the connected user")
     @PostMapping(path = "/{disclaimerId}")
     @ResponseStatus(HttpStatus.CREATED)
-    // @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public AgreementDTO create(@PathVariable("disclaimerId") @Identifier String disclaimerId, HttpServletRequest httpServletRequest) {
         AgreementCreationDTO creationDTO = new AgreementCreationDTO();
         creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(httpServletRequest));

@@ -24,6 +24,7 @@
 
 package io.julb.springbootstarter.core.localization;
 
+import io.julb.springbootstarter.core.configs.ConfigSourceConstants;
 import io.julb.springbootstarter.core.configs.ConfigSourceService;
 
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Julb.
  */
 public class LocaleService {
-
     /**
      * The config sources ervice.
      */
@@ -54,7 +54,7 @@ public class LocaleService {
      * @return the default locale.
      */
     public Locale getDefaultLocale() {
-        return Objects.requireNonNullElse(configSourceService.getTypedProperty("locales.default", Locale.class), Locale.getDefault());
+        return Objects.requireNonNullElse(configSourceService.getTypedProperty(ConfigSourceConstants.LOCALES_DEFAULT, Locale.class), Locale.getDefault());
     }
 
     /**
@@ -62,7 +62,7 @@ public class LocaleService {
      * @return th supported locales.
      */
     public List<Locale> getSupportedLocales() {
-        return Arrays.asList(configSourceService.getTypedProperty("locales", Locale[].class));
+        return Arrays.asList(configSourceService.getTypedProperty(ConfigSourceConstants.LOCALES, Locale[].class));
     }
 
     /**
@@ -70,7 +70,7 @@ public class LocaleService {
      * @return the default timezone.
      */
     public TimeZone getDefaultTimeZone() {
-        return Objects.requireNonNullElse(configSourceService.getTypedProperty("timezones.default", TimeZone.class), TimeZone.getDefault());
+        return Objects.requireNonNullElse(configSourceService.getTypedProperty(ConfigSourceConstants.TIMEZONES_DEFAULT, TimeZone.class), TimeZone.getDefault());
     }
 
     /**

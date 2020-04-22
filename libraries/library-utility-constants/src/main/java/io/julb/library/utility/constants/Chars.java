@@ -102,6 +102,11 @@ public class Chars {
     public static final char PIPE = '|';
 
     /**
+     * The "_" character.
+     */
+    public static final char UNDERSCORE = '_';
+
+    /**
      * The " " character.
      */
     public static final char SPACE = ' ';
