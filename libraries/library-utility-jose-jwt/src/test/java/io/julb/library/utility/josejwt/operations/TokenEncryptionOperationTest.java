@@ -37,9 +37,9 @@ import io.julb.library.utility.josejwt.jwk.impl.ManualSymmetricJWKProvider;
 import java.util.Calendar;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test class for {@link TokenEncryptionOperation}.
@@ -75,7 +75,7 @@ public class TokenEncryptionOperationTest {
     /**
      * Sets-up the test.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception {
         Calendar issueTime = Calendar.getInstance();
@@ -134,10 +134,10 @@ public class TokenEncryptionOperationTest {
         //@formatter:on
 
         EncryptedJWT encryptedJWT = EncryptedJWT.parse(encryptedToken);
-        Assert.assertEquals("JWT", encryptedJWT.getHeader().getContentType());
-        Assert.assertEquals(this.symmetricJWKProvider.toJWK().getAlgorithm().getName(), encryptedJWT.getHeader().getAlgorithm().getName());
-        Assert.assertEquals("A256GCM", encryptedJWT.getHeader().getEncryptionMethod().getName());
-        Assert.assertEquals(this.symmetricJWKProvider.toJWK().getKeyID(), encryptedJWT.getHeader().getKeyID());
+        Assertions.assertEquals("JWT", encryptedJWT.getHeader().getContentType());
+        Assertions.assertEquals(this.symmetricJWKProvider.toJWK().getAlgorithm().getName(), encryptedJWT.getHeader().getAlgorithm().getName());
+        Assertions.assertEquals("A256GCM", encryptedJWT.getHeader().getEncryptionMethod().getName());
+        Assertions.assertEquals(this.symmetricJWKProvider.toJWK().getKeyID(), encryptedJWT.getHeader().getKeyID());
     }
 
     /**
@@ -152,10 +152,10 @@ public class TokenEncryptionOperationTest {
         //@formatter:on
 
         EncryptedJWT encryptedJWT = EncryptedJWT.parse(encryptedToken);
-        Assert.assertEquals("JWT", encryptedJWT.getHeader().getContentType());
-        Assert.assertEquals(asymmetricRSAJWKProvider.toJWK().getAlgorithm().getName(), encryptedJWT.getHeader().getAlgorithm().getName());
-        Assert.assertEquals("A256GCM", encryptedJWT.getHeader().getEncryptionMethod().getName());
-        Assert.assertEquals(this.asymmetricRSAJWKProvider.toJWK().getKeyID(), encryptedJWT.getHeader().getKeyID());
+        Assertions.assertEquals("JWT", encryptedJWT.getHeader().getContentType());
+        Assertions.assertEquals(asymmetricRSAJWKProvider.toJWK().getAlgorithm().getName(), encryptedJWT.getHeader().getAlgorithm().getName());
+        Assertions.assertEquals("A256GCM", encryptedJWT.getHeader().getEncryptionMethod().getName());
+        Assertions.assertEquals(this.asymmetricRSAJWKProvider.toJWK().getKeyID(), encryptedJWT.getHeader().getKeyID());
     }
 
     /**
@@ -170,9 +170,9 @@ public class TokenEncryptionOperationTest {
         //@formatter:on
 
         EncryptedJWT encryptedJWT = EncryptedJWT.parse(encryptedToken);
-        Assert.assertEquals("JWT", encryptedJWT.getHeader().getContentType());
-        Assert.assertEquals(asymmetricECJWKProvider.toJWK().getAlgorithm().getName(), encryptedJWT.getHeader().getAlgorithm().getName());
-        Assert.assertEquals("A256GCM", encryptedJWT.getHeader().getEncryptionMethod().getName());
-        Assert.assertEquals(this.asymmetricECJWKProvider.toJWK().getKeyID(), encryptedJWT.getHeader().getKeyID());
+        Assertions.assertEquals("JWT", encryptedJWT.getHeader().getContentType());
+        Assertions.assertEquals(asymmetricECJWKProvider.toJWK().getAlgorithm().getName(), encryptedJWT.getHeader().getAlgorithm().getName());
+        Assertions.assertEquals("A256GCM", encryptedJWT.getHeader().getEncryptionMethod().getName());
+        Assertions.assertEquals(this.asymmetricECJWKProvider.toJWK().getKeyID(), encryptedJWT.getHeader().getKeyID());
     }
 }

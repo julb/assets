@@ -27,9 +27,9 @@ import io.julb.springbootstarter.web.filters.ReturnOpenTracingTraceAsResponseHea
 
 import javax.servlet.Filter;
 
-import org.springframework.cloud.sleuth.instrument.web.TraceWebServletAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import brave.Tracer;
@@ -48,7 +48,7 @@ public class WebMvcOpenTracingConfiguration {
      * @return the generic filter bean.
      */
     @Bean
-    @Order(TraceWebServletAutoConfiguration.TRACING_FILTER_ORDER + 1)
+    @Order(Ordered.HIGHEST_PRECEDENCE + 6)
     public Filter returnOpenTracingTraceAsResponseHeaderFilter(Tracer tracer) {
         return new ReturnOpenTracingTraceAsResponseHeaderFilterBean(tracer);
     }

@@ -31,8 +31,9 @@ import io.julb.library.utility.josejwt.exceptions.badrequest.TokenNotParseableJO
 import lombok.Getter;
 import lombok.Setter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.javacrumbs.jsonunit.JsonAssert;
 
@@ -48,7 +49,7 @@ public class JSONStringJWKProviderTest {
     /**
      * Sets-up the test before run.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws JOSEException {
 
@@ -73,8 +74,10 @@ public class JSONStringJWKProviderTest {
     /**
      * Test method.
      */
-    @Test(expected = TokenNotParseableJOSEJWTException.class)
+    @Test
     public void whenBuildJWKSNoString_thenThrowTokenIsNotParseableException() {
-        new JSONStringJWKProvider.Builder().build().toJWK();
+        Assertions.assertThrows(TokenNotParseableJOSEJWTException.class, () -> {
+            new JSONStringJWKProvider.Builder().build().toJWK();
+        });
     }
 }

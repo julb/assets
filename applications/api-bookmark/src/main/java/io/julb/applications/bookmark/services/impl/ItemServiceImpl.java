@@ -44,10 +44,10 @@ import io.julb.applications.bookmark.services.dto.item.AbstractItemUpdateDTO;
 import io.julb.applications.bookmark.services.exceptions.CannotMoveFolderInSubfolderException;
 import io.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import io.julb.library.dto.messaging.events.ResourceEventType;
-import io.julb.library.dto.security.AuthenticatedUserIdentityDTO;
+import io.julb.library.dto.security.AuthenticatedUserDTO;
 import io.julb.library.dto.simple.identifier.IdentifierDTO;
 import io.julb.library.dto.simple.value.PositiveIntegerValueDTO;
-import io.julb.library.persistence.mongodb.entities.user.UserEntity;
+import io.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import io.julb.library.utility.constants.Chars;
 import io.julb.library.utility.constants.Strings;
 import io.julb.library.utility.data.search.Searchable;
@@ -526,10 +526,11 @@ public class ItemServiceImpl implements ItemService {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
         // Add author.
-        AuthenticatedUserIdentityDTO connnectedUser = securityService.getConnectedUserIdentity();
-        entity.setUser(new UserEntity());
+        AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
+        entity.setUser(new UserRefEntity());
+        entity.getUser().setDisplayName(connnectedUser.getDisplayName());
         entity.getUser().setFirstName(connnectedUser.getFirstName());
-        entity.getUser().setId(connnectedUser.getId());
+        entity.getUser().setId(connnectedUser.getUserId());
         entity.getUser().setLastName(connnectedUser.getLastName());
         entity.getUser().setMail(connnectedUser.getMail());
 

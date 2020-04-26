@@ -10,6 +10,10 @@ dependencies {
 	api 'org.slf4j:slf4j-api'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

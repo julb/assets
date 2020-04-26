@@ -7,20 +7,27 @@ plugins {
 dependencies {
 	api platform(project(':bom'))
 	
+	api 'com.nimbusds:nimbus-jose-jwt'
+
 	implementation project(':libraries:library-logging-core')
-	implementation project(':libraries:library-utility-constants')
-	implementation project(':libraries:library-utility-exception')
-	implementation 'com.nimbusds:nimbus-jose-jwt'
-	implementation 'commons-codec:commons-codec'
+    implementation project(':libraries:library-utility-constants')
+    implementation project(':libraries:library-utility-date')
+    implementation project(':libraries:library-utility-exception')
+    implementation 'commons-codec:commons-codec'
+    implementation 'commons-io:commons-io'
 	implementation 'org.apache.commons:commons-lang3'
 	implementation 'org.apache.commons:commons-collections4'
 	implementation 'org.bouncycastle:bcprov-jdk15on'
 	implementation 'org.bouncycastle:bcpkix-jdk15on'
 	
 	//testImplementation project(':libraries:library-logging-test')
-	testImplementation 'junit:junit'
+	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testImplementation 'org.json:json'
 	testImplementation 'net.javacrumbs.json-unit:json-unit'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 publishing {

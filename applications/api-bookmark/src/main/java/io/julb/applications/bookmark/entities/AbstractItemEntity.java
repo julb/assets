@@ -27,7 +27,7 @@ package io.julb.applications.bookmark.entities;
 import io.julb.applications.bookmark.services.dto.ItemType;
 import io.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import io.julb.library.persistence.mongodb.entities.message.ShortMessageEntity;
-import io.julb.library.persistence.mongodb.entities.user.UserEntity;
+import io.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import io.julb.library.utility.interfaces.IIdentifiable;
 import io.julb.library.utility.validator.constraints.Identifier;
 import io.julb.library.utility.validator.constraints.Trademark;
@@ -136,7 +136,7 @@ public abstract class AbstractItemEntity extends AbstractAuditedEntity implement
      //@formatter:on
     @NotNull
     @Valid
-    private UserEntity user;
+    private UserRefEntity user;
 
     //@formatter:off
      /**

@@ -37,6 +37,16 @@ spring.data.mongodb:
    database: app1
    autoIndexCreation: true
 
+#
+security.jwt:
+  enabled: true
+  issuer: julb.io
+  audience: julb.io
+  signature-key:
+    algorithm: RS512
+    key-id: sign.test
+    key-path: classpath:/jwt.sign.key.pub
+
 # Application
 application:
   auto-cleaning:
@@ -45,7 +55,7 @@ application:
 management:
   endpoints.web.exposure.include: health,prometheus,info
   endpoint.prometheus.enabled: true
-  
+
 ---
 
 spring:

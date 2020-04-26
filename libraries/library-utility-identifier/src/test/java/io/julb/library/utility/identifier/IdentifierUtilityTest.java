@@ -27,8 +27,8 @@ import io.julb.library.utility.constants.Integers;
 
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link IdentifierUtility} class.
@@ -43,9 +43,9 @@ public final class IdentifierUtilityTest {
     @Test
     public void whenGenerateId_thenReturnValidFormat() {
         String id = IdentifierUtility.generateId();
-        Assert.assertEquals(Integers.THIRTY_TWO, id.length());
-        Assert.assertEquals(id, id.toLowerCase());
-        Assert.assertTrue(Pattern.matches("^[0-9a-f]+$", id));
+        Assertions.assertEquals(Integers.THIRTY_TWO, id.length());
+        Assertions.assertEquals(id, id.toLowerCase());
+        Assertions.assertTrue(Pattern.matches("^[0-9a-f]+$", id));
     }
 
 }

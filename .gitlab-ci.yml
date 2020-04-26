@@ -1,4 +1,11 @@
-image: gradle:jdk13
+services:
+  - docker:dind
+
+variables:
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_DRIVER: overlay2
+
+image: gradle:jdk14
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -11,12 +18,12 @@ cache:
 build:
   stage: build
   script:
-    - ./gradlew assemble
+    - ./gradlew check --info
 
-test:
-  stage: test
-  script:
-    - ./gradlew check
+#test:
+#  stage: test
+#  script:
+#    - ./gradlew check --info
 
 pages:
   script:

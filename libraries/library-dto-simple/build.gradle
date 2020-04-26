@@ -11,6 +11,10 @@ dependencies {
     implementation project(':libraries:library-utility-validator')
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

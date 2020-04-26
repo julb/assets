@@ -68,7 +68,7 @@ public class CollectController {
     @Operation(summary = "collect a web analytics event")
     @GetMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public void collect(@Valid AnalyticsRequestParams analyticsRequestParams, HttpServletRequest httpServletRequest) {
         // Builds the event.
         WebAnalyticsEventDTO event = new WebAnalyticsEventDTO();

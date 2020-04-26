@@ -24,8 +24,8 @@
 
 package io.julb.library.utility.crypto.aes;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class enables encryption and decryption of a {@link String} using AES256.
@@ -45,23 +45,25 @@ public class AESEncryptorTest {
 
         String cipheredText = AESEncryptor.encrypt(rawText, key, salt);
         String plainText = AESEncryptor.decrypt(cipheredText, key, salt);
-        Assert.assertEquals(rawText, plainText);
+        Assertions.assertEquals(rawText, plainText);
     }
 
     /**
      * Test method.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void whenEncryptingDecryptingDifferentKey_thenThrow() {
-        String rawText = "textToEncrypt";
-        String key = "aaaabbbbccccddddaaaabbbbccccdddd";
-        String salt = "aaaabbbbccccaaaabbbbccccaaaabbbb";
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            String rawText = "textToEncrypt";
+            String key = "aaaabbbbccccddddaaaabbbbccccdddd";
+            String salt = "aaaabbbbccccaaaabbbbccccaaaabbbb";
 
-        String falseKey = "bbbbccccddddaaaabbbbccccddddaaaa";
-        String falseSalt = "bbbbccccddddaaaabbbbccccddddaaaa";
+            String falseKey = "bbbbccccddddaaaabbbbccccddddaaaa";
+            String falseSalt = "bbbbccccddddaaaabbbbccccddddaaaa";
 
-        String cipheredText = AESEncryptor.encrypt(rawText, key, salt);
-        AESEncryptor.decrypt(cipheredText, falseKey, falseSalt);
+            String cipheredText = AESEncryptor.encrypt(rawText, key, salt);
+            AESEncryptor.decrypt(cipheredText, falseKey, falseSalt);
+        });
     }
 
 }

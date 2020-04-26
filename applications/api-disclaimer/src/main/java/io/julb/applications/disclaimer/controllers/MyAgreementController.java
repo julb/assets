@@ -78,7 +78,7 @@ public class MyAgreementController {
     @GetMapping
     @OpenApiPageable
     @OpenApiSearchable
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public Page<AgreementDTO> findAll(Searchable searchable, Pageable pageable) {
         return myAgreementService.findAll(searchable, pageable);
     }
@@ -90,7 +90,7 @@ public class MyAgreementController {
      */
     @Operation(summary = "gets the agreement to a disclaimer for the connected user")
     @GetMapping(path = "/{disclaimerId}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public AgreementDTO get(@PathVariable("disclaimerId") @Identifier String disclaimerId) {
         return myAgreementService.findOne(disclaimerId);
     }
@@ -106,7 +106,7 @@ public class MyAgreementController {
     @Operation(summary = "signify the agreement to a disclaimer for the connected user")
     @PostMapping(path = "/{disclaimerId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public AgreementDTO create(@PathVariable("disclaimerId") @Identifier String disclaimerId, HttpServletRequest httpServletRequest) {
         AgreementCreationDTO creationDTO = new AgreementCreationDTO();
         creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(httpServletRequest));

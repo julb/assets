@@ -31,7 +31,7 @@ import io.julb.applications.urlshortener.services.dto.LinkPatchDTO;
 import io.julb.applications.urlshortener.services.dto.LinkUpdateDTO;
 import io.julb.library.mapping.annotations.ObjectMappingFactory;
 import io.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
-import io.julb.library.persistence.mongodb.entities.user.UserEntity;
+import io.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import io.julb.library.utility.constants.Chars;
 import io.julb.library.utility.enums.HttpProtocol;
 import io.julb.library.utility.interfaces.IIdentifiable;
@@ -194,7 +194,7 @@ public class LinkEntity extends AbstractAuditedEntity implements IIdentifiable {
      //@formatter:on
     @NotNull
     @Valid
-    private UserEntity user;
+    private UserRefEntity user;
 
     //@formatter:off
      /**

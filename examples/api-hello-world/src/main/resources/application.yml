@@ -8,6 +8,11 @@ application:
       - Charlie
       - David
 
+management.health.probes.enabled: true
+
+spring.servlet.multipart:
+  enabled: false
+
 springdoc:
    cache.disabled: true
    api-docs:

@@ -9,7 +9,11 @@ dependencies {
 	
 	implementation project(':libraries:library-utility-constants')
 	
-	testImplementation 'junit:junit'
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 publishing {

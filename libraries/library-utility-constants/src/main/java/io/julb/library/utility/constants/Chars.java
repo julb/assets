@@ -42,6 +42,16 @@ public class Chars {
     public static final char NINE = '9';
 
     /**
+     * The 'A' character.
+     */
+    public static final char A_UPPERCASE = 'A';
+
+    /**
+     * The 'Z' character.
+     */
+    public static final char Z_UPPERCASE = 'Z';
+
+    /**
      * The 'a' character.
      */
     public static final char A_LOWERCASE = 'a';

@@ -22,6 +22,10 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

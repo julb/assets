@@ -2,7 +2,7 @@ plugins {
     id 'java-library-distribution'
     id 'io.freefair.lombok'
     id 'julb-additional-jars'
-    id 'com.google.cloud.tools.jib'
+    id 'org.springframework.boot'
 }
 
 dependencies {
@@ -19,6 +19,7 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3'
 	
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+    testImplementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb-test')
     testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
     testImplementation 'net.javacrumbs.json-unit:json-unit'
 }
@@ -31,6 +32,20 @@ jar {
     }
 }
 
+test {
+    useJUnitPlatform()
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootJar {
+    classifier = 'boot'
+    mainClassName = 'io.julb.Application'
+    layered()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {
@@ -39,10 +54,4 @@ publishing {
             artifact distTar
 	    }
 	}
-}
-
-jib {
-    container {
-        ports = ['8080']
-    }
 }

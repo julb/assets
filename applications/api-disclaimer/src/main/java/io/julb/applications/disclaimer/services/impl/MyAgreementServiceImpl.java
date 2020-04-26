@@ -35,8 +35,8 @@ import io.julb.applications.disclaimer.services.dto.agreement.AgreementDTO;
 import io.julb.applications.disclaimer.services.exceptions.DisclaimerIsNotActiveException;
 import io.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import io.julb.library.dto.messaging.events.ResourceEventType;
-import io.julb.library.dto.security.AuthenticatedUserIdentityDTO;
-import io.julb.library.persistence.mongodb.entities.user.UserEntity;
+import io.julb.library.dto.security.AuthenticatedUserDTO;
+import io.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import io.julb.library.utility.data.search.Searchable;
 import io.julb.library.utility.date.DateUtility;
 import io.julb.library.utility.exceptions.ResourceAlreadyExistsException;
@@ -179,10 +179,11 @@ public class MyAgreementServiceImpl implements MyAgreementService {
         entity.setAgreedAt(DateUtility.dateTimeNow());
 
         // Add author.
-        AuthenticatedUserIdentityDTO connnectedUser = securityService.getConnectedUserIdentity();
-        entity.setUser(new UserEntity());
+        AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
+        entity.setUser(new UserRefEntity());
+        entity.getUser().setDisplayName(connnectedUser.getDisplayName());
         entity.getUser().setFirstName(connnectedUser.getFirstName());
-        entity.getUser().setId(connnectedUser.getId());
+        entity.getUser().setId(connnectedUser.getUserId());
         entity.getUser().setLastName(connnectedUser.getLastName());
         entity.getUser().setMail(connnectedUser.getMail());
 

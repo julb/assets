@@ -23,7 +23,9 @@
  */
 package io.julb.springbootstarter.security.configurations;
 
-import io.julb.springbootstarter.security.services.impl.PreAuthenticatedUserDetailsService;
+import io.julb.springbootstarter.security.configurations.beans.handlers.CustomAuthenticationFailureHandler;
+import io.julb.springbootstarter.security.configurations.beans.handlers.CustomAuthenticationLogoutHandler;
+import io.julb.springbootstarter.security.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsLogoutHandlerDelegate;
 
 import java.util.Map;
 
@@ -39,15 +41,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 
 /**
  * The security configuration.
@@ -56,8 +56,24 @@ import org.springframework.security.web.authentication.preauth.RequestHeaderAuth
  */
 @Configuration
 @EnableWebSecurity
-@Import({SecurityInternalApiKeyConfiguration.class, SecurityInternalJwtConfiguration.class})
-@AutoConfigureAfter({SecurityInternalApiKeyConfiguration.class, SecurityInternalJwtConfiguration.class})
+//@formatter:off
+@Import({
+    SecurityAuthenticationByApiKeyConfiguration.class, 
+    SecurityAuthenticationByInternalApiKeyConfiguration.class, 
+    SecurityAuthenticationByJwtConfiguration.class, 
+    SecurityAuthenticationByPasswordConfiguration.class, 
+    SecurityAuthenticationByPincodeConfiguration.class, 
+    SecurityAuthenticationByTotpConfiguration.class
+})
+@AutoConfigureAfter({
+    SecurityAuthenticationByApiKeyConfiguration.class, 
+    SecurityAuthenticationByInternalApiKeyConfiguration.class, 
+    SecurityAuthenticationByJwtConfiguration.class, 
+    SecurityAuthenticationByPasswordConfiguration.class, 
+    SecurityAuthenticationByPincodeConfiguration.class, 
+    SecurityAuthenticationByTotpConfiguration.class
+})
+//@formatter:on
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
@@ -67,12 +83,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private GenericApplicationContext applicationContext;
 
     /**
+     * The authentication user details logout handler.
+     */
+    @Autowired(required = false)
+    private IAuthenticationUserDetailsLogoutHandlerDelegate authenticationUserDetailsLogoutHandlerDelegate;
+
+    /**
      * The unauthorized entrypoint.
      * @return the unauthorized entrypoint.
      */
     @Bean
     public AuthenticationEntryPoint unauthorizedAuthenticationEntrypoint() {
-        return new UnauthorizedAuthenticationEntrypoint();
+        return new CustomAuthenticationFailureHandler();
     }
 
     /**
@@ -87,23 +109,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * The service used to authenticate the user according to the received JWT.
-     * @return the instance of the service.
+     * The logout handler.
+     * @return the logout handler.
      */
     @Bean
-    public PreAuthenticatedUserDetailsService preAuthenticatedUserDetailsService() {
-        return new PreAuthenticatedUserDetailsService();
-    }
-
-    /**
-     * Defines a pre-authenticated authentication provider.
-     * @return the preAuthenticatedAuthenticationProvider.
-     */
-    @Bean
-    public PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider() {
-        PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
-        preAuthenticatedAuthenticationProvider.setPreAuthenticatedUserDetailsService(preAuthenticatedUserDetailsService());
-        return preAuthenticatedAuthenticationProvider;
+    public CustomAuthenticationLogoutHandler logoutHandler() {
+        CustomAuthenticationLogoutHandler customAuthenticationLogoutHandler = new CustomAuthenticationLogoutHandler();
+        customAuthenticationLogoutHandler.setAuthenticationUserDetailsLogoutHandlerDelegate(authenticationUserDetailsLogoutHandlerDelegate);
+        return customAuthenticationLogoutHandler;
     }
 
     // ------------------------------------------ Overridden methods.
@@ -114,13 +127,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http)
         throws Exception {
-        // Add filters.
-        Map<String, RequestHeaderAuthenticationFilter> beansOfType = applicationContext.getBeansOfType(RequestHeaderAuthenticationFilter.class);
-        for (RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter : beansOfType.values()) {
-            http.addFilterBefore(requestHeaderAuthenticationFilter, AnonymousAuthenticationFilter.class);
-        }
-
-        // Configure security.
         //@formatter:off
         http
             .authorizeRequests()
@@ -135,7 +141,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .httpBasic().disable()
-                .csrf().disable();
+                .csrf().disable()
+            .logout()
+                .logoutUrl("/logout")
+                .addLogoutHandler(logoutHandler());
         //@formatter:on
     }
 
@@ -145,7 +154,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
         throws Exception {
-        auth.authenticationProvider(preAuthenticatedAuthenticationProvider());
+        Map<String, AuthenticationProvider> beansOfType = applicationContext.getBeansOfType(AuthenticationProvider.class);
+        for (AuthenticationProvider authenticationProvider : beansOfType.values()) {
+            auth.authenticationProvider(authenticationProvider);
+        }
     }
 
 }

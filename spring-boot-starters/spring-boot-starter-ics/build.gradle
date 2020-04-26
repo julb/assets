@@ -17,6 +17,10 @@ dependencies {
     
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

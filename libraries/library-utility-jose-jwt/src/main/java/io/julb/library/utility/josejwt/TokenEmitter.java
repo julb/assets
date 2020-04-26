@@ -106,10 +106,6 @@ public class TokenEmitter {
                 throw new IllegalArgumentException("signature private key must not be null");
             }
 
-            if (this.encryptionJWKProvider == null) {
-                throw new IllegalArgumentException("encryption key must not be null");
-            }
-
             // Hash for tracking purpose.
             String hash = TokenDigestUtility.hash(jwtClaims);
             LOGGER.debug("Token <{}> - Start emitting.", hash);
@@ -119,12 +115,18 @@ public class TokenEmitter {
             String signedToken = tokenSignatureOperation.execute(jwtClaims);
 
             // 2. Encrypting the token.
-            TokenEncryptionOperation tokenEncryptionOperation = new TokenEncryptionOperation(this.encryptionJWKProvider);
-            String encryptedToken = tokenEncryptionOperation.execute(signedToken);
+            if (this.encryptionJWKProvider != null) {
+                TokenEncryptionOperation tokenEncryptionOperation = new TokenEncryptionOperation(this.encryptionJWKProvider);
+                String encryptedToken = tokenEncryptionOperation.execute(signedToken);
 
-            // 3. Return the token
-            LOGGER.debug("Emitting token {} - Finish.", hash);
-            return encryptedToken;
+                // 3. Return the token
+                LOGGER.debug("Emitting token {} - Finish.", hash);
+                return encryptedToken;
+            } else {
+                // 3. Return the token
+                LOGGER.debug("Emitting token {} - Finish.", hash);
+                return signedToken;
+            }
         } catch (JOSEJWTException e) {
             LOGGER.error(e.getMessage(), e);
             throw e;

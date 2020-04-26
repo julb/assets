@@ -49,4 +49,24 @@ public class HttpServletRequestUtility {
         }
         return ipv4;
     }
+
+    /**
+     * Gets the user browser.
+     * @param httpServletRequest the request.
+     * @return the browser.
+     */
+    public static String getBrowser(HttpServletRequest httpServletRequest) {
+        // TODO Auto-generated method stub
+        return "Chrome";
+    }
+
+    /**
+     * Gets the operating system.
+     * @param httpServletRequest the request.
+     * @return the operating system.
+     */
+    public static String getOperatingSystem(HttpServletRequest httpServletRequest) {
+        // TODO Auto-generated method stub
+        return "Windows";
+    }
 }

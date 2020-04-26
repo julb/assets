@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * <P>
  * @author Julb.
  */
-@org.springframework.security.test.context.support.WithMockUser(roles = "USER")
+@org.springframework.security.test.context.support.WithMockUser(roles = {"USER", "FULLY_AUTHENTICATED"})
 @Documented
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

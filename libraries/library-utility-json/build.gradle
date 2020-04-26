@@ -12,6 +12,10 @@ dependencies {
 	implementation 'org.apache.commons:commons-text'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

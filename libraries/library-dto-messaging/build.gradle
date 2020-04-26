@@ -8,6 +8,10 @@ dependencies {
 	api platform(project(':bom'))
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

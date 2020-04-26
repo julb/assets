@@ -46,16 +46,6 @@ public class TokenReceiver {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenReceiver.class);
 
     /**
-     * The issuer to expect.
-     */
-    private String expectedIssuer;
-
-    /**
-     * The audience to expect.
-     */
-    private String expectedAudience;
-
-    /**
      * The signatures keys.
      */
     private IJWKSetProvider signatureJWKSetProvider;
@@ -75,26 +65,6 @@ public class TokenReceiver {
     }
 
     // ------------------------------------------ Builder methods.
-
-    /**
-     * Setter for property expectedIssuer.
-     * @param expectedIssuer New value of property expectedIssuer.
-     * @return the current instance.
-     */
-    public TokenReceiver setExpectedIssuer(String expectedIssuer) {
-        this.expectedIssuer = expectedIssuer;
-        return this;
-    }
-
-    /**
-     * Setter for property expectedAudience.
-     * @param expectedAudience New value of property expectedAudience.
-     * @return the current instance.
-     */
-    public TokenReceiver setExpectedAudience(String expectedAudience) {
-        this.expectedAudience = expectedAudience;
-        return this;
-    }
 
     /**
      * Setter for property encryptionJWKSetProvider.
@@ -121,10 +91,12 @@ public class TokenReceiver {
     /**
      * Receives a JSON web token signed and encrypted, decrypts it and check its signature.
      * @param token the ciphered and signed JSON web token.
+     * @param expectedIssuer the expected issuer.
+     * @param expectedAudience the expected audience.
      * @return the JSON web token decrypted and valid for processing.
      * @throws JOSEJWTException if an error occurs.
      */
-    public String receive(String token)
+    public String receive(String token, String expectedIssuer, String expectedAudience)
         throws JOSEJWTException {
         try {
             // Check all informations are provided.
@@ -144,18 +116,19 @@ public class TokenReceiver {
                 throw new IllegalArgumentException("signature key must be provided");
             }
 
-            if (encryptionJWKSetProvider == null) {
-                throw new IllegalArgumentException("encryption key must be provided");
-            }
-
             // Hash for tracking purpose.
             String hash = TokenDigestUtility.hash(token);
 
             LOGGER.debug("Token <{}> - Start receiving.", hash);
 
             // 1. Decrypting the token.
-            TokenDecryptionOperation tokenDecryptionOperation = new TokenDecryptionOperation(encryptionJWKSetProvider);
-            String decryptedToken = tokenDecryptionOperation.execute(token);
+            String decryptedToken = null;
+            if (encryptionJWKSetProvider != null) {
+                TokenDecryptionOperation tokenDecryptionOperation = new TokenDecryptionOperation(encryptionJWKSetProvider);
+                decryptedToken = tokenDecryptionOperation.execute(token);
+            } else {
+                decryptedToken = token;
+            }
 
             // 2. Check signature of token.
             TokenVerifierOperation tokenVerifierOperation = new TokenVerifierOperation(signatureJWKSetProvider, expectedAudience, expectedIssuer);

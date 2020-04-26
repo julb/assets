@@ -39,9 +39,9 @@ import io.julb.library.utility.josejwt.jwk.impl.ManualSymmetricJWKProvider;
 import java.util.Calendar;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test class for {@link TokenSignatureOperationTest}.
@@ -77,7 +77,7 @@ public class TokenSignatureOperationTest {
     /**
      * Sets-up the test.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception {
         Calendar issueTime = Calendar.getInstance();
@@ -138,8 +138,8 @@ public class TokenSignatureOperationTest {
         //@formatter:on
 
         SignedJWT signedJWT = SignedJWT.parse(signedToken);
-        Assert.assertEquals(this.symmetricJWKProvider.toJWK().getAlgorithm().getName(), signedJWT.getHeader().getAlgorithm().getName());
-        Assert.assertEquals(this.symmetricJWKProvider.toJWK().getKeyID(), signedJWT.getHeader().getKeyID());
+        Assertions.assertEquals(this.symmetricJWKProvider.toJWK().getAlgorithm().getName(), signedJWT.getHeader().getAlgorithm().getName());
+        Assertions.assertEquals(this.symmetricJWKProvider.toJWK().getKeyID(), signedJWT.getHeader().getKeyID());
     }
 
     /**
@@ -154,8 +154,8 @@ public class TokenSignatureOperationTest {
         //@formatter:on
 
         SignedJWT signedJWT = SignedJWT.parse(signedToken);
-        Assert.assertEquals(asymmetricRSAJWKProvider.toJWK().getAlgorithm().getName(), signedJWT.getHeader().getAlgorithm().getName());
-        Assert.assertEquals(this.asymmetricRSAJWKProvider.toJWK().getKeyID(), signedJWT.getHeader().getKeyID());
+        Assertions.assertEquals(asymmetricRSAJWKProvider.toJWK().getAlgorithm().getName(), signedJWT.getHeader().getAlgorithm().getName());
+        Assertions.assertEquals(this.asymmetricRSAJWKProvider.toJWK().getKeyID(), signedJWT.getHeader().getKeyID());
     }
 
     /**
@@ -170,7 +170,7 @@ public class TokenSignatureOperationTest {
         //@formatter:on
 
         SignedJWT signedJWT = SignedJWT.parse(signedToken);
-        Assert.assertEquals(asymmetricECJWKProvider.toJWK().getAlgorithm().getName(), signedJWT.getHeader().getAlgorithm().getName());
-        Assert.assertEquals(this.asymmetricECJWKProvider.toJWK().getKeyID(), signedJWT.getHeader().getKeyID());
+        Assertions.assertEquals(asymmetricECJWKProvider.toJWK().getAlgorithm().getName(), signedJWT.getHeader().getAlgorithm().getName());
+        Assertions.assertEquals(this.asymmetricECJWKProvider.toJWK().getKeyID(), signedJWT.getHeader().getKeyID());
     }
 }

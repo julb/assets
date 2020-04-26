@@ -96,4 +96,39 @@ public class ResourceTypes {
      */
     public static final String BOOMARK_ITEM = "bookmark-item";
 
+    /**
+     * The "user" resource type.
+     */
+    public static final String USER = "user";
+
+    /**
+     * The "user-authentication" resource type.
+     */
+    public static final String USER_AUTHENTICATION = "user-authentication";
+
+    /**
+     * The "user-session" resource type.
+     */
+    public static final String USER_SESSION = "user-session";
+
+    /**
+     * The "user-mail" resource type.
+     */
+    public static final String USER_MAIL = "user-mail";
+
+    /**
+     * The "user-mobile-phone" resource type.
+     */
+    public static final String USER_MOBILE_PHONE = "user-mobile-phone";
+
+    /**
+     * The "user-profile" resource type.
+     */
+    public static final String USER_PROFILE = "user-profile";
+
+    /**
+     * The "user-preferences" resource type.
+     */
+    public static final String USER_PREFERENCES = "user-preferences";
+
 }

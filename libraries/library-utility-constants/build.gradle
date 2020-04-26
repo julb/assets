@@ -4,6 +4,10 @@ plugins {
 	id 'julb-additional-jars'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

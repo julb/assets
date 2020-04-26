@@ -9,7 +9,11 @@ dependencies {
 	
 	implementation 'org.springframework.security:spring-security-crypto'
 	
-	testImplementation 'junit:junit'
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 publishing {

@@ -23,9 +23,10 @@
  */
 package io.julb.springbootstarter.security.services.impl;
 
-import io.julb.library.dto.security.AuthenticatedUserIdentityDTO;
-import io.julb.library.dto.security.AuthenticatedUserRole;
+import io.julb.library.dto.security.AuthenticatedUserDTO;
+import io.julb.library.dto.security.UserRole;
 import io.julb.library.utility.constants.Integers;
+import io.julb.library.utility.identifier.IdentifierUtility;
 import io.julb.springbootstarter.security.services.ISecurityService;
 import io.julb.springbootstarter.security.services.dto.CustomUserDetails;
 import io.julb.springbootstarter.security.utilities.RoleUtility;
@@ -75,22 +76,28 @@ public class SecurityService implements ISecurityService {
      * {@inheritDoc}
      */
     @Override
-    public AuthenticatedUserIdentityDTO getConnectedUserIdentity() {
+    public AuthenticatedUserDTO getConnectedUserIdentity() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             Object userDetails = authentication.getPrincipal();
             if (userDetails instanceof CustomUserDetails) {
                 CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
-                return customUserDetails.getIdentity();
+                return customUserDetails.getDetails();
             } else if (userDetails instanceof UserDetails) {
-                // FIXME
-                return new AuthenticatedUserIdentityDTO();
+                UserDetails user = ((UserDetails) userDetails);
+                AuthenticatedUserDTO authenticatedUser = new AuthenticatedUserDTO();
+                authenticatedUser.setUserId(IdentifierUtility.generateId());
+                authenticatedUser.setDisplayName(user.getUsername());
+                authenticatedUser.setFirstName(user.getUsername());
+                authenticatedUser.setLastName(user.getUsername());
+                authenticatedUser.setMail(user.getUsername() + "@local");
+                return authenticatedUser;
             } else {
                 // FIXME
-                AuthenticatedUserIdentityDTO anonymousUser = new AuthenticatedUserIdentityDTO();
+                AuthenticatedUserDTO anonymousUser = new AuthenticatedUserDTO();
                 anonymousUser.setFirstName("Anonymous");
                 anonymousUser.setLastName("User");
-                anonymousUser.setId(StringUtils.repeat('0', Integers.THIRTY_TWO));
+                anonymousUser.setUserId(StringUtils.repeat('0', Integers.THIRTY_TWO));
                 anonymousUser.setMail("anonymous@localhost");
                 return anonymousUser;
             }
@@ -103,9 +110,9 @@ public class SecurityService implements ISecurityService {
      */
     @Override
     public String getConnectedUserId() {
-        AuthenticatedUserIdentityDTO identity = getConnectedUserIdentity();
+        AuthenticatedUserDTO identity = getConnectedUserIdentity();
         if (identity != null) {
-            return identity.getId();
+            return identity.getUserId();
         } else {
             return null;
         }
@@ -125,7 +132,7 @@ public class SecurityService implements ISecurityService {
      */
     @Override
     public boolean isAdministrator() {
-        String autorityName = RoleUtility.toAuthorityName(AuthenticatedUserRole.ADMINISTRATOR.toString());
+        String autorityName = RoleUtility.toAuthorityName(UserRole.ADMINISTRATOR.toString());
         UserDetails userDetails = getConnectedUser();
         if (userDetails != null) {
             for (GrantedAuthority authority : userDetails.getAuthorities()) {

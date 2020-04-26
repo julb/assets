@@ -23,12 +23,8 @@
  */
 package io.julb.library.utility.size;
 
-/**
- * Copyright (c) Airbus.
- */
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link CpuUtility} class.
@@ -43,7 +39,7 @@ public class CpuUtilityTest {
     @Test
     public void whenParseCpuWithm_thenReturnValidFloatValue() {
         Float floatValue = CpuUtility.parse("1250m");
-        Assert.assertEquals(Float.valueOf(1.25f), floatValue);
+        Assertions.assertEquals(Float.valueOf(1.25f), floatValue);
     }
 
     /**
@@ -52,7 +48,7 @@ public class CpuUtilityTest {
     @Test
     public void whenParse_thenReturnValidFloatValue() {
         Float floatValue = CpuUtility.parse("2.375");
-        Assert.assertEquals(Float.valueOf(2.375f), floatValue);
+        Assertions.assertEquals(Float.valueOf(2.375f), floatValue);
     }
 
     /**
@@ -61,7 +57,7 @@ public class CpuUtilityTest {
     @Test
     public void whenParseAndRoundCpuWithm_thenReturnValidFloatValue() {
         Float floatValue = CpuUtility.parseAndRound("1250m");
-        Assert.assertEquals(Float.valueOf(1.3f), floatValue);
+        Assertions.assertEquals(Float.valueOf(1.3f), floatValue);
     }
 
     /**
@@ -70,7 +66,7 @@ public class CpuUtilityTest {
     @Test
     public void whenParseAndRound_thenReturnValidFloatValue() {
         Float floatValue = CpuUtility.parseAndRound("2.375");
-        Assert.assertEquals(Float.valueOf(2.4f), floatValue);
+        Assertions.assertEquals(Float.valueOf(2.4f), floatValue);
     }
 
 }

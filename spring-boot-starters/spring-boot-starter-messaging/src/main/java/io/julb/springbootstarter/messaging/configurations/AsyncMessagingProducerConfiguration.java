@@ -66,7 +66,7 @@ public class AsyncMessagingProducerConfiguration {
      */
     @PostConstruct
     public void initSaslConfig() {
-        if (rabbitProperties.getSsl().isEnabled() && rabbitProperties.getSsl().getKeyStore() != null) {
+        if (rabbitProperties.getSsl().determineEnabled() && rabbitProperties.getSsl().getKeyStore() != null) {
             cachingConnectionFactory.getRabbitConnectionFactory().setSaslConfig(DefaultSaslConfig.EXTERNAL);
         }
     }

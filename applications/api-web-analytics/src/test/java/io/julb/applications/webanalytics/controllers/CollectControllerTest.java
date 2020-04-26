@@ -28,21 +28,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import io.julb.springbootstarter.messaging.processors.AsyncMessageProducerProcessor;
+import io.julb.springbootstarter.test.base.AbstractBaseTest;
 import io.julb.springbootstarter.test.security.annotations.WithMockUser;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.Message;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import net.javacrumbs.jsonunit.JsonAssert;
@@ -52,11 +49,8 @@ import net.javacrumbs.jsonunit.JsonAssert;
  * <P>
  * @author Julb.
  */
-@RunWith(SpringRunner.class)
-@ActiveProfiles("TEST")
-@SpringBootTest
 @AutoConfigureMockMvc
-public class CollectControllerTest {
+public class CollectControllerTest extends AbstractBaseTest {
 
     /**
      * The mock MVC.
@@ -99,7 +93,7 @@ public class CollectControllerTest {
             )
             .andExpect(status().isNoContent())
             .andDo((handler) -> {
-                Assert.assertEquals(1, queueWithMessages.size());
+                Assertions.assertEquals(1, queueWithMessages.size());
                 @SuppressWarnings("unchecked")
                 Message<String> message = (Message<String>) queueWithMessages.poll();
                 JsonAssert.assertJsonPartEquals("test", message.getPayload(), "body.applicationName");
@@ -126,7 +120,7 @@ public class CollectControllerTest {
             .perform(get("/collect").contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isBadRequest())
             .andDo((handler) -> {
-                Assert.assertEquals(0, queueWithMessages.size());
+                Assertions.assertEquals(0, queueWithMessages.size());
             });
         //@formatter:on
     }
@@ -153,7 +147,7 @@ public class CollectControllerTest {
             )
             .andExpect(status().isUnauthorized())
             .andDo((handler) -> {
-                Assert.assertEquals(0, queueWithMessages.size());
+                Assertions.assertEquals(0, queueWithMessages.size());
             });
         //@formatter:on
     }

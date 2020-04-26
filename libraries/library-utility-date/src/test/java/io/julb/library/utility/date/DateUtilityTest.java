@@ -23,11 +23,8 @@
  */
 package io.julb.library.utility.date;
 
-/**
- */
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link DateUtility} class.
@@ -42,7 +39,7 @@ public class DateUtilityTest {
     @Test
     public void whenDateTimeNow_thenReturnValidDateTime() {
         String date = DateUtility.dateTimeNow();
-        Assert.assertEquals(24, date.length());
+        Assertions.assertEquals(24, date.length());
     }
 
     /**
@@ -51,7 +48,7 @@ public class DateUtilityTest {
     @Test
     public void whenDateNow_thenReturnValidDate() {
         String date = DateUtility.dateNow();
-        Assert.assertEquals(10, date.length());
+        Assertions.assertEquals(10, date.length());
     }
 
     /**
@@ -60,7 +57,7 @@ public class DateUtilityTest {
     @Test
     public void whenEpochSecondNow_thenReturnValidEpoch() {
         Long epochSeconds = DateUtility.epochSecondNow();
-        Assert.assertNotNull(epochSeconds);
+        Assertions.assertNotNull(epochSeconds);
     }
 
 }

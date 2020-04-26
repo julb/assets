@@ -23,12 +23,8 @@
  */
 package io.julb.library.utility.size;
 
-/**
- * Copyright (c) Airbus.
- */
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link MemoryUtility} class.
@@ -43,7 +39,7 @@ public class MemoryUtilityTest {
     @Test
     public void whenParseMemoryWithKi_thenReturnValidDoubleValue() {
         Long doubleValue = MemoryUtility.parse("1Ki");
-        Assert.assertEquals(Long.valueOf(1024), doubleValue);
+        Assertions.assertEquals(Long.valueOf(1024), doubleValue);
     }
 
     /**
@@ -52,6 +48,6 @@ public class MemoryUtilityTest {
     @Test
     public void whenParseMemoryWithMi_thenReturnValidDoubleValue() {
         Long doubleValue = MemoryUtility.parse("2Mi");
-        Assert.assertEquals(Long.valueOf(2097152), doubleValue);
+        Assertions.assertEquals(Long.valueOf(2097152), doubleValue);
     }
 }

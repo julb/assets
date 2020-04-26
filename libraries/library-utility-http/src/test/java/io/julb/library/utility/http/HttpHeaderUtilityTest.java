@@ -24,8 +24,8 @@
 package io.julb.library.utility.http;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * A generic configuration class for a SSL client.
@@ -40,7 +40,7 @@ public final class HttpHeaderUtilityTest {
     @Test
     public void whenGeneratingBearerTokenFromToken_thenReturnBearerToken() {
         String bearerToken = HttpHeaderUtility.toBearerToken("sometoken");
-        Assert.assertEquals("Bearer sometoken", bearerToken);
+        Assertions.assertEquals("Bearer sometoken", bearerToken);
     }
 
     /**
@@ -48,9 +48,9 @@ public final class HttpHeaderUtilityTest {
      */
     @Test
     public void whenGeneratingBearerTokenFromNothing_thenReturnNull() {
-        Assert.assertNull(HttpHeaderUtility.toBearerToken(null));
-        Assert.assertNull(HttpHeaderUtility.toBearerToken(""));
-        Assert.assertNull(HttpHeaderUtility.toBearerToken(" "));
+        Assertions.assertNull(HttpHeaderUtility.toBearerToken(null));
+        Assertions.assertNull(HttpHeaderUtility.toBearerToken(""));
+        Assertions.assertNull(HttpHeaderUtility.toBearerToken(" "));
     }
 
     /**
@@ -59,7 +59,7 @@ public final class HttpHeaderUtilityTest {
     @Test
     public void whenGeneratingTokenFromBearerToken_thenReturnToken() {
         String token = HttpHeaderUtility.fromBearerToken("Bearer sometoken");
-        Assert.assertEquals("sometoken", token);
+        Assertions.assertEquals("sometoken", token);
     }
 
     /**
@@ -67,9 +67,9 @@ public final class HttpHeaderUtilityTest {
      */
     @Test
     public void whenGeneratingTokenFromUnmatchBearerToken_thenReturnNull() {
-        Assert.assertNull(HttpHeaderUtility.fromBearerToken("token"));
-        Assert.assertNull(HttpHeaderUtility.fromBearerToken("bearer token"));
-        Assert.assertNull(HttpHeaderUtility.fromBearerToken("BEARER token"));
+        Assertions.assertNull(HttpHeaderUtility.fromBearerToken("token"));
+        Assertions.assertNull(HttpHeaderUtility.fromBearerToken("bearer token"));
+        Assertions.assertNull(HttpHeaderUtility.fromBearerToken("BEARER token"));
     }
 
     /**
@@ -77,9 +77,9 @@ public final class HttpHeaderUtilityTest {
      */
     @Test
     public void whenGeneratingTokenFromBlankBearer_thenReturnNull() {
-        Assert.assertNull(HttpHeaderUtility.fromBearerToken(null));
-        Assert.assertNull(HttpHeaderUtility.fromBearerToken(""));
-        Assert.assertNull(HttpHeaderUtility.fromBearerToken(" "));
+        Assertions.assertNull(HttpHeaderUtility.fromBearerToken(null));
+        Assertions.assertNull(HttpHeaderUtility.fromBearerToken(""));
+        Assertions.assertNull(HttpHeaderUtility.fromBearerToken(" "));
     }
 
     /**
@@ -88,7 +88,7 @@ public final class HttpHeaderUtilityTest {
     @Test
     public void whenGeneratingBasicTokenFromUsernamePassword_thenReturnBasicToken() {
         String basicToken = HttpHeaderUtility.toBasicToken("admin", "my:password");
-        Assert.assertEquals("Basic YWRtaW46bXk6cGFzc3dvcmQ", basicToken);
+        Assertions.assertEquals("Basic YWRtaW46bXk6cGFzc3dvcmQ", basicToken);
     }
 
     /**
@@ -96,12 +96,12 @@ public final class HttpHeaderUtilityTest {
      */
     @Test
     public void whenGeneratingBasicTokenFromNothing_thenReturnNull() {
-        Assert.assertNull(HttpHeaderUtility.toBasicToken(null, "my:password"));
-        Assert.assertNull(HttpHeaderUtility.toBasicToken("", "my:password"));
-        Assert.assertNull(HttpHeaderUtility.toBasicToken(" ", "my:password"));
-        Assert.assertNull(HttpHeaderUtility.toBasicToken("admin", null));
-        Assert.assertNull(HttpHeaderUtility.toBasicToken("admin", ""));
-        Assert.assertNull(HttpHeaderUtility.toBasicToken("admin", " "));
+        Assertions.assertNull(HttpHeaderUtility.toBasicToken(null, "my:password"));
+        Assertions.assertNull(HttpHeaderUtility.toBasicToken("", "my:password"));
+        Assertions.assertNull(HttpHeaderUtility.toBasicToken(" ", "my:password"));
+        Assertions.assertNull(HttpHeaderUtility.toBasicToken("admin", null));
+        Assertions.assertNull(HttpHeaderUtility.toBasicToken("admin", ""));
+        Assertions.assertNull(HttpHeaderUtility.toBasicToken("admin", " "));
     }
 
     /**
@@ -110,8 +110,8 @@ public final class HttpHeaderUtilityTest {
     @Test
     public void whenGeneratingTokenFromBasicToken_thenReturnToken() {
         Pair<String, String> token = HttpHeaderUtility.fromBasicToken("Basic YWRtaW46bXk6cGFzc3dvcmQ");
-        Assert.assertEquals("admin", token.getLeft());
-        Assert.assertEquals("my:password", token.getRight());
+        Assertions.assertEquals("admin", token.getLeft());
+        Assertions.assertEquals("my:password", token.getRight());
     }
 
     /**
@@ -119,10 +119,10 @@ public final class HttpHeaderUtilityTest {
      */
     @Test
     public void whenGeneratingTokenFromUnmatchBasicToken_thenReturnNull() {
-        Assert.assertNull(HttpHeaderUtility.fromBasicToken("token"));
-        Assert.assertNull(HttpHeaderUtility.fromBasicToken("basic token"));
-        Assert.assertNull(HttpHeaderUtility.fromBasicToken("BASIC token"));
-        Assert.assertNull(HttpHeaderUtility.fromBasicToken("Basic YWRtaW4="));
+        Assertions.assertNull(HttpHeaderUtility.fromBasicToken("token"));
+        Assertions.assertNull(HttpHeaderUtility.fromBasicToken("basic token"));
+        Assertions.assertNull(HttpHeaderUtility.fromBasicToken("BASIC token"));
+        Assertions.assertNull(HttpHeaderUtility.fromBasicToken("Basic YWRtaW4="));
     }
 
     /**
@@ -130,8 +130,8 @@ public final class HttpHeaderUtilityTest {
      */
     @Test
     public void whenGeneratingTokenFromBlankBasic_thenReturnNull() {
-        Assert.assertNull(HttpHeaderUtility.fromBasicToken(null));
-        Assert.assertNull(HttpHeaderUtility.fromBasicToken(""));
-        Assert.assertNull(HttpHeaderUtility.fromBasicToken(" "));
+        Assertions.assertNull(HttpHeaderUtility.fromBasicToken(null));
+        Assertions.assertNull(HttpHeaderUtility.fromBasicToken(""));
+        Assertions.assertNull(HttpHeaderUtility.fromBasicToken(" "));
     }
 }

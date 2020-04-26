@@ -36,8 +36,9 @@ import io.julb.library.utility.josejwt.jwk.impl.ManualSymmetricJWKProvider;
 import java.util.Calendar;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.javacrumbs.jsonunit.JsonAssert;
 
@@ -75,7 +76,7 @@ public class TokenReceiverTest {
     /**
      * Sets-up the test.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception {
         Calendar issueTime = Calendar.getInstance();
@@ -139,11 +140,9 @@ public class TokenReceiverTest {
 
         //@formatter:off
         String receivedToken = new TokenReceiver()
-            .setExpectedAudience(this.jwtClaimsSet.getAudience().get(0))
-            .setExpectedIssuer(this.jwtClaimsSet.getIssuer())
             .setSignatureJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricRSAVerifyJWKProvider).build())
             .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
-            .receive(emittedToken);
+            .receive(emittedToken, this.jwtClaimsSet.getIssuer(), this.jwtClaimsSet.getAudience().get(0));
         //@formatter:on
 
         JsonAssert.assertJsonEquals(this.jwtClaimsSet.toString(), receivedToken);
@@ -152,88 +151,90 @@ public class TokenReceiverTest {
     /**
      * Test method.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void whenReceivingTokenWithoutExpectedIssuer_thenThrowIllegalArgumentException()
         throws Exception {
-        //@formatter:off
-        String emittedToken = new TokenEmitter()
-            .setSignatureJWKProvider(asymmetricRSASignatureJWKProvider)
-            .setEncryptionJWKProvider(symmetricJWKProvider)
-            .emit(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            //@formatter:off
+            String emittedToken = new TokenEmitter()
+                .setSignatureJWKProvider(asymmetricRSASignatureJWKProvider)
+                .setEncryptionJWKProvider(symmetricJWKProvider)
+                .emit(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        new TokenReceiver()
-            .setExpectedAudience(this.jwtClaimsSet.getAudience().get(0))
-            .setSignatureJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricRSAVerifyJWKProvider).build())
-            .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
-            .receive(emittedToken);
-        //@formatter:on
+            //@formatter:off
+            new TokenReceiver()
+                .setSignatureJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricRSAVerifyJWKProvider).build())
+                .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
+                .receive(emittedToken, null, this.jwtClaimsSet.getAudience().get(0));
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void whenReceivingTokenWithoutExpectedAudience_thenThrowIllegalArgumentException()
         throws Exception {
-        //@formatter:off
-        String emittedToken = new TokenEmitter()
-            .setSignatureJWKProvider(asymmetricRSASignatureJWKProvider)
-            .setEncryptionJWKProvider(symmetricJWKProvider)
-            .emit(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            //@formatter:off
+            String emittedToken = new TokenEmitter()
+                .setSignatureJWKProvider(asymmetricRSASignatureJWKProvider)
+                .setEncryptionJWKProvider(symmetricJWKProvider)
+                .emit(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        new TokenReceiver()
-            .setExpectedIssuer(this.jwtClaimsSet.getIssuer())
-            .setSignatureJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricRSAVerifyJWKProvider).build())
-            .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
-            .receive(emittedToken);
-        //@formatter:on
+            //@formatter:off
+            new TokenReceiver()
+                .setSignatureJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricRSAVerifyJWKProvider).build())
+                .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
+                .receive(emittedToken, this.jwtClaimsSet.getIssuer(), null);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void whenReceivingTokenWithoutSignature_thenThrowIllegalArgumentException()
         throws Exception {
-        //@formatter:off
-        String emittedToken = new TokenEmitter()
-            .setSignatureJWKProvider(asymmetricRSASignatureJWKProvider)
-            .setEncryptionJWKProvider(symmetricJWKProvider)
-            .emit(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            //@formatter:off
+            String emittedToken = new TokenEmitter()
+                .setSignatureJWKProvider(asymmetricRSASignatureJWKProvider)
+                .setEncryptionJWKProvider(symmetricJWKProvider)
+                .emit(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        new TokenReceiver()
-            .setExpectedAudience(this.jwtClaimsSet.getAudience().get(0))
-            .setExpectedIssuer(this.jwtClaimsSet.getIssuer())
-            .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
-            .receive(emittedToken);
-        //@formatter:on
+            //@formatter:off
+            new TokenReceiver()
+                .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
+                .receive(emittedToken, this.jwtClaimsSet.getIssuer(), this.jwtClaimsSet.getAudience().get(0));
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void whenReceivingTokenWithoutEncryption_thenThrowIllegalArgumentException()
         throws Exception {
-        //@formatter:off
-        String emittedToken = new TokenEmitter()
-            .setSignatureJWKProvider(asymmetricRSASignatureJWKProvider)
-            .setEncryptionJWKProvider(symmetricJWKProvider)
-            .emit(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            //@formatter:off
+            String emittedToken = new TokenEmitter()
+                .setSignatureJWKProvider(asymmetricRSASignatureJWKProvider)
+                .setEncryptionJWKProvider(symmetricJWKProvider)
+                .emit(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        new TokenReceiver()
-            .setExpectedAudience(this.jwtClaimsSet.getAudience().get(0))
-            .setExpectedIssuer(this.jwtClaimsSet.getIssuer())
-            .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
-            .receive(emittedToken);
-        //@formatter:on
+            //@formatter:off
+            new TokenReceiver()
+                .setEncryptionJWKSetProvider(new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build())
+                .receive(emittedToken, this.jwtClaimsSet.getIssuer(), this.jwtClaimsSet.getAudience().get(0));
+            //@formatter:on
+        });
     }
 }
