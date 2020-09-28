@@ -18,12 +18,19 @@ dependencies {
     implementation project(':libraries:library-utility-identifier')
     implementation project(':libraries:library-utility-jose-jwt')
     implementation project(':libraries:library-utility-http')
+    implementation project(':libraries:library-utility-validator')
     implementation project(':spring-boot-starters:spring-boot-starter-core')
     implementation project(':spring-boot-starters:spring-boot-starter-resource-types')
     
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.apache.commons:commons-lang3'
+    implementation 'commons-codec:commons-codec'
+    implementation 'org.json:json'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 publishing {

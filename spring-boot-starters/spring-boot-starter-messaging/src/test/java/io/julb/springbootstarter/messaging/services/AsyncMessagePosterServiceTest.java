@@ -24,8 +24,8 @@
 
 package io.julb.springbootstarter.messaging.services;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import io.julb.library.utility.date.DateUtility;
 import io.julb.library.utility.identifier.IdentifierUtility;

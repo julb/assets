@@ -13,6 +13,10 @@ dependencies {
 	implementation 'javax.persistence:javax.persistence-api'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

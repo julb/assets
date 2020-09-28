@@ -33,7 +33,7 @@ import io.julb.library.mapping.annotations.ObjectMappingFactory;
 import io.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import io.julb.library.persistence.mongodb.entities.date.DateTimeIntervalEntity;
 import io.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
-import io.julb.library.persistence.mongodb.entities.user.UserEntity;
+import io.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import io.julb.library.utility.interfaces.IIdentifiable;
 import io.julb.library.utility.validator.constraints.DateTimeInFuture;
 import io.julb.library.utility.validator.constraints.Identifier;
@@ -146,7 +146,7 @@ public class AnnouncementEntity extends AbstractAuditedEntity implements IIdenti
      //@formatter:on
     @NotNull
     @Valid
-    private UserEntity user;
+    private UserRefEntity user;
 
     //@formatter:off
      /**

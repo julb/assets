@@ -24,9 +24,8 @@
 package io.julb.springbootstarter.security.services.dto;
 
 import io.julb.library.dto.security.AuthenticatedUserDTO;
-import io.julb.library.dto.security.AuthenticatedUserIdentityDTO;
-import io.julb.library.dto.security.AuthenticatedUserRole;
-import io.julb.library.dto.security.AuthenticatedUserTokenType;
+import io.julb.library.dto.security.TechnicalRole;
+import io.julb.library.dto.security.UserRole;
 import io.julb.springbootstarter.security.utilities.RoleUtility;
 
 import java.util.ArrayList;
@@ -63,17 +62,21 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
+        if (authenticatedUser.getMfaVerified()) {
+            // Add roles.
+            for (UserRole role : this.authenticatedUser.getRoles()) {
+                authorities.add(new SimpleGrantedAuthority(RoleUtility.toAuthorityName(role.toString())));
+            }
 
-        // Add the roles.
-        for (AuthenticatedUserRole role : this.authenticatedUser.getRoles()) {
-            authorities.add(new SimpleGrantedAuthority(RoleUtility.toAuthorityName(role.toString())));
+            // Add local permissions.
+            for (String permission : this.authenticatedUser.getPermissions()) {
+                authorities.add(new SimpleGrantedAuthority(permission));
+            }
+        } else {
+            // Add MFA required role
+            authorities.add(new SimpleGrantedAuthority(RoleUtility.toAuthorityName(TechnicalRole.MFA_REQUIRED.toString())));
         }
-        authorities.add(new SimpleGrantedAuthority(RoleUtility.toAuthorityName(this.authenticatedUser.getType().toString())));
 
-        // Add the permissions.
-        for (String permission : this.authenticatedUser.getPermissions()) {
-            authorities.add(new SimpleGrantedAuthority(permission));
-        }
         return authorities;
     }
 
@@ -90,7 +93,7 @@ public class CustomUserDetails implements UserDetails {
      */
     @Override
     public String getUsername() {
-        return this.authenticatedUser.getIdentity().getUserName();
+        return this.authenticatedUser.getMail();
     }
 
     /**
@@ -122,15 +125,15 @@ public class CustomUserDetails implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        return this.authenticatedUser.getEnabled();
+        return true;
     }
 
     /**
      * Gets the identity of the authenticated user.
      * @return the identity.
      */
-    public AuthenticatedUserIdentityDTO getIdentity() {
-        return this.authenticatedUser.getIdentity();
+    public AuthenticatedUserDTO getDetails() {
+        return this.authenticatedUser;
     }
 
     /**
@@ -138,30 +141,6 @@ public class CustomUserDetails implements UserDetails {
      * @return <code>true</code> if the current user is administrator, <code>false</code> otherwise.
      */
     public boolean isAdministrator() {
-        return this.authenticatedUser.getRoles().contains(AuthenticatedUserRole.ADMINISTRATOR);
-    }
-
-    /**
-     * Returns <code>true</code> if the current user is developer, <code>false</code> otherwise.
-     * @return <code>true</code> if the current user is developer, <code>false</code> otherwise.
-     */
-    public boolean isDeveloper() {
-        return this.authenticatedUser.getRoles().contains(AuthenticatedUserRole.DEVELOPER);
-    }
-
-    /**
-     * Returns <code>true</code> if the current user is a U2M, <code>false</code> otherwise.
-     * @return <code>true</code> if the current user is a U2M, <code>false</code> otherwise.
-     */
-    public boolean isUser2Machine() {
-        return AuthenticatedUserTokenType.U2M.equals(this.authenticatedUser.getType());
-    }
-
-    /**
-     * Returns <code>true</code> if the current user is a U2M, <code>false</code> otherwise.
-     * @return <code>true</code> if the current user is a U2M, <code>false</code> otherwise.
-     */
-    public boolean isMachine2Machine() {
-        return AuthenticatedUserTokenType.M2M.equals(this.authenticatedUser.getType());
+        return this.authenticatedUser.getRoles().contains(UserRole.ADMINISTRATOR);
     }
 }

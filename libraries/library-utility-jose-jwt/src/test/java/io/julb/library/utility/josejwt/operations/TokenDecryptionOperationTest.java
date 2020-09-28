@@ -43,8 +43,9 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.javacrumbs.jsonunit.JsonAssert;
 
@@ -82,7 +83,7 @@ public class TokenDecryptionOperationTest {
     /**
      * Sets-up the test.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception {
         Calendar issueTime = Calendar.getInstance();
@@ -210,69 +211,75 @@ public class TokenDecryptionOperationTest {
     /**
      * Test method.
      */
-    @Test(expected = UnresolvableKeyJOSEJWTException.class)
+    @Test
     public void whenDecryptingTokenNoValidKey_thenThrowUnresolvableKeyJOSEJWTException()
         throws Exception {
-        //@formatter:off
-        String encryptedToken = new TokenEncryptionOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(UnresolvableKeyJOSEJWTException.class, () -> {
+            //@formatter:off
+            String encryptedToken = new TokenEncryptionOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricECJWKProvider).build();
-        new TokenDecryptionOperation(jwkSetProvider).execute(encryptedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricECJWKProvider).build();
+            new TokenDecryptionOperation(jwkSetProvider).execute(encryptedToken);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = UnresolvableKeyJOSEJWTException.class)
+    @Test
     public void whenDecryptingTokenInvalidUse_thenUnresolvableKeyJOSEJWTException()
         throws Exception {
-        //@formatter:off
-        String encryptedToken = new TokenEncryptionOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(UnresolvableKeyJOSEJWTException.class, () -> {
+            //@formatter:off
+            String encryptedToken = new TokenEncryptionOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKProvider lookAlikeSymmetricJWKProvider = new ManualSymmetricJWKProvider.Builder()
-            .algorithm("dir")
-            .keyId(symmetricJWKProvider.toJWK().getKeyID())
-            .secretKey("aaaaaaaabbbbbbbbccccccccdddddddd")
-            .useForSignature()
-            .build();
-        //@formatter:on
+            //@formatter:off
+            IJWKProvider lookAlikeSymmetricJWKProvider = new ManualSymmetricJWKProvider.Builder()
+                .algorithm("dir")
+                .keyId(symmetricJWKProvider.toJWK().getKeyID())
+                .secretKey("aaaaaaaabbbbbbbbccccccccdddddddd")
+                .useForSignature()
+                .build();
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(lookAlikeSymmetricJWKProvider).build();
-        new TokenDecryptionOperation(jwkSetProvider).execute(encryptedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(lookAlikeSymmetricJWKProvider).build();
+            new TokenDecryptionOperation(jwkSetProvider).execute(encryptedToken);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = JOSEJWTException.class)
+    @Test
     public void whenDecryptingTokenValidKidInvalidKey_thenThrowJOSEJWTException()
         throws Exception {
-        //@formatter:off
-        String encryptedToken = new TokenEncryptionOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(JOSEJWTException.class, () -> {
+            //@formatter:off
+            String encryptedToken = new TokenEncryptionOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKProvider lookAlikeSymmetricJWKProvider = new ManualSymmetricJWKProvider.Builder()
-            .algorithm("dir")
-            .keyId(symmetricJWKProvider.toJWK().getKeyID())
-            .secretKey("eeeeeeeeffffffffgggggggghhhhhhhh")
-            .useForEncryption()
-            .build();
-        //@formatter:on
+            //@formatter:off
+            IJWKProvider lookAlikeSymmetricJWKProvider = new ManualSymmetricJWKProvider.Builder()
+                .algorithm("dir")
+                .keyId(symmetricJWKProvider.toJWK().getKeyID())
+                .secretKey("eeeeeeeeffffffffgggggggghhhhhhhh")
+                .useForEncryption()
+                .build();
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(lookAlikeSymmetricJWKProvider).build();
-        new TokenDecryptionOperation(jwkSetProvider).execute(encryptedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(lookAlikeSymmetricJWKProvider).build();
+            new TokenDecryptionOperation(jwkSetProvider).execute(encryptedToken);
+            //@formatter:on
+        });
     }
 }

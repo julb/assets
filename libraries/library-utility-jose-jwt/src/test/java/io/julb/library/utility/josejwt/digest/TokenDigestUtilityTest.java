@@ -29,9 +29,9 @@ import io.julb.library.utility.josejwt.exceptions.JOSEJWTException;
 
 import java.util.Calendar;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * A test for token digest.
@@ -52,7 +52,7 @@ public class TokenDigestUtilityTest {
     /**
      * Sets-up the test.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws JOSEJWTException {
         Calendar issueTime = Calendar.getInstance();
@@ -82,6 +82,6 @@ public class TokenDigestUtilityTest {
         String hashedToken = TokenDigestUtility.hash(this.jwtClaimsSet.toString());
         //@formatter:on
 
-        Assert.assertEquals(64, hashedToken.length());
+        Assertions.assertEquals(64, hashedToken.length());
     }
 }

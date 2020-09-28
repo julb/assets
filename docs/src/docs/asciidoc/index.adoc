@@ -9,4 +9,4 @@ An introduction to http://asciidoc.org[AsciiDoc].
 * item 2
 
 [source,ruby]
-puts "Hello, World!"
+puts "Hello, World! haha"

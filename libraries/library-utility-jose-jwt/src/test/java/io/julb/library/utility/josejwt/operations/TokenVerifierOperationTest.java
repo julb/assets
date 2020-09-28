@@ -49,8 +49,9 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.javacrumbs.jsonunit.JsonAssert;
 
@@ -88,7 +89,7 @@ public class TokenVerifierOperationTest {
     /**
      * Sets-up the test.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception {
         Calendar issueTime = Calendar.getInstance();
@@ -220,242 +221,260 @@ public class TokenVerifierOperationTest {
     /**
      * Test method.
      */
-    @Test(expected = UnresolvableKeyJOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenNoValidKey_thenThrowUnresolvableKeyJOSEJWTException()
         throws Exception {
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(UnresolvableKeyJOSEJWTException.class, () -> {
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricECJWKProvider).build();
-        new TokenVerifierOperation(jwkSetProvider).execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(asymmetricECJWKProvider).build();
+            new TokenVerifierOperation(jwkSetProvider).execute(signedToken);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = UnresolvableKeyJOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenInvalidUse_thenUnresolvableKeyJOSEJWTException()
         throws Exception {
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(UnresolvableKeyJOSEJWTException.class, () -> {
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKProvider lookAlikeSymmetricJWKProvider = new ManualSymmetricJWKProvider.Builder()
-            .algorithm(JWSAlgorithm.HS256.getName())
-            .keyId(symmetricJWKProvider.toJWK().getKeyID())
-            .secretKey("aaaaaaaabbbbbbbbccccccccdddddddd")
-            .useForEncryption()
-            .build();
-        //@formatter:on
+            //@formatter:off
+            IJWKProvider lookAlikeSymmetricJWKProvider = new ManualSymmetricJWKProvider.Builder()
+                .algorithm(JWSAlgorithm.HS256.getName())
+                .keyId(symmetricJWKProvider.toJWK().getKeyID())
+                .secretKey("aaaaaaaabbbbbbbbccccccccdddddddd")
+                .useForEncryption()
+                .build();
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(lookAlikeSymmetricJWKProvider).build();
-        new TokenVerifierOperation(jwkSetProvider).execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(lookAlikeSymmetricJWKProvider).build();
+            new TokenVerifierOperation(jwkSetProvider).execute(signedToken);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = JOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenValidKidInvalidKey_thenThrowJOSEJWTException()
         throws Exception {
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(JOSEJWTException.class, () -> {
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKProvider lookAlikeSymmetricJWKProvider = new ManualSymmetricJWKProvider.Builder()
-            .algorithm(JWSAlgorithm.HS256.getName())
-            .keyId(symmetricJWKProvider.toJWK().getKeyID())
-            .secretKey("eeeeeeeeffffffffgggggggghhhhhhhh")
-            .useForEncryption()
-            .build();
-        //@formatter:on
+            //@formatter:off
+            IJWKProvider lookAlikeSymmetricJWKProvider = new ManualSymmetricJWKProvider.Builder()
+                .algorithm(JWSAlgorithm.HS256.getName())
+                .keyId(symmetricJWKProvider.toJWK().getKeyID())
+                .secretKey("eeeeeeeeffffffffgggggggghhhhhhhh")
+                .useForEncryption()
+                .build();
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(lookAlikeSymmetricJWKProvider).build();
-        new TokenVerifierOperation(jwkSetProvider).execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(lookAlikeSymmetricJWKProvider).build();
+            new TokenVerifierOperation(jwkSetProvider).execute(signedToken);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = InvalidIssuerInTokenJOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenInvalidIssuer_thenThrowInvalidIssuerInTokenJOSEJWTException()
         throws Exception {
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(InvalidIssuerInTokenJOSEJWTException.class, () -> {
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
-        String rawToken = new TokenVerifierOperation(jwkSetProvider, this.jwtClaimsSet.getAudience().get(0), "badIssuer")
-            .execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
+            String rawToken = new TokenVerifierOperation(jwkSetProvider, this.jwtClaimsSet.getAudience().get(0), "badIssuer")
+                .execute(signedToken);
+            //@formatter:on
 
-        JsonAssert.assertJsonEquals(this.jwtClaimsSet.toString(), new JSONObject(rawToken));
+            JsonAssert.assertJsonEquals(this.jwtClaimsSet.toString(), new JSONObject(rawToken));
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = InvalidAudienceInTokenJOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenInvalidAudience_thenThrowInvalidAudienceInTokenJOSEJWTException()
         throws Exception {
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(InvalidAudienceInTokenJOSEJWTException.class, () -> {
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
-        String rawToken = new TokenVerifierOperation(jwkSetProvider, "badAudience", this.jwtClaimsSet.getIssuer())
-            .execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
+            String rawToken = new TokenVerifierOperation(jwkSetProvider, "badAudience", this.jwtClaimsSet.getIssuer())
+                .execute(signedToken);
+            //@formatter:on
 
-        JsonAssert.assertJsonEquals(this.jwtClaimsSet.toString(), new JSONObject(rawToken));
+            JsonAssert.assertJsonEquals(this.jwtClaimsSet.toString(), new JSONObject(rawToken));
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = ExpiredTokenJOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenExpired_thenThrowExpiredTokenJOSEJWTException()
         throws Exception {
-        Calendar issueTime = Calendar.getInstance();
-        Calendar expirationTime = Calendar.getInstance();
-        expirationTime.add(Calendar.HOUR, -20);
+        Assertions.assertThrows(ExpiredTokenJOSEJWTException.class, () -> {
+            Calendar issueTime = Calendar.getInstance();
+            Calendar expirationTime = Calendar.getInstance();
+            expirationTime.add(Calendar.HOUR, -20);
 
-        //@formatter:off
-        this.jwtClaimsSet = new JWTClaimsSet.Builder()
-            .issuer("API_Gateway")
-            .audience("API_backend")
-            .jwtID("jwtId")
-            .subject("contact@julb.io")
-            .claim("typ", "U2M")
-            .issueTime(issueTime.getTime())
-            .expirationTime(expirationTime.getTime())
-            .build();
-        //@formatter:on
+            //@formatter:off
+            this.jwtClaimsSet = new JWTClaimsSet.Builder()
+                .issuer("API_Gateway")
+                .audience("API_backend")
+                .jwtID("jwtId")
+                .subject("contact@julb.io")
+                .claim("typ", "U2M")
+                .issueTime(issueTime.getTime())
+                .expirationTime(expirationTime.getTime())
+                .build();
+            //@formatter:on
 
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
-        new TokenVerifierOperation(jwkSetProvider, "badAudience", this.jwtClaimsSet.getIssuer())
-            .execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
+            new TokenVerifierOperation(jwkSetProvider, "badAudience", this.jwtClaimsSet.getIssuer())
+                .execute(signedToken);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingIssuerInTokenJOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenMissingIssuer_thenThrowMissingIssuerInTokenJOSEJWTException()
         throws Exception {
-        Calendar issueTime = Calendar.getInstance();
-        Calendar expirationTime = Calendar.getInstance();
-        expirationTime.add(Calendar.HOUR, 1);
+        Assertions.assertThrows(MissingIssuerInTokenJOSEJWTException.class, () -> {
+            Calendar issueTime = Calendar.getInstance();
+            Calendar expirationTime = Calendar.getInstance();
+            expirationTime.add(Calendar.HOUR, 1);
 
-        //@formatter:off
-        this.jwtClaimsSet = new JWTClaimsSet.Builder()
-            .audience("API_backend")
-            .jwtID("jwtId")
-            .subject("contact@julb.io")
-            .claim("typ", "U2M")
-            .issueTime(issueTime.getTime())
-            .expirationTime(expirationTime.getTime())
-            .build();
-        //@formatter:on
+            //@formatter:off
+            this.jwtClaimsSet = new JWTClaimsSet.Builder()
+                .audience("API_backend")
+                .jwtID("jwtId")
+                .subject("contact@julb.io")
+                .claim("typ", "U2M")
+                .issueTime(issueTime.getTime())
+                .expirationTime(expirationTime.getTime())
+                .build();
+            //@formatter:on
 
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
-        new TokenVerifierOperation(jwkSetProvider,this.jwtClaimsSet.getAudience().get(0), "API_Gateway")
-            .execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
+            new TokenVerifierOperation(jwkSetProvider,this.jwtClaimsSet.getAudience().get(0), "API_Gateway")
+                .execute(signedToken);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingAudienceInTokenJOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenMissingAudience_thenThrowMissingAudienceInTokenJOSEJWTException()
         throws Exception {
-        Calendar issueTime = Calendar.getInstance();
-        Calendar expirationTime = Calendar.getInstance();
-        expirationTime.add(Calendar.HOUR, 1);
+        Assertions.assertThrows(MissingAudienceInTokenJOSEJWTException.class, () -> {
+            Calendar issueTime = Calendar.getInstance();
+            Calendar expirationTime = Calendar.getInstance();
+            expirationTime.add(Calendar.HOUR, 1);
 
-        //@formatter:off
-        this.jwtClaimsSet = new JWTClaimsSet.Builder()
-            .issuer("API_Gateway")
-            .jwtID("jwtId")
-            .subject("contact@julb.io")
-            .claim("typ", "U2M")
-            .issueTime(issueTime.getTime())
-            .expirationTime(expirationTime.getTime())
-            .build();
-        //@formatter:on
+            //@formatter:off
+            this.jwtClaimsSet = new JWTClaimsSet.Builder()
+                .issuer("API_Gateway")
+                .jwtID("jwtId")
+                .subject("contact@julb.io")
+                .claim("typ", "U2M")
+                .issueTime(issueTime.getTime())
+                .expirationTime(expirationTime.getTime())
+                .build();
+            //@formatter:on
 
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
-        new TokenVerifierOperation(jwkSetProvider, "audience", this.jwtClaimsSet.getIssuer())
-            .execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
+            new TokenVerifierOperation(jwkSetProvider, "audience", this.jwtClaimsSet.getIssuer())
+                .execute(signedToken);
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingExpirationInTokenJOSEJWTException.class)
+    @Test
     public void whenVerifyingTokenMissingExpiration_thenThrowMissingExpirationInTokenJOSEJWTException()
         throws Exception {
-        Calendar issueTime = Calendar.getInstance();
-        Calendar expirationTime = Calendar.getInstance();
-        expirationTime.add(Calendar.HOUR, 1);
+        Assertions.assertThrows(MissingExpirationInTokenJOSEJWTException.class, () -> {
+            Calendar issueTime = Calendar.getInstance();
+            Calendar expirationTime = Calendar.getInstance();
+            expirationTime.add(Calendar.HOUR, 1);
 
-        //@formatter:off
-        this.jwtClaimsSet = new JWTClaimsSet.Builder()
-            .issuer("API_Gateway")
-            .audience("API_backend")
-            .jwtID("jwtId")
-            .subject("contact@julb.io")
-            .claim("typ", "U2M")
-            .issueTime(issueTime.getTime())
-            .build();
-        //@formatter:on
+            //@formatter:off
+            this.jwtClaimsSet = new JWTClaimsSet.Builder()
+                .issuer("API_Gateway")
+                .audience("API_backend")
+                .jwtID("jwtId")
+                .subject("contact@julb.io")
+                .claim("typ", "U2M")
+                .issueTime(issueTime.getTime())
+                .build();
+            //@formatter:on
 
-        //@formatter:off
-        String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
-            .execute(this.jwtClaimsSet.toString());
-        //@formatter:on
+            //@formatter:off
+            String signedToken = new TokenSignatureOperation(symmetricJWKProvider)
+                .execute(this.jwtClaimsSet.toString());
+            //@formatter:on
 
-        //@formatter:off
-        IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
-        new TokenVerifierOperation(jwkSetProvider,this.jwtClaimsSet.getAudience().get(0), this.jwtClaimsSet.getIssuer())
-            .execute(signedToken);
-        //@formatter:on
+            //@formatter:off
+            IJWKSetProvider jwkSetProvider = new ManualJWKSetProvider.Builder().addJWKProvider(symmetricJWKProvider).build();
+            new TokenVerifierOperation(jwkSetProvider,this.jwtClaimsSet.getAudience().get(0), this.jwtClaimsSet.getIssuer())
+                .execute(signedToken);
+            //@formatter:on
+        });
     }
 }

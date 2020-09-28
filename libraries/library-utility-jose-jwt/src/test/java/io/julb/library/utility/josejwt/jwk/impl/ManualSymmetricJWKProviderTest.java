@@ -32,9 +32,9 @@ import lombok.Setter;
 
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The symmetric JWK.
@@ -63,7 +63,7 @@ public class ManualSymmetricJWKProviderTest {
     /**
      * Sets-up the test before run.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         this.algorithm = "A256GCM";
         this.keyId = UUID.randomUUID().toString();
@@ -86,10 +86,10 @@ public class ManualSymmetricJWKProviderTest {
         //@formatter:on
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        Assert.assertEquals(algorithm, jsonObject.getString("alg"));
-        Assert.assertEquals("enc", jsonObject.getString("use"));
-        Assert.assertEquals(keyId, jsonObject.getString("kid"));
-        Assert.assertEquals(Base64.encodeBase64URLSafeString(secretKey.getBytes()), jsonObject.getString("k"));
+        Assertions.assertEquals(algorithm, jsonObject.getString("alg"));
+        Assertions.assertEquals("enc", jsonObject.getString("use"));
+        Assertions.assertEquals(keyId, jsonObject.getString("kid"));
+        Assertions.assertEquals(Base64.encodeBase64URLSafeString(secretKey.getBytes()), jsonObject.getString("k"));
     }
 
     /**
@@ -108,69 +108,77 @@ public class ManualSymmetricJWKProviderTest {
         //@formatter:on
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        Assert.assertEquals(algorithm, jsonObject.getString("alg"));
-        Assert.assertEquals("sig", jsonObject.getString("use"));
-        Assert.assertEquals(keyId, jsonObject.getString("kid"));
-        Assert.assertEquals(Base64.encodeBase64URLSafeString(secretKey.getBytes()), jsonObject.getString("k"));
+        Assertions.assertEquals(algorithm, jsonObject.getString("alg"));
+        Assertions.assertEquals("sig", jsonObject.getString("use"));
+        Assertions.assertEquals(keyId, jsonObject.getString("kid"));
+        Assertions.assertEquals(Base64.encodeBase64URLSafeString(secretKey.getBytes()), jsonObject.getString("k"));
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingFieldInKeyFormatException.class)
+    @Test
     public void whenMissingAlgorithm_thenThrowException() {
-        //@formatter:off
-        new ManualSymmetricJWKProvider.Builder()
-            .keyId(keyId)
-            .secretKey(secretKey)
-            .useForSignature()
-            .build()
-            .toJSONString();
-        //@formatter:on
+        Assertions.assertThrows(MissingFieldInKeyFormatException.class, () -> {
+            //@formatter:off
+            new ManualSymmetricJWKProvider.Builder()
+                .keyId(keyId)
+                .secretKey(secretKey)
+                .useForSignature()
+                .build()
+                .toJSONString();
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingFieldInKeyFormatException.class)
+    @Test
     public void whenMissingKeyId_thenThrowException() {
-        //@formatter:off
-        new ManualSymmetricJWKProvider.Builder()
-            .algorithm(algorithm)
-            .secretKey(secretKey)
-            .useForSignature()
-            .build()
-            .toJSONString();
-        //@formatter:on
+        Assertions.assertThrows(MissingFieldInKeyFormatException.class, () -> {
+            //@formatter:off
+            new ManualSymmetricJWKProvider.Builder()
+                .algorithm(algorithm)
+                .secretKey(secretKey)
+                .useForSignature()
+                .build()
+                .toJSONString();
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingFieldInKeyFormatException.class)
+    @Test
     public void whenMissingSecretKey_thenThrowException() {
-        //@formatter:off
-        new ManualSymmetricJWKProvider.Builder()
-            .algorithm(algorithm)
-            .keyId(keyId)
-            .useForSignature()
-            .build()
-            .toJSONString();
-        //@formatter:on
+        Assertions.assertThrows(MissingFieldInKeyFormatException.class, () -> {
+            //@formatter:off
+            new ManualSymmetricJWKProvider.Builder()
+                .algorithm(algorithm)
+                .keyId(keyId)
+                .useForSignature()
+                .build()
+                .toJSONString();
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingFieldInKeyFormatException.class)
+    @Test
     public void whenMissingUse_thenThrowException() {
-        //@formatter:off
-        new ManualSymmetricJWKProvider.Builder()
-            .algorithm(algorithm)
-            .keyId(keyId)
-            .secretKey(secretKey)
-            .build()
-            .toJSONString();
-        //@formatter:on
+        Assertions.assertThrows(MissingFieldInKeyFormatException.class, () -> {
+            //@formatter:off
+            new ManualSymmetricJWKProvider.Builder()
+                .algorithm(algorithm)
+                .keyId(keyId)
+                .secretKey(secretKey)
+                .build()
+                .toJSONString();
+            //@formatter:on
+        });
     }
 }

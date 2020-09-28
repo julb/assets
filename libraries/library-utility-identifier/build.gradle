@@ -10,7 +10,11 @@ dependencies {
 	implementation project(':libraries:library-utility-constants')
 	implementation 'org.apache.commons:commons-text'
 	
-	testImplementation 'junit:junit'
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 publishing {

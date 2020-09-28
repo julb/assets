@@ -15,6 +15,10 @@ dependencies {
 	implementation 'ma.glasnost.orika:orika-core'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

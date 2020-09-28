@@ -75,7 +75,7 @@ public final class DateUtility {
      * @return the current date minus the given value in the given unit.
      */
     public static String dateTimeMinus(Integer value, TemporalUnit unit) {
-        return DateTimeFormatter.ofPattern(Temporals.ISO_8601_DATE_TIME).format(ZonedDateTime.now(ZoneOffset.UTC).minus(value, unit));
+        return dateTimeMinus(value.longValue(), unit);
     }
 
     /**
@@ -85,7 +85,45 @@ public final class DateUtility {
      * @return the current date plus the given value in the given unit.
      */
     public static String dateTimePlus(Integer value, TemporalUnit unit) {
+        return dateTimePlus(value.longValue(), unit);
+    }
+
+    /**
+     * Returns the current date minus the given value in the given unit.
+     * @param value the value to subtract.
+     * @param unit the unit.
+     * @return the current date minus the given value in the given unit.
+     */
+    public static String dateTimeMinus(Long value, TemporalUnit unit) {
+        return DateTimeFormatter.ofPattern(Temporals.ISO_8601_DATE_TIME).format(ZonedDateTime.now(ZoneOffset.UTC).minus(value, unit));
+    }
+
+    /**
+     * Returns the current date plus the given value in the given unit.
+     * @param value the value to add.
+     * @param unit the unit.
+     * @return the current date plus the given value in the given unit.
+     */
+    public static String dateTimePlus(Long value, TemporalUnit unit) {
         return DateTimeFormatter.ofPattern(Temporals.ISO_8601_DATE_TIME).format(ZonedDateTime.now(ZoneOffset.UTC).plus(value, unit));
+    }
+
+    /**
+     * Returns <code>true</code> if the given date is before now, <code>false</code> otherwise.
+     * @param dateTime the date time to compare.
+     * @return <code>true</code> if the given date is before now, <code>false</code> otherwise.
+     */
+    public static Boolean dateTimeBeforeNow(String dateTime) {
+        return dateTime.compareTo(dateTimeNow()) <= 0;
+    }
+
+    /**
+     * Returns <code>true</code> if the given date is after now, <code>false</code> otherwise.
+     * @param dateTime the date time to compare.
+     * @return <code>true</code> if the given date is after now, <code>false</code> otherwise.
+     */
+    public static Boolean dateTimeAfterNow(String dateTime) {
+        return dateTime.compareTo(dateTimeNow()) > 0;
     }
 
     /**

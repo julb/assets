@@ -98,7 +98,7 @@ public class MyItemController {
     @GetMapping
     @OpenApiPageable
     @OpenApiSearchable
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public Page<? extends AbstractItemDTO> findAll(Searchable searchable, Pageable pageable) {
         return myItemService.findAll(searchable, pageable);
     }
@@ -109,7 +109,7 @@ public class MyItemController {
      */
     @Operation(summary = "list my root items")
     @GetMapping("/root/children")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public List<? extends AbstractItemDTO> findAll() {
         return myItemService.findAllByParent(null);
     }
@@ -121,7 +121,7 @@ public class MyItemController {
      */
     @Operation(summary = "list the children of an item")
     @GetMapping("/{itemId}/children")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public List<? extends AbstractItemDTO> findChildren(@PathVariable("itemId") @Identifier String itemId) {
         return myItemService.findAllByParent(itemId);
     }
@@ -136,7 +136,7 @@ public class MyItemController {
     @GetMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_FOLDER_JSON_VALUE)
     @OpenApiPageable
     @OpenApiSearchable
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public Page<? extends AbstractItemDTO> findAllFolders(Searchable searchable, Pageable pageable) {
         return myItemService.findAllByType(ItemType.FOLDER, searchable, pageable);
     }
@@ -151,7 +151,7 @@ public class MyItemController {
     @GetMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_EXTERNAL_LINK_JSON_VALUE)
     @OpenApiPageable
     @OpenApiSearchable
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public Page<? extends AbstractItemDTO> findAllExternalLinks(Searchable searchable, Pageable pageable) {
         return myItemService.findAllByType(ItemType.EXTERNAL_LINK, searchable, pageable);
     }
@@ -166,7 +166,7 @@ public class MyItemController {
     @GetMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_OBJECT_LINK_JSON_VALUE)
     @OpenApiPageable
     @OpenApiSearchable
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public Page<? extends AbstractItemDTO> findAllObjectLinks(Searchable searchable, Pageable pageable) {
         return myItemService.findAllByType(ItemType.OBJECT_LINK, searchable, pageable);
     }
@@ -178,7 +178,7 @@ public class MyItemController {
      */
     @Operation(summary = "gets a item")
     @GetMapping(path = "/{id}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public AbstractItemDTO get(@PathVariable @Identifier String id) {
         return myItemService.findOne(id);
     }
@@ -193,7 +193,7 @@ public class MyItemController {
     @Operation(summary = "creates a folder")
     @PostMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_FOLDER_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public FolderDTO create(@RequestBody @NotNull @Valid FolderCreationDTO creationDTO) {
         return (FolderDTO) myItemService.create(creationDTO);
     }
@@ -206,7 +206,7 @@ public class MyItemController {
     @Operation(summary = "creates an external link")
     @PostMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_EXTERNAL_LINK_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public ExternalLinkDTO create(@RequestBody @NotNull @Valid ExternalLinkCreationDTO creationDTO) {
         return (ExternalLinkDTO) myItemService.create(creationDTO);
     }
@@ -219,7 +219,7 @@ public class MyItemController {
     @Operation(summary = "creates an object link")
     @PostMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_OBJECT_LINK_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public ObjectLinkDTO create(@RequestBody @NotNull @Valid ObjectLinkCreationDTO creationDTO) {
         return (ObjectLinkDTO) myItemService.create(creationDTO);
     }
@@ -232,7 +232,7 @@ public class MyItemController {
      */
     @Operation(summary = "updates a folder")
     @PutMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_FOLDER_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public FolderDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid FolderUpdateDTO updateDTO) {
         return (FolderDTO) myItemService.update(id, updateDTO);
     }
@@ -245,7 +245,7 @@ public class MyItemController {
      */
     @Operation(summary = "updates an external link")
     @PutMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_EXTERNAL_LINK_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public ExternalLinkDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ExternalLinkUpdateDTO updateDTO) {
         return (ExternalLinkDTO) myItemService.update(id, updateDTO);
     }
@@ -258,7 +258,7 @@ public class MyItemController {
      */
     @Operation(summary = "updates an object link")
     @PutMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_OBJECT_LINK_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public ObjectLinkDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ObjectLinkUpdateDTO updateDTO) {
         return (ObjectLinkDTO) myItemService.update(id, updateDTO);
     }
@@ -271,7 +271,7 @@ public class MyItemController {
      */
     @Operation(summary = "patches a folder")
     @PatchMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_FOLDER_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public FolderDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid FolderPatchDTO patchDTO) {
         return (FolderDTO) myItemService.patch(id, patchDTO);
     }
@@ -284,7 +284,7 @@ public class MyItemController {
      */
     @Operation(summary = "patches an external link")
     @PatchMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_EXTERNAL_LINK_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public ExternalLinkDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ExternalLinkPatchDTO patchDTO) {
         return (ExternalLinkDTO) myItemService.patch(id, patchDTO);
     }
@@ -297,7 +297,7 @@ public class MyItemController {
      */
     @Operation(summary = "patches an object link")
     @PatchMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_OBJECT_LINK_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public ObjectLinkDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ObjectLinkPatchDTO patchDTO) {
         return (ObjectLinkDTO) myItemService.patch(id, patchDTO);
     }
@@ -310,7 +310,7 @@ public class MyItemController {
      */
     @Operation(summary = "updates the position of the item")
     @PutMapping(path = "/{id}/position", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public AbstractItemDTO updatePosition(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid PositiveIntegerValueDTO updateDTO) {
         return myItemService.updatePosition(id, updateDTO);
     }
@@ -323,7 +323,7 @@ public class MyItemController {
      */
     @Operation(summary = "updates the paarent of the item")
     @PutMapping(path = "/{id}/parent", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public AbstractItemDTO updateParent(@PathVariable @Identifier String id, @RequestBody @Valid IdentifierDTO updateDTO) {
         return myItemService.updateParent(id, updateDTO);
     }
@@ -335,7 +335,7 @@ public class MyItemController {
     @Operation(summary = "deletes an item")
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public void delete(@PathVariable String id) {
         myItemService.delete(id);
     }

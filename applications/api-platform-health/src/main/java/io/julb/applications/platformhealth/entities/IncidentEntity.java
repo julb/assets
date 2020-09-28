@@ -34,7 +34,7 @@ import io.julb.library.mapping.annotations.ObjectMappingFactory;
 import io.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import io.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
 import io.julb.library.persistence.mongodb.entities.message.ShortMessageEntity;
-import io.julb.library.persistence.mongodb.entities.user.UserEntity;
+import io.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import io.julb.library.utility.interfaces.IIdentifiable;
 import io.julb.library.utility.validator.constraints.Identifier;
 import io.julb.library.utility.validator.constraints.Tag;
@@ -144,7 +144,7 @@ public class IncidentEntity extends AbstractAuditedEntity implements IIdentifiab
      //@formatter:on
     @NotNull
     @Valid
-    private UserEntity user;
+    private UserRefEntity user;
 
     //@formatter:off
      /**

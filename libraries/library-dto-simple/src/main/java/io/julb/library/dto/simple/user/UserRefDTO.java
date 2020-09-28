@@ -87,4 +87,17 @@ public class UserRefDTO {
      */
      //@formatter:on
     private String mail;
+
+    //@formatter:off
+     /**
+     * The displayName attribute.
+     * -- GETTER --
+     * Getter for {@link #displayName} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #displayName} property.
+     * @param displayName the value to set.
+     */
+     //@formatter:on
+    private String displayName;
 }

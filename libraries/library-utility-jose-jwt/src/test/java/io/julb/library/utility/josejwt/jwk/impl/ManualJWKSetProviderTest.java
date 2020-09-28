@@ -35,9 +35,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The symmetric JWK.
@@ -61,7 +61,7 @@ public class ManualJWKSetProviderTest {
     /**
      * Sets-up the test before run.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws JOSEException {
         //@formatter:off
@@ -92,7 +92,7 @@ public class ManualJWKSetProviderTest {
         String jsonString = jwkSetProvider.toJSONString(false);
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        Assert.assertEquals(jwkSetProvider.getJwkProviders().size(), jsonObject.getJSONArray("keys").length());
+        Assertions.assertEquals(jwkSetProvider.getJwkProviders().size(), jsonObject.getJSONArray("keys").length());
     }
 
     /**
@@ -107,7 +107,7 @@ public class ManualJWKSetProviderTest {
             .build();
         //@formatter:on
         JSONObject jsonObject = new JSONObject(jwkSetProvider.toJSONString(false));
-        Assert.assertEquals(jwkSetProvider.getJwkProviders().size(), jsonObject.getJSONArray("keys").length());
+        Assertions.assertEquals(jwkSetProvider.getJwkProviders().size(), jsonObject.getJSONArray("keys").length());
     }
 
     /**
@@ -123,6 +123,6 @@ public class ManualJWKSetProviderTest {
         //@formatter:on
 
         JSONObject jsonObject = new JSONObject(jwkSetProvider.toJSONString());
-        Assert.assertEquals(jwkSetProvider.getJwkProviders().size() - 1, jsonObject.getJSONArray("keys").length()); // Exclude symmetric key.
+        Assertions.assertEquals(jwkSetProvider.getJwkProviders().size() - 1, jsonObject.getJSONArray("keys").length()); // Exclude symmetric key.
     }
 }

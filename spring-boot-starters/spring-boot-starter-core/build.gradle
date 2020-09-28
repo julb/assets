@@ -15,6 +15,10 @@ dependencies {
     implementation project(':libraries:library-utility-interface')
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

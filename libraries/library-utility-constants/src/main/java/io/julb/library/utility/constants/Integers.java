@@ -52,9 +52,24 @@ public class Integers {
     public static final int TWO = 2;
 
     /**
+     * The '3' value.
+     */
+    public static final int THREE = 3;
+
+    /**
      * The '4' value.
      */
     public static final int FOUR = 4;
+
+    /**
+     * The '5' value.
+     */
+    public static final int FIVE = 5;
+
+    /**
+     * The '6' value.
+     */
+    public static final int SIX = 6;
 
     /**
      * The '8' value.
@@ -75,6 +90,16 @@ public class Integers {
      * The '45' value.
      */
     public static final int FORTY_FIVE = 45;
+
+    /**
+     * The '64' value.
+     */
+    public static final int SIXTY_FOUR = 64;
+
+    /**
+     * The '128' value.
+     */
+    public static final int ONE_HUNDRED_TWENTY_EIGHT = 128;
 
     /**
      * The '1000' value.

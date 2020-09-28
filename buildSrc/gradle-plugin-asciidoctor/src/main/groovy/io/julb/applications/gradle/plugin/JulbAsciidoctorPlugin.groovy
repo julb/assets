@@ -26,7 +26,7 @@ package io.julb.applications.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Zip
-import org.asciidoctor.gradle.AsciidoctorPlugin
+import org.asciidoctor.gradle.jvm.AsciidoctorJPlugin
 
 /**
  * The plugin to handle AsciiDoc generation for a project. <P>
@@ -42,7 +42,7 @@ class JulbAsciidoctorPlugin implements Plugin<Project> {
     public void apply(Project project) {
         project.logger.info('[Julb] Applying AsciiDictor Plugin for project ' + project.name)
         
-        project.plugins.apply(AsciidoctorPlugin)
+        project.plugins.apply(AsciidoctorJPlugin)
         
         project.gradle.projectsEvaluated {
 	        // Generate ZIP of docs.

@@ -36,9 +36,9 @@ import io.julb.library.utility.josejwt.operations.TokenDecryptionOperation;
 import java.util.Calendar;
 import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test class for {@link TokenDecryptionOperation}.
@@ -69,7 +69,7 @@ public class TokenEmitterTest {
     /**
      * Sets-up the test.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception {
         Calendar issueTime = Calendar.getInstance();
@@ -121,32 +121,21 @@ public class TokenEmitterTest {
             .emit(this.jwtClaimsSet.toString());
         //@formatter:on
 
-        Assert.assertNotNull(emittedToken);
+        Assertions.assertNotNull(emittedToken);
     }
 
     /**
      * Test method.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void whenEmittingTokenWithoutSignature_thenThrowIllegalArgumentException()
         throws Exception {
-        //@formatter:off
-        new TokenEmitter()
-            .setEncryptionJWKProvider(symmetricJWKProvider)
-            .emit(this.jwtClaimsSet.toString());
-        //@formatter:on
-    }
-
-    /**
-     * Test method.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void whenEmittingTokenWithoutEncryption_thenThrowIllegalArgumentException()
-        throws Exception {
-        //@formatter:off
-        new TokenEmitter()
-            .setSignatureJWKProvider(asymmetricRSAJWKProvider)
-            .emit(this.jwtClaimsSet.toString());
-        //@formatter:on
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            //@formatter:off
+            new TokenEmitter()
+                .setEncryptionJWKProvider(symmetricJWKProvider)
+                .emit(this.jwtClaimsSet.toString());
+            //@formatter:on
+        });
     }
 }

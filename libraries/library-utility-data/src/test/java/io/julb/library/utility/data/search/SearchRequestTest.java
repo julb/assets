@@ -32,8 +32,8 @@ import io.julb.library.utility.data.search.predicates.joins.OrPredicate;
 import io.julb.library.utility.data.search.predicates.modifiers.NotPredicate;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link SearchRequest} class.
@@ -47,7 +47,7 @@ public class SearchRequestTest {
      */
     @Test
     public void whenToStringEmpty_thenReturnsEmptyString() {
-        Assert.assertEquals(StringUtils.EMPTY, Searchable.empty().toString());
+        Assertions.assertEquals(StringUtils.EMPTY, Searchable.empty().toString());
     }
 
     /**
@@ -59,7 +59,7 @@ public class SearchRequestTest {
         predicate.setName("lastName");
         predicate.setOperator(OperatorAttributePredicate.EQUAL);
         predicate.setValue("John DOE");
-        Assert.assertEquals("lastName|eq:\"John DOE\"", predicate.toString());
+        Assertions.assertEquals("lastName|eq:\"John DOE\"", predicate.toString());
     }
 
     /**
@@ -71,7 +71,7 @@ public class SearchRequestTest {
         predicate.setName("lastName");
         predicate.setOperator(OperatorAttributePredicate.IN);
         predicate.setValue(new String[] {"John DOE", "Alice DOE"});
-        Assert.assertEquals("lastName|in:\"John DOE,Alice DOE\"", predicate.toString());
+        Assertions.assertEquals("lastName|in:\"John DOE,Alice DOE\"", predicate.toString());
     }
 
     /**
@@ -82,7 +82,7 @@ public class SearchRequestTest {
         NoValueAttributePredicate predicate = new NoValueAttributePredicate();
         predicate.setName("lastName");
         predicate.setOperator(OperatorAttributePredicate.IS_NOT_NULL);
-        Assert.assertEquals("lastName|nn:", predicate.toString());
+        Assertions.assertEquals("lastName|nn:", predicate.toString());
     }
 
     /**
@@ -93,7 +93,7 @@ public class SearchRequestTest {
         NoValueAttributePredicate predicate = new NoValueAttributePredicate();
         predicate.setName("lastName");
         predicate.setOperator(OperatorAttributePredicate.IS_NOT_NULL);
-        Assert.assertEquals("!lastName|nn:", new NotPredicate(predicate).toString());
+        Assertions.assertEquals("!lastName|nn:", new NotPredicate(predicate).toString());
     }
 
     /**
@@ -111,7 +111,7 @@ public class SearchRequestTest {
         predicate2.setOperator(OperatorAttributePredicate.EQUAL);
         predicate2.setValue("Alice DOE");
 
-        Assert.assertEquals("(lastName|eq:\"John DOE\" AND firstName|eq:\"Alice DOE\")", new AndPredicate(predicate1, predicate2).toString());
+        Assertions.assertEquals("(lastName|eq:\"John DOE\" AND firstName|eq:\"Alice DOE\")", new AndPredicate(predicate1, predicate2).toString());
     }
 
     /**
@@ -134,6 +134,6 @@ public class SearchRequestTest {
         predicate3.setOperator(OperatorAttributePredicate.GREATER_OR_EQUAL_THAN);
         predicate3.setValue("20");
 
-        Assert.assertEquals("((lastName|eq:\"John DOE\" AND firstName|eq:\"Alice DOE\") OR age|ge:\"20\")", new OrPredicate(new AndPredicate(predicate1, predicate2), predicate3).toString());
+        Assertions.assertEquals("((lastName|eq:\"John DOE\" AND firstName|eq:\"Alice DOE\") OR age|ge:\"20\")", new OrPredicate(new AndPredicate(predicate1, predicate2), predicate3).toString());
     }
 }

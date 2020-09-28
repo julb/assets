@@ -40,9 +40,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The symmetric JWK.
@@ -101,7 +101,7 @@ public class ManualAsymmetricJWKProviderTest {
     /**
      * Sets-up the test before run.
      */
-    @Before
+    @BeforeEach
     public void setUp()
         throws JOSEException {
         this.keyId = UUID.randomUUID().toString();
@@ -131,10 +131,10 @@ public class ManualAsymmetricJWKProviderTest {
         //@formatter:on
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        Assert.assertEquals(rsaSignatureAlgorithm, jsonObject.getString("alg"));
-        Assert.assertEquals("sig", jsonObject.getString("use"));
-        Assert.assertEquals(keyId, jsonObject.getString("kid"));
-        Assert.assertEquals("RSA", jsonObject.getString("kty"));
+        Assertions.assertEquals(rsaSignatureAlgorithm, jsonObject.getString("alg"));
+        Assertions.assertEquals("sig", jsonObject.getString("use"));
+        Assertions.assertEquals(keyId, jsonObject.getString("kid"));
+        Assertions.assertEquals("RSA", jsonObject.getString("kty"));
     }
 
     /**
@@ -153,10 +153,10 @@ public class ManualAsymmetricJWKProviderTest {
         //@formatter:on
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        Assert.assertEquals(rsaEncryptionAlgorithm, jsonObject.getString("alg"));
-        Assert.assertEquals("enc", jsonObject.getString("use"));
-        Assert.assertEquals(keyId, jsonObject.getString("kid"));
-        Assert.assertEquals("RSA", jsonObject.getString("kty"));
+        Assertions.assertEquals(rsaEncryptionAlgorithm, jsonObject.getString("alg"));
+        Assertions.assertEquals("enc", jsonObject.getString("use"));
+        Assertions.assertEquals(keyId, jsonObject.getString("kid"));
+        Assertions.assertEquals("RSA", jsonObject.getString("kty"));
     }
 
     /**
@@ -175,10 +175,10 @@ public class ManualAsymmetricJWKProviderTest {
         //@formatter:on
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        Assert.assertEquals(ecEncryptionAlgorithm, jsonObject.getString("alg"));
-        Assert.assertEquals("enc", jsonObject.getString("use"));
-        Assert.assertEquals(keyId, jsonObject.getString("kid"));
-        Assert.assertEquals("EC", jsonObject.getString("kty"));
+        Assertions.assertEquals(ecEncryptionAlgorithm, jsonObject.getString("alg"));
+        Assertions.assertEquals("enc", jsonObject.getString("use"));
+        Assertions.assertEquals(keyId, jsonObject.getString("kid"));
+        Assertions.assertEquals("EC", jsonObject.getString("kty"));
     }
 
     /**
@@ -197,70 +197,78 @@ public class ManualAsymmetricJWKProviderTest {
         //@formatter:on
 
         JSONObject jsonObject = new JSONObject(jsonString);
-        Assert.assertEquals(ecSignatureAlgorithm, jsonObject.getString("alg"));
-        Assert.assertEquals("sig", jsonObject.getString("use"));
-        Assert.assertEquals(keyId, jsonObject.getString("kid"));
-        Assert.assertEquals("EC", jsonObject.getString("kty"));
+        Assertions.assertEquals(ecSignatureAlgorithm, jsonObject.getString("alg"));
+        Assertions.assertEquals("sig", jsonObject.getString("use"));
+        Assertions.assertEquals(keyId, jsonObject.getString("kid"));
+        Assertions.assertEquals("EC", jsonObject.getString("kty"));
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingFieldInKeyFormatException.class)
+    @Test
     public void whenMissingAlgorithm_thenThrowException() {
-        //@formatter:off
-        new ManualAsymmetricJWKProvider.Builder()
-            .keyId(keyId)
-            .publicKey(rsaSignaturePublicKey)
-            .useForSignature()
-            .build()
-            .toJSONString();
-        //@formatter:on
+        Assertions.assertThrows(MissingFieldInKeyFormatException.class, () -> {
+            //@formatter:off
+            new ManualAsymmetricJWKProvider.Builder()
+                .keyId(keyId)
+                .publicKey(rsaSignaturePublicKey)
+                .useForSignature()
+                .build()
+                .toJSONString();
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingFieldInKeyFormatException.class)
+    @Test
     public void whenMissingKeyId_thenThrowException() {
-        //@formatter:off
-        new ManualAsymmetricJWKProvider.Builder()
-            .algorithm(rsaSignatureAlgorithm)
-            .publicKey(rsaSignaturePublicKey)
-            .useForSignature()
-            .build()
-            .toJSONString();
-        //@formatter:on
+        Assertions.assertThrows(MissingFieldInKeyFormatException.class, () -> {
+            //@formatter:off
+            new ManualAsymmetricJWKProvider.Builder()
+                .algorithm(rsaSignatureAlgorithm)
+                .publicKey(rsaSignaturePublicKey)
+                .useForSignature()
+                .build()
+                .toJSONString();
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingFieldInKeyFormatException.class)
+    @Test
     public void whenMissingKey_thenThrowException() {
-        //@formatter:off
-        new ManualAsymmetricJWKProvider.Builder()
-            .algorithm(rsaSignatureAlgorithm)
-            .keyId(keyId)
-            .useForSignature()
-            .build()
-            .toJSONString();
-        //@formatter:on
+        Assertions.assertThrows(MissingFieldInKeyFormatException.class, () -> {
+            //@formatter:off
+            new ManualAsymmetricJWKProvider.Builder()
+                .algorithm(rsaSignatureAlgorithm)
+                .keyId(keyId)
+                .useForSignature()
+                .build()
+                .toJSONString();
+            //@formatter:on
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = MissingFieldInKeyFormatException.class)
+    @Test
     public void whenMissingUse_thenThrowException() {
-        //@formatter:off
-        new ManualAsymmetricJWKProvider.Builder()
-            .algorithm(rsaSignatureAlgorithm)
-            .keyId(keyId)
-            .publicKey(rsaSignaturePublicKey)
-            .build()
-            .toJSONString();
-        //@formatter:on
+        Assertions.assertThrows(MissingFieldInKeyFormatException.class, () -> {
+            //@formatter:off
+            new ManualAsymmetricJWKProvider.Builder()
+                .algorithm(rsaSignatureAlgorithm)
+                .keyId(keyId)
+                .publicKey(rsaSignaturePublicKey)
+                .build()
+                .toJSONString();
+            //@formatter:on
+        });
     }
 
 }

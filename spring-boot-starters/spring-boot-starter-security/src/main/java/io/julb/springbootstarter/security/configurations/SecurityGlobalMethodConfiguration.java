@@ -23,7 +23,7 @@
  */
 package io.julb.springbootstarter.security.configurations;
 
-import io.julb.springbootstarter.security.configurations.beans.CustomPermissionEvaluator;
+import io.julb.springbootstarter.security.configurations.beans.access.CustomPermissionEvaluator;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;

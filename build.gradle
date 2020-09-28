@@ -5,6 +5,13 @@ plugins {
 allprojects {
 	apply plugin: 'eclipse'
 	apply plugin: 'maven-publish'
+	
+	eclipse {
+	   classpath {
+	       downloadSources = true
+           downloadJavadoc = true
+	   }
+	}
 		
 	repositories {
 		mavenLocal()

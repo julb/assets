@@ -13,6 +13,10 @@ dependencies {
 	implementation 'ch.qos.logback.contrib:logback-jackson'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

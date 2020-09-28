@@ -54,17 +54,12 @@ public class UncaughtErrorController implements ErrorController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UncaughtErrorController.class);
 
     /**
-     * The error path.
-     */
-    public static final String ERROR_PATH = "/error";
-
-    /**
      * Method that handles the error endpoint.
      * @param request the HTTP Servlet request.
      * @param response the HTTP Servlet response.
      * @return the error response.
      */
-    @RequestMapping(path = ERROR_PATH)
+    @RequestMapping(path = "${server.error.path:/error}")
     public ResponseEntity<HttpErrorResponseDTO> handleError(HttpServletRequest request, HttpServletResponse response) {
 
         // Log exception
@@ -88,8 +83,9 @@ public class UncaughtErrorController implements ErrorController {
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public String getErrorPath() {
-        return ERROR_PATH;
+        return null;
     }
-
 }

@@ -24,6 +24,10 @@ dependencies {
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

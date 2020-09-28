@@ -1,11 +1,12 @@
 pluginManagement {
     plugins {
-        id 'io.freefair.lombok' version '5.0.0-rc6'
-        id 'com.google.cloud.tools.jib' version '2.1.0'
+        id 'io.freefair.lombok' version '5.2.1'
+        id 'org.springframework.boot' version '2.3.4.RELEASE'
     }
 }
 
 include 'applications:api-announcement'
+include 'applications:api-authorization-server'
 include 'applications:api-bookmark'
 include 'applications:api-disclaimer'
 include 'applications:api-platform-health'
@@ -41,6 +42,7 @@ include 'libraries:library-utility-interface'
 include 'libraries:library-utility-jose-jwt'
 include 'libraries:library-utility-json'
 include 'libraries:library-utility-mapping'
+include 'libraries:library-utility-otp'
 include 'libraries:library-utility-size'
 include 'libraries:library-utility-validator'
 
@@ -57,7 +59,9 @@ include 'spring-boot-starters:spring-boot-starter-opentracing'
 include 'spring-boot-starters:spring-boot-starter-persistence-core'
 include 'spring-boot-starters:spring-boot-starter-persistence-jpa'
 include 'spring-boot-starters:spring-boot-starter-persistence-mongodb'
+include 'spring-boot-starters:spring-boot-starter-persistence-mongodb-test'
 include 'spring-boot-starters:spring-boot-starter-resource-types'
 include 'spring-boot-starters:spring-boot-starter-security'
 include 'spring-boot-starters:spring-boot-starter-test'
+include 'spring-boot-starters:spring-boot-starter-validation'
 include 'spring-boot-starters:spring-boot-starter-web'

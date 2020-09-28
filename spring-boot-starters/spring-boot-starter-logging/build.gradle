@@ -10,6 +10,10 @@ dependencies {
 	implementation project(':libraries:library-logging-logback')
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {

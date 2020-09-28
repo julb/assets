@@ -2,6 +2,7 @@ plugins {
 	id 'java-library-distribution'
 	id 'io.freefair.lombok'
 	id 'julb-additional-jars'
+    id 'org.springframework.boot'
 }
 
 dependencies {
@@ -12,6 +13,28 @@ dependencies {
 	implementation project(':spring-boot-starters:spring-boot-starter-consumer')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'io.julb.Application'
+        )
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootJar {
+    classifier = 'boot'
+    mainClassName = 'io.julb.Application'
+    layered()
 }
 
 publishing {

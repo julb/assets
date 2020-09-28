@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.GenericFilterBean;
 
 /**
@@ -30,6 +31,12 @@ public class TrademarkFilter extends GenericFilterBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrademarkFilter.class);
 
     /**
+     * The trademark override if any.
+     */
+    @Value("${trademark.override:}")
+    private String trademarkOverride;
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -41,7 +48,7 @@ public class TrademarkFilter extends GenericFilterBean {
 
         // Trademark from system.
         if (StringUtils.isBlank(trademark)) {
-            trademark = System.getProperty("trademark.override");
+            trademark = this.trademarkOverride;
         }
 
         if (StringUtils.isNotBlank(trademark)) {

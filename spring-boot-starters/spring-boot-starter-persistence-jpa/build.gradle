@@ -19,6 +19,10 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 publishing {
 	publications {
 	    JavaPublication(MavenPublication) {
