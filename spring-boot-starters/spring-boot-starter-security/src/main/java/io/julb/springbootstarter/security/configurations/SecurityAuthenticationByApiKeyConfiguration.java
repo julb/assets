@@ -38,7 +38,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -79,7 +78,6 @@ public class SecurityAuthenticationByApiKeyConfiguration {
      * @throws Exception if an error occurs.
      */
     @Bean
-    @Order(20)
     public AuthenticationByApiKeyAuthenticationFilter authenticationByApiKeyFilter(AuthenticationManager authenticationManager)
         throws Exception {
         AuthenticationByApiKeyAuthenticationFilter filter = new AuthenticationByApiKeyAuthenticationFilter(securityApiKeyProperties.getHeaderName());

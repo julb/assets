@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -41,7 +42,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <P>
  * @author Julb.
  */
-public class AuthenticationByApiKeyAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class AuthenticationByApiKeyAuthenticationFilter extends UsernamePasswordAuthenticationFilter implements Ordered {
 
     /**
      * The logger.
@@ -86,6 +87,14 @@ public class AuthenticationByApiKeyAuthenticationFilter extends UsernamePassword
         String hashedApiKey = passwordEncoderService.hash(obtainPassword(request));
         CustomApiKeyAuthenticationToken authRequest = new CustomApiKeyAuthenticationToken(rawApiKey, hashedApiKey);
         return this.getAuthenticationManager().authenticate(authRequest);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return 20;
     }
 
 }

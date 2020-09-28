@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
 import org.springframework.web.filter.GenericFilterBean;
 
 /**
@@ -23,7 +24,7 @@ import org.springframework.web.filter.GenericFilterBean;
  * <P>
  * @author Julb.
  */
-public class TrademarkFilter extends GenericFilterBean {
+public class TrademarkFilter extends GenericFilterBean implements Ordered {
 
     /**
      * The logger.
@@ -62,5 +63,13 @@ public class TrademarkFilter extends GenericFilterBean {
 
         // Go on.
         chain.doFilter(request, response);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

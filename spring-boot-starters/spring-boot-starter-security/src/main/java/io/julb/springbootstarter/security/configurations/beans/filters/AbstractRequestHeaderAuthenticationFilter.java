@@ -34,6 +34,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -47,7 +48,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
  * <P>
  * @author Julb.
  */
-public abstract class AbstractRequestHeaderAuthenticationFilter extends RequestHeaderAuthenticationFilter {
+public abstract class AbstractRequestHeaderAuthenticationFilter extends RequestHeaderAuthenticationFilter implements Ordered {
 
     /**
      * The requestMatcher attribute.
@@ -135,6 +136,14 @@ public abstract class AbstractRequestHeaderAuthenticationFilter extends RequestH
         } catch (AuthenticationException failed) {
             unsuccessfulAuthentication(request, response, failed);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return 10;
     }
 
 }

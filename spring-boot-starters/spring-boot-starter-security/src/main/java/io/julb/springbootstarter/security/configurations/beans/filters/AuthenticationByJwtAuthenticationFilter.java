@@ -27,6 +27,12 @@ import io.julb.library.utility.http.HttpHeaderUtility;
 import io.julb.springbootstarter.security.configurations.beans.authenticationtokens.CustomJwtPreAuthenticatedAuthenticationToken;
 import io.julb.springbootstarter.security.configurations.beans.matchers.RequestHeaderBearerTokenRequestMatcher;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpHeaders;
@@ -45,6 +51,16 @@ public class AuthenticationByJwtAuthenticationFilter extends AbstractRequestHead
     public AuthenticationByJwtAuthenticationFilter() {
         super(HttpHeaders.AUTHORIZATION);
         this.setRequestMatcher(new RequestHeaderBearerTokenRequestMatcher(HttpHeaders.AUTHORIZATION));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException,
+        ServletException {
+        super.doFilter(request, response, chain);
     }
 
     /**

@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,7 +43,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <P>
  * @author Julb.
  */
-public class AuthenticationByPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class AuthenticationByPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter implements Ordered {
 
     /**
      * The logger.
@@ -93,4 +94,11 @@ public class AuthenticationByPasswordAuthenticationFilter extends UsernamePasswo
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return 20;
+    }
 }

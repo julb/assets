@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -45,7 +46,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <P>
  * @author Julb.
  */
-public class AuthenticationByTotpAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class AuthenticationByTotpAuthenticationFilter extends UsernamePasswordAuthenticationFilter implements Ordered {
 
     /**
      * The logger.
@@ -120,5 +121,13 @@ public class AuthenticationByTotpAuthenticationFilter extends UsernamePasswordAu
      */
     protected String obtainDeviceId(HttpServletRequest request) {
         return request.getParameter(DEVICE_ID_PARAMETER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getOrder() {
+        return 20;
     }
 }

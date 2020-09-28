@@ -47,7 +47,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -124,7 +123,6 @@ public class SecurityAuthenticationByJwtConfiguration {
      * @return the request header authentication filter.
      */
     @Bean
-    @Order(10)
     public RequestHeaderAuthenticationFilter authenticationByJwtFilter(AuthenticationManager authenticationManager) {
         AuthenticationByJwtAuthenticationFilter filter = new AuthenticationByJwtAuthenticationFilter();
         filter.setAuthenticationManager(authenticationManager);
