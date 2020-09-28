@@ -18,12 +18,12 @@ cache:
 build:
   stage: build
   script:
-    - ./gradlew check --info
+    - ./gradlew assemble
 
-#test:
-#  stage: test
-#  script:
-#    - ./gradlew check --info
+test:
+  stage: test
+  script:
+    - ./gradlew check
 
 pages:
   script:

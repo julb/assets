@@ -59,9 +59,8 @@ security:
   
 logging:
   level:
-    root: INFO
-    org.springframework: INFO
-    io.julb: INFO
+    root: OFF
+    org.springframework: OFF
   
 ---
 spring:
