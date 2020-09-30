@@ -1,0 +1,26 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+    api 'com.google.zxing:core:3.4.1'
+    api 'com.google.zxing:javase:3.4.1'
+	
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}
