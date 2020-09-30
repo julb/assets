@@ -191,7 +191,7 @@ public class CaughtExceptionAdviceController {
      * @return the error response.
      */
     @ExceptionHandler({ServletRequestBindingException.class, ValidationException.class, HttpMessageNotReadableException.class, JsonProcessingException.class, BadRequestException.class, MethodArgumentTypeMismatchException.class,
-        UnsupportedOperationException.class, ResourceStillReferencedException.class, SearchTermSearchQueryParseException.class})
+        UnsupportedOperationException.class, ResourceStillReferencedException.class, SearchTermSearchQueryParseException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final ResponseEntity<HttpErrorResponseDTO> handleGenericBadRequestException(Exception exception, HttpServletRequest request) {
 

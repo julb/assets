@@ -39,6 +39,8 @@ dependencies {
         api 'org.mnode.ical4j:ical4j:3.0.19'
         api 'org.jsoup:jsoup:1.13.1'
         api 'dev.samstevens.totp:totp:1.7'
+        api 'com.google.zxing:core:3.4.1'
+        api 'com.google.zxing:javase:3.4.1'
     }
 }
 
