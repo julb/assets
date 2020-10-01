@@ -87,6 +87,16 @@ public class JWTClaims {
     public static final String MAIL_VERIFIED = "email_verified";
 
     /**
+     * The "phone_number" attribute.
+     */
+    public static final String PHONE_NUMBER = "phone_number";
+
+    /**
+     * The "phone_number_verified" attribute.
+     */
+    public static final String PHONE_NUMBER_VERIFIED = "phone_number_verified";
+
+    /**
      * The "o" attribute.
      */
     public static final String ORGANIZATION = "o";

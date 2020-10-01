@@ -61,4 +61,43 @@ public class MobilePhoneDTO {
      */
      //@formatter:on
     private String number;
+
+    //@formatter:off
+     /**
+     * The internationalNumber attribute.
+     * -- GETTER --
+     * Getter for {@link #internationalNumber} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #internationalNumber} property.
+     * @param internationalNumber the value to set.
+     */
+     //@formatter:on
+    private String internationalNumber;
+
+    //@formatter:off
+     /**
+     * The nationalNumber attribute.
+     * -- GETTER --
+     * Getter for {@link #nationalNumber} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #nationalNumber} property.
+     * @param nationalNumber the value to set.
+     */
+     //@formatter:on
+    private String nationalNumber;
+
+    //@formatter:off
+     /**
+     * The e164Number attribute.
+     * -- GETTER --
+     * Getter for {@link #e164Number} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #e164Number} property.
+     * @param e164Number the value to set.
+     */
+     //@formatter:on
+    private String e164Number;
 }

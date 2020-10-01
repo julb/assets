@@ -31,13 +31,16 @@ import io.julb.applications.authorizationserver.configurations.properties.Access
 import io.julb.applications.authorizationserver.configurations.properties.ApplicationProperties;
 import io.julb.applications.authorizationserver.entities.UserEntity;
 import io.julb.applications.authorizationserver.entities.mail.UserMailEntity;
+import io.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
 import io.julb.applications.authorizationserver.entities.profile.UserProfileEntity;
 import io.julb.applications.authorizationserver.entities.session.UserSessionEntity;
 import io.julb.applications.authorizationserver.repositories.UserMailRepository;
+import io.julb.applications.authorizationserver.repositories.UserMobilePhoneRepository;
 import io.julb.applications.authorizationserver.repositories.UserProfileRepository;
 import io.julb.applications.authorizationserver.services.UserSessionToAccessTokenMapper;
 import io.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import io.julb.library.utility.constants.JWTClaims;
+import io.julb.library.utility.constants.Strings;
 import io.julb.library.utility.date.DateUtility;
 import io.julb.library.utility.http.HttpHeaderUtility;
 import io.julb.library.utility.identifier.IdentifierUtility;
@@ -84,6 +87,12 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
      */
     @Autowired
     private UserMailRepository userMailRepository;
+
+    /**
+     * The user mobile phone repository.
+     */
+    @Autowired
+    private UserMobilePhoneRepository userMobilePhoneRepository;
 
     /**
      * The application properties.
@@ -134,6 +143,7 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
         UserEntity user = userSession.getUser();
         UserProfileEntity userProfile = userProfileRepository.findByTmAndUser_Id(tm, user.getId());
         UserMailEntity userMail = userMailRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId());
+        UserMobilePhoneEntity userMobilePhone = userMobilePhoneRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId());
 
         // Issue date/expiration
         Date issueDate = DateUtility.parseDateTime(DateUtility.dateTimeNow());
@@ -156,6 +166,8 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
             .claim(JWTClaims.WEBSITE_URL, userProfile.getWebsiteUrl())
             .claim(JWTClaims.MAIL, userMail.getMail())
             .claim(JWTClaims.MAIL_VERIFIED, userMail.getVerified())
+            .claim(JWTClaims.PHONE_NUMBER, userMobilePhone != null ? userMobilePhone.getMobilePhone().getE164Number() : Strings.EMPTY)
+            .claim(JWTClaims.PHONE_NUMBER_VERIFIED, userMobilePhone != null ? userMobilePhone.getVerified() : Boolean.FALSE.toString())
             .claim(JWTClaims.ORGANIZATION, userProfile.getOrganization())
             .claim(JWTClaims.ORGANIZATION_UNIT, userProfile.getOrganizationUnit())
             .claim(JWTClaims.ROLES, user.getRoles())

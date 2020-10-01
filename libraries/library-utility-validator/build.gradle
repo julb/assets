@@ -10,6 +10,9 @@ dependencies {
 	implementation project(':libraries:library-utility-constants')
     implementation project(':libraries:library-utility-date')
     implementation project(':libraries:library-utility-interface')
+
+    implementation 'com.googlecode.libphonenumber:libphonenumber'
+
 	api 'javax.validation:validation-api'
 }
 
