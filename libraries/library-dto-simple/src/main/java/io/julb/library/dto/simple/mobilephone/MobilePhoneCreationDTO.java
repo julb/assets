@@ -24,6 +24,9 @@
 
 package io.julb.library.dto.simple.mobilephone;
 
+import io.julb.library.utility.interfaces.IPhoneNumber;
+import io.julb.library.utility.validator.constraints.PhoneNumber;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -39,7 +42,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class MobilePhoneCreationDTO {
+@PhoneNumber
+public class MobilePhoneCreationDTO implements IPhoneNumber {
 
     //@formatter:off
      /**

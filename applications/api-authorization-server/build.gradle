@@ -21,6 +21,7 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.apache.commons:commons-text'
     implementation 'org.apache.commons:commons-lang3'
+    implementation 'com.googlecode.libphonenumber:libphonenumber'
     
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
     testImplementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb-test')

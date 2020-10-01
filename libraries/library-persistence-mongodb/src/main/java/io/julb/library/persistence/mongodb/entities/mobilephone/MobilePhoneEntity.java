@@ -27,6 +27,8 @@ package io.julb.library.persistence.mongodb.entities.mobilephone;
 import io.julb.library.dto.simple.mobilephone.MobilePhoneCreationDTO;
 import io.julb.library.dto.simple.mobilephone.MobilePhoneDTO;
 import io.julb.library.mapping.annotations.ObjectMappingFactory;
+import io.julb.library.utility.interfaces.IPhoneNumber;
+import io.julb.library.utility.validator.constraints.PhoneNumber;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -50,7 +52,8 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(callSuper = false, of = {"countryCode", "number"})
 @NoArgsConstructor
-public class MobilePhoneEntity {
+@PhoneNumber
+public class MobilePhoneEntity implements IPhoneNumber {
 
     //@formatter:off
      /**
@@ -85,5 +88,50 @@ public class MobilePhoneEntity {
     @Pattern(regexp = "^[0-9]+$")
     @Size(min = 1, max = 20)
     private String number;
+
+    //@formatter:off
+     /**
+     * The internationalNumber attribute.
+     * -- GETTER --
+     * Getter for {@link #internationalNumber} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #internationalNumber} property.
+     * @param internationalNumber the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String internationalNumber;
+
+    //@formatter:off
+     /**
+     * The nationalNumber attribute.
+     * -- GETTER --
+     * Getter for {@link #nationalNumber} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #nationalNumber} property.
+     * @param nationalNumber the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String nationalNumber;
+
+    //@formatter:off
+     /**
+     * The e164Number attribute.
+     * -- GETTER --
+     * Getter for {@link #e164Number} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #e164Number} property.
+     * @param e164Number the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String e164Number;
 
 }

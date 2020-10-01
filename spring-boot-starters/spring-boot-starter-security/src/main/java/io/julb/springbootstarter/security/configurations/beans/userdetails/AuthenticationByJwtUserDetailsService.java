@@ -97,6 +97,8 @@ public class AuthenticationByJwtUserDetailsService implements AuthenticationUser
                 dto.setLastName(payloadAsJson.getString(JWTClaims.FAMILY_NAME));
                 dto.setMail(payloadAsJson.getString(JWTClaims.MAIL));
                 dto.setMailVerified(payloadAsJson.getBoolean(JWTClaims.MAIL_VERIFIED));
+                dto.setMobilePhone(payloadAsJson.getString(JWTClaims.PHONE_NUMBER));
+                dto.setMobilePhoneVerified(payloadAsJson.getBoolean(JWTClaims.PHONE_NUMBER_VERIFIED));
                 dto.setMfaVerified(payloadAsJson.getBoolean(JWTClaims.MFA_VERIFIED));
                 dto.setName(payloadAsJson.getString(JWTClaims.NAME));
                 dto.setOrganization(payloadAsJson.optString(JWTClaims.ORGANIZATION));

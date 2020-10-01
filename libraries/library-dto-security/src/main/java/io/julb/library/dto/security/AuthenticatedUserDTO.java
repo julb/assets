@@ -174,6 +174,32 @@ public class AuthenticatedUserDTO {
 
     //@formatter:off
      /**
+     * The mobilePhone attribute.
+     * -- GETTER --
+     * Getter for {@link #mobilePhone} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #mobilePhone} property.
+     * @param mobilePhone the value to set.
+     */
+     //@formatter:on
+    private String mobilePhone;
+
+    //@formatter:off
+     /**
+     * The mobilePhoneVerified attribute.
+     * -- GETTER --
+     * Getter for {@link #mobilePhoneVerified} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #mobilePhoneVerified} property.
+     * @param mobilePhoneVerified the value to set.
+     */
+     //@formatter:on
+    private Boolean mobilePhoneVerified;
+
+    //@formatter:off
+     /**
      * The organization attribute.
      * -- GETTER --
      * Getter for {@link #organization} property.

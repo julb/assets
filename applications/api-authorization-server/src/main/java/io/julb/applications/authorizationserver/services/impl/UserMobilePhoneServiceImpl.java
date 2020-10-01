@@ -24,6 +24,11 @@
 
 package io.julb.applications.authorizationserver.services.impl;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+
 import io.julb.applications.authorizationserver.entities.UserEntity;
 import io.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
 import io.julb.applications.authorizationserver.repositories.UserMobilePhoneRepository;
@@ -43,6 +48,7 @@ import io.julb.library.utility.constants.Chars;
 import io.julb.library.utility.constants.Integers;
 import io.julb.library.utility.data.search.Searchable;
 import io.julb.library.utility.date.DateUtility;
+import io.julb.library.utility.exceptions.InternalServerErrorException;
 import io.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import io.julb.library.utility.exceptions.ResourceNotFoundException;
 import io.julb.library.utility.identifier.IdentifierUtility;
@@ -178,27 +184,41 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public UserMobilePhoneDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserMobilePhoneCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+        try {
+            String tm = TrademarkContextHolder.getTrademark();
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
+            // Check that the user exists
+            UserEntity user = userRepository.findByTmAndId(tm, userId);
+            if (user == null) {
+                throw new ResourceNotFoundException(UserEntity.class, userId);
+            }
+
+            // Check that the item exists
+            if (userMobilePhoneRepository.existsByTmAndUser_IdAndMobilePhone_CountryCodeIgnoreCaseAndMobilePhone_NumberIgnoreCase(tm, userId, creationDTO.getMobilePhone().getCountryCode(), creationDTO.getMobilePhone().getNumber())) {
+                throw new ResourceAlreadyExistsException(UserMobilePhoneEntity.class,
+                    Map.<String, String> of("userId", userId, "mobilePhone.countryCode", creationDTO.getMobilePhone().getCountryCode(), "mobilePhone.number", creationDTO.getMobilePhone().getNumber()));
+            }
+
+            // Check validity of the number.
+
+            UserMobilePhoneEntity entityToCreate = mappingService.map(creationDTO, UserMobilePhoneEntity.class);
+            entityToCreate.setUser(user);
+            entityToCreate.setVerified(false);
+
+            // Handle phone number.
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+            PhoneNumber phoneNumber = phoneUtil.parse(creationDTO.getMobilePhone().getNumber(), creationDTO.getMobilePhone().getCountryCode());
+            entityToCreate.getMobilePhone().setInternationalNumber(phoneUtil.format(phoneNumber, PhoneNumberFormat.INTERNATIONAL));
+            entityToCreate.getMobilePhone().setNationalNumber(phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL));
+            entityToCreate.getMobilePhone().setE164Number(phoneUtil.format(phoneNumber, PhoneNumberFormat.E164));
+
+            this.onPersist(entityToCreate);
+
+            UserMobilePhoneEntity result = userMobilePhoneRepository.save(entityToCreate);
+            return mappingService.map(result, UserMobilePhoneDTO.class);
+        } catch (NumberParseException e) {
+            throw new InternalServerErrorException(e);
         }
-
-        // Check that the item exists
-        if (userMobilePhoneRepository.existsByTmAndUser_IdAndMobilePhone_CountryCodeIgnoreCaseAndMobilePhone_NumberIgnoreCase(tm, userId, creationDTO.getMobilePhone().getCountryCode(), creationDTO.getMobilePhone().getNumber())) {
-            throw new ResourceAlreadyExistsException(UserMobilePhoneEntity.class,
-                Map.<String, String> of("userId", userId, "mobilePhone.countryCode", creationDTO.getMobilePhone().getCountryCode(), "mobilePhone.number", creationDTO.getMobilePhone().getNumber()));
-        }
-
-        UserMobilePhoneEntity entityToCreate = mappingService.map(creationDTO, UserMobilePhoneEntity.class);
-        entityToCreate.setUser(user);
-        entityToCreate.setVerified(false);
-        this.onPersist(entityToCreate);
-
-        UserMobilePhoneEntity result = userMobilePhoneRepository.save(entityToCreate);
-        return mappingService.map(result, UserMobilePhoneDTO.class);
     }
 
     /**
