@@ -22,7 +22,7 @@
 			<appender-ref ref="CONSOLE" />
 		</logger>
 		
-		<logger name="io.julb" level="INFO">
+		<logger name="me.julb" level="INFO">
 			<appender-ref ref="CONSOLE" />
 		</logger>
 		
@@ -44,7 +44,7 @@
 			<appender-ref ref="CONSOLE" />
 		</logger>
 		
-		<logger name="io.julb" level="INFO">
+		<logger name="me.julb" level="INFO">
 			<appender-ref ref="CONSOLE" />
 		</logger>
 		
@@ -70,7 +70,7 @@
             <appender-ref ref="CONSOLE" />
         </logger>
         
-        <logger name="io.julb" level="INFO">
+        <logger name="me.julb" level="INFO">
             <appender-ref ref="CONSOLE" />
         </logger>
         
