@@ -16,7 +16,7 @@ dependencies {
 jar {
     manifest {
         attributes(
-            'Main-Class': 'io.julb.Application'
+            'Main-Class': 'me.julb.Application'
         )
     }
 }
@@ -31,7 +31,7 @@ springBoot {
 
 bootJar {
     classifier = 'boot'
-    mainClassName = 'io.julb.Application'
+    mainClassName = 'me.julb.Application'
     layered()
 }
 

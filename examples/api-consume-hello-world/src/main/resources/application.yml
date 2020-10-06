@@ -11,7 +11,7 @@ springdoc:
       enabled: true
    swagger-ui:
       enabled: false
-   packages-to-scan: io.julb
+   packages-to-scan: me.julb
    additional-properties:
       name: test
       version: 1.0.0-SNAPSHOT
