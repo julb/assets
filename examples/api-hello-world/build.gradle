@@ -1,6 +1,7 @@
 plugins {
 	id 'java-library-distribution'
 	id 'io.freefair.lombok'
+	id 'julb-java11'
 	id 'julb-additional-jars'
 	id 'org.springframework.boot'
 }
@@ -16,6 +17,10 @@ dependencies {
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }
 
+lombok {
+    config['lombok.log.fieldName'] = 'LOGGER'
+}
+
 jar {
     manifest {
         attributes(
@@ -26,15 +31,20 @@ jar {
 
 test {
     useJUnitPlatform()
+    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
 }
 
 springBoot {
     buildInfo()
 }
 
+bootBuildImage {
+    environment = ["BP_JVM_VERSION" : "11.*"]
+}
+
 bootJar {
     classifier = 'boot'
-    mainClassName = 'me.julb.Application'
+    mainClass = 'me.julb.Application'
     layered()
 }
 

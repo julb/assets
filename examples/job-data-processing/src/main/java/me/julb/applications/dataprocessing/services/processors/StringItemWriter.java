@@ -5,8 +5,8 @@ package me.julb.applications.dataprocessing.services.processors;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemWriter;
@@ -16,12 +16,8 @@ import org.springframework.batch.item.ItemWriter;
  * <P>
  * @author Airbus.
  */
+@Slf4j
 public class StringItemWriter implements ItemWriter<String> {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(StringItemWriter.class);
 
     // ------------------------------------------ Overridden methods.
 

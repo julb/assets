@@ -27,8 +27,8 @@ package me.julb.applications.authorizationserver.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
+import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.library.dto.security.AuthenticatedUserDTO;
 
 /**
@@ -51,7 +51,7 @@ public interface MyCurrentSessionService {
      * @param accessTokenCreation the access token creation.
      * @return the ID token.
      */
-    UserSessionAccessTokenDTO createAccessToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation);
+    UserSessionAccessTokenWithIdTokenDTO createAccessToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation);
 
     // ------------------------------------------ Write methods.
 

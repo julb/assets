@@ -42,7 +42,6 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -63,7 +62,6 @@ import me.julb.springbootstarter.web.resolvers.search.CustomSearchableHandlerMet
  */
 @Configuration
 @Import(SecurityConfiguration.class)
-@EnableWebMvc
 @EnableConfigurationProperties(CorsProperties.class)
 public class WebMvcConfiguration implements WebMvcConfigurer {
 

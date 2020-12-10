@@ -23,8 +23,7 @@
  */
 package me.julb.springbootstarter.consumer.decoders;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import feign.RetryableException;
 import feign.Retryer;
@@ -35,12 +34,8 @@ import me.julb.library.utility.exceptions.UnableToReachRemoteSystemException;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class DefaultRetryer extends Retryer.Default {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRetryer.class);
 
     /**
      * {@inheritDoc}

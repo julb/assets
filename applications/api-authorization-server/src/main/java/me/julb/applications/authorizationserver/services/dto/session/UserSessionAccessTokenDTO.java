@@ -75,4 +75,17 @@ public class UserSessionAccessTokenDTO {
      //@formatter:on
     private Long expiresIn;
 
+    //@formatter:off
+     /**
+     * The expiresAt attribute.
+     * -- GETTER --
+     * Getter for {@link #expiresAt} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #expiresAt} property.
+     * @param expiresAt the value to set.
+     */
+     //@formatter:on
+    private String expiresAt;
+
 }

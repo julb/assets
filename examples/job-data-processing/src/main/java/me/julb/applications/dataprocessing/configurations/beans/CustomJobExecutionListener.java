@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,17 +15,13 @@ import org.springframework.beans.factory.annotation.Value;
  * <P>
  * @author Airbus.
  */
+@Slf4j
 public class CustomJobExecutionListener implements JobExecutionListener {
 
     /**
      * The key to get the metrics of the job.
      */
     public static final String JOB_EXECUTION_CONTEXT_METRICS = "metrics";
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomJobExecutionListener.class);
 
     /**
      * The application name.

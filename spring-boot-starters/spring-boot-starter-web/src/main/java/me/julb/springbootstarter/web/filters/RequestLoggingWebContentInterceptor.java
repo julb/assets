@@ -4,9 +4,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 
@@ -17,12 +17,8 @@ import me.julb.library.utility.constants.CustomHttpHeaders;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class RequestLoggingWebContentInterceptor extends WebContentInterceptor {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestLoggingWebContentInterceptor.class);
 
     /**
      * {@inheritDoc}

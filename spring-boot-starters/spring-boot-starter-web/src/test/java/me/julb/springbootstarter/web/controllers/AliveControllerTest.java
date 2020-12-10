@@ -28,20 +28,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import me.julb.springbootstarter.core.configurations.CoreConfiguration;
 import me.julb.springbootstarter.security.configurations.SecurityConfiguration;
 import me.julb.springbootstarter.web.configurations.WebMvcConfiguration;
-import me.julb.springbootstarter.web.controllers.AliveController;
 import me.julb.springbootstarter.web.helpers.UnitTestService;
 
 /**
@@ -49,7 +46,6 @@ import me.julb.springbootstarter.web.helpers.UnitTestService;
  * <P>
  * @author Julb.
  */
-@RunWith(SpringRunner.class)
 @WebMvcTest
 @ContextConfiguration(classes = {AliveController.class, UnitTestService.class, CoreConfiguration.class, WebMvcConfiguration.class, SecurityConfiguration.class})
 public class AliveControllerTest {

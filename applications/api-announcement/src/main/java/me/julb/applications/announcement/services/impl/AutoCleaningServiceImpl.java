@@ -27,8 +27,8 @@ package me.julb.applications.announcement.services.impl;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -46,12 +46,8 @@ import me.julb.springbootstarter.core.context.TrademarkContextHolder;
  * @author Julb.
  */
 @Service
+@Slf4j
 public class AutoCleaningServiceImpl {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AutoCleaningServiceImpl.class);
 
     /**
      * The application properties.

@@ -3,8 +3,8 @@
  */
 package me.julb.applications.dataprocessing.services.processors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.batch.item.ItemProcessor;
 
 /**
@@ -12,12 +12,8 @@ import org.springframework.batch.item.ItemProcessor;
  * <P>
  * @author Airbus.
  */
+@Slf4j
 public class StringToUpperCaseProcessor implements ItemProcessor<String, String> {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(StringToUpperCaseProcessor.class);
 
     // ------------------------------------------ Overridden methods.
 

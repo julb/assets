@@ -27,8 +27,6 @@ package me.julb.library.utility.crypto.aes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import me.julb.library.utility.crypto.aes.AESEncryptor;
-
 /**
  * This class enables encryption and decryption of a {@link String} using AES256.
  * <P>

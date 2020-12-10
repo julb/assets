@@ -31,9 +31,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.temporal.ChronoUnit;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.josejwt.exceptions.badrequest.TokenNotParseableJOSEJWTException;
@@ -44,12 +44,8 @@ import me.julb.library.utility.josejwt.jwk.IJWKSetProvider;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class RemoteUrlJWKSetProvider implements IJWKSetProvider {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteUrlJWKSetProvider.class);
 
     /**
      * The URL returning the JSON.

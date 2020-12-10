@@ -49,4 +49,30 @@ public class UserSessionAccessTokenWithIdTokenDTO extends UserSessionAccessToken
      //@formatter:on
     private String idToken;
 
+    //@formatter:off
+     /**
+     * The idTokenExpiresIn attribute.
+     * -- GETTER --
+     * Getter for {@link #idTokenExpiresIn} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #idTokenExpiresIn} property.
+     * @param idTokenExpiresIn the value to set.
+     */
+     //@formatter:on
+    private Long idTokenExpiresIn;
+
+    //@formatter:off
+     /**
+     * The idTokenExpiresAt attribute.
+     * -- GETTER --
+     * Getter for {@link #idTokenExpiresAt} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #idTokenExpiresAt} property.
+     * @param idTokenExpiresAt the value to set.
+     */
+     //@formatter:on
+    private String idTokenExpiresAt;
+
 }

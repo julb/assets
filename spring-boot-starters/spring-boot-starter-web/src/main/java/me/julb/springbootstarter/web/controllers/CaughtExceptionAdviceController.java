@@ -33,8 +33,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
@@ -79,13 +79,9 @@ import me.julb.springbootstarter.web.resolvers.search.exceptions.SearchTermSearc
  * @author Julb.
  */
 @ControllerAdvice
+@Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CaughtExceptionAdviceController {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CaughtExceptionAdviceController.class);
 
     /**
      * The message resource.

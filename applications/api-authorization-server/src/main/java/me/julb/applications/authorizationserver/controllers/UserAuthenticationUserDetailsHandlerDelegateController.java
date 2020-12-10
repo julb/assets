@@ -24,19 +24,14 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
@@ -47,13 +42,13 @@ import me.julb.applications.authorizationserver.services.UserSessionService;
 import me.julb.applications.authorizationserver.services.dto.security.UserAuthenticationUserDetailsDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFirstCreationDTO;
+import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionWithRawIdTokenDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
-import me.julb.library.utility.exceptions.InternalServerErrorException;
 import me.julb.springbootstarter.security.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsHandlerDelegate;
 import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 
@@ -63,17 +58,19 @@ import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
  * @author Julb.
  */
 @Service
+@Slf4j
 public class UserAuthenticationUserDetailsHandlerDelegateController implements IAuthenticationUserDetailsHandlerDelegate {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserAuthenticationUserDetailsHandlerDelegateController.class);
 
     /**
      * The REMEMBERME_PARAMETER attribute.
      */
     private static final String REMEMBERME_PARAMETER = "rememberMe";
+
+    /**
+     * The HTTP user access token service.
+     */
+    @Autowired
+    private HttpUserAccessTokenService httpUserAccessTokenService;
 
     /**
      * The user authentication generic service.
@@ -88,89 +85,68 @@ public class UserAuthenticationUserDetailsHandlerDelegateController implements I
     private UserSessionService userSessionService;
 
     /**
-     * The JSON object mapper.
-     */
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    /**
      * /** {@inheritDoc}
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        try {
-            LOGGER.info("Authentication successful.");
+        LOGGER.info("Authentication successful.");
 
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserAuthenticationUserDetailsDTO) {
-                UserAuthenticationUserDetailsDTO dto = (UserAuthenticationUserDetailsDTO) principal;
-                String userId = dto.getCredentials().getUser().getId();
-                String id = dto.getCredentials().getUserAuthentication().getId();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAuthenticationUserDetailsDTO) {
+            UserAuthenticationUserDetailsDTO dto = (UserAuthenticationUserDetailsDTO) principal;
+            String userId = dto.getCredentials().getUser().getId();
+            String id = dto.getCredentials().getUserAuthentication().getId();
 
-                // Update successful.
-                userAuthenticationGenericService.updateSuccessfulUse(userId, id);
+            // Update successful.
+            userAuthenticationGenericService.updateSuccessfulUse(userId, id);
 
-                // Generate session.
-                UserAuthenticationType type = dto.getCredentials().getUserAuthentication().getType();
-                if (UserAuthenticationType.PASSWORD.equals(type) || UserAuthenticationType.PINCODE.equals(type) || UserAuthenticationType.API_KEY.equals(type)) {
-                    // Remember me ?
-                    Boolean rememberMe = obtainRememberMe(request);
+            // Generate session.
+            UserAuthenticationType type = dto.getCredentials().getUserAuthentication().getType();
+            if (UserAuthenticationType.PASSWORD.equals(type) || UserAuthenticationType.PINCODE.equals(type) || UserAuthenticationType.API_KEY.equals(type)) {
+                // Remember me ?
+                Boolean rememberMe = obtainRememberMe(request);
 
-                    // Prepare user session creation.
-                    UserSessionCreationDTO userSessionCreationDTO = new UserSessionCreationDTO();
-                    if (dto.getMfaEnabled()) {
-                        userSessionCreationDTO.setMfaVerified(Boolean.FALSE);
-                    }
-
-                    if (rememberMe) {
-                        userSessionCreationDTO.setDurationInSeconds(TimeUnit.DAYS.toSeconds(Integers.THIRTY));
-                    } else {
-                        userSessionCreationDTO.setDurationInSeconds(TimeUnit.HOURS.toSeconds(Integers.TWO));
-                    }
-
-                    // Generate session
-                    UserSessionWithRawIdTokenDTO session = userSessionService.create(userId, userSessionCreationDTO);
-
-                    // Generate access token
-                    UserSessionAccessTokenFirstCreationDTO creationDTO = new UserSessionAccessTokenFirstCreationDTO();
-                    creationDTO.setBrowser(HttpServletRequestUtility.getBrowser(request));
-                    creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
-                    creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
-                    creationDTO.setOperatingSystem(HttpServletRequestUtility.getOperatingSystem(request));
-                    UserSessionAccessTokenDTO accessTokenDTO = userSessionService.createAccessTokenFirst(userId, session.getId(), creationDTO);
-
-                    // Return result.
-                    UserSessionAccessTokenWithIdTokenDTO sessionToken = new UserSessionAccessTokenWithIdTokenDTO();
-                    sessionToken.setIdToken(session.getRawIdToken());
-                    sessionToken.setAccessToken(accessTokenDTO.getAccessToken());
-                    sessionToken.setExpiresIn(accessTokenDTO.getExpiresIn());
-                    sessionToken.setType(accessTokenDTO.getType());
-
-                    // Write JSON response to body.
-                    response.setStatus(HttpStatus.OK.value());
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    this.objectMapper.writeValue(response.getOutputStream(), sessionToken);
-                    response.flushBuffer();
-                } else if (UserAuthenticationType.TOTP.equals(type)) {
-                    // Get MFA session ID.
-                    UserSessionDTO userSession = userSessionService.markMfaAsVerified(userId, dto.getMfaSessionId());
-
-                    // Regenerate an access token.
-                    UserSessionAccessTokenFirstCreationDTO creationDTO = new UserSessionAccessTokenFirstCreationDTO();
-                    creationDTO.setBrowser(HttpServletRequestUtility.getBrowser(request));
-                    creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
-                    creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
-                    creationDTO.setOperatingSystem(HttpServletRequestUtility.getOperatingSystem(request));
-                    UserSessionAccessTokenDTO accessTokenDTO = userSessionService.createAccessTokenFirst(userId, userSession.getId(), creationDTO);
-
-                    // Write JSON response to body.
-                    response.setStatus(HttpStatus.OK.value());
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    this.objectMapper.writeValue(response.getOutputStream(), accessTokenDTO);
-                    response.flushBuffer();
+                // Prepare user session creation.
+                UserSessionCreationDTO userSessionCreationDTO = new UserSessionCreationDTO();
+                if (dto.getMfaEnabled()) {
+                    userSessionCreationDTO.setMfaVerified(Boolean.FALSE);
                 }
+
+                if (rememberMe) {
+                    userSessionCreationDTO.setDurationInSeconds(TimeUnit.DAYS.toSeconds(Integers.THIRTY));
+                } else {
+                    userSessionCreationDTO.setDurationInSeconds(TimeUnit.HOURS.toSeconds(Integers.TWO));
+                }
+
+                // Generate session
+                UserSessionWithRawIdTokenDTO session = userSessionService.create(userId, userSessionCreationDTO);
+
+                // Generate access token
+                UserSessionAccessTokenFromIdTokenCreationDTO creationDTO = new UserSessionAccessTokenFromIdTokenCreationDTO();
+                creationDTO.setBrowser(HttpServletRequestUtility.getBrowser(request));
+                creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
+                creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
+                creationDTO.setOperatingSystem(HttpServletRequestUtility.getOperatingSystem(request));
+                creationDTO.setRawIdToken(session.getRawIdToken());
+                UserSessionAccessTokenWithIdTokenDTO sessionToken = userSessionService.createAccessTokenFromIdToken(creationDTO);
+
+                // Write JSON response to body.
+                httpUserAccessTokenService.writeResponseWithIdToken(sessionToken, response);
+            } else if (UserAuthenticationType.TOTP.equals(type)) {
+                // Get MFA session ID.
+                UserSessionDTO userSession = userSessionService.markMfaAsVerified(userId, dto.getMfaSessionId());
+
+                // Regenerate an access token.
+                UserSessionAccessTokenFirstCreationDTO creationDTO = new UserSessionAccessTokenFirstCreationDTO();
+                creationDTO.setBrowser(HttpServletRequestUtility.getBrowser(request));
+                creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
+                creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
+                creationDTO.setOperatingSystem(HttpServletRequestUtility.getOperatingSystem(request));
+                UserSessionAccessTokenDTO sessionToken = userSessionService.createAccessTokenFirst(userId, userSession.getId(), creationDTO);
+
+                // Write JSON response to body.
+                httpUserAccessTokenService.writeResponseWithoutIdToken(sessionToken, response);
             }
-        } catch (IOException e) {
-            throw new InternalServerErrorException(e);
         }
     }
 

@@ -38,7 +38,6 @@ import org.springframework.http.MediaType;
 import org.springframework.messaging.Message;
 import org.springframework.test.web.servlet.MockMvc;
 
-import me.julb.applications.webanalytics.controllers.CollectController;
 import me.julb.springbootstarter.messaging.processors.AsyncMessageProducerProcessor;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 import me.julb.springbootstarter.test.security.annotations.WithMockUser;

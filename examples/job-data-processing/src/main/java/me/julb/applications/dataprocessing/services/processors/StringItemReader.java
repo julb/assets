@@ -6,8 +6,8 @@ package me.julb.applications.dataprocessing.services.processors;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
@@ -21,12 +21,8 @@ import me.julb.applications.dataprocessing.configurations.beans.CustomJobExecuti
  * <P>
  * @author Airbus.
  */
+@Slf4j
 public class StringItemReader extends AbstractPagingItemReader<String> {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(StringItemReader.class);
 
     /**
      * The current job execution.

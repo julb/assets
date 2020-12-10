@@ -39,6 +39,8 @@ import java.util.UUID;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -53,8 +55,6 @@ import org.apache.http.ssl.PrivateKeyStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
@@ -70,12 +70,8 @@ import me.julb.springbootstarter.consumer.configurations.properties.TlsTruststor
  * <P>
  * @author Julb.
  */
+@Slf4j
 public final class FeignClientUtility {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(FeignClientUtility.class);
 
     /**
      * Builds a feign client instance.

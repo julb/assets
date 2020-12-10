@@ -43,8 +43,7 @@ import com.nimbusds.jwt.EncryptedJWT;
 import java.text.ParseException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.josejwt.digest.TokenDigestUtility;
@@ -59,12 +58,8 @@ import me.julb.library.utility.josejwt.jwk.IJWKSetProvider;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class TokenDecryptionOperation {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenDecryptionOperation.class);
 
     /**
      * The private key used to decrypt the token.

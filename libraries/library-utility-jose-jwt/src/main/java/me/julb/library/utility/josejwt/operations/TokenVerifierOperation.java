@@ -43,10 +43,10 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.josejwt.digest.TokenDigestUtility;
@@ -68,12 +68,8 @@ import me.julb.library.utility.josejwt.jwk.IJWKSetProvider;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class TokenVerifierOperation {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenVerifierOperation.class);
 
     /**
      * The valid public keys used to check the token signature.

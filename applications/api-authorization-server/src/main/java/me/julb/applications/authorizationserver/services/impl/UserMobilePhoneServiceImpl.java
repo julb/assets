@@ -35,11 +35,11 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -89,14 +89,10 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
  * @author Julb.
  */
 @Service
+@Slf4j
 @Validated
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserMobilePhoneServiceImpl.class);
 
     /**
      * The item repository.

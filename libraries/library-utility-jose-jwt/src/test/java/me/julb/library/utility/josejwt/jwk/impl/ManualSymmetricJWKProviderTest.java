@@ -35,7 +35,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import me.julb.library.utility.josejwt.exceptions.internalservererror.MissingFieldInKeyFormatException;
-import me.julb.library.utility.josejwt.jwk.impl.ManualSymmetricJWKProvider;
 
 /**
  * The symmetric JWK.

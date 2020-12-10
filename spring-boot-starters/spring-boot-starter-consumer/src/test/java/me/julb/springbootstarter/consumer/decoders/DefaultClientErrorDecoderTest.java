@@ -26,23 +26,22 @@ package me.julb.springbootstarter.consumer.decoders;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import feign.Request;
 import feign.Request.Body;
 import feign.Request.HttpMethod;
+import feign.RequestTemplate;
+import feign.Response;
 import me.julb.library.utility.exceptions.AbstractRemoteSystemException;
 import me.julb.library.utility.exceptions.RemoteSystemClientErrorException;
 import me.julb.library.utility.exceptions.RemoteSystemGatewayTimeoutException;
 import me.julb.library.utility.exceptions.RemoteSystemNotFoundException;
 import me.julb.library.utility.exceptions.RemoteSystemServerErrorException;
 import me.julb.library.utility.exceptions.RemoteSystemServiceUnavailableException;
-import me.julb.springbootstarter.consumer.decoders.DefaultClientErrorDecoder;
-import feign.RequestTemplate;
-import feign.Response;
 
 /**
  * An Error Decoder for Feign clients.
@@ -64,7 +63,7 @@ public class DefaultClientErrorDecoderTest {
     /**
      * The set-up.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         this.errorDecoder = new DefaultClientErrorDecoder();
         this.sampleRequest = Request.create(HttpMethod.GET, "http://nowhere", new HashMap<String, Collection<String>>(), Body.empty(), new RequestTemplate());
@@ -82,7 +81,7 @@ public class DefaultClientErrorDecoderTest {
             .build();
         //@formatter:on
 
-        Assert.assertNull(this.errorDecoder.decode("methodKey", response));
+        Assertions.assertNull(this.errorDecoder.decode("methodKey", response));
     }
 
     /**
@@ -97,7 +96,7 @@ public class DefaultClientErrorDecoderTest {
             .build();
         //@formatter:on
 
-        Assert.assertNull(this.errorDecoder.decode("methodKey", response));
+        Assertions.assertNull(this.errorDecoder.decode("methodKey", response));
     }
 
     /**
@@ -112,7 +111,7 @@ public class DefaultClientErrorDecoderTest {
             .build();
         //@formatter:on
 
-        Assert.assertNull(this.errorDecoder.decode("methodKey", response));
+        Assertions.assertNull(this.errorDecoder.decode("methodKey", response));
     }
 
     /**
@@ -316,15 +315,15 @@ public class DefaultClientErrorDecoderTest {
      * @param expectedExceptionClazz the expected exception clazz.
      */
     protected void assertDecoderReturnRemoteSystemException(Response response, Exception exception, Class<? extends Exception> expectedExceptionClazz) {
-        Assert.assertNotNull(exception);
+        Assertions.assertNotNull(exception);
 
-        Assert.assertTrue("Method should have thrown a " + expectedExceptionClazz.getName(), exception.getClass().equals(expectedExceptionClazz));
+        Assertions.assertTrue(exception.getClass().equals(expectedExceptionClazz), "Method should have thrown a " + expectedExceptionClazz.getName());
 
         AbstractRemoteSystemException castedException = (AbstractRemoteSystemException) exception;
-        Assert.assertEquals(sampleRequest.httpMethod().name(), castedException.getHttpRequestMethod());
-        Assert.assertEquals(sampleRequest.url(), castedException.getHttpRequestUrl());
-        Assert.assertEquals(response.reason(), castedException.getHttpResponseReason());
-        Assert.assertEquals(response.status(), castedException.getHttpResponseStatusCode().intValue());
+        Assertions.assertEquals(sampleRequest.httpMethod().name(), castedException.getHttpRequestMethod());
+        Assertions.assertEquals(sampleRequest.url(), castedException.getHttpRequestUrl());
+        Assertions.assertEquals(response.reason(), castedException.getHttpResponseReason());
+        Assertions.assertEquals(response.status(), castedException.getHttpResponseStatusCode().intValue());
     }
 
 }

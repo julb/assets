@@ -23,9 +23,9 @@
  */
 package me.julb.springbootstarter.security.configurations.beans.userdetails;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.User;
@@ -40,12 +40,8 @@ import me.julb.springbootstarter.core.configurations.properties.SecurityInternal
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class AuthenticationByInternalApiKeyUserDetailsService implements AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationByInternalApiKeyUserDetailsService.class);
 
     /**
      * The security internal api key properties.

@@ -5,7 +5,9 @@ spring:
       
 ---
 spring:
-  profiles: TEST
+  config:
+    activate:
+      on-profile: TEST
   
   main:
     banner-mode: "off"
@@ -17,7 +19,9 @@ logging:
   
 ---
 spring:
-  profiles: LOCAL
+  config:
+    activate:
+      on-profile: LOCAL
   cloud:
     stream:
       bindings:
@@ -29,18 +33,8 @@ spring:
           main-producer:
             producer:
               routing-key-expression: headers['routingKey']
-
-#mongodb
-spring.data.mongodb:
-   host: localhost
-   port: 27017
-   database: app1
-   autoIndexCreation: true
-
-# Application
-application:
-  auto-cleaning:
-    announcement-threshold-in-days: 15
+server:
+  port: 9090
 
 management:
   endpoints.web.exposure.include: health,prometheus,info
@@ -49,7 +43,9 @@ management:
 ---
 
 spring:
-  profiles: DEV,INT,VAL,STG,PROD
+  config:
+    activate:
+      on-profile: DEV,INT,VAL,STG,PROD
   cloud:
     kubernetes:
       enabled: true

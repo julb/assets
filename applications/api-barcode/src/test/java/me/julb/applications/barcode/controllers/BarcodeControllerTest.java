@@ -34,7 +34,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import me.julb.applications.barcode.controllers.BarcodeController;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**

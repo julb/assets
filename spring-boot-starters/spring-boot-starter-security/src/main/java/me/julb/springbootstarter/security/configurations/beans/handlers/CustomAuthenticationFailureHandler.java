@@ -31,8 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AccountStatusException;
@@ -52,12 +52,8 @@ import me.julb.springbootstarter.security.configurations.beans.userdetails.deleg
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler, AuthenticationEntryPoint {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomAuthenticationFailureHandler.class);
 
     /**
      * The authentication user details delegate service.

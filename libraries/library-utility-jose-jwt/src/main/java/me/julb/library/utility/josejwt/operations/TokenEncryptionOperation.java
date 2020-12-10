@@ -38,8 +38,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.RSAKey;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import me.julb.library.utility.josejwt.digest.TokenDigestUtility;
 import me.julb.library.utility.josejwt.exceptions.JOSEJWTException;
@@ -51,12 +50,8 @@ import me.julb.library.utility.josejwt.jwk.IJWKProvider;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class TokenEncryptionOperation {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenEncryptionOperation.class);
 
     /**
      * The JWK provider.

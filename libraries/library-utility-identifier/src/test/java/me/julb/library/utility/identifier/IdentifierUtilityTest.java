@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import me.julb.library.utility.constants.Integers;
-import me.julb.library.utility.identifier.IdentifierUtility;
 
 /**
  * Test class for {@link IdentifierUtility} class.

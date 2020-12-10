@@ -5,7 +5,9 @@ spring:
       
 ---
 spring:
-  profiles: TEST
+  config:
+    activate:
+      on-profile: TEST
   
   main:
     banner-mode: "off"
@@ -17,7 +19,9 @@ logging:
   
 ---
 spring:
-  profiles: LOCAL
+  config:
+    activate:
+      on-profile: LOCAL
   cloud:
     stream:
       bindings:
@@ -49,7 +53,9 @@ management:
 ---
 
 spring:
-  profiles: DEV,INT,VAL,STG,PROD
+  config:
+    activate:
+      on-profile: DEV,INT,VAL,STG,PROD
   cloud:
     kubernetes:
       enabled: true

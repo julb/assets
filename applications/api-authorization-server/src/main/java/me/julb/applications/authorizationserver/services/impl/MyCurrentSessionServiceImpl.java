@@ -35,8 +35,8 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.services.MyCurrentSessionService;
 import me.julb.applications.authorizationserver.services.UserSessionService;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
+import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.library.dto.security.AuthenticatedUserDTO;
 import me.julb.springbootstarter.security.services.ISecurityService;
 
@@ -78,7 +78,7 @@ public class MyCurrentSessionServiceImpl implements MyCurrentSessionService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserSessionAccessTokenDTO createAccessToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation) {
+    public UserSessionAccessTokenWithIdTokenDTO createAccessToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation) {
         return userSessionService.createAccessTokenFromIdToken(accessTokenCreation);
     }
 

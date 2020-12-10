@@ -31,9 +31,9 @@ import java.io.IOException;
 
 import javax.validation.constraints.Min;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.codec.digest.DigestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,14 +51,10 @@ import me.julb.library.utility.barcode.qrcode.QRCodeUtility;
  * @author Julb.
  */
 @RestController
+@Slf4j
 @Validated
 @RequestMapping(path = "/barcodes")
 public class BarcodeController {
-
-    /**
-     * The logger.
-     */
-    private final static Logger LOGGER = LoggerFactory.getLogger(BarcodeController.class);
 
     /**
      * Generates a EAN13 bar code.

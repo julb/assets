@@ -30,8 +30,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import me.julb.library.utility.barcode.ean13.EAN13Utility;
-
 /**
  * Unit test class for {@link EAN13Utility}.
  * <P>

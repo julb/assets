@@ -145,9 +145,11 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
         UserMailEntity userMail = userMailRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId());
         UserMobilePhoneEntity userMobilePhone = userMobilePhoneRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId());
 
+        String expirationDateTime = DateUtility.dateTimePlus(accessTokenJwtForgery.getValidityInSeconds().intValue(), ChronoUnit.SECONDS);
+
         // Issue date/expiration
         Date issueDate = DateUtility.parseDateTime(DateUtility.dateTimeNow());
-        Date expirationDate = DateUtility.parseDateTime(DateUtility.dateTimePlus(accessTokenJwtForgery.getValidityInSeconds().intValue(), ChronoUnit.SECONDS));
+        Date expirationDate = DateUtility.parseDateTime(expirationDateTime);
 
         // @formatter:off
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
@@ -181,7 +183,8 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
         // Return token.
         UserSessionAccessTokenDTO accessToken = new UserSessionAccessTokenDTO();
         accessToken.setAccessToken(jwt);
-        accessToken.setExpiresIn(DateUtility.epochSecond(expirationDate) - DateUtility.epochSecondNow());
+        accessToken.setExpiresAt(expirationDateTime);
+        accessToken.setExpiresIn(DateUtility.secondsUntil(expirationDateTime));
         accessToken.setType(HttpHeaderUtility.BEARER);
         return accessToken;
     }
