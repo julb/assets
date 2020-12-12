@@ -29,8 +29,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,13 +46,9 @@ import me.julb.library.utility.http.HttpErrorResponseBuilder;
  * @author Julb.
  */
 @RestController
+@Slf4j
 @Hidden
 public class UncaughtErrorController implements ErrorController {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(UncaughtErrorController.class);
 
     /**
      * Method that handles the error endpoint.

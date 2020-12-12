@@ -42,8 +42,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import me.julb.library.utility.josejwt.digest.TokenDigestUtility;
 import me.julb.library.utility.josejwt.exceptions.JOSEJWTException;
@@ -57,12 +56,8 @@ import me.julb.library.utility.josejwt.jwk.IJWKProvider;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class TokenSignatureOperation {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenSignatureOperation.class);
 
     /**
      * The private key used to sign the token.

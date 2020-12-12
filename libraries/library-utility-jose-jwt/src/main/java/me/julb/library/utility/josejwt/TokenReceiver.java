@@ -23,9 +23,9 @@
  */
 package me.julb.library.utility.josejwt;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import me.julb.library.utility.josejwt.digest.TokenDigestUtility;
 import me.julb.library.utility.josejwt.exceptions.JOSEJWTException;
@@ -38,12 +38,8 @@ import me.julb.library.utility.josejwt.operations.TokenVerifierOperation;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class TokenReceiver {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenReceiver.class);
 
     /**
      * The signatures keys.

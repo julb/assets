@@ -23,8 +23,8 @@
  */
 package me.julb.springbootstarter.security.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -49,14 +49,10 @@ import me.julb.springbootstarter.security.services.ISecurityService;
  * @author Julb.
  */
 @RestController
+@Slf4j
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SecurityExceptionAdviceController {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityExceptionAdviceController.class);
 
     /**
      * The security service.

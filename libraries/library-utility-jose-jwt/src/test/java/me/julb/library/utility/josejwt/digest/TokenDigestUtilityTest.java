@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import me.julb.library.utility.josejwt.digest.TokenDigestUtility;
 import me.julb.library.utility.josejwt.exceptions.JOSEJWTException;
 
 /**

@@ -24,6 +24,7 @@
 package me.julb.library.utility.josejwt.jwk;
 
 import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.util.JSONObjectUtils;
 
 /**
  * An interface describing a JWKSet provider.
@@ -53,7 +54,7 @@ public interface IJWKSetProvider {
      * @return a JSON string of the keys contained in this JWKSet.
      */
     default String toJSONString(boolean publicKeyOnly) {
-        return toJWKSet().toJSONObject(publicKeyOnly).toJSONString();
+        return JSONObjectUtils.toJSONString(toJWKSet().toJSONObject(publicKeyOnly));
     }
 
     /**

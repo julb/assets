@@ -23,8 +23,8 @@
  */
 package me.julb.springbootstarter.consumer.decoders;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 
 import feign.Response;
@@ -40,12 +40,8 @@ import me.julb.library.utility.exceptions.RemoteSystemServiceUnavailableExceptio
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class DefaultClientErrorDecoder implements ErrorDecoder {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultClientErrorDecoder.class);
 
     /**
      * {@inheritDoc}

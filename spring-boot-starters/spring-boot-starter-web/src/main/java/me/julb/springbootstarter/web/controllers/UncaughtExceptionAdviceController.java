@@ -23,8 +23,8 @@
  */
 package me.julb.springbootstarter.web.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -42,14 +42,10 @@ import me.julb.library.utility.http.HttpErrorResponseBuilder;
  * @author Julb.
  */
 @RestController
+@Slf4j
 @ControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class UncaughtExceptionAdviceController {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(UncaughtExceptionAdviceController.class);
 
     /**
      * Method that handles thrown {@link Exception}.

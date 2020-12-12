@@ -26,8 +26,6 @@ package me.julb.library.utility.size;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import me.julb.library.utility.size.CpuUtility;
-
 /**
  * Test class for {@link CpuUtility} class.
  * <P>

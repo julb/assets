@@ -26,8 +26,6 @@ package me.julb.library.utility.date;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import me.julb.library.utility.date.DateUtility;
-
 /**
  * Test class for {@link DateUtility} class.
  * <P>

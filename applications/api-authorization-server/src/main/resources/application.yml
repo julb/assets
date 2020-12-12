@@ -2,10 +2,12 @@ spring:
   cloud:
     kubernetes:
       enabled: false
-      
+
 ---
 spring:
-  profiles: TEST
+  config:
+    activate:
+      on-profile: TEST
   main:
     banner-mode: "off"
     cloud:
@@ -23,7 +25,7 @@ spring:
 # Application
 application:
   access-token-jwt-forgery:
-    issuer: julb.io
+    issuer: julb.me
     validity-in-seconds: 28800
     signature:
       algorithm: RS512
@@ -45,7 +47,7 @@ security:
     header-value: 123456
   jwt:
     enabled: true
-    issuer: julb.io
+    issuer: julb.me
     signature-key:
       algorithm: RS512
       key-id: sign.test
@@ -64,7 +66,9 @@ logging:
   
 ---
 spring:
-  profiles: LOCAL
+  config:
+    activate:
+      on-profile: LOCAL
   cloud:
     stream:
       bindings:
@@ -87,7 +91,7 @@ spring.data.mongodb:
 # Application
 application:
   access-token-jwt-forgery:
-    issuer: julb.io
+    issuer: julb.me
     validity-in-seconds: 28800
     signature:
       algorithm: RS512
@@ -109,7 +113,7 @@ security:
     header-value: 123456
   jwt:
     enabled: true
-    issuer: julb.io
+    issuer: julb.me
     signature-key:
       algorithm: RS512
       key-id: sign.test
@@ -124,7 +128,9 @@ security:
 ---
 
 spring:
-  profiles: DEV,INT,VAL,STG,PROD
+  config:
+    activate:
+      on-profile: DEV,INT,VAL,STG,PROD
   cloud:
     kubernetes:
       enabled: true

@@ -5,7 +5,9 @@ spring:
       
 ---
 spring:
-  profiles: TEST
+  config:
+    activate:
+      on-profile: TEST
   
   main:
     banner-mode: "off"
@@ -17,25 +19,11 @@ logging:
   
 ---
 spring:
-  profiles: LOCAL
-  cloud:
-    stream:
-      bindings:
-        default.binder: rabbitmq
-        main-producer:
-          destination: main-exchange-point
-      rabbit:
-        bindings:
-          main-producer:
-            producer:
-              routing-key-expression: headers['routingKey']
-
-#mongodb
-spring.data.mongodb:
-   host: localhost
-   port: 27017
-   database: app1
-   autoIndexCreation: true
+  config:
+    activate:
+      on-profile: LOCAL
+server:
+  port: 9096
 
 management:
   endpoints.web.exposure.include: health,prometheus,info
@@ -44,7 +32,9 @@ management:
 ---
 
 spring:
-  profiles: DEV,INT,VAL,STG,PROD
+  config:
+    activate:
+      on-profile: DEV,INT,VAL,STG,PROD
   cloud:
     kubernetes:
       enabled: true

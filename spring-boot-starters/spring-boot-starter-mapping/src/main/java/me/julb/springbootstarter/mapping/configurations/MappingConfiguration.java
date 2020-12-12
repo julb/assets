@@ -24,8 +24,8 @@
 
 package me.julb.springbootstarter.mapping.configurations;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -48,12 +48,8 @@ import me.julb.library.mapping.annotations.ObjectMappingFactory;
  * @author Julb.
  */
 @Configuration
+@Slf4j
 public class MappingConfiguration {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MappingConfiguration.class);
 
     /**
      * The base-package mapping.

@@ -10,6 +10,8 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +43,10 @@ import me.julb.springbootstarter.web.utility.PageUtility;
  * @author Julb.
  */
 @RestController
+@Slf4j
 @Validated
 @RequestMapping(path = "/hello", produces = MediaType.APPLICATION_JSON_VALUE)
 public class HelloController {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(HelloController.class);
 
     /**
      * The app properties.

@@ -30,8 +30,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import me.julb.library.utility.barcode.qrcode.QRCodeUtility;
-
 /**
  * Unit test class for {@link QRCodeUtility}.
  * <P>

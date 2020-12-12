@@ -1,7 +1,7 @@
 package me.julb.applications.dataprocessing.services.processors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -12,12 +12,8 @@ import org.springframework.batch.repeat.RepeatStatus;
  * <P>
  * @author Airbus.
  */
+@Slf4j
 public class SimpleTasklet implements Tasklet {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTasklet.class);
 
     /**
      * Runs the indexation. {@inheritDoc}

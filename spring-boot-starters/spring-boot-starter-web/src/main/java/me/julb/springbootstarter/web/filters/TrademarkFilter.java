@@ -8,9 +8,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
@@ -24,12 +24,8 @@ import me.julb.springbootstarter.core.context.TrademarkContextHolder;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class TrademarkFilter extends GenericFilterBean implements Ordered {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrademarkFilter.class);
 
     /**
      * The trademark override if any.

@@ -23,10 +23,10 @@
  */
 package me.julb.springbootstarter.security.configurations.beans.userdetails;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,12 +49,8 @@ import me.julb.springbootstarter.security.services.dto.CustomUserDetails;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class AuthenticationByJwtUserDetailsService implements AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationByJwtUserDetailsService.class);
 
     /**
      * The security JWT properties.

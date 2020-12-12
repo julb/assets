@@ -27,8 +27,8 @@ package me.julb.springbootstarter.messaging.services;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
@@ -51,13 +51,9 @@ import me.julb.springbootstarter.messaging.processors.AsyncMessageProducerProces
  * @author Julb.
  */
 @Service
+@Slf4j
 @Validated
 public class AsyncMessagePosterService implements IAsyncMessagePosterService {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncMessagePosterService.class);
 
     /**
      * Thee routing key header name.

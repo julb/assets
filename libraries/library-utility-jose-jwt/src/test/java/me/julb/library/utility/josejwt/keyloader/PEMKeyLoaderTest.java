@@ -31,6 +31,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -42,26 +44,19 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import me.julb.library.utility.josejwt.exceptions.JOSEJWTException;
 import me.julb.library.utility.josejwt.exceptions.internalservererror.InvalidPEMKeyFormatException;
 import me.julb.library.utility.josejwt.exceptions.internalservererror.InvalidPasswordPEMKeyException;
 import me.julb.library.utility.josejwt.exceptions.internalservererror.MissingPasswordPEMKeyException;
-import me.julb.library.utility.josejwt.keyloader.PEMKeyLoader;
 
 /**
  * A loader to build {@link java.security.PublicKey} and {@link java.security.PrivateKey} from PEM files.
  * <P>
  * @author Julb.
  */
+@Slf4j
 public final class PEMKeyLoaderTest {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PEMKeyLoader.class);
 
     // ------------------------------------------ Constructors.
 

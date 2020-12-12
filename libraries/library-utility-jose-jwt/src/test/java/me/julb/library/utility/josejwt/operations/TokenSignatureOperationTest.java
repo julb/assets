@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Test;
 import me.julb.library.utility.josejwt.jwk.IJWKProvider;
 import me.julb.library.utility.josejwt.jwk.impl.ManualAsymmetricJWKProvider;
 import me.julb.library.utility.josejwt.jwk.impl.ManualSymmetricJWKProvider;
-import me.julb.library.utility.josejwt.operations.TokenSignatureOperation;
 
 /**
  * Unit test class for {@link TokenSignatureOperationTest}.

@@ -89,7 +89,8 @@ public final class CustomTracingFeignClient implements Client {
     }
 
     @Override
-    public Response execute(Request request, Request.Options options) throws IOException {
+    public Response execute(Request request, Request.Options options)
+        throws IOException {
         Map<String, Collection<String>> headers = new HashMap<>(request.headers());
         Span span = handleSend(headers, request, null);
         LOGGER.debug("Handled send of " + span);

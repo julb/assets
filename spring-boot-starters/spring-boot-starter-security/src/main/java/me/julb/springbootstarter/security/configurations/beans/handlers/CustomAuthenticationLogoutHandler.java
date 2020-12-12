@@ -27,8 +27,8 @@ package me.julb.springbootstarter.security.configurations.beans.handlers;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
@@ -39,12 +39,8 @@ import me.julb.springbootstarter.security.configurations.beans.userdetails.deleg
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class CustomAuthenticationLogoutHandler implements LogoutHandler {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomAuthenticationLogoutHandler.class);
 
     /**
      * The authentication user details logout handler delegate.

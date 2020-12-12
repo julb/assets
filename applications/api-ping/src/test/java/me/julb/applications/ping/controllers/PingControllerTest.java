@@ -35,7 +35,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import me.julb.applications.ping.controllers.PingController;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 import me.julb.springbootstarter.test.security.annotations.WithMockUser;
 

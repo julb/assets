@@ -27,8 +27,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import me.julb.library.utility.http.HttpHeaderUtility;
-
 /**
  * A generic configuration class for a SSL client.
  * <P>

@@ -30,6 +30,8 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.security.Security;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.EncryptionException;
@@ -39,8 +41,6 @@ import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import me.julb.library.utility.josejwt.exceptions.JOSEJWTException;
 import me.julb.library.utility.josejwt.exceptions.internalservererror.InvalidPEMKeyFormatException;
@@ -52,12 +52,8 @@ import me.julb.library.utility.josejwt.exceptions.internalservererror.MissingPas
  * <P>
  * @author Julb.
  */
+@Slf4j
 public final class PEMKeyLoader {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PEMKeyLoader.class);
 
     // ------------------------------------------ Constructors.
 

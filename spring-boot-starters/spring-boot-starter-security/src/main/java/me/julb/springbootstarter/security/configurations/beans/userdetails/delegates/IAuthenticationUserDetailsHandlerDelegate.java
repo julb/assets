@@ -31,7 +31,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 /**
- * The authentication by TOTP delegate service.
+ * The authentication user details delegate service.
  * <P>
  * @author Julb.
  */

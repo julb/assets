@@ -50,6 +50,7 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.google.common.collect.Iterables;
+import org.testcontainers.utility.DockerImageName;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByPincodeEntity;
@@ -84,7 +85,7 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
      * The MongoDB container.
      */
     @Container
-    private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer();
+    private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.0.10"));
 
     /**
      * The mock MVC.

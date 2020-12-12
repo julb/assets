@@ -198,6 +198,30 @@ public final class DateUtility {
     }
 
     /**
+     * Returns the second since epoch equivalent of a date.
+     * @param dateTime the date time.
+     * @return the second since epoch equivalent of a date.
+     */
+    public static Long epochSecond(String dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+        return ZonedDateTime.ofInstant(DateTimeFormatter.ofPattern(Temporals.ISO_8601_DATE_TIME).parse(dateTime, ZonedDateTime::from).toInstant(), ZoneOffset.UTC).toEpochSecond();
+    }
+
+    /**
+     * Returns the number of seconds necessary to reach given date time.
+     * @param dateTime the date time.
+     * @return the number of seconds necessary to reach given date time.
+     */
+    public static Long secondsUntil(String dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+        return Math.max(0, epochSecond(dateTime) - epochSecondNow());
+    }
+
+    /**
      * Returns the date equivalent of second since epoch.
      * @param epochSecond the epoch seconds.
      * @return the date equivalent of second since epoch.

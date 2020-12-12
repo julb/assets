@@ -32,8 +32,8 @@ import java.util.concurrent.BlockingQueue;
 import javax.validation.ConstraintViolationException;
 
 import org.json.JSONObject;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -42,12 +42,10 @@ import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.messaging.Message;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.springbootstarter.messaging.processors.AsyncMessageProducerProcessor;
-import me.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
 import me.julb.springbootstarter.messaging.services.dto.UnitTestAsyncMessageDTO;
 
 /**
@@ -55,7 +53,6 @@ import me.julb.springbootstarter.messaging.services.dto.UnitTestAsyncMessageDTO;
  * <P>
  * @author Julb.
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @EnableAutoConfiguration
 @SpringBootConfiguration
@@ -113,23 +110,27 @@ public class AsyncMessagePosterServiceTest {
     /**
      * Unit test method.
      */
-    @Test(expected = ConstraintViolationException.class)
+    @Test
     public void whenPostingNullRoutingKey_thenThrowConstraintViolationException()
         throws Exception {
-        UnitTestAsyncMessageDTO dto = new UnitTestAsyncMessageDTO();
-        dto.setId(IdentifierUtility.generateId());
-        dto.setVersion(1);
-        dto.setTimestamp(DateUtility.dateTimeNow());
-        dto.setAdditionalValue("some.value");
-        asyncMessagePosterService.postMessage(null, dto);
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            UnitTestAsyncMessageDTO dto = new UnitTestAsyncMessageDTO();
+            dto.setId(IdentifierUtility.generateId());
+            dto.setVersion(1);
+            dto.setTimestamp(DateUtility.dateTimeNow());
+            dto.setAdditionalValue("some.value");
+            asyncMessagePosterService.postMessage(null, dto);
+        });
     }
 
     /**
      * Unit test method.
      */
-    @Test(expected = ConstraintViolationException.class)
+    @Test
     public void whenPostingNullAsyncMessage_thenThrowConstraintViolationException()
         throws Exception {
-        asyncMessagePosterService.postMessage("some.routing.key", null);
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            asyncMessagePosterService.postMessage("some.routing.key", null);
+        });
     }
 }

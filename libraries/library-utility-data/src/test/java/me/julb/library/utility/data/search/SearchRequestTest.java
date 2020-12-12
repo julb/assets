@@ -27,8 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import me.julb.library.utility.data.search.SearchRequest;
-import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.data.search.predicates.attributes.MultipleValuesAttributePredicate;
 import me.julb.library.utility.data.search.predicates.attributes.NoValueAttributePredicate;
 import me.julb.library.utility.data.search.predicates.attributes.OperatorAttributePredicate;

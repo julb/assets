@@ -34,6 +34,7 @@ import org.springframework.data.domain.Pageable;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFirstCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
+import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionCredentialsDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
@@ -92,7 +93,7 @@ public interface UserSessionService {
      * @param accessTokenCreation the access token creation.
      * @return the access token.
      */
-    UserSessionAccessTokenDTO createAccessTokenFromIdToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation);
+    UserSessionAccessTokenWithIdTokenDTO createAccessTokenFromIdToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation);
 
     /**
      * Generates an access token for a user.

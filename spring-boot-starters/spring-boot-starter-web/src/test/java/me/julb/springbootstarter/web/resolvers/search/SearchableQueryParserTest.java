@@ -16,14 +16,13 @@
 package me.julb.springbootstarter.web.resolvers.search;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import me.julb.library.utility.data.search.predicates.attributes.MultipleValuesAttributePredicate;
 import me.julb.library.utility.data.search.predicates.attributes.NoValueAttributePredicate;
 import me.julb.library.utility.data.search.predicates.attributes.OperatorAttributePredicate;
 import me.julb.library.utility.data.search.predicates.attributes.SingleValueAttributePredicate;
-import me.julb.springbootstarter.web.resolvers.search.SearchableQueryParser;
 import me.julb.springbootstarter.web.resolvers.search.exceptions.SearchTermSearchQueryParseException;
 import me.julb.springbootstarter.web.resolvers.search.exceptions.UnknownOperatorSearchQueryParseException;
 
@@ -63,9 +62,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithNoOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.EQUAL, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.EQUAL, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -74,9 +73,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithEqOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|eq", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.EQUAL, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.EQUAL, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -85,9 +84,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithNotEqualOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|ne", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.NOT_EQUAL, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.NOT_EQUAL, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -96,9 +95,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithGreaterOrEqualThanOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|ge", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.GREATER_OR_EQUAL_THAN, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.GREATER_OR_EQUAL_THAN, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -107,9 +106,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithGreaterThanOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|gt", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.GREATER_THAN, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.GREATER_THAN, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -118,9 +117,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithLessOrEqualThanOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|le", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.LESS_OR_EQUAL_THAN, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.LESS_OR_EQUAL_THAN, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -129,9 +128,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithLessThanOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|lt", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.LESS_THAN, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.LESS_THAN, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -140,9 +139,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithLikeOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|lk", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.LIKE, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.LIKE, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -151,9 +150,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithNotLikeOperator_thenReturnValidPredicate() {
         SingleValueAttributePredicate predicate = (SingleValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|nl", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.NOT_LIKE, predicate.getOperator());
-        Assert.assertEquals("DOE", predicate.getValue());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.NOT_LIKE, predicate.getOperator());
+        Assertions.assertEquals("DOE", predicate.getValue());
     }
 
     /**
@@ -162,9 +161,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithInOperator_thenReturnValidPredicate() {
         MultipleValuesAttributePredicate predicate = (MultipleValuesAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|in", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.IN, predicate.getOperator());
-        Assert.assertTrue(ArrayUtils.contains(predicate.getValue(), "DOE"));
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.IN, predicate.getOperator());
+        Assertions.assertTrue(ArrayUtils.contains(predicate.getValue(), "DOE"));
     }
 
     /**
@@ -173,10 +172,10 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithInOperatorMultipleValues_thenReturnValidPredicate() {
         MultipleValuesAttributePredicate predicate = (MultipleValuesAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|in", "DOE,BOB");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.IN, predicate.getOperator());
-        Assert.assertTrue(ArrayUtils.contains(predicate.getValue(), "DOE"));
-        Assert.assertTrue(ArrayUtils.contains(predicate.getValue(), "BOB"));
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.IN, predicate.getOperator());
+        Assertions.assertTrue(ArrayUtils.contains(predicate.getValue(), "DOE"));
+        Assertions.assertTrue(ArrayUtils.contains(predicate.getValue(), "BOB"));
     }
 
     /**
@@ -185,9 +184,9 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithNotInOperator_thenReturnValidPredicate() {
         MultipleValuesAttributePredicate predicate = (MultipleValuesAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|ni", "DOE");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.NOT_IN, predicate.getOperator());
-        Assert.assertTrue(ArrayUtils.contains(predicate.getValue(), "DOE"));
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.NOT_IN, predicate.getOperator());
+        Assertions.assertTrue(ArrayUtils.contains(predicate.getValue(), "DOE"));
     }
 
     /**
@@ -196,10 +195,10 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithNotInOperatorMultipleValues_thenReturnValidPredicate() {
         MultipleValuesAttributePredicate predicate = (MultipleValuesAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|ni", "DOE,BOB");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.NOT_IN, predicate.getOperator());
-        Assert.assertTrue(ArrayUtils.contains(predicate.getValue(), "DOE"));
-        Assert.assertTrue(ArrayUtils.contains(predicate.getValue(), "BOB"));
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.NOT_IN, predicate.getOperator());
+        Assertions.assertTrue(ArrayUtils.contains(predicate.getValue(), "DOE"));
+        Assertions.assertTrue(ArrayUtils.contains(predicate.getValue(), "BOB"));
     }
 
     /**
@@ -208,8 +207,8 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithIsNullOperator_thenReturnValidPredicate() {
         NoValueAttributePredicate predicate = (NoValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|nu", "");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.IS_NULL, predicate.getOperator());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.IS_NULL, predicate.getOperator());
     }
 
     /**
@@ -218,47 +217,57 @@ public class SearchableQueryParserTest {
     @Test
     public void whenTermWithIsNotNullOperatorMultipleValues_thenReturnValidPredicate() {
         NoValueAttributePredicate predicate = (NoValueAttributePredicate) SearchableQueryParser.searchTermToPredicate("", "lastName|nn", "");
-        Assert.assertEquals("lastName", predicate.getName());
-        Assert.assertEquals(OperatorAttributePredicate.IS_NOT_NULL, predicate.getOperator());
+        Assertions.assertEquals("lastName", predicate.getName());
+        Assertions.assertEquals(OperatorAttributePredicate.IS_NOT_NULL, predicate.getOperator());
     }
 
     /**
      * Test method.
      */
-    @Test(expected = UnknownOperatorSearchQueryParseException.class)
+    @Test
     public void whenTermWithIsUnknownOperator_thenThrowUnknownOperatorSearchQueryParseException() {
-        SearchableQueryParser.searchTermToPredicate("", "lastName|zz", "");
+        Assertions.assertThrows(UnknownOperatorSearchQueryParseException.class, () -> {
+            SearchableQueryParser.searchTermToPredicate("", "lastName|zz", "");
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = SearchTermSearchQueryParseException.class)
+    @Test
     public void whenTermWithEqOperatorNoValue_ThrowSearchTermSearchQueryParseException() {
-        SearchableQueryParser.searchTermToPredicate("", "lastName|eq", "");
+        Assertions.assertThrows(SearchTermSearchQueryParseException.class, () -> {
+            SearchableQueryParser.searchTermToPredicate("", "lastName|eq", "");
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = SearchTermSearchQueryParseException.class)
+    @Test
     public void whenTermWithNoOperatorNoValue_ThrowSearchTermSearchQueryParseException() {
-        SearchableQueryParser.searchTermToPredicate("", "lastName", "");
+        Assertions.assertThrows(SearchTermSearchQueryParseException.class, () -> {
+            SearchableQueryParser.searchTermToPredicate("", "lastName", "");
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = SearchTermSearchQueryParseException.class)
+    @Test
     public void whenTermWithNoProvidedOperator_ThrowSearchTermSearchQueryParseException() {
-        SearchableQueryParser.searchTermToPredicate("", "lastName|", "");
+        Assertions.assertThrows(SearchTermSearchQueryParseException.class, () -> {
+            SearchableQueryParser.searchTermToPredicate("", "lastName|", "");
+        });
     }
 
     /**
      * Test method.
      */
-    @Test(expected = SearchTermSearchQueryParseException.class)
+    @Test
     public void whenTermWithNoValueOperatorValueProvided_ThrowSearchTermSearchQueryParseException() {
-        SearchableQueryParser.searchTermToPredicate("", "lastName|nn", "DOE");
+        Assertions.assertThrows(SearchTermSearchQueryParseException.class, () -> {
+            SearchableQueryParser.searchTermToPredicate("", "lastName|nn", "DOE");
+        });
     }
 }

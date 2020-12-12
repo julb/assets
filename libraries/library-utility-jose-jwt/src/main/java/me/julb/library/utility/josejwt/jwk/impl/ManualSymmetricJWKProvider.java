@@ -32,10 +32,9 @@ import java.text.ParseException;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import me.julb.library.utility.josejwt.exceptions.internalservererror.InvalidKeyFormatException;
 import me.julb.library.utility.josejwt.exceptions.internalservererror.MissingFieldInKeyFormatException;
@@ -48,12 +47,8 @@ import me.julb.library.utility.josejwt.jwk.IJWKProvider;
  */
 @Getter
 @Setter
+@Slf4j
 public class ManualSymmetricJWKProvider implements IJWKProvider {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManualSymmetricJWKProvider.class);
 
     //@formatter:off
      /**

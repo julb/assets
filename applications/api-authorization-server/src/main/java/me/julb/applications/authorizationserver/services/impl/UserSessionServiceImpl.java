@@ -52,6 +52,7 @@ import me.julb.applications.authorizationserver.services.UserSessionToAccessToke
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFirstCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
+import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionCredentialsDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
@@ -248,7 +249,7 @@ public class UserSessionServiceImpl implements UserSessionService {
      * {@inheritDoc}
      */
     @Override
-    public UserSessionAccessTokenDTO createAccessTokenFromIdToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation) {
+    public UserSessionAccessTokenWithIdTokenDTO createAccessTokenFromIdToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation) {
         String tm = TrademarkContextHolder.getTrademark();
 
         // Extract user ID.
@@ -274,13 +275,28 @@ public class UserSessionServiceImpl implements UserSessionService {
             throw new UnauthorizedException();
         }
 
+        if (DateUtility.dateTimeBeforeNow(existing.getExpiryDateTime())) {
+            throw new UnauthorizedException();
+        }
+
         // Update
         mappingService.map(accessTokenCreation, existing);
         this.onUpdate(existing);
         UserSessionEntity result = userSessionRepository.save(existing);
 
         // Generate JWT.
-        return userSessionToAccessTokenMapper.map(result);
+        UserSessionAccessTokenDTO accessToken = userSessionToAccessTokenMapper.map(result);
+
+        // Return result.
+        UserSessionAccessTokenWithIdTokenDTO sessionToken = new UserSessionAccessTokenWithIdTokenDTO();
+        sessionToken.setAccessToken(accessToken.getAccessToken());
+        sessionToken.setExpiresAt(accessToken.getExpiresAt());
+        sessionToken.setExpiresIn(accessToken.getExpiresIn());
+        sessionToken.setType(accessToken.getType());
+        sessionToken.setIdToken(accessTokenCreation.getRawIdToken());
+        sessionToken.setIdTokenExpiresAt(result.getExpiryDateTime());
+        sessionToken.setIdTokenExpiresIn(DateUtility.secondsUntil(result.getExpiryDateTime()));
+        return sessionToken;
     }
 
     /**

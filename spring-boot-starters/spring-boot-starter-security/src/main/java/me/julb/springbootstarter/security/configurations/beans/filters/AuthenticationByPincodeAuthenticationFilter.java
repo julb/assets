@@ -27,8 +27,8 @@ package me.julb.springbootstarter.security.configurations.beans.filters;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.security.core.Authentication;
@@ -43,12 +43,8 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
  * <P>
  * @author Julb.
  */
+@Slf4j
 public class AuthenticationByPincodeAuthenticationFilter extends UsernamePasswordAuthenticationFilter implements Ordered {
-
-    /**
-     * The logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationByPincodeAuthenticationFilter.class);
 
     /**
      * The URL attribute.

@@ -34,7 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import me.julb.library.utility.josejwt.exceptions.badrequest.TokenNotParseableJOSEJWTException;
-import me.julb.library.utility.josejwt.jwk.impl.JSONStringJWKProvider;
 import net.javacrumbs.jsonunit.JsonAssert;
 
 /**

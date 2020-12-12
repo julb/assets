@@ -27,14 +27,15 @@ package me.julb.applications.authorizationserver.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,10 +45,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.julb.applications.authorizationserver.services.MyCurrentSessionService;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
+import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.library.dto.security.AuthenticatedUserDTO;
 import me.julb.library.utility.date.DateUtility;
+import me.julb.library.utility.exceptions.BadRequestException;
 import me.julb.library.utility.validator.constraints.SecureIdToken;
 import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 
@@ -67,6 +69,12 @@ public class MyCurrentSessionController {
     @Autowired
     private MyCurrentSessionService myCurrentSessionService;
 
+    /**
+     * The HTTP user access token service.
+     */
+    @Autowired
+    private HttpUserAccessTokenService httpUserAccessTokenService;
+
     // ------------------------------------------ Read methods.
 
     /**
@@ -83,16 +91,28 @@ public class MyCurrentSessionController {
     // ------------------------------------------ Write methods.
 
     /**
-     * Gets an access token.
-     * @param request the request.
-     * @param idToken the ID token.
-     * @return the access token.
+     * Returns the access token.
+     * @param idTokenFromParam the ID token from param.
+     * @param idTokenFromCookie the ID token from cookie.
+     * @param request the HTTP request.
+     * @param response the HTTP response.
      */
     @Operation(summary = "gets an access token")
     @PostMapping(path = "/refresh")
-    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserSessionAccessTokenDTO refreshAccessToken(HttpServletRequest request, @RequestParam("idToken") @NotNull @NotBlank @SecureIdToken String idToken) {
+    public void refreshAccessToken(@RequestParam(value = "idToken", required = false) @SecureIdToken String idTokenFromParam, @CookieValue(value = "idToken", required = false) @SecureIdToken String idTokenFromCookie, HttpServletRequest request,
+        HttpServletResponse response) {
+        // Extract ID Token: param has precedence over cookie.
+        String idToken;
+        if (StringUtils.isNotBlank(idTokenFromParam)) {
+            idToken = idTokenFromParam;
+        } else if (StringUtils.isNotBlank(idTokenFromCookie)) {
+            idToken = idTokenFromCookie;
+        } else {
+            // No token provided so reject the request.
+            throw new BadRequestException();
+        }
+
         // Generate access token
         UserSessionAccessTokenFromIdTokenCreationDTO creationDTO = new UserSessionAccessTokenFromIdTokenCreationDTO();
         creationDTO.setBrowser(HttpServletRequestUtility.getBrowser(request));
@@ -100,7 +120,10 @@ public class MyCurrentSessionController {
         creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
         creationDTO.setOperatingSystem(HttpServletRequestUtility.getOperatingSystem(request));
         creationDTO.setRawIdToken(idToken);
-        return myCurrentSessionService.createAccessToken(creationDTO);
+        UserSessionAccessTokenWithIdTokenDTO createAccessToken = myCurrentSessionService.createAccessToken(creationDTO);
+
+        // Write response.
+        httpUserAccessTokenService.writeResponseWithIdToken(createAccessToken, response);
     }
 
     /**
