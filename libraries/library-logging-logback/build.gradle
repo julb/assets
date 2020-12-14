@@ -1,0 +1,32 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+    id 'julb-java11'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+	implementation project(':libraries:library-logging-core')
+	implementation 'ch.qos.logback:logback-classic'
+	implementation 'ch.qos.logback.contrib:logback-json-classic'
+	implementation 'ch.qos.logback.contrib:logback-jackson'
+}
+
+lombok {
+    config['lombok.log.fieldName'] = 'LOGGER'
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF"]
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

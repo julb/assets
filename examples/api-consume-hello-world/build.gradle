@@ -1,0 +1,48 @@
+plugins {
+	id 'java-library-distribution'
+	id 'io.freefair.lombok'
+    id 'julb-java11'
+	id 'julb-additional-jars'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+	api platform(project(':bom'))
+
+	implementation project(':libraries:library-dto-simple')
+	implementation project(':spring-boot-starters:spring-boot-starter-web')
+	implementation project(':spring-boot-starters:spring-boot-starter-consumer')
+	
+	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+lombok {
+    config['lombok.log.fieldName'] = 'LOGGER'
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootBuildImage {
+    environment = ["BP_JVM_VERSION" : "11.*"]
+}
+
+bootJar {
+    classifier = 'boot'
+    mainClass = 'me.julb.Application'
+    layered()
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

@@ -1,0 +1,21 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+    id 'julb-java11'
+	id 'julb-additional-jars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation project(':spring-boot-starters:spring-boot-starter-core')
+    implementation project(':spring-boot-starters:spring-boot-starter-test')
+    
+    api 'org.testcontainers:mongodb'
+    api 'org.testcontainers:junit-jupiter'
+}
+
+lombok {
+    config['lombok.log.fieldName'] = 'LOGGER'
+}

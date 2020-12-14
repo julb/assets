@@ -1,0 +1,27 @@
+server:
+   port: 8081
+
+application:
+   hello-world:
+      endpoint:
+         url: http://localhost:8080
+
+springdoc:
+   api-docs:
+      enabled: true
+   swagger-ui:
+      enabled: false
+   packages-to-scan: me.julb
+   additional-properties:
+      name: test
+      version: 1.0.0-SNAPSHOT
+      description: desc
+      servers:
+         - url: "http://localhost:8080"
+           description: "Hello"
+      authentication:
+         authentication-headers:
+            - display-name: header1
+              header-name: X-Header-1
+            - display-name: header2
+              header-name: X-Header-2
