@@ -21,14 +21,14 @@ asciidoctor {
 task docs(type: Copy) {
     dependsOn 'asciidoctor', 'aggregateJavadoc'
 
-    into("$buildDir/docs")
+    into("$buildDir/packaged-docs/$version")
 
-    from("${asciidoctor.outputDir}/html5") {
+    from("${asciidoctor.outputDir}") {
         exclude 'index-single.html'
         into 'reference/html'
     }
 
-    from("${asciidoctor.outputDir}/html5") {
+    from("${asciidoctor.outputDir}") {
         include 'index-single.html', 'resources/**'
         rename ('index-single.html', 'index.html')
         into 'reference/htmlsingle'
