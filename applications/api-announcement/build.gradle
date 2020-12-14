@@ -21,7 +21,7 @@ dependencies {
 	
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
     testImplementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb-test')
-    testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
+    testImplementation project(':spring-boot-starters:spring-boot-starter-messaging-test')
     testImplementation 'net.javacrumbs.json-unit:json-unit'
 }
 

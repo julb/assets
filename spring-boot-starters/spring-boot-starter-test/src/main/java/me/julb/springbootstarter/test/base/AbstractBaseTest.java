@@ -25,6 +25,7 @@
 package me.julb.springbootstarter.test.base;
 
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -34,5 +35,6 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @ActiveProfiles("TEST")
 @SpringBootTest
+@ComponentScan(basePackages = "me.julb")
 public abstract class AbstractBaseTest {
 }

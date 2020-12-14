@@ -14,8 +14,8 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3'
 	
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
-    testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
     testImplementation 'net.javacrumbs.json-unit:json-unit'
+    testImplementation project(':spring-boot-starters:spring-boot-starter-messaging-test')
 }
 
 lombok {

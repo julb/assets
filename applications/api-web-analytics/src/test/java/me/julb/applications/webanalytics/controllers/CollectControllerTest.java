@@ -27,19 +27,15 @@ package me.julb.applications.webanalytics.controllers;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.concurrent.BlockingQueue;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.Message;
 import org.springframework.test.web.servlet.MockMvc;
 
-import me.julb.springbootstarter.messaging.processors.AsyncMessageProducerProcessor;
-import me.julb.springbootstarter.test.base.AbstractBaseTest;
+import me.julb.springbootstarter.test.messaging.base.AbstractMessagingBaseTest;
 import me.julb.springbootstarter.test.security.annotations.WithMockUser;
 import net.javacrumbs.jsonunit.JsonAssert;
 
@@ -49,7 +45,7 @@ import net.javacrumbs.jsonunit.JsonAssert;
  * @author Julb.
  */
 @AutoConfigureMockMvc
-public class CollectControllerTest extends AbstractBaseTest {
+public class CollectControllerTest extends AbstractMessagingBaseTest {
 
     /**
      * The mock MVC.
@@ -58,26 +54,12 @@ public class CollectControllerTest extends AbstractBaseTest {
     private MockMvc mockMvc;
 
     /**
-     * The processor to get the reference to the producer.
-     */
-    @Autowired
-    private AsyncMessageProducerProcessor asyncMessaceProducerProcessor;
-
-    /**
-     * The message collector.
-     */
-    @Autowired
-    private MessageCollector collector;
-
-    /**
      * Unit test method.
      */
     @Test
     @WithMockUser
     public void whenCollect_thenReturn204()
         throws Exception {
-        BlockingQueue<Message<?>> queueWithMessages = collector.forChannel(asyncMessaceProducerProcessor.mainProducer());
-
         //@formatter:off
         mockMvc
             .perform(
@@ -92,15 +74,14 @@ public class CollectControllerTest extends AbstractBaseTest {
             )
             .andExpect(status().isNoContent())
             .andDo((handler) -> {
-                Assertions.assertEquals(1, queueWithMessages.size());
-                @SuppressWarnings("unchecked")
-                Message<String> message = (Message<String>) queueWithMessages.poll();
-                JsonAssert.assertJsonPartEquals("test", message.getPayload(), "body.applicationName");
-                JsonAssert.assertJsonPartEquals("1.0.0", message.getPayload(), "body.applicationVersion");
-                JsonAssert.assertJsonPartEquals("pageview", message.getPayload(), "body.hitType");
-                JsonAssert.assertJsonPartEquals("app", message.getPayload(), "body.dataSource");
-                JsonAssert.assertJsonPartEquals("abcdefgh", message.getPayload(), "body.visitorId");
-                JsonAssert.assertJsonPartEquals("ERROR", message.getPayload(), "level");
+                Message<byte[]> message = output.receive();
+                String payload = new String(message.getPayload());
+                JsonAssert.assertJsonPartEquals("test", payload, "body.applicationName");
+                JsonAssert.assertJsonPartEquals("1.0.0", payload, "body.applicationVersion");
+                JsonAssert.assertJsonPartEquals("pageview", payload, "body.hitType");
+                JsonAssert.assertJsonPartEquals("app", payload, "body.dataSource");
+                JsonAssert.assertJsonPartEquals("abcdefgh", payload, "body.visitorId");
+                JsonAssert.assertJsonPartEquals("ERROR", payload, "level");
             });
         //@formatter:on
     }
@@ -112,14 +93,14 @@ public class CollectControllerTest extends AbstractBaseTest {
     @WithMockUser
     public void whenCollectWithMissingParams_thenReturn400()
         throws Exception {
-        BlockingQueue<Message<?>> queueWithMessages = collector.forChannel(asyncMessaceProducerProcessor.mainProducer());
-
         //@formatter:off
         mockMvc
             .perform(get("/collect").contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isBadRequest())
             .andDo((handler) -> {
-                Assertions.assertEquals(0, queueWithMessages.size());
+                Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+                    output.receive();
+                });
             });
         //@formatter:on
     }
@@ -130,8 +111,6 @@ public class CollectControllerTest extends AbstractBaseTest {
     @Test
     public void whenCollectNotAuthenticated_thenReturn401()
         throws Exception {
-        BlockingQueue<Message<?>> queueWithMessages = collector.forChannel(asyncMessaceProducerProcessor.mainProducer());
-
         //@formatter:off
         mockMvc
             .perform(
@@ -146,9 +125,10 @@ public class CollectControllerTest extends AbstractBaseTest {
             )
             .andExpect(status().isUnauthorized())
             .andDo((handler) -> {
-                Assertions.assertEquals(0, queueWithMessages.size());
+                Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+                    output.receive();
+                });
             });
         //@formatter:on
     }
-
 }

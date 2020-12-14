@@ -41,8 +41,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -89,6 +91,7 @@ import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBa
  * <P>
  * @author Julb.
  */
+@Import(TestChannelBinderConfiguration.class)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = AuthenticationByTotpControllerTest.Initializer.class)
 @Testcontainers

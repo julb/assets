@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,6 @@ import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.springbootstarter.messaging.builders.AuditAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.processors.AsyncMessageProducerProcessor;
 
 /**
  * The message poster service.
@@ -61,15 +61,25 @@ public class AsyncMessagePosterService implements IAsyncMessagePosterService {
     private static final String ROUTING_KEY_DEFAULT_HEADER_NAME = "routingKey";
 
     /**
+     * The main producer default channel name.
+     */
+    private static final String MAIN_PRODUCER_DEFAULT_CHANNEL_NAME = "mainProducer";
+
+    /**
+     * The main producer channel name.
+     */
+    private String mainProducerChannelName = MAIN_PRODUCER_DEFAULT_CHANNEL_NAME;
+
+    /**
      * The routing key heeader name.
      */
     private String routingKeyHeaderName = ROUTING_KEY_DEFAULT_HEADER_NAME;
 
     /**
-     * The processor to get the reference to the producer.
+     * The bridge to post messages.
      */
     @Autowired
-    private AsyncMessageProducerProcessor asyncMessaceProducerProcessor;
+    private StreamBridge streamBridge;
 
     /**
      * {@inheritDoc}
@@ -84,7 +94,7 @@ public class AsyncMessagePosterService implements IAsyncMessagePosterService {
             .setHeader(routingKeyHeaderName, routingKeyValue.toLowerCase())
             .build();
         //@formatter:on
-        asyncMessaceProducerProcessor.mainProducer().send(amqpMessage);
+        streamBridge.send(String.format("%s-out-0", this.mainProducerChannelName), amqpMessage);
 
         // Logs successful
         LOGGER.info("Message with id <{}> posted successfully.", asyncMessage.getId());

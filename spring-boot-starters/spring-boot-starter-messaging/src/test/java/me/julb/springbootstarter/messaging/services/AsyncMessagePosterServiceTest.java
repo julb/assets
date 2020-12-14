@@ -27,38 +27,27 @@ package me.julb.springbootstarter.messaging.services;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import java.util.concurrent.BlockingQueue;
-
 import javax.validation.ConstraintViolationException;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.stream.test.binder.MessageCollector;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.messaging.Message;
-import org.springframework.test.context.ActiveProfiles;
 
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.identifier.IdentifierUtility;
-import me.julb.springbootstarter.messaging.processors.AsyncMessageProducerProcessor;
 import me.julb.springbootstarter.messaging.services.dto.UnitTestAsyncMessageDTO;
+import me.julb.springbootstarter.test.messaging.base.AbstractMessagingBaseTest;
 
 /**
  * Unit test for class {@link AsyncPosterMessageService}.
  * <P>
  * @author Julb.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@EnableAutoConfiguration
-@SpringBootConfiguration
-@ActiveProfiles("TEST")
-@ComponentScan(basePackages = "me.julb.springbootstarter.messaging")
-public class AsyncMessagePosterServiceTest {
+@SpringBootApplication
+public class AsyncMessagePosterServiceTest extends AbstractMessagingBaseTest {
 
     /**
      * The async message poster service.
@@ -67,25 +56,11 @@ public class AsyncMessagePosterServiceTest {
     private IAsyncMessagePosterService asyncMessagePosterService;
 
     /**
-     * The processor to get the reference to the producer.
-     */
-    @Autowired
-    private AsyncMessageProducerProcessor asyncMessaceProducerProcessor;
-
-    /**
-     * The message collector.
-     */
-    @Autowired
-    private MessageCollector collector;
-
-    /**
      * Unit test method.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void whenPostingMessage_thenMessageSent()
         throws Exception {
-        BlockingQueue<Message<?>> queueWithMessages = collector.forChannel(asyncMessaceProducerProcessor.mainProducer());
 
         // Post message.
         UnitTestAsyncMessageDTO dto = new UnitTestAsyncMessageDTO();
@@ -95,8 +70,9 @@ public class AsyncMessagePosterServiceTest {
         dto.setAdditionalValue("some.value");
         asyncMessagePosterService.postMessage("routing.key.value", dto);
 
-        Message<String> message = (Message<String>) queueWithMessages.poll();
-        JSONObject payload = new JSONObject(message.getPayload());
+        Message<byte[]> message = output.receive();
+
+        JSONObject payload = new JSONObject(new String(message.getPayload()));
 
         //@formatter:off
         assertThat(message.getHeaders().get("routingKey"), is("routing.key.value"));

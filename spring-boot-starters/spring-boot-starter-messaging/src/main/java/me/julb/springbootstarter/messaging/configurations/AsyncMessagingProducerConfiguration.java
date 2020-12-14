@@ -31,10 +31,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
-import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Configuration;
-
-import me.julb.springbootstarter.messaging.processors.AsyncMessageProducerProcessor;
 
 /**
  * MQ binding configuration.
@@ -42,7 +39,6 @@ import me.julb.springbootstarter.messaging.processors.AsyncMessageProducerProces
  * @author Julb.
  */
 @Configuration
-@EnableBinding({AsyncMessageProducerProcessor.class})
 public class AsyncMessagingProducerConfiguration {
 
     /**
@@ -59,7 +55,7 @@ public class AsyncMessagingProducerConfiguration {
 
     /**
      * Initializes the saslConfig to SASLConfig.EXTERNAL if MTLS used.<br>
-     * 
+     *
      * <pre>
      * See https://github.com/spring-projects/spring-boot/issues/6719
      * </pre>
