@@ -183,7 +183,6 @@ me.julb.springbootstarter.mapping.configurations
 me.julb.springbootstarter.mapping.services
 me.julb.springbootstarter.messaging.builders
 me.julb.springbootstarter.messaging.configurations
-me.julb.springbootstarter.messaging.processors
 me.julb.springbootstarter.messaging.services
 me.julb.springbootstarter.monitoring.prometheus.configurations
 me.julb.springbootstarter.persistence.core.specifications
@@ -211,6 +210,7 @@ me.julb.springbootstarter.security.services.dto
 me.julb.springbootstarter.security.services.impl
 me.julb.springbootstarter.security.utilities
 me.julb.springbootstarter.test.base
+me.julb.springbootstarter.test.messaging.base
 me.julb.springbootstarter.test.security.annotations
 me.julb.springbootstarter.web.annotations.openapi
 me.julb.springbootstarter.web.configurations
