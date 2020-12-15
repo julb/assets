@@ -10,8 +10,8 @@ application:
 
 google.recaptcha:
   enabled: true
-  site-key: 6LczlwYaAAAAAJUdvpjT-RPk4CeSIQdSycrJBTnI
-  secret-key: 6LczlwYaAAAAAE2lToAea3dn8DBYsYosyRN1-6mf
+  site-key: ${GOOGLE_RECAPTCHA_SITE_KEY}
+  secret-key: ${GOOGLE_RECAPTCHA_SECRET_KEY}
   action-thresholds:
     HELLO: 0.5
 

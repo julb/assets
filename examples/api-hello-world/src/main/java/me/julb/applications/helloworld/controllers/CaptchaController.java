@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import me.julb.springbootstarter.web.annotations.captcha.CaptchaValid;
 
 /**
- * The hello controller.
+ * The captcha controller.
  * <P>
  * @author Julb.
  */
@@ -26,10 +26,7 @@ public class CaptchaController {
     // ------------------------------------------ Read methods.
 
     /**
-     * Gets the hello message.
-     * @param searchable the search request.
-     * @param pageable the pageable information.
-     * @return the hello message.
+     * Performs a call through captcha protection.
      */
     @GetMapping
     @Operation(summary = "Captcha call")
