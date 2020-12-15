@@ -1,0 +1,53 @@
+spring:
+  main:
+    banner-mode: "off"
+  
+application:
+  jwks:
+    keys:
+      - name: symmetric-key-pub
+        public-keys-only: true
+        definitions:
+          - key-id: first-key
+            key: "0123456789012345"
+            algorithm: DIR
+            use: enc
+            type: SYMMETRIC
+
+      - name: symmetric-key-prv
+        public-keys-only: false
+        definitions:
+          - key-id: first-key
+            key: "0123456789012345"
+            algorithm: DIR
+            use: enc
+            type: SYMMETRIC
+
+      - name: asymmetric-key
+        public-keys-only: true
+        definitions:
+          - key-id: first-key
+            key: |
+              -----BEGIN PUBLIC KEY-----
+              MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkicnN0p2h9hE9mmfimeQ
+              u6tQxn4vsWifVuGRFvioZaDsL8w+4fRI5isiCikz2GWmWTEZHbBGPfxGvsm36bjA
+              0FHPp6S8RKzwJhnCB+sw54vxDpJp/luPjKyjlem1LgfAb66DRSujZiNGMjmRhbKt
+              zYfBXPJpemUPMcrO2JzvO78DCx4Ru9NnoqarnUe+yZzZKk0qlOcQkE7EIkQXcyMS
+              rJt19RspucE03tcvcrZD7qKdq/qCia4WMe3LTPw5Cdue6ZrKkEDe05W47tzP/KJz
+              DQWDEC4ahSlJtsRUsbkmxi4kO0/nswAD4+YxhCRiZvXUmfIVJp2YmwFB0OM3HnwW
+              GwIDAQAB
+              -----END PUBLIC KEY-----
+            algorithm: RS384
+            use: sig
+            type: ASYMMETRIC
+            
+          - key-id: second-key
+            key: |
+              -----BEGIN PUBLIC KEY-----
+              MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEv8vOml148yIlQYTxg/Kz8tNA2Ro3Zxj4
+              T2GQPiGwjcTeGuxQmU1rfts0ULTYLi3qwbc/bk5vWGOWq2uBA7rajcNUHFoXVmlZ
+              Ug5y08QATuX9437KoVI7mZOEM0U1fOgs
+              -----END PUBLIC KEY-----
+            algorithm: ES384
+            use: sig
+            type: ASYMMETRIC

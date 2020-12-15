@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.library.utility.constants;
+package me.julb.applications.jwks.services;
+
+import javax.validation.constraints.NotNull;
+
+import org.springframework.cache.annotation.Cacheable;
+
+import me.julb.applications.jwks.configurations.caching.CacheConstants;
+import me.julb.library.utility.validator.constraints.JSONWebKeyId;
+import me.julb.library.utility.validator.constraints.JSONWebKeysetName;
 
 /**
- * A class to list custom HTTP headers.
+ * The keyset service.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+public interface IKeyService {
 
     /**
-     * The header for getting trademark.
+     * Finds the keys using the keyset name.
+     * @param keysetName the name.
+     * @return the JSON representation of this keyset.
      */
-    public static final String X_JULB_TM = "x-julb-tm";
+    @Cacheable(value = CacheConstants.KEYSET_KEYS_CACHE_KEY, unless = "#result == null")
+    String findAll(@NotNull @JSONWebKeysetName String keysetName);
 
     /**
-     * The header for debug purposes.
+     * Finds the keys by keyset name and key ID.
+     * @param keysetName the keyset name.
+     * @param keyId the key ID.
+     * @return the JSON representation of this key.
      */
-    public static final String X_JULB_HTTP_TRACE_ENABLED = "x-julb-http-trace-enabled";
-
-    /**
-     * The header for real IP address.
-     */
-    public static final String X_REAL_IP = "x-real-ip";
-
-    /**
-     * The header for X-Forwarded-For value.
-     */
-    public static final String X_FORWARDED_FOR = "x-forwarded-for";
-
-    /**
-     * The header for Google ReCaptcha token.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_TOKEN = "x-google-recaptcha-token";
-
-    /**
-     * The header for Google ReCaptcha action.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_ACTION = "x-google-recaptcha-action";
-
+    @Cacheable(value = CacheConstants.KEYSET_KEY_CACHE_KEY, unless = "#result == null")
+    String findByKeyId(@NotNull @JSONWebKeysetName String keysetName, @NotNull @JSONWebKeyId String keyId);
 }
