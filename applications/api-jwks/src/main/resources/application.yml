@@ -1,0 +1,61 @@
+spring:
+  cloud:
+    kubernetes:
+      enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: LOCAL
+
+application:
+  jwks:
+    keys:
+      - name: test
+        public-keys-only: false
+        definitions:
+          - key-id: xxxxx
+            key: "01234567890123450123456789012345"
+            algorithm: dir
+            use: enc
+            type: SYMMETRIC
+          - key-id: yyyyy
+            key: "54321098765432105432109876543210"
+            algorithm: dir
+            use: enc
+            type: SYMMETRIC
+      - name: test2
+        public-keys-only: true
+        definitions:
+          - key-id: zzzzz
+            key: |
+              -----BEGIN PUBLIC KEY-----
+              MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEv8vOml148yIlQYTxg/Kz8tNA2Ro3Zxj4
+              T2GQPiGwjcTeGuxQmU1rfts0ULTYLi3qwbc/bk5vWGOWq2uBA7rajcNUHFoXVmlZ
+              Ug5y08QATuX9437KoVI7mZOEM0U1fOgs
+              -----END PUBLIC KEY-----
+            algorithm: ES384
+            use: sig
+            type: ASYMMETRIC
+
+management:
+  endpoints.web.exposure.include: health,prometheus,info
+  endpoint.prometheus.enabled: true
+  
+---
+
+spring:
+  config:
+    activate:
+      on-profile: DEV,INT,VAL,STG,PROD
+  cloud:
+    kubernetes:
+      enabled: true
+      reload:
+        enabled: true
+      config:
+        sources:
+        - name: api-default-java
+        - name: api-default-backend-java
+        - name: ${APPLICATION_FULL_NAME}

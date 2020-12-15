@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.library.utility.constants;
+package me.julb.library.utility.validator.constraints;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import javax.validation.constraints.Pattern;
 
 /**
- * A class to list custom HTTP headers.
+ * Validator to check that a String is a JSON Web Key Set name.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+@Pattern(regexp = "^[a-zA-Z0-9][a-zA-Z0-9\\-\\.]+[a-zA-Z0-9]$")
+@Documented
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = {})
+public @interface JSONWebKeysetName {
 
     /**
-     * The header for getting trademark.
+     * The error message.
+     * @return the error message.
      */
-    public static final String X_JULB_TM = "x-julb-tm";
+    String message() default "{me.julb.library.utility.validator.constraints.JSONWebKeysetName.message}";
 
     /**
-     * The header for debug purposes.
+     * Returns the validation groups.
+     * @return the validation groups.
      */
-    public static final String X_JULB_HTTP_TRACE_ENABLED = "x-julb-http-trace-enabled";
+    Class<?>[] groups() default {};
 
     /**
-     * The header for real IP address.
+     * Returns the payload type.
+     * @return the payload type.
      */
-    public static final String X_REAL_IP = "x-real-ip";
-
-    /**
-     * The header for X-Forwarded-For value.
-     */
-    public static final String X_FORWARDED_FOR = "x-forwarded-for";
-
-    /**
-     * The header for Google ReCaptcha token.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_TOKEN = "x-google-recaptcha-token";
-
-    /**
-     * The header for Google ReCaptcha action.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_ACTION = "x-google-recaptcha-action";
-
+    Class<? extends Payload>[] payload() default {};
 }

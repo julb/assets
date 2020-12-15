@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.library.utility.constants;
+package me.julb.applications.jwks.configurations.properties;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 /**
- * A class to list custom HTTP headers.
+ * The properties for the application.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "application")
+@Validated
+public class ApplicationProperties {
 
-    /**
-     * The header for getting trademark.
+    //@formatter:off
+     /**
+     * The JWKS definition list.
+     * -- GETTER --
+     * Getter for {@link #jwks} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #jwks} property.
+     * @param jwks the value to set.
      */
-    public static final String X_JULB_TM = "x-julb-tm";
-
-    /**
-     * The header for debug purposes.
-     */
-    public static final String X_JULB_HTTP_TRACE_ENABLED = "x-julb-http-trace-enabled";
-
-    /**
-     * The header for real IP address.
-     */
-    public static final String X_REAL_IP = "x-real-ip";
-
-    /**
-     * The header for X-Forwarded-For value.
-     */
-    public static final String X_FORWARDED_FOR = "x-forwarded-for";
-
-    /**
-     * The header for Google ReCaptcha token.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_TOKEN = "x-google-recaptcha-token";
-
-    /**
-     * The header for Google ReCaptcha action.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_ACTION = "x-google-recaptcha-action";
-
+     //@formatter:on
+    private JwksProperties jwks = new JwksProperties();
 }

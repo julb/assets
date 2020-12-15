@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.library.utility.constants;
+package me.julb.applications.jwks.configurations.caching;
 
 /**
- * A class to list custom HTTP headers.
+ * Cache constants for the API.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+public interface CacheConstants {
 
     /**
-     * The header for getting trademark.
+     * The keysets cache key.
      */
-    public static final String X_JULB_TM = "x-julb-tm";
+    String KEYSET_KEYS_CACHE_KEY = "keyset-keys";
 
     /**
-     * The header for debug purposes.
+     * The keyset's key cache key.
      */
-    public static final String X_JULB_HTTP_TRACE_ENABLED = "x-julb-http-trace-enabled";
-
-    /**
-     * The header for real IP address.
-     */
-    public static final String X_REAL_IP = "x-real-ip";
-
-    /**
-     * The header for X-Forwarded-For value.
-     */
-    public static final String X_FORWARDED_FOR = "x-forwarded-for";
-
-    /**
-     * The header for Google ReCaptcha token.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_TOKEN = "x-google-recaptcha-token";
-
-    /**
-     * The header for Google ReCaptcha action.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_ACTION = "x-google-recaptcha-action";
-
+    String KEYSET_KEY_CACHE_KEY = "keyset-key";
 }
