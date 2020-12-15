@@ -31,6 +31,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 
 import org.springframework.cloud.openfeign.support.PageJacksonModule;
+import org.springframework.cloud.openfeign.support.SortJacksonModule;
 
 import feign.Response;
 import feign.Util;
@@ -55,6 +56,7 @@ public class JsonStringDecoder implements Decoder {
         this.objectMapper = new ObjectMapper();
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         this.objectMapper.registerModule(new PageJacksonModule());
+        this.objectMapper.registerModule(new SortJacksonModule());
     }
 
     /**
