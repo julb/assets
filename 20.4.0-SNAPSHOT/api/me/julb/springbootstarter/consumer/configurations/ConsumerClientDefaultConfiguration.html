@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -212,6 +212,13 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>com.fasterxml.jackson.databind.Module</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#defaultSortJacksonModule()">defaultSortJacksonModule</a></span>()</code></th>
+<td class="colLast">
+<div class="block">The sort jackson module.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>feign.codec.Encoder</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#encoder()">encoder</a></span>()</code></th>
 <td class="colLast">
@@ -349,17 +356,34 @@ public&nbsp;<a href="../decoders/DefaultRetryer.html" title="class in me.julb.sp
 <a id="defaultPageJacksonModule()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>defaultPageJacksonModule</h4>
 <pre class="methodSignature">@Bean
-@ConditionalOnMissingBean
+@ConditionalOnMissingBean(org.springframework.cloud.openfeign.support.PageJacksonModule.class)
 @ConditionalOnClass(name="org.springframework.data.domain.Page")
 public&nbsp;com.fasterxml.jackson.databind.Module&nbsp;defaultPageJacksonModule()</pre>
 <div class="block">The page jackson module.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the page jackson module.</dd>
+</dl>
+</li>
+</ul>
+<a id="defaultSortJacksonModule()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>defaultSortJacksonModule</h4>
+<pre class="methodSignature">@Bean
+@ConditionalOnMissingBean(org.springframework.cloud.openfeign.support.SortJacksonModule.class)
+@ConditionalOnClass(name="org.springframework.data.domain.Sort")
+public&nbsp;com.fasterxml.jackson.databind.Module&nbsp;defaultSortJacksonModule()</pre>
+<div class="block">The sort jackson module.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the sort jackson module.</dd>
 </dl>
 </li>
 </ul>

@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10};
+var data = {"i0":10,"i1":10,"i2":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -181,6 +181,20 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code><a href="../services/CaptchaService.html" title="interface in me.julb.springbootstarter.web.services">CaptchaService</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#captchaService()">captchaService</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Builds a captcha service.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../aspects/captcha/CaptchaValidAspect.html" title="class in me.julb.springbootstarter.web.aspects.captcha">CaptchaValidAspect</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#captchaValidAspect()">captchaValidAspect</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Builds a captcha valid aspect.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>org.springframework.web.client.RestTemplate</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#googleReCaptchaRestTemplate()">googleReCaptchaRestTemplate</a></span>()</code></th>
 <td class="colLast">
@@ -233,7 +247,7 @@ extends java.lang.Object</pre>
 <a id="googleReCaptchaRestTemplate()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>googleReCaptchaRestTemplate</h4>
 <pre class="methodSignature">@Bean
@@ -242,6 +256,36 @@ public&nbsp;org.springframework.web.client.RestTemplate&nbsp;googleReCaptchaRest
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the rest template.</dd>
+</dl>
+</li>
+</ul>
+<a id="captchaValidAspect()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>captchaValidAspect</h4>
+<pre class="methodSignature">@Bean
+public&nbsp;<a href="../aspects/captcha/CaptchaValidAspect.html" title="class in me.julb.springbootstarter.web.aspects.captcha">CaptchaValidAspect</a>&nbsp;captchaValidAspect()</pre>
+<div class="block">Builds a captcha valid aspect.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the captcha valid aspect.</dd>
+</dl>
+</li>
+</ul>
+<a id="captchaService()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>captchaService</h4>
+<pre class="methodSignature">@Bean
+public&nbsp;<a href="../services/CaptchaService.html" title="interface in me.julb.springbootstarter.web.services">CaptchaService</a>&nbsp;captchaService()</pre>
+<div class="block">Builds a captcha service.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the captcha service.</dd>
 </dl>
 </li>
 </ul>
