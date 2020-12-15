@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.library.utility.constants;
+
+package me.julb.springbootstarter.web.services;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+
+import lombok.NonNull;
 
 /**
- * A class to list custom HTTP headers.
+ * The google re-captcha service.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+public interface CaptchaService {
 
     /**
-     * The header for getting trademark.
+     * Validates the given captcha.
+     * @param httpServletRequest the servlet request.
+     * @return <code>true</code> if the captcha is valid, <code>false</code> otherwise.
      */
-    public static final String X_JULB_TM = "x-julb-tm";
-
-    /**
-     * The header for debug purposes.
-     */
-    public static final String X_JULB_HTTP_TRACE_DISABLED = "x-julb-http-trace-disabled";
-
-    /**
-     * The header for real IP address.
-     */
-    public static final String X_REAL_IP = "x-real-ip";
-
-    /**
-     * The header for X-Forwarded-For value.
-     */
-    public static final String X_FORWARDED_FOR = "x-forwarded-for";
-
-    /**
-     * The header for Google ReCaptcha token.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_TOKEN = "x-google-recaptcha-token";
-
-    /**
-     * The header for Google ReCaptcha action.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_ACTION = "x-google-recaptcha-action";
+    Boolean validate(@NotNull @NonNull HttpServletRequest httpServletRequest);
 
 }

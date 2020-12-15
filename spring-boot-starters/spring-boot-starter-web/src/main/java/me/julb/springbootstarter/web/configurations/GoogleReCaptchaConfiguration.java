@@ -21,43 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.library.utility.constants;
+package me.julb.springbootstarter.web.configurations;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+
+import me.julb.springbootstarter.web.configurations.beans.GoogleReCaptchaProperties;
 
 /**
- * A class to list custom HTTP headers.
+ * The Google ReCaptcha configuration.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+@Configuration
+@EnableConfigurationProperties(GoogleReCaptchaProperties.class)
+@ConditionalOnProperty(prefix = "google.recaptcha", name = "enabled", matchIfMissing = false)
+public class GoogleReCaptchaConfiguration {
 
     /**
-     * The header for getting trademark.
+     * Builds a rest template for Google ReCaptcha.
+     * @return the rest template.
      */
-    public static final String X_JULB_TM = "x-julb-tm";
-
-    /**
-     * The header for debug purposes.
-     */
-    public static final String X_JULB_HTTP_TRACE_DISABLED = "x-julb-http-trace-disabled";
-
-    /**
-     * The header for real IP address.
-     */
-    public static final String X_REAL_IP = "x-real-ip";
-
-    /**
-     * The header for X-Forwarded-For value.
-     */
-    public static final String X_FORWARDED_FOR = "x-forwarded-for";
-
-    /**
-     * The header for Google ReCaptcha token.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_TOKEN = "x-google-recaptcha-token";
-
-    /**
-     * The header for Google ReCaptcha action.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_ACTION = "x-google-recaptcha-action";
-
+    @Bean
+    public RestTemplate googleReCaptchaRestTemplate() {
+        return new RestTemplate();
+    }
 }
