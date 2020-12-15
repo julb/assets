@@ -10,7 +10,7 @@ javaPlatform {
 dependencies {
 	// Spring Boot as BOM
     api platform('org.springframework.boot:spring-boot-dependencies:2.4.1')
-    api platform('org.springframework.cloud:spring-cloud-dependencies:2020.0.0-M6')
+    api platform('org.springframework.cloud:spring-cloud-dependencies:2020.0.0-RC1')
     api platform("org.testcontainers:testcontainers-bom:1.15.1")
     
     // Additional libraries.

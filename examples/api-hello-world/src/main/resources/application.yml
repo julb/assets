@@ -8,6 +8,13 @@ application:
       - Charlie
       - David
 
+google.recaptcha:
+  enabled: true
+  site-key: 6LczlwYaAAAAAJUdvpjT-RPk4CeSIQdSycrJBTnI
+  secret-key: 6LczlwYaAAAAAE2lToAea3dn8DBYsYosyRN1-6mf
+  action-thresholds:
+    HELLO: 0.5
+
 management.health.probes.enabled: true
 
 spring.servlet.multipart:

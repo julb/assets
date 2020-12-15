@@ -36,8 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -54,10 +52,8 @@ import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
  * <P>
  * @author Julb.
  */
-@Service
 @Slf4j
 @Validated
-@ConditionalOnBean(GoogleReCaptchaProperties.class)
 public class GoogleReCaptchaV3ServiceImpl implements CaptchaService {
 
     /**

@@ -29,7 +29,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import me.julb.springbootstarter.web.aspects.captcha.CaptchaValidAspect;
 import me.julb.springbootstarter.web.configurations.beans.GoogleReCaptchaProperties;
+import me.julb.springbootstarter.web.services.CaptchaService;
+import me.julb.springbootstarter.web.services.impl.GoogleReCaptchaV3ServiceImpl;
 
 /**
  * The Google ReCaptcha configuration.
@@ -48,5 +51,23 @@ public class GoogleReCaptchaConfiguration {
     @Bean
     public RestTemplate googleReCaptchaRestTemplate() {
         return new RestTemplate();
+    }
+
+    /**
+     * Builds a captcha valid aspect.
+     * @return the captcha valid aspect.
+     */
+    @Bean
+    public CaptchaValidAspect captchaValidAspect() {
+        return new CaptchaValidAspect();
+    }
+
+    /**
+     * Builds a captcha service.
+     * @return the captcha service.
+     */
+    @Bean
+    public CaptchaService captchaService() {
+        return new GoogleReCaptchaV3ServiceImpl();
     }
 }
