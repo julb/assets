@@ -1,30 +1,38 @@
-[![Build Status](https://travis-ci.com/julb/assets.svg?token=NrPG3HkqVTG4JHmZ7BhS&branch=develop)](https://travis-ci.com/julb/assets)
+![Build](https://github.com/julb/assets/workflows/Build/badge.svg)
 
-# assets
+# Julb Spring Boot Assets
 
 ## Description
 
-This project is a mono-repo for all assets such as:
-* Libraries
-* Spring Boot starters
-* Examples
-* Applications
+This project is a mono-repo providing Spring Boot assets such as:
+
+- Utility libraries
+- Spring Boot starters (Consumer, Gateway, Job, Messaging, OpenTracing)
+- Examples (API, Jobs)
+- Applications
 
 ## How to use
+
+### Generate Eclipse IDE files
+
+```bash
+$ ./gradlew eclipse
+```
 
 ### Build the project
 
 ```bash
-$ ./gradlew build
+$ ./gradlew build docs
 ```
 
-### Generate Docker images for Java applications
+### Generate Docker images using Buildpacks
+
 ```bash
-$ ./gradlew jibDockerBuild \
-    -Djib.from.image=adoptopenjdk:13-openj9 \
-    -Djib.container.creationTime=USE_CURRENT_TIMESTAMP \
-    -Djib.to.tags=latest
-
-$ docker run -ti --rm -p 9090:9090 -e "JAVA_TOOL_OPTIONS=-Dserver.port=9090" <api-name>[:<api-version>]
+$ ./gradlew bootBuildImage
 ```
 
+## Contributing
+
+This project is totally open source and contributors are welcome.
+
+When you submit a PR, please ensure that the code follows formatting rules provided under [config/eclipse](./config/eclipse) directory.
