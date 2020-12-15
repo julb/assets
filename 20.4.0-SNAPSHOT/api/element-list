@@ -73,6 +73,12 @@ me.julb.applications.helloworld.controllers
 me.julb.applications.helloworld.entities
 me.julb.applications.helloworld.repositories
 me.julb.applications.helloworld.services.dto
+me.julb.applications.jwks.configurations
+me.julb.applications.jwks.configurations.caching
+me.julb.applications.jwks.configurations.properties
+me.julb.applications.jwks.controllers
+me.julb.applications.jwks.services
+me.julb.applications.jwks.services.impl
 me.julb.applications.ping.configurations
 me.julb.applications.ping.configurations.properties
 me.julb.applications.ping.controllers

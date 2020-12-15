@@ -83,6 +83,7 @@
 <li><a href="me/julb/applications/authorizationserver/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.authorizationserver.configurations.properties">ApplicationProperties</a></li>
 <li><a href="me/julb/applications/bookmark/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.bookmark.configurations.properties">ApplicationProperties</a></li>
 <li><a href="me/julb/applications/disclaimer/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.disclaimer.configurations.properties">ApplicationProperties</a></li>
+<li><a href="me/julb/applications/jwks/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.jwks.configurations.properties">ApplicationProperties</a></li>
 <li><a href="me/julb/applications/urlshortener/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.urlshortener.configurations.properties">ApplicationProperties</a></li>
 <li><a href="me/julb/springbootstarter/consumer/interceptors/ApplyMultipleRequestInterceptors.html" title="class in me.julb.springbootstarter.consumer.interceptors">ApplyMultipleRequestInterceptors</a></li>
 <li><a href="me/julb/library/utility/validator/constraints/AspireCode.html" title="annotation in me.julb.library.utility.validator.constraints">AspireCode</a></li>
@@ -122,6 +123,7 @@
 <li><a href="me/julb/library/utility/validator/constraints/Base64.html" title="annotation in me.julb.library.utility.validator.constraints">Base64</a></li>
 <li><a href="me/julb/library/utility/exceptions/BaseException.html" title="class in me.julb.library.utility.exceptions">BaseException</a></li>
 <li><a href="me/julb/library/dto/simple/value/BooleanValueDTO.html" title="class in me.julb.library.dto.simple.value">BooleanValueDTO</a></li>
+<li><a href="me/julb/applications/jwks/configurations/caching/CacheConstants.html" title="interface in me.julb.applications.jwks.configurations.caching"><span class="interfaceName">CacheConstants</span></a></li>
 <li><a href="me/julb/applications/bookmark/services/exceptions/CannotMoveFolderInSubfolderException.html" title="class in me.julb.applications.bookmark.services.exceptions">CannotMoveFolderInSubfolderException</a></li>
 <li><a href="me/julb/applications/helloworld/controllers/CaptchaController.html" title="class in me.julb.applications.helloworld.controllers">CaptchaController</a></li>
 <li><a href="me/julb/springbootstarter/web/services/CaptchaService.html" title="interface in me.julb.springbootstarter.web.services"><span class="interfaceName">CaptchaService</span></a></li>
@@ -176,6 +178,7 @@
 <li><a href="me/julb/applications/dataprocessing/configurations/CustomConfiguration.html" title="class in me.julb.applications.dataprocessing.configurations">CustomConfiguration</a></li>
 <li><a href="me/julb/applications/disclaimer/configurations/CustomConfiguration.html" title="class in me.julb.applications.disclaimer.configurations">CustomConfiguration</a></li>
 <li><a href="me/julb/applications/helloworld/configurations/CustomConfiguration.html" title="class in me.julb.applications.helloworld.configurations">CustomConfiguration</a></li>
+<li><a href="me/julb/applications/jwks/configurations/CustomConfiguration.html" title="class in me.julb.applications.jwks.configurations">CustomConfiguration</a></li>
 <li><a href="me/julb/applications/ping/configurations/CustomConfiguration.html" title="class in me.julb.applications.ping.configurations">CustomConfiguration</a></li>
 <li><a href="me/julb/applications/platformhealth/configurations/CustomConfiguration.html" title="class in me.julb.applications.platformhealth.configurations">CustomConfiguration</a></li>
 <li><a href="me/julb/applications/urlshortener/configurations/CustomConfiguration.html" title="class in me.julb.applications.urlshortener.configurations">CustomConfiguration</a></li>
@@ -304,6 +307,7 @@
 <li><a href="me/julb/library/utility/interfaces/IIdentifiable.html" title="interface in me.julb.library.utility.interfaces"><span class="interfaceName">IIdentifiable</span></a></li>
 <li><a href="me/julb/library/utility/josejwt/jwk/IJWKProvider.html" title="interface in me.julb.library.utility.josejwt.jwk"><span class="interfaceName">IJWKProvider</span></a></li>
 <li><a href="me/julb/library/utility/josejwt/jwk/IJWKSetProvider.html" title="interface in me.julb.library.utility.josejwt.jwk"><span class="interfaceName">IJWKSetProvider</span></a></li>
+<li><a href="me/julb/applications/jwks/services/IKeyService.html" title="interface in me.julb.applications.jwks.services"><span class="interfaceName">IKeyService</span></a></li>
 <li><a href="me/julb/springbootstarter/mapping/services/IMappingService.html" title="interface in me.julb.springbootstarter.mapping.services"><span class="interfaceName">IMappingService</span></a></li>
 <li><a href="me/julb/applications/platformhealth/controllers/IncidentComponentController.html" title="class in me.julb.applications.platformhealth.controllers">IncidentComponentController</a></li>
 <li><a href="me/julb/applications/platformhealth/services/dto/incidentcomponent/IncidentComponentCreationDTO.html" title="class in me.julb.applications.platformhealth.services.dto.incidentcomponent">IncidentComponentCreationDTO</a></li>
@@ -381,8 +385,17 @@
 <li><a href="me/julb/library/utility/josejwt/jwk/impl/JSONStringJWKProvider.Builder.html" title="class in me.julb.library.utility.josejwt.jwk.impl">JSONStringJWKProvider.Builder</a></li>
 <li><a href="me/julb/library/utility/josejwt/jwk/impl/JSONStringJWKSetProvider.html" title="class in me.julb.library.utility.josejwt.jwk.impl">JSONStringJWKSetProvider</a></li>
 <li><a href="me/julb/library/utility/josejwt/jwk/impl/JSONStringJWKSetProvider.Builder.html" title="class in me.julb.library.utility.josejwt.jwk.impl">JSONStringJWKSetProvider.Builder</a></li>
+<li><a href="me/julb/library/utility/validator/constraints/JSONWebKeyId.html" title="annotation in me.julb.library.utility.validator.constraints">JSONWebKeyId</a></li>
+<li><a href="me/julb/library/utility/validator/constraints/JSONWebKeysetName.html" title="annotation in me.julb.library.utility.validator.constraints">JSONWebKeysetName</a></li>
+<li><a href="me/julb/applications/jwks/configurations/properties/JwkDefinitionProperties.html" title="class in me.julb.applications.jwks.configurations.properties">JwkDefinitionProperties</a></li>
+<li><a href="me/julb/applications/jwks/configurations/properties/JwkDefinitionProperties.JwkInstanceType.html" title="enum in me.julb.applications.jwks.configurations.properties">JwkDefinitionProperties.JwkInstanceType</a></li>
+<li><a href="me/julb/applications/jwks/configurations/properties/JwkProperties.html" title="class in me.julb.applications.jwks.configurations.properties">JwkProperties</a></li>
+<li><a href="me/julb/applications/jwks/configurations/properties/JwksProperties.html" title="class in me.julb.applications.jwks.configurations.properties">JwksProperties</a></li>
+<li><a href="me/julb/applications/jwks/configurations/properties/JwkSymmetricProperties.html" title="class in me.julb.applications.jwks.configurations.properties">JwkSymmetricProperties</a></li>
 <li><a href="me/julb/library/utility/validator/constraints/JWT.html" title="annotation in me.julb.library.utility.validator.constraints">JWT</a></li>
 <li><a href="me/julb/library/utility/constants/JWTClaims.html" title="class in me.julb.library.utility.constants">JWTClaims</a></li>
+<li><a href="me/julb/applications/jwks/controllers/KeyController.html" title="class in me.julb.applications.jwks.controllers">KeyController</a></li>
+<li><a href="me/julb/applications/jwks/services/impl/KeyService.html" title="class in me.julb.applications.jwks.services.impl">KeyService</a></li>
 <li><a href="me/julb/library/utility/validator/constraints/LargeContent.html" title="annotation in me.julb.library.utility.validator.constraints">LargeContent</a></li>
 <li><a href="me/julb/library/dto/simple/content/LargeContentCreationDTO.html" title="class in me.julb.library.dto.simple.content">LargeContentCreationDTO</a></li>
 <li><a href="me/julb/library/dto/simple/content/LargeContentDTO.html" title="class in me.julb.library.dto.simple.content">LargeContentDTO</a></li>
