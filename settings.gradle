@@ -17,6 +17,7 @@ include 'applications:api-ping'
 include 'applications:api-platform-health'
 include 'applications:api-url-shortener'
 include 'applications:api-web-analytics'
+include 'applications:fun-gen-uuid'
 include 'applications:fun-send-mail'
 
 include 'bom'
