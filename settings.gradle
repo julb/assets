@@ -2,6 +2,8 @@ pluginManagement {
     plugins {
         id 'io.freefair.lombok' version '5.3.0'
         id 'org.springframework.boot' version '2.4.1'
+        id 'com.github.johnrengelman.shadow' version '6.1.0'
+        id 'org.springframework.boot.experimental.thin-launcher' version '1.0.25.RELEASE'
     }
 }
 
@@ -15,6 +17,7 @@ include 'applications:api-ping'
 include 'applications:api-platform-health'
 include 'applications:api-url-shortener'
 include 'applications:api-web-analytics'
+include 'applications:fun-send-mail'
 
 include 'bom'
 include 'docs'
