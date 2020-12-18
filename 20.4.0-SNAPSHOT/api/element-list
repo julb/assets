@@ -111,6 +111,7 @@ me.julb.applications.webanalytics.configurations.properties
 me.julb.applications.webanalytics.controllers
 me.julb.applications.webanalytics.controllers.params
 me.julb.applications.webanalytics.services.dto
+me.julb.functions
 me.julb.library.dto.http.alive
 me.julb.library.dto.http.analytics
 me.julb.library.dto.http.error
