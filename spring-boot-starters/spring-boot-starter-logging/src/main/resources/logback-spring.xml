@@ -5,10 +5,6 @@
 	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
 	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 	
-	<springProfile name="TEST">
-        <root level="OFF"/>
-    </springProfile>
-		
 	<springProfile name="(default | LOCAL) &amp; !HTTP_DEBUG">
 		<logger name="org.springframework" level="INFO">
 			<appender-ref ref="CONSOLE" />
@@ -70,7 +66,7 @@
             <appender-ref ref="CONSOLE" />
         </logger>
         
-        <logger name="me.julb" level="INFO">
+        <logger name="me.julb" level="DEBUG">
             <appender-ref ref="CONSOLE" />
         </logger>
         
