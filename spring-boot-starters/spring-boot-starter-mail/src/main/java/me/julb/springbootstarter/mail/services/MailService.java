@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2020 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,39 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package me.julb.springbootstarter.mail.services;
 
-package me.julb.library.utility.constants;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import me.julb.library.dto.mail.MailDTO;
 
 /**
- * The media type.
+ * Email service.
  * <P>
  * @author Julb.
  */
-public class MediaType {
+public interface MailService {
 
     /**
-     * The text/plain media type.
+     * Sends the mail.
+     * @param mail the mail message to send.
      */
-    public static final String TEXT_PLAIN = "text/plain";
-
-    /**
-     * The text/html media type.
-     */
-    public static final String TEXT_HTML = "text/html";
-
-    /**
-     * The text/html with UTF8 charset media type.
-     */
-    public static final String TEXT_HTML_UTF8 = "text/html; charset=utf-8";
-
-    /**
-     * The text/markdown media type.
-     */
-    public static final String TEXT_MARKDOWN = "text/markdown";
-
-    /**
-     * The text/calendar media type.
-     */
-    public static final String TEXT_CALENDAR = "text/calendar";
+    void send(@NotNull @Valid MailDTO mail);
 
 }
