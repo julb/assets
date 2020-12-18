@@ -20,7 +20,7 @@ dependencies {
     implementation project(':spring-boot-starters:spring-boot-starter-validation')
     
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
-    testImplementation 'com.icegreen:greenmail-junit5:1.6.1'
+    testImplementation 'com.icegreen:greenmail-junit5'
 }
 
 lombok {
