@@ -115,6 +115,7 @@ me.julb.library.dto.http.alive
 me.julb.library.dto.http.analytics
 me.julb.library.dto.http.error
 me.julb.library.dto.icsfeed
+me.julb.library.dto.mail
 me.julb.library.dto.messaging.events
 me.julb.library.dto.messaging.message
 me.julb.library.dto.rssfeed
@@ -185,6 +186,8 @@ me.julb.springbootstarter.gateway.controllers
 me.julb.springbootstarter.ics.service
 me.julb.springbootstarter.ics.service.impl
 me.julb.springbootstarter.job.configurations
+me.julb.springbootstarter.mail.services
+me.julb.springbootstarter.mail.services.impl
 me.julb.springbootstarter.mapping.configurations
 me.julb.springbootstarter.mapping.services
 me.julb.springbootstarter.messaging.builders
