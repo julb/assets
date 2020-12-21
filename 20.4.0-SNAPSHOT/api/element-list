@@ -112,6 +112,7 @@ me.julb.applications.webanalytics.controllers
 me.julb.applications.webanalytics.controllers.params
 me.julb.applications.webanalytics.services.dto
 me.julb.functions
+me.julb.library.dto.googlechat
 me.julb.library.dto.http.alive
 me.julb.library.dto.http.analytics
 me.julb.library.dto.http.error
@@ -184,6 +185,12 @@ me.julb.springbootstarter.core.localization
 me.julb.springbootstarter.core.messages
 me.julb.springbootstarter.core.rendering
 me.julb.springbootstarter.gateway.controllers
+me.julb.springbootstarter.googlechat.annotations
+me.julb.springbootstarter.googlechat.configurations
+me.julb.springbootstarter.googlechat.configurations.beans
+me.julb.springbootstarter.googlechat.consumers
+me.julb.springbootstarter.googlechat.services
+me.julb.springbootstarter.googlechat.services.impl
 me.julb.springbootstarter.ics.service
 me.julb.springbootstarter.ics.service.impl
 me.julb.springbootstarter.job.configurations
