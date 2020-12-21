@@ -1,0 +1,13 @@
+google:
+  chat:
+    rooms:
+      - name: __NAME_A__
+        spaceId: __SPACE_ID_A__
+        key: __KEY_A__
+        token: __TOKEN_A__
+        defaultThreadKey: __DEFAULT_THREAD_KEY_A__
+
+      - name: __NAME_B__
+        spaceId: __SPACE_ID_B__
+        key: __KEY_B__
+        token: __TOKEN_B__

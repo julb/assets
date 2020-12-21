@@ -34,6 +34,9 @@ import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import me.julb.library.utility.validator.constraints.MailContent;
+import me.julb.library.utility.validator.constraints.MailSubject;
+
 /**
  * DTO to send a mail.
  * <P>
@@ -43,40 +46,91 @@ import lombok.Setter;
 @Setter
 public class MailDTO {
 
-    /**
-     * The sender of the mail.
+    //@formatter:off
+     /**
+     * The from attribute.
+     * -- GETTER --
+     * Getter for {@link #from} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #from} property.
+     * @param from the value to set.
      */
-    @Email
+     //@formatter:on
     @NotBlank
+    @NotNull
+    @Email
     private String from;
 
-    /**
-     * TO recipients of the email.
+    //@formatter:off
+     /**
+     * The TO recipients of the email.
+     * -- GETTER --
+     * Getter for {@link #tos} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #tos} property.
+     * @param tos the value to set.
      */
+     //@formatter:on
     private Collection<@Email @NotBlank String> tos = new ArrayList<>();
 
-    /**
-     * CC recipients of the email.
+    //@formatter:off
+     /**
+     * The CC recipients of the email.
+     * -- GETTER --
+     * Getter for {@link #ccs} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #ccs} property.
+     * @param ccs the value to set.
      */
+     //@formatter:on
     private Collection<@Email @NotBlank String> ccs = new ArrayList<>();
 
-    /**
-     * BCC recipients of the email.
+    //@formatter:off
+     /**
+     * The BCC recipients of the email.
+     * -- GETTER --
+     * Getter for {@link #bccs} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #bccs} property.
+     * @param bccs the value to set.
      */
+     //@formatter:on
     private Collection<@Email @NotBlank String> bccs = new ArrayList<>();
 
-    /**
-     * Subject of the email.
+    //@formatter:off
+     /**
+     * The subject attribute.
+     * -- GETTER --
+     * Getter for {@link #subject} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #subject} property.
+     * @param subject the value to set.
      */
+     //@formatter:on
     @NotNull
     @NotBlank
+    @MailSubject
     private String subject;
 
-    /**
-     * HTML Body (content) of the email.
+    //@formatter:off
+     /**
+     * The HTML content of the mail.
+     * -- GETTER --
+     * Getter for {@link #html} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #html} property.
+     * @param html the value to set.
      */
+     //@formatter:on
     @NotNull
     @NotBlank
+    @MailContent
     private String html;
 
     /**
