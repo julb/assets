@@ -22,25 +22,27 @@
  * SOFTWARE.
  */
 
-package me.julb.springbootstarter.web.services;
+package me.julb.springbootstarter.googlerecaptcha.annotations;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import lombok.NonNull;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 /**
- * The google re-captcha service.
+ * Provides a simple conditional on <code>google.recaptcha.enabled</code>.
  * <P>
  * @author Julb.
  */
-public interface CaptchaService {
-
-    /**
-     * Validates the given captcha.
-     * @param httpServletRequest the servlet request.
-     * @return <code>true</code> if the captcha is valid, <code>false</code> otherwise.
-     */
-    Boolean validate(@NotNull @NonNull HttpServletRequest httpServletRequest);
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@ConditionalOnProperty(prefix = "google.recaptcha", name = "enabled", matchIfMissing = true)
+public @interface ConditionalOnGoogleReCaptchaEnabled {
 
 }

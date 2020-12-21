@@ -55,10 +55,10 @@ import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageLevel;
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.exceptions.InternalServerErrorException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
+import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
-import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 
 /**
  * The rest controller to redirect the user.

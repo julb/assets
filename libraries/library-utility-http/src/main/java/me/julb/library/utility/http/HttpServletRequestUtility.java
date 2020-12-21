@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package me.julb.springbootstarter.web.utility;
+package me.julb.library.utility.http;
 
 import javax.servlet.http.HttpServletRequest;
 

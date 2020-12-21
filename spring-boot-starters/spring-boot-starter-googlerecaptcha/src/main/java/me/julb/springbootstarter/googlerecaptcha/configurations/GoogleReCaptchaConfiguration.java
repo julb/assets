@@ -21,18 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.springbootstarter.web.configurations;
+package me.julb.springbootstarter.googlerecaptcha.configurations;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.context.annotation.PropertySource;
 
-import me.julb.springbootstarter.web.aspects.captcha.CaptchaValidAspect;
-import me.julb.springbootstarter.web.configurations.beans.GoogleReCaptchaProperties;
-import me.julb.springbootstarter.web.services.CaptchaService;
-import me.julb.springbootstarter.web.services.impl.GoogleReCaptchaV3ServiceImpl;
+import me.julb.springbootstarter.googlerecaptcha.annotations.ConditionalOnGoogleReCaptchaEnabled;
+import me.julb.springbootstarter.googlerecaptcha.configurations.beans.GoogleReCaptchaProperties;
 
 /**
  * The Google ReCaptcha configuration.
@@ -41,33 +37,8 @@ import me.julb.springbootstarter.web.services.impl.GoogleReCaptchaV3ServiceImpl;
  */
 @Configuration
 @EnableConfigurationProperties(GoogleReCaptchaProperties.class)
-@ConditionalOnProperty(prefix = "google.recaptcha", name = "enabled", matchIfMissing = false)
+@ConditionalOnGoogleReCaptchaEnabled
+@PropertySource("classpath:/me/julb/springbootstarter/googlerecaptcha/default.properties")
 public class GoogleReCaptchaConfiguration {
 
-    /**
-     * Builds a rest template for Google ReCaptcha.
-     * @return the rest template.
-     */
-    @Bean
-    public RestTemplate googleReCaptchaRestTemplate() {
-        return new RestTemplate();
-    }
-
-    /**
-     * Builds a captcha valid aspect.
-     * @return the captcha valid aspect.
-     */
-    @Bean
-    public CaptchaValidAspect captchaValidAspect() {
-        return new CaptchaValidAspect();
-    }
-
-    /**
-     * Builds a captcha service.
-     * @return the captcha service.
-     */
-    @Bean
-    public CaptchaService captchaService() {
-        return new GoogleReCaptchaV3ServiceImpl();
-    }
 }

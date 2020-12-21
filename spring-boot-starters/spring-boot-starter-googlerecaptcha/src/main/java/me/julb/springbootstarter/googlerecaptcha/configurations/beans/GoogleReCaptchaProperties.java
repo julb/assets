@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.springbootstarter.web.configurations.beans;
+package me.julb.springbootstarter.googlerecaptcha.configurations.beans;
 
 import java.util.Map;
 

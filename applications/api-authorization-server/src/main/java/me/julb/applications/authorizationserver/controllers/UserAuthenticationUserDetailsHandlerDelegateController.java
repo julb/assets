@@ -49,8 +49,8 @@ import me.julb.applications.authorizationserver.services.dto.session.UserSession
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionWithRawIdTokenDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
+import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.springbootstarter.security.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsHandlerDelegate;
-import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 
 /**
  * The delegate service implementation for user authentication details.

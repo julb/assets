@@ -9,7 +9,6 @@ application:
       - David
 
 google.recaptcha:
-  enabled: true
   site-key: ${GOOGLE_RECAPTCHA_SITE_KEY}
   secret-key: ${GOOGLE_RECAPTCHA_SECRET_KEY}
   action-thresholds:

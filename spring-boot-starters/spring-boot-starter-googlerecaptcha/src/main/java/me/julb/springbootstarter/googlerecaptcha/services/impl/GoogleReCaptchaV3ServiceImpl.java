@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package me.julb.springbootstarter.web.services.impl;
+package me.julb.springbootstarter.googlerecaptcha.services.impl;
 
-import java.net.URI;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,16 +35,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import me.julb.library.utility.constants.CustomHttpHeaders;
-import me.julb.library.utility.exceptions.InternalServerErrorException;
-import me.julb.springbootstarter.web.configurations.beans.GoogleReCaptchaProperties;
-import me.julb.springbootstarter.web.services.CaptchaService;
-import me.julb.springbootstarter.web.services.dto.GoogleReCaptchaV3ChallengeResponseDTO;
-import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
+import me.julb.library.utility.http.HttpServletRequestUtility;
+import me.julb.springbootstarter.googlerecaptcha.annotations.ConditionalOnGoogleReCaptchaEnabled;
+import me.julb.springbootstarter.googlerecaptcha.configurations.beans.GoogleReCaptchaProperties;
+import me.julb.springbootstarter.googlerecaptcha.consumers.GoogleReCaptchaFeignClient;
+import me.julb.springbootstarter.googlerecaptcha.consumers.GoogleReCaptchaV3ChallengeResponseDTO;
+import me.julb.springbootstarter.googlerecaptcha.services.GoogleReCaptchaService;
 
 /**
  * The Captcha service implementation for Google ReCaptcha V3.
@@ -54,12 +53,9 @@ import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
  */
 @Slf4j
 @Validated
-public class GoogleReCaptchaV3ServiceImpl implements CaptchaService {
-
-    /**
-     * The Google Recaptcha URL template.
-     */
-    protected static final String GOOGLE_RECAPTCHA_URL_TEMPLATE = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s";
+@Service
+@ConditionalOnGoogleReCaptchaEnabled
+public class GoogleReCaptchaV3ServiceImpl implements GoogleReCaptchaService {
 
     /**
      * The pattern used to validate the Google Recaptcha token.
@@ -78,10 +74,10 @@ public class GoogleReCaptchaV3ServiceImpl implements CaptchaService {
     private GoogleReCaptchaProperties googleReCaptchaProperties;
 
     /**
-     * The rest template to invoke Google service.
+     * The feign client to verify captcha.
      */
     @Autowired
-    protected RestTemplate googleReCaptchaRestTemplate;
+    protected GoogleReCaptchaFeignClient googleReCaptchaFeignClient;
 
     /**
      * {@inheritDoc}
@@ -123,39 +119,26 @@ public class GoogleReCaptchaV3ServiceImpl implements CaptchaService {
         Float actionThreshold = googleReCaptchaProperties.getActionThresholds().get(captchaAction);
 
         // Invoke Google service.
-        GoogleReCaptchaV3ChallengeResponseDTO googleResponse = verifyToken(captchaToken, ipAddress);
+        GoogleReCaptchaV3ChallengeResponseDTO googleResponse = googleReCaptchaFeignClient.verify(googleReCaptchaProperties.getSecretKey(), captchaToken, ipAddress);
         if (!googleResponse.isSuccess()) {
             LOGGER.debug("Google ReCaptcha Service failed to verify the Captcha. Errors: {}", ArrayUtils.toString(googleResponse.getErrorCodes()));
             return false;
         }
+        LOGGER.debug("Google stated that the Captcha verification is successful.");
 
-        if (!StringUtils.equalsIgnoreCase(googleResponse.getAction(), captchaAction)) {
+        if (googleResponse.getAction() != null && !StringUtils.equalsIgnoreCase(googleResponse.getAction(), captchaAction)) {
             LOGGER.debug("Google ReCaptcha Service verified successfully the Captcha but actions don't match. Google: {} vs Actual: {}.", googleResponse.getAction(), captchaAction);
             return false;
         }
+        LOGGER.debug("Action passed as parameter and action returned by Google are matching.");
 
         if (googleResponse.getScore() < actionThreshold) {
             LOGGER.debug("Google ReCaptcha Service verified successfully but scoring is not good. Google: {}, Actual threshold: {}.", googleResponse.getScore(), actionThreshold);
             return false;
         }
 
+        LOGGER.debug("Captcha verified successfully.");
+
         return true;
     }
-
-    /**
-     * Verifies the captcha using Google service.
-     * @param captchaToken the captcha token.
-     * @param ipAddress the ip address.
-     * @return the response.
-     */
-    private GoogleReCaptchaV3ChallengeResponseDTO verifyToken(String captchaToken, String ipAddress) {
-        URI verifyUri = URI.create(String.format(GOOGLE_RECAPTCHA_URL_TEMPLATE, googleReCaptchaProperties.getSecretKey(), captchaToken, ipAddress));
-        try {
-            return googleReCaptchaRestTemplate.getForObject(verifyUri, GoogleReCaptchaV3ChallengeResponseDTO.class);
-        } catch (RestClientException e) {
-            LOGGER.error("Failed to join the Google ReCaptcha service.", e);
-            throw new InternalServerErrorException(e);
-        }
-    }
-
 }

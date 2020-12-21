@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.julb.springbootstarter.web.annotations.captcha.CaptchaValid;
+import me.julb.springbootstarter.googlerecaptcha.annotations.GoogleReCaptchaValid;
 
 /**
  * The captcha controller.
@@ -30,7 +30,7 @@ public class CaptchaController {
      */
     @GetMapping
     @Operation(summary = "Captcha call")
-    @CaptchaValid
+    @GoogleReCaptchaValid
     public void test() {
         LOGGER.info("Receiving captcha call.");
     }

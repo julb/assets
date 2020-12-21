@@ -1,4 +1,4 @@
-package me.julb.springbootstarter.web.aspects.captcha;
+package me.julb.springbootstarter.googlerecaptcha.aspects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -7,11 +7,13 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import me.julb.library.utility.exceptions.UnauthorizedException;
-import me.julb.springbootstarter.web.services.CaptchaService;
+import me.julb.springbootstarter.googlerecaptcha.annotations.ConditionalOnGoogleReCaptchaEnabled;
+import me.julb.springbootstarter.googlerecaptcha.services.GoogleReCaptchaService;
 
 /**
  * The Google Re-Captcha aspect.
@@ -19,13 +21,15 @@ import me.julb.springbootstarter.web.services.CaptchaService;
  * @author Julb.
  */
 @Aspect
-public class CaptchaValidAspect {
+@Component
+@ConditionalOnGoogleReCaptchaEnabled
+public class GoogleReCaptchaValidAspect {
 
     /**
      * The captcha service attribute.
      */
     @Autowired
-    private CaptchaService captchaService;
+    private GoogleReCaptchaService googleReCaptchaService;
 
     /**
      * Validates the captcha.
@@ -33,11 +37,11 @@ public class CaptchaValidAspect {
      * @return the joint point.
      * @throws Throwable if an error occurs.
      */
-    @Around("@annotation(me.julb.springbootstarter.web.annotations.captcha.CaptchaValid)")
+    @Around("@annotation(me.julb.springbootstarter.googlerecaptcha.annotations.GoogleReCaptchaValid)")
     public Object validateCaptcha(ProceedingJoinPoint joinPoint)
         throws Throwable {
         HttpServletRequest request = currentHttpServletRequest();
-        Boolean isValidCaptcha = captchaService.validate(request);
+        Boolean isValidCaptcha = googleReCaptchaService.validate(request);
         if (BooleanUtils.isNotTrue(isValidCaptcha)) {
             throw new UnauthorizedException();
         }

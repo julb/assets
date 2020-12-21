@@ -50,8 +50,8 @@ import me.julb.applications.authorizationserver.services.dto.session.UserSession
 import me.julb.library.dto.security.AuthenticatedUserDTO;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.BadRequestException;
+import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.library.utility.validator.constraints.SecureIdToken;
-import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 
 /**
  * The rest controller to return current session.

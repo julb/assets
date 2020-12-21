@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.springbootstarter.web.services.impl;
+package me.julb.springbootstarter.googlerecaptcha.services;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,13 +31,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.client.RestTemplate;
 
 import me.julb.library.utility.constants.CustomHttpHeaders;
+import me.julb.springbootstarter.googlerecaptcha.configurations.GoogleReCaptchaConfiguration;
+import me.julb.springbootstarter.googlerecaptcha.consumers.GoogleReCaptchaFeignClient;
+import me.julb.springbootstarter.googlerecaptcha.consumers.GoogleReCaptchaV3ChallengeResponseDTO;
+import me.julb.springbootstarter.googlerecaptcha.services.impl.GoogleReCaptchaV3ServiceImpl;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
-import me.julb.springbootstarter.web.configurations.GoogleReCaptchaConfiguration;
-import me.julb.springbootstarter.web.services.CaptchaService;
-import me.julb.springbootstarter.web.services.dto.GoogleReCaptchaV3ChallengeResponseDTO;
 
 /**
  * Test class for {@link GoogleReCaptchaV3ServiceImpl} class.
@@ -45,19 +45,19 @@ import me.julb.springbootstarter.web.services.dto.GoogleReCaptchaV3ChallengeResp
  * @author Julb.
  */
 @ContextConfiguration(classes = {GoogleReCaptchaConfiguration.class, GoogleReCaptchaV3ServiceImpl.class})
-public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
+public class GoogleReCaptchaServiceTest extends AbstractBaseTest {
 
     /**
      * The captcha service.
      */
     @Autowired
-    private CaptchaService captchaService;
+    private GoogleReCaptchaService googleReCaptchaService;
 
     /**
      * The captcha aspect to validate.
      */
     @MockBean
-    private RestTemplate googleReCaptchaRestTemplate;
+    private GoogleReCaptchaFeignClient googleReCaptchaFeignClient;
 
     /**
      * Unit test method.
@@ -75,9 +75,9 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
         response.setHostname("localhost");
         response.setScore(1.0f);
         response.setSuccess(true);
-        Mockito.when(googleReCaptchaRestTemplate.getForObject(Mockito.any(), Mockito.any())).thenReturn(response);
+        Mockito.when(googleReCaptchaFeignClient.verify(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
 
-        Assertions.assertTrue(captchaService.validate(request));
+        Assertions.assertTrue(googleReCaptchaService.validate(request));
     }
 
     /**
@@ -87,7 +87,7 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
     public void whenRequestIsNull_thenThrowNullPointerException()
         throws Throwable {
         Assertions.assertThrows(NullPointerException.class, () -> {
-            captchaService.validate(null);
+            googleReCaptchaService.validate(null);
         });
     }
 
@@ -101,7 +101,7 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
         Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn(null);
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("HELLO");
-        Assertions.assertFalse(captchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(request));
     }
 
     /**
@@ -114,7 +114,7 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
         Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("$$$$$");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("HELLO");
-        Assertions.assertFalse(captchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(request));
     }
 
     /**
@@ -127,7 +127,7 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
         Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn(null);
-        Assertions.assertFalse(captchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(request));
     }
 
     /**
@@ -140,7 +140,7 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
         Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("$$$$");
-        Assertions.assertFalse(captchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(request));
     }
 
     /**
@@ -153,7 +153,7 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
         Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
         Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("UNKNOWN");
-        Assertions.assertFalse(captchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(request));
     }
 
     /**
@@ -172,9 +172,9 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
         response.setHostname("localhost");
         response.setScore(1.0f);
         response.setSuccess(true);
-        Mockito.when(googleReCaptchaRestTemplate.getForObject(Mockito.any(), Mockito.any())).thenReturn(response);
+        Mockito.when(googleReCaptchaFeignClient.verify(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
 
-        Assertions.assertFalse(captchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(request));
     }
 
     /**
@@ -193,9 +193,9 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
         response.setHostname("localhost");
         response.setScore(0.4f);
         response.setSuccess(true);
-        Mockito.when(googleReCaptchaRestTemplate.getForObject(Mockito.any(), Mockito.any())).thenReturn(response);
+        Mockito.when(googleReCaptchaFeignClient.verify(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
 
-        Assertions.assertFalse(captchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(request));
     }
 
     /**
@@ -211,8 +211,8 @@ public class GoogleReCaptchaV3ServiceImplTest extends AbstractBaseTest {
 
         GoogleReCaptchaV3ChallengeResponseDTO response = new GoogleReCaptchaV3ChallengeResponseDTO();
         response.setSuccess(false);
-        Mockito.when(googleReCaptchaRestTemplate.getForObject(Mockito.any(), Mockito.any())).thenReturn(response);
+        Mockito.when(googleReCaptchaFeignClient.verify(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
 
-        Assertions.assertFalse(captchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(request));
     }
 }

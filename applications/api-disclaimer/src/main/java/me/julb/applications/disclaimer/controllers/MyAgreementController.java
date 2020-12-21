@@ -46,10 +46,10 @@ import me.julb.applications.disclaimer.services.MyAgreementService;
 import me.julb.applications.disclaimer.services.dto.agreement.AgreementCreationDTO;
 import me.julb.applications.disclaimer.services.dto.agreement.AgreementDTO;
 import me.julb.library.utility.data.search.Searchable;
+import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
-import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 
 /**
  * The rest controller to manage the connected user agreements.

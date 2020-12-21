@@ -1,4 +1,4 @@
-package me.julb.springbootstarter.web.annotations.captcha;
+package me.julb.springbootstarter.googlerecaptcha.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CaptchaValid {
+public @interface GoogleReCaptchaValid {
 
 }

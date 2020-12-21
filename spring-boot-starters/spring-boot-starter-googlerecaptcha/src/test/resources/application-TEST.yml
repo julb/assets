@@ -1,0 +1,6 @@
+google:
+  recaptcha:
+    site-key: __SITE_KEY__
+    secret-key: __SECRET_KEY__
+    action-thresholds:
+      HELLO: 0.5

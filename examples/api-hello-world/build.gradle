@@ -13,6 +13,7 @@ dependencies {
 	implementation project(':libraries:library-dto-simple')
     implementation project(':libraries:library-utility-validator')
 	implementation project(':spring-boot-starters:spring-boot-starter-web')
+    implementation project(':spring-boot-starters:spring-boot-starter-googlerecaptcha')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }

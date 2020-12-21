@@ -41,10 +41,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.julb.applications.webanalytics.controllers.params.AnalyticsRequestParams;
 import me.julb.applications.webanalytics.services.dto.WebAnalyticsEventDTO;
+import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
-import me.julb.springbootstarter.web.utility.HttpServletRequestUtility;
 
 /**
  * The REST controller to collect the analytics.
