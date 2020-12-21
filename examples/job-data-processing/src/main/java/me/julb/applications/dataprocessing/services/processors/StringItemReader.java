@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Airbus.
+ * Copyright (c) Julb.
  */
 package me.julb.applications.dataprocessing.services.processors;
 
@@ -19,7 +19,7 @@ import me.julb.applications.dataprocessing.configurations.beans.CustomJobExecuti
 /**
  * A String item reader example.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @Slf4j
 public class StringItemReader extends AbstractPagingItemReader<String> {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Airbus.
+ * Copyright (c) Julb.
  */
 package me.julb.applications.dataprocessing.services.processors;
 
@@ -14,7 +14,7 @@ import org.springframework.batch.item.ItemWriter;
 /**
  * The string item writer.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @Slf4j
 public class StringItemWriter implements ItemWriter<String> {

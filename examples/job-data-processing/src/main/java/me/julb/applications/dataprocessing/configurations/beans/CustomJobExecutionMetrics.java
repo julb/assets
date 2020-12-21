@@ -6,7 +6,7 @@ import lombok.Setter;
 /**
  * The job execution metrics.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @Getter
 @Setter

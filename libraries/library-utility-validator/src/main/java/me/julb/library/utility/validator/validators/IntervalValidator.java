@@ -32,7 +32,7 @@ import me.julb.library.utility.validator.constraints.Interval;
 /**
  * Validator to check that the given object is a valid interval.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 public class IntervalValidator implements ConstraintValidator<Interval, Object> {
 

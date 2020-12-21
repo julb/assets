@@ -35,7 +35,7 @@ import org.springframework.http.HttpStatus;
 /**
  * The OpenAPI SpringDoc configuration properties.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @Getter
 @Setter

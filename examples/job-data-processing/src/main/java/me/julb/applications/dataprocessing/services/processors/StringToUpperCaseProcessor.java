@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Airbus.
+ * Copyright (c) Julb.
  */
 package me.julb.applications.dataprocessing.services.processors;
 
@@ -10,7 +10,7 @@ import org.springframework.batch.item.ItemProcessor;
 /**
  * The processor that converts a string to uppercase string.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @Slf4j
 public class StringToUpperCaseProcessor implements ItemProcessor<String, String> {

@@ -33,7 +33,7 @@ import me.julb.library.utility.validator.constraints.DateTimeInFuture;
 /**
  * Validator to check that the given object is a valid interval.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 public class DateTimeInFutureValidator implements ConstraintValidator<DateTimeInFuture, Object> {
 

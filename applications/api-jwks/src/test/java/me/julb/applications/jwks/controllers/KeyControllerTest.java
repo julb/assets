@@ -41,7 +41,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
 /**
  * Unit test for the {@link KeyController} class.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @AutoConfigureMockMvc
 public class KeyControllerTest extends AbstractBaseTest {

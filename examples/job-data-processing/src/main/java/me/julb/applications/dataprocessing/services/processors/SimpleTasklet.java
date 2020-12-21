@@ -10,7 +10,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 /**
  * Simple tasklet example.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @Slf4j
 public class SimpleTasklet implements Tasklet {

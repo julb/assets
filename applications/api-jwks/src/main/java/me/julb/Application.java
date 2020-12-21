@@ -29,7 +29,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Main class to launch the application.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @SpringBootApplication
 public class Application {

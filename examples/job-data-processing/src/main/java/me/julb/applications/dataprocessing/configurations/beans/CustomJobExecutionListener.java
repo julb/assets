@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 /**
  * A listener for the current job execution.
  * <P>
- * @author Airbus.
+ * @author Julb.
  */
 @Slf4j
 public class CustomJobExecutionListener implements JobExecutionListener {
