@@ -126,9 +126,6 @@
 <li><a href="me/julb/applications/jwks/configurations/caching/CacheConstants.html" title="interface in me.julb.applications.jwks.configurations.caching"><span class="interfaceName">CacheConstants</span></a></li>
 <li><a href="me/julb/applications/bookmark/services/exceptions/CannotMoveFolderInSubfolderException.html" title="class in me.julb.applications.bookmark.services.exceptions">CannotMoveFolderInSubfolderException</a></li>
 <li><a href="me/julb/applications/helloworld/controllers/CaptchaController.html" title="class in me.julb.applications.helloworld.controllers">CaptchaController</a></li>
-<li><a href="me/julb/springbootstarter/web/services/CaptchaService.html" title="interface in me.julb.springbootstarter.web.services"><span class="interfaceName">CaptchaService</span></a></li>
-<li><a href="me/julb/springbootstarter/web/annotations/captcha/CaptchaValid.html" title="annotation in me.julb.springbootstarter.web.annotations.captcha">CaptchaValid</a></li>
-<li><a href="me/julb/springbootstarter/web/aspects/captcha/CaptchaValidAspect.html" title="class in me.julb.springbootstarter.web.aspects.captcha">CaptchaValidAspect</a></li>
 <li><a href="me/julb/springbootstarter/web/controllers/CaughtExceptionAdviceController.html" title="class in me.julb.springbootstarter.web.controllers">CaughtExceptionAdviceController</a></li>
 <li><a href="me/julb/library/utility/constants/Chars.html" title="class in me.julb.library.utility.constants">Chars</a></li>
 <li><a href="me/julb/library/utility/validator/constraints/Code.html" title="annotation in me.julb.library.utility.validator.constraints">Code</a></li>
@@ -157,6 +154,7 @@
 <li><a href="me/julb/applications/platformhealth/services/impl/ComponentServiceImpl.html" title="class in me.julb.applications.platformhealth.services.impl">ComponentServiceImpl</a></li>
 <li><a href="me/julb/applications/platformhealth/services/dto/component/ComponentUpdateDTO.html" title="class in me.julb.applications.platformhealth.services.dto.component">ComponentUpdateDTO</a></li>
 <li><a href="me/julb/springbootstarter/googlechat/annotations/ConditionalOnGoogleChatEnabled.html" title="annotation in me.julb.springbootstarter.googlechat.annotations">ConditionalOnGoogleChatEnabled</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/annotations/ConditionalOnGoogleReCaptchaEnabled.html" title="annotation in me.julb.springbootstarter.googlerecaptcha.annotations">ConditionalOnGoogleReCaptchaEnabled</a></li>
 <li><a href="me/julb/springbootstarter/core/configs/ConfigSourceConstants.html" title="interface in me.julb.springbootstarter.core.configs"><span class="interfaceName">ConfigSourceConstants</span></a></li>
 <li><a href="me/julb/springbootstarter/core/configs/ConfigSourceService.html" title="class in me.julb.springbootstarter.core.configs">ConfigSourceService</a></li>
 <li><a href="me/julb/library/utility/exceptions/ConflictException.html" title="class in me.julb.library.utility.exceptions">ConflictException</a></li>
@@ -274,10 +272,16 @@
 <li><a href="me/julb/library/utility/validator/constraints/GoogleChatText.html" title="annotation in me.julb.library.utility.validator.constraints">GoogleChatText</a></li>
 <li><a href="me/julb/springbootstarter/googlechat/consumers/GoogleChatTextBodyDTO.html" title="class in me.julb.springbootstarter.googlechat.consumers">GoogleChatTextBodyDTO</a></li>
 <li><a href="me/julb/library/utility/validator/constraints/GoogleChatThreadKey.html" title="annotation in me.julb.library.utility.validator.constraints">GoogleChatThreadKey</a></li>
-<li><a href="me/julb/springbootstarter/web/configurations/GoogleReCaptchaConfiguration.html" title="class in me.julb.springbootstarter.web.configurations">GoogleReCaptchaConfiguration</a></li>
-<li><a href="me/julb/springbootstarter/web/configurations/beans/GoogleReCaptchaProperties.html" title="class in me.julb.springbootstarter.web.configurations.beans">GoogleReCaptchaProperties</a></li>
-<li><a href="me/julb/springbootstarter/web/services/dto/GoogleReCaptchaV3ChallengeResponseDTO.html" title="class in me.julb.springbootstarter.web.services.dto">GoogleReCaptchaV3ChallengeResponseDTO</a></li>
-<li><a href="me/julb/springbootstarter/web/services/impl/GoogleReCaptchaV3ServiceImpl.html" title="class in me.julb.springbootstarter.web.services.impl">GoogleReCaptchaV3ServiceImpl</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/configurations/GoogleReCaptchaConfiguration.html" title="class in me.julb.springbootstarter.googlerecaptcha.configurations">GoogleReCaptchaConfiguration</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/consumers/GoogleReCaptchaFeignClient.html" title="interface in me.julb.springbootstarter.googlerecaptcha.consumers"><span class="interfaceName">GoogleReCaptchaFeignClient</span></a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/consumers/GoogleReCaptchaFeignClient.LocalConsumerConfiguration.html" title="class in me.julb.springbootstarter.googlerecaptcha.consumers">GoogleReCaptchaFeignClient.LocalConsumerConfiguration</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/consumers/GoogleReCaptchaFeignClient.LocalConsumerProperties.html" title="class in me.julb.springbootstarter.googlerecaptcha.consumers">GoogleReCaptchaFeignClient.LocalConsumerProperties</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/configurations/beans/GoogleReCaptchaProperties.html" title="class in me.julb.springbootstarter.googlerecaptcha.configurations.beans">GoogleReCaptchaProperties</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/services/GoogleReCaptchaService.html" title="interface in me.julb.springbootstarter.googlerecaptcha.services"><span class="interfaceName">GoogleReCaptchaService</span></a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/consumers/GoogleReCaptchaV3ChallengeResponseDTO.html" title="class in me.julb.springbootstarter.googlerecaptcha.consumers">GoogleReCaptchaV3ChallengeResponseDTO</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/services/impl/GoogleReCaptchaV3ServiceImpl.html" title="class in me.julb.springbootstarter.googlerecaptcha.services.impl">GoogleReCaptchaV3ServiceImpl</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/annotations/GoogleReCaptchaValid.html" title="annotation in me.julb.springbootstarter.googlerecaptcha.annotations">GoogleReCaptchaValid</a></li>
+<li><a href="me/julb/springbootstarter/googlerecaptcha/aspects/GoogleReCaptchaValidAspect.html" title="class in me.julb.springbootstarter.googlerecaptcha.aspects">GoogleReCaptchaValidAspect</a></li>
 <li><a href="me/julb/springbootstarter/monitoring/prometheus/configurations/HealthMetricsConfiguration.html" title="class in me.julb.springbootstarter.monitoring.prometheus.configurations">HealthMetricsConfiguration</a></li>
 <li><a href="me/julb/library/utility/enums/HealthStatus.html" title="enum in me.julb.library.utility.enums">HealthStatus</a></li>
 <li><a href="me/julb/applications/helloworld/controllers/HelloController.html" title="class in me.julb.applications.helloworld.controllers">HelloController</a></li>
@@ -292,7 +296,7 @@
 <li><a href="me/julb/library/utility/http/HttpHeaderUtility.html" title="class in me.julb.library.utility.http">HttpHeaderUtility</a></li>
 <li><a href="me/julb/library/utility/validator/constraints/HTTPLink.html" title="annotation in me.julb.library.utility.validator.constraints">HTTPLink</a></li>
 <li><a href="me/julb/library/utility/enums/HttpProtocol.html" title="enum in me.julb.library.utility.enums">HttpProtocol</a></li>
-<li><a href="me/julb/springbootstarter/web/utility/HttpServletRequestUtility.html" title="class in me.julb.springbootstarter.web.utility">HttpServletRequestUtility</a></li>
+<li><a href="me/julb/library/utility/http/HttpServletRequestUtility.html" title="class in me.julb.library.utility.http">HttpServletRequestUtility</a></li>
 <li><a href="me/julb/applications/authorizationserver/controllers/HttpUserAccessTokenService.html" title="class in me.julb.applications.authorizationserver.controllers">HttpUserAccessTokenService</a></li>
 <li><a href="me/julb/springbootstarter/messaging/services/IAsyncMessagePosterService.html" title="interface in me.julb.springbootstarter.messaging.services"><span class="interfaceName">IAsyncMessagePosterService</span></a></li>
 <li><a href="me/julb/springbootstarter/security/configurations/beans/userdetails/delegates/IAuthenticationByApiKeyUserDetailsDelegateService.html" title="interface in me.julb.springbootstarter.security.configurations.beans.userdetails.delegates"><span class="interfaceName">IAuthenticationByApiKeyUserDetailsDelegateService</span></a></li>

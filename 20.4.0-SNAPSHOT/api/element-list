@@ -191,6 +191,13 @@ me.julb.springbootstarter.googlechat.configurations.beans
 me.julb.springbootstarter.googlechat.consumers
 me.julb.springbootstarter.googlechat.services
 me.julb.springbootstarter.googlechat.services.impl
+me.julb.springbootstarter.googlerecaptcha.annotations
+me.julb.springbootstarter.googlerecaptcha.aspects
+me.julb.springbootstarter.googlerecaptcha.configurations
+me.julb.springbootstarter.googlerecaptcha.configurations.beans
+me.julb.springbootstarter.googlerecaptcha.consumers
+me.julb.springbootstarter.googlerecaptcha.services
+me.julb.springbootstarter.googlerecaptcha.services.impl
 me.julb.springbootstarter.ics.service
 me.julb.springbootstarter.ics.service.impl
 me.julb.springbootstarter.job.configurations
@@ -229,9 +236,7 @@ me.julb.springbootstarter.security.utilities
 me.julb.springbootstarter.test.base
 me.julb.springbootstarter.test.messaging.base
 me.julb.springbootstarter.test.security.annotations
-me.julb.springbootstarter.web.annotations.captcha
 me.julb.springbootstarter.web.annotations.openapi
-me.julb.springbootstarter.web.aspects.captcha
 me.julb.springbootstarter.web.configurations
 me.julb.springbootstarter.web.configurations.beans
 me.julb.springbootstarter.web.controllers
@@ -240,8 +245,5 @@ me.julb.springbootstarter.web.resolvers.locale
 me.julb.springbootstarter.web.resolvers.page
 me.julb.springbootstarter.web.resolvers.search
 me.julb.springbootstarter.web.resolvers.search.exceptions
-me.julb.springbootstarter.web.services
-me.julb.springbootstarter.web.services.dto
-me.julb.springbootstarter.web.services.impl
 me.julb.springbootstarter.web.utility
 me.julb.springbootstarter.web.views.rssfeed
