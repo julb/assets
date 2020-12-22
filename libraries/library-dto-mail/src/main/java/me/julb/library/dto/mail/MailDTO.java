@@ -133,6 +133,32 @@ public class MailDTO {
     @MailContent
     private String html;
 
+    //@formatter:off
+     /**
+     * The inlineAttachments attribute.
+     * -- GETTER --
+     * Getter for {@link #inlineAttachments} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #inlineAttachments} property.
+     * @param inlineAttachments the value to set.
+     */
+     //@formatter:on
+    private Collection<MailInlineAttachmentDTO> inlineAttachments = new ArrayList<>();
+
+    //@formatter:off
+     /**
+     * The attachments attribute.
+     * -- GETTER --
+     * Getter for {@link #attachments} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #attachments} property.
+     * @param attachments the value to set.
+     */
+     //@formatter:on
+    private Collection<MailAttachmentDTO> attachments = new ArrayList<>();
+
     /**
      * {@inheritDoc}
      */

@@ -23,26 +23,36 @@
  */
 package me.julb.springbootstarter.mail.services.impl;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.Message.RecipientType;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import me.julb.library.dto.mail.MailAttachmentDTO;
 import me.julb.library.dto.mail.MailDTO;
-import me.julb.library.utility.constants.MediaType;
+import me.julb.library.dto.mail.MailInlineAttachmentDTO;
+import me.julb.library.utility.constants.Chars;
 import me.julb.springbootstarter.mail.services.MailService;
 
 /**
@@ -76,11 +86,47 @@ public class MailServiceImpl implements MailService {
             @Override
             public void prepare(MimeMessage mimeMessage)
                 throws Exception {
+                MimeMultipart content = new MimeMultipart("related");
+
+                // Add HTML part.
+                MimeBodyPart htmlPart = new MimeBodyPart();
+                htmlPart.setText(mailDto.getHtml(), StandardCharsets.UTF_8.toString(), "html");
+                htmlPart.setContentID("__html_body");
+                content.addBodyPart(htmlPart);
+
+                // Add inline attachments.
+                for (MailInlineAttachmentDTO inlineAttachment : mailDto.getInlineAttachments()) {
+                    // Extract inline attachment as a datasource.
+                    byte[] inlineAttachmentAsBytes = Base64.getDecoder().decode(inlineAttachment.getContentBase64());
+                    DataSource ds = new ByteArrayDataSource(inlineAttachmentAsBytes, inlineAttachment.getMimeType());
+
+                    // Attach mime body part.
+                    MimeBodyPart inlineAttachmentBodyPart = new MimeBodyPart();
+                    inlineAttachmentBodyPart.setDataHandler(new DataHandler(ds));
+                    inlineAttachmentBodyPart.setContentID(StringUtils.join(Chars.LEFT_ANGLE_BRACKET, inlineAttachment.getContentId(), Chars.RIGHT_ANGLE_BRACKET));
+                    inlineAttachmentBodyPart.setDisposition(MimeBodyPart.INLINE);
+                    content.addBodyPart(inlineAttachmentBodyPart);
+                }
+
+                // Add attachment
+                for (MailAttachmentDTO attachment : mailDto.getAttachments()) {
+                    // Extract inline attachment as a datasource.
+                    byte[] attachmentAsBytes = Base64.getDecoder().decode(attachment.getContentBase64());
+                    DataSource ds = new ByteArrayDataSource(attachmentAsBytes, attachment.getMimeType());
+
+                    // Attach mime body part.
+                    MimeBodyPart attachmentBodyPart = new MimeBodyPart();
+                    attachmentBodyPart.setDataHandler(new DataHandler(ds));
+                    attachmentBodyPart.setDisposition(MimeBodyPart.ATTACHMENT);
+                    attachmentBodyPart.setFileName(attachment.getFileName());
+                    content.addBodyPart(attachmentBodyPart);
+                }
+
                 // Mime message.
                 mimeMessage.setFrom(mailDto.getFrom());
                 mimeMessage.setSentDate(new Date());
                 mimeMessage.setSubject(mailDto.getSubject());
-                mimeMessage.setContent(mailDto.getHtml(), MediaType.TEXT_HTML_UTF8);
+                mimeMessage.setContent(content);
 
                 try {
                     if (CollectionUtils.isNotEmpty(mailDto.getTos())) {

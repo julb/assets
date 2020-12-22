@@ -156,4 +156,14 @@ public class Chars {
      */
     public static final char DOLLAR = '$';
 
+    /**
+     * The "&lt;" character.
+     */
+    public static final char LEFT_ANGLE_BRACKET = '<';
+
+    /**
+     * The "&gt;" character.
+     */
+    public static final char RIGHT_ANGLE_BRACKET = '>';
+
 }

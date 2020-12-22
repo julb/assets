@@ -27,6 +27,7 @@ import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
@@ -83,7 +84,8 @@ public class MailServiceTest extends AbstractBaseTest {
         Assertions.assertEquals(dto.getTos().iterator().next(), mimeMessage.getRecipients(javax.mail.Message.RecipientType.TO)[0].toString());
         Assertions.assertEquals(dto.getCcs().iterator().next(), mimeMessage.getRecipients(javax.mail.Message.RecipientType.CC)[0].toString());
         Assertions.assertEquals(dto.getSubject(), mimeMessage.getSubject());
-        Assertions.assertEquals(dto.getHtml() + "\r\n", mimeMessage.getContent().toString());
+        MimeMultipart content = (MimeMultipart) mimeMessage.getContent();
+        Assertions.assertEquals(dto.getHtml(), content.getBodyPart("__html_body").getContent().toString());
 
     }
 }
