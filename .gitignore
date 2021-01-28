@@ -3,8 +3,8 @@
 .project
 .classpath
 .settings
+.data
 build
 bin
 lombok.config
 target
-
