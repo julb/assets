@@ -1,6 +1,6 @@
 plugins {
-    id 'julb-asciidoctor'
-    id 'julb-aggregate-javadoc'
+    id 'me.julb.gradleplugins.asciidoctor'
+    id 'me.julb.gradleplugins.aggregatejavadoc'
 }
 
 // Aggregate the JavaDoc.

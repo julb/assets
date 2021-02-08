@@ -1,5 +1,5 @@
 plugins {
-	id 'julb-semantic-versioning'
+	id 'me.julb.gradleplugins.semanticversioning'
 }
 
 allprojects {

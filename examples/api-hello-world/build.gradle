@@ -1,8 +1,8 @@
 plugins {
 	id 'java-library-distribution'
 	id 'io.freefair.lombok'
-	id 'julb-java11'
-	id 'julb-additional-jars'
+	id 'me.julb.gradleplugins.java11'
+	id 'me.julb.gradleplugins.additionaljars'
 	id 'org.springframework.boot'
 }
 

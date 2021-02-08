@@ -4,6 +4,18 @@ pluginManagement {
         id 'org.springframework.boot' version '2.4.2'
         id 'com.github.johnrengelman.shadow' version '6.1.0'
         id 'org.springframework.boot.experimental.thin-launcher' version '1.0.25.RELEASE'
+        id 'me.julb.gradleplugins.additionaljars' version '1.0.0'
+        id 'me.julb.gradleplugins.aggregatejavadoc' version '1.0.0'
+        id 'me.julb.gradleplugins.asciidoctor' version '1.0.0'
+        id 'me.julb.gradleplugins.java11' version '1.0.0'
+        id 'me.julb.gradleplugins.semanticversioning' version '1.0.0'
+    }
+
+    repositories {
+        gradlePluginPortal()
+        mavenLocal()
+        mavenCentral()
+        jcenter()
     }
 }
 
