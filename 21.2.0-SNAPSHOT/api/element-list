@@ -208,7 +208,13 @@ me.julb.springbootstarter.mapping.services
 me.julb.springbootstarter.messaging.builders
 me.julb.springbootstarter.messaging.configurations
 me.julb.springbootstarter.messaging.services
-me.julb.springbootstarter.monitoring.prometheus.configurations
+me.julb.springbootstarter.monitoring.prometheus.healthstatus.configurations
+me.julb.springbootstarter.monitoring.prometheus.pushmetrics.annotations
+me.julb.springbootstarter.monitoring.prometheus.pushmetrics.configurations
+me.julb.springbootstarter.monitoring.prometheus.pushmetrics.consumers
+me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services
+me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto
+me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.impl
 me.julb.springbootstarter.persistence.core.specifications
 me.julb.springbootstarter.persistence.jpa.configurations
 me.julb.springbootstarter.persistence.jpa.specifications
