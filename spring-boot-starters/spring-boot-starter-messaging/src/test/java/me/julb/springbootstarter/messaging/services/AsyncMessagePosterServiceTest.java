@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
 import org.springframework.messaging.Message;
 
 import me.julb.library.utility.date.DateUtility;
@@ -47,13 +48,14 @@ import me.julb.springbootstarter.test.messaging.base.AbstractMessagingBaseTest;
  * @author Julb.
  */
 @SpringBootApplication
+@ConditionalOnNotWebApplication
 public class AsyncMessagePosterServiceTest extends AbstractMessagingBaseTest {
 
     /**
      * The async message poster service.
      */
     @Autowired
-    private IAsyncMessagePosterService asyncMessagePosterService;
+    private AsyncMessagePosterService asyncMessagePosterService;
 
     /**
      * Unit test method.

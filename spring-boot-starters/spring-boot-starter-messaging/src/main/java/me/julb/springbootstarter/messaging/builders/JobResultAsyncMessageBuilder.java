@@ -24,6 +24,8 @@
 
 package me.julb.springbootstarter.messaging.builders;
 
+import java.util.Map;
+
 import me.julb.library.dto.messaging.events.EventCollectorAsyncMessageLevel;
 import me.julb.library.dto.messaging.events.JobResultAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.JobResultStatus;
@@ -100,12 +102,63 @@ public class JobResultAsyncMessageBuilder<T> {
     }
 
     /**
+     * Setter for property instance.
+     * @param instance New value of property instance.
+     * @return the current builder instance.
+     */
+    public JobResultAsyncMessageBuilder<T> instance(String instance) {
+        this.message.setInstance(instance);
+        return this;
+    }
+
+    /**
+     * Setter for property completedAtDateTime.
+     * @param completedAtDateTime New value of property completedAtDateTime.
+     * @return the current builder instance.
+     */
+    public JobResultAsyncMessageBuilder<T> completedAtDateTime(String completedAtDateTime) {
+        this.message.setCompletedAtDateTime(completedAtDateTime);
+        return this;
+    }
+
+    /**
+     * Setter for property durationInSeconds.
+     * @param durationInSeconds New value of property durationInSeconds.
+     * @return the current builder instance.
+     */
+    public JobResultAsyncMessageBuilder<T> durationInSeconds(Long durationInSeconds) {
+        this.message.setDurationInSeconds(durationInSeconds);
+        return this;
+    }
+
+    /**
      * Setter for property result.
      * @param result New value of property result.
      * @return the current builder instance.
      */
     public JobResultAsyncMessageBuilder<T> result(JobResultStatus result) {
         this.message.setResult(result);
+        return this;
+    }
+
+    /**
+     * Add a metric into the job result.
+     * @param name the metric name.
+     * @param value the metric value.
+     * @return the current builder instance.
+     */
+    public JobResultAsyncMessageBuilder<T> metric(String name, Number value) {
+        this.message.getMetrics().put(name, value);
+        return this;
+    }
+
+    /**
+     * Add metrics into the job result.
+     * @param metrics New value of property metrics.
+     * @return the current builder instance.
+     */
+    public JobResultAsyncMessageBuilder<T> metrics(Map<String, Number> metrics) {
+        this.message.getMetrics().putAll(metrics);
         return this;
     }
 

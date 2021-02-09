@@ -114,7 +114,7 @@ public class PrometheusMetricsPushServiceImpl implements PrometheusMetricsPushSe
         prometheusPushGatewayFeignClient.create(job, instance, prometheusMetricsPayload);
 
         // Trace successful.
-        LOGGER.info("Metrics for job <{}> and instance <{}> successfully created.", job, instance);
+        LOGGER.info("Metrics for job <{}> and instance <{}> created successfully.", job, instance);
     }
 
     /**

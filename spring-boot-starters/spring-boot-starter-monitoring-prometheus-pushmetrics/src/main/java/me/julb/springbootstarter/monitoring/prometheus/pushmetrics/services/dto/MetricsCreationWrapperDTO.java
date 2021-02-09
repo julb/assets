@@ -34,6 +34,9 @@ import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import me.julb.library.utility.validator.constraints.PrometheusMetricsInstanceName;
 import me.julb.library.utility.validator.constraints.PrometheusMetricsJobName;
 
@@ -92,4 +95,20 @@ public class MetricsCreationWrapperDTO {
     @Valid
     @NotEmpty
     private Collection<MetricsCreationDTO> metrics;
+
+    /**
+     * Gets the metric.
+     * @param metricName the name of the metric.
+     * @return the metric.
+     */
+    public MetricsCreationDTO getMetric(String metricName) {
+        if (CollectionUtils.isNotEmpty(metrics)) {
+            for (MetricsCreationDTO metricsCreationDTO : metrics) {
+                if (StringUtils.equalsIgnoreCase(metricName, metricsCreationDTO.getName())) {
+                    return metricsCreationDTO;
+                }
+            }
+        }
+        return null;
+    }
 }

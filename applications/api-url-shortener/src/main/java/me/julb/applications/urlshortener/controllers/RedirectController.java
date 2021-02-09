@@ -58,7 +58,7 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
+import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 
 /**
  * The rest controller to redirect the user.
@@ -92,7 +92,7 @@ public class RedirectController {
      * The async message poster service.
      */
     @Autowired
-    private IAsyncMessagePosterService asyncMessagePosterService;
+    private AsyncMessagePosterService asyncMessagePosterService;
 
     // ------------------------------------------ Read methods.
 

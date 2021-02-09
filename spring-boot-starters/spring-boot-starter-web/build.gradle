@@ -31,7 +31,6 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3'
 	implementation 'org.apache.commons:commons-collections4'
 	implementation 'org.apache.lucene:lucene-queryparser'
-	implementation 'org.springframework.data:spring-data-rest-webmvc'
 	implementation 'org.springdoc:springdoc-openapi-webmvc-core'
 	implementation 'org.springdoc:springdoc-openapi-data-rest'
 	implementation 'com.google.code.findbugs:jsr305'

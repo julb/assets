@@ -44,7 +44,7 @@ import me.julb.applications.webanalytics.services.dto.WebAnalyticsEventDTO;
 import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
+import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 
 /**
  * The REST controller to collect the analytics.
@@ -59,7 +59,7 @@ public class CollectController {
      * The async message poster service.
      */
     @Autowired
-    private IAsyncMessagePosterService asyncMessagePosterService;
+    private AsyncMessagePosterService asyncMessagePosterService;
 
     /**
      * This method enables the collection of a navigation event.

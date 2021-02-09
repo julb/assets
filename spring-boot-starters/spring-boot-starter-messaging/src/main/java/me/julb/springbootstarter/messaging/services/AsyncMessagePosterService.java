@@ -27,136 +27,62 @@ package me.julb.springbootstarter.messaging.services;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.integration.support.MessageBuilder;
-import org.springframework.messaging.Message;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import me.julb.library.dto.messaging.events.AuditAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.EventCollectorAsyncMessageDTO;
-import me.julb.library.dto.messaging.events.EventCollectorAsyncMessageLevel;
 import me.julb.library.dto.messaging.events.JobResultAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
-import me.julb.springbootstarter.messaging.builders.AuditAsyncMessageBuilder;
 
 /**
- * The message poster service.
+ * The main service to post message.
  * <P>
  * @author Julb.
  */
-@Service
-@Slf4j
-@Validated
-public class AsyncMessagePosterService implements IAsyncMessagePosterService {
+public interface AsyncMessagePosterService {
 
     /**
-     * Thee routing key header name.
+     * Posts a message to the broker.
+     * @param routingKey the routing key to use.
+     * @param messagingPost the message to post.
+     * @param <T> the type of bean associated to the message.
      */
-    private static final String ROUTING_KEY_DEFAULT_HEADER_NAME = "routingKey";
+    <T> void postMessage(@NotNull @NotBlank String routingKey, @NotNull AsyncMessageDTO<T> messagingPost);
 
     /**
-     * The main producer default channel name.
+     * Posts a event collector message to the broker.
+     * @param type the type of the event.
+     * @param messagingPost the message to post.
+     * @param <T> the type of bean associated to the message.
      */
-    private static final String MAIN_PRODUCER_DEFAULT_CHANNEL_NAME = "mainProducer";
+    <T> void postEventCollectorMessage(@NotNull @NotBlank String type, @NotNull EventCollectorAsyncMessageDTO<T> messagingPost);
 
     /**
-     * The main producer channel name.
+     * Posts a resource message to the broker.
+     * @param messagingPost the message to post.
+     * @param <T> the type of bean associated to the message.
      */
-    private String mainProducerChannelName = MAIN_PRODUCER_DEFAULT_CHANNEL_NAME;
+    <T> void postResourceEventMessage(@NotNull ResourceEventAsyncMessageDTO messagingPost);
 
     /**
-     * The routing key heeader name.
+     * Posts a job execution result message to the broker.
+     * @param messagingPost the message to post.
+     * @param <T> the type of bean associated to the message.
      */
-    private String routingKeyHeaderName = ROUTING_KEY_DEFAULT_HEADER_NAME;
+    <T> void postJobExecutionResultMessage(@NotNull JobResultAsyncMessageDTO<T> messagingPost);
 
     /**
-     * The bridge to post messages.
+     * Posts a web analytics message to the broker.
+     * @param messagingPost the message to post.
+     * @param <T> the type of bean associated to the message.
      */
-    @Autowired
-    private StreamBridge streamBridge;
+    <T> void postWebAnalyticsMessage(@NotNull WebAnalyticsAsyncMessageDTO<T> messagingPost);
 
     /**
-     * {@inheritDoc}
+     * Posts a audit message to the broker.
+     * @param messagingPost the message to post.
+     * @param <T> the type of bean associated to the message.
      */
-    @Override
-    public <T> void postMessage(@NotNull @NotBlank String routingKeyValue, @NotNull AsyncMessageDTO<T> asyncMessage) {
-        // Logs a message.
-        LOGGER.info("Posting message with id <{}> using the routing key <{}>.", asyncMessage.getId(), routingKeyValue);
-
-        //@formatter:off
-        Message<AsyncMessageDTO<T>> amqpMessage = MessageBuilder.withPayload(asyncMessage)
-            .setHeader(routingKeyHeaderName, routingKeyValue.toLowerCase())
-            .build();
-        //@formatter:on
-        streamBridge.send(String.format("%s-out-0", this.mainProducerChannelName), amqpMessage);
-
-        // Logs successful
-        LOGGER.info("Message with id <{}> posted successfully.", asyncMessage.getId());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> void postResourceEventMessage(@NotNull ResourceEventAsyncMessageDTO messagingPost) {
-        String routingKey = String.format("resource.%s.%s", messagingPost.getResourceType(), messagingPost.getEventType().toString()).toLowerCase();
-        this.postMessage(routingKey, messagingPost);
-
-        //@formatter:off
-        AuditAsyncMessageDTO<Void> auditMessage = new AuditAsyncMessageBuilder<Void>()
-            .level(EventCollectorAsyncMessageLevel.INFO)
-            .objectType(messagingPost.getResourceType())
-            .objectReference(messagingPost.getResourceId())
-            .objectName(messagingPost.getResourceName())
-            .product("Resource")
-            .action(messagingPost.getEventType().toString())
-            .user(messagingPost.getUser())
-            .build();
-        //@formatter:on
-
-        this.postAuditMessage(auditMessage);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> void postEventCollectorMessage(@NotNull @NotBlank String type, @NotNull EventCollectorAsyncMessageDTO<T> messagingPost) {
-        String routingKey = String.format("%s.%s.created", type, messagingPost.getLevel().toString()).toLowerCase();
-        this.postMessage(routingKey, messagingPost);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> void postJobExecutionResultMessage(@NotNull JobResultAsyncMessageDTO<T> messagingPost) {
-        String routingKey = String.format("job-execution-result.%s.created", messagingPost.getLevel().toString()).toLowerCase();
-        this.postMessage(routingKey, messagingPost);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> void postWebAnalyticsMessage(@NotNull WebAnalyticsAsyncMessageDTO<T> messagingPost) {
-        String routingKey = String.format("analytics.%s.created", messagingPost.getLevel().toString()).toLowerCase();
-        this.postMessage(routingKey, messagingPost);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> void postAuditMessage(@NotNull AuditAsyncMessageDTO<T> messagingPost) {
-        String routingKey = String.format("audit.%s.created", messagingPost.getLevel().toString()).toLowerCase();
-        this.postMessage(routingKey, messagingPost);
-    }
+    <T> void postAuditMessage(@NotNull AuditAsyncMessageDTO<T> messagingPost);
 
 }

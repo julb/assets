@@ -23,6 +23,9 @@
  */
 package me.julb.library.dto.messaging.events;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -52,6 +55,19 @@ public class JobResultAsyncMessageDTO<T> extends EventCollectorAsyncMessageDTO<T
 
     //@formatter:off
      /**
+     * The instance attribute.
+     * -- GETTER --
+     * Getter for {@link #instance} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #instance} property.
+     * @param instance the value to set.
+     */
+     //@formatter:on
+    private String instance;
+
+    //@formatter:off
+     /**
      * The result attribute.
      * -- GETTER --
      * Getter for {@link #result} property.
@@ -63,10 +79,58 @@ public class JobResultAsyncMessageDTO<T> extends EventCollectorAsyncMessageDTO<T
      //@formatter:on
     private JobResultStatus result;
 
+    //@formatter:off
+     /**
+     * The completedAtDateTime attribute.
+     * -- GETTER --
+     * Getter for {@link #completedAtDateTime} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #completedAtDateTime} property.
+     * @param completedAtDateTime the value to set.
+     */
+     //@formatter:on
+    private String completedAtDateTime;
+
+    //@formatter:off
+     /**
+     * The durationInSeconds attribute.
+     * -- GETTER --
+     * Getter for {@link #durationInSeconds} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #durationInSeconds} property.
+     * @param durationInSeconds the value to set.
+     */
+     //@formatter:on
+    private Long durationInSeconds;
+
+    //@formatter:off
+     /**
+     * The metrics attribute.
+     * -- GETTER --
+     * Getter for {@link #metrics} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #metrics} property.
+     * @param metrics the value to set.
+     */
+     //@formatter:on
+    private Map<String, Number> metrics = new HashMap<>();
+
     /**
      * Constructor.
      */
     public JobResultAsyncMessageDTO() {
         super();
+    }
+
+    /**
+     * Gets the value of a metric.
+     * @param metricName the name of the metric.
+     * @return the value.
+     */
+    public Number getMetric(String metricName) {
+        return metrics.get(metricName);
     }
 }
