@@ -7,10 +7,13 @@ allprojects {
 	apply plugin: 'maven-publish'
 	
 	eclipse {
-	   classpath {
-	       downloadSources = true
-           downloadJavadoc = true
-	   }
+	    classpath {
+	        downloadSources = true
+            downloadJavadoc = true
+	    }
+	    project {
+            natures 'org.eclipse.buildship.core.gradleprojectnature'
+        }
 	}
 		
 	repositories {

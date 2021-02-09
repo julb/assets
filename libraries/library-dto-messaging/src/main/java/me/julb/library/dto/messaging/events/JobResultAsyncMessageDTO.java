@@ -26,9 +26,15 @@ package me.julb.library.dto.messaging.events;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import me.julb.library.utility.validator.constraints.DateTimeISO8601;
 
 /**
  * DTO designed to describe a job result.
@@ -51,6 +57,8 @@ public class JobResultAsyncMessageDTO<T> extends EventCollectorAsyncMessageDTO<T
      * @param name the value to set.
      */
      //@formatter:on
+    @NotNull
+    @NotBlank
     private String name;
 
     //@formatter:off
@@ -64,6 +72,8 @@ public class JobResultAsyncMessageDTO<T> extends EventCollectorAsyncMessageDTO<T
      * @param instance the value to set.
      */
      //@formatter:on
+    @NotNull
+    @NotBlank
     private String instance;
 
     //@formatter:off
@@ -77,6 +87,7 @@ public class JobResultAsyncMessageDTO<T> extends EventCollectorAsyncMessageDTO<T
      * @param result the value to set.
      */
      //@formatter:on
+    @NotNull
     private JobResultStatus result;
 
     //@formatter:off
@@ -90,6 +101,9 @@ public class JobResultAsyncMessageDTO<T> extends EventCollectorAsyncMessageDTO<T
      * @param completedAtDateTime the value to set.
      */
      //@formatter:on
+    @NotNull
+    @NotBlank
+    @DateTimeISO8601
     private String completedAtDateTime;
 
     //@formatter:off
@@ -103,6 +117,8 @@ public class JobResultAsyncMessageDTO<T> extends EventCollectorAsyncMessageDTO<T
      * @param durationInSeconds the value to set.
      */
      //@formatter:on
+    @NotNull
+    @Min(0)
     private Long durationInSeconds;
 
     //@formatter:off
@@ -116,6 +132,7 @@ public class JobResultAsyncMessageDTO<T> extends EventCollectorAsyncMessageDTO<T
      * @param metrics the value to set.
      */
      //@formatter:on
+    @NotNull
     private Map<String, Number> metrics = new HashMap<>();
 
     /**

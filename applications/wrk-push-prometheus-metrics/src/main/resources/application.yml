@@ -22,9 +22,6 @@ spring:
   config:
     activate:
       on-profile: LOCAL
-  rabbitmq:
-    host: localhost
-    port: 5672
   cloud:
     stream:
       bindings:
@@ -34,17 +31,20 @@ spring:
         jobResult-in-0:
           destination: E.main
           group: Q.job-results
+          consumer:
+            concurrency: 3
+            maxAttempts: 5
+            backOffMultiplier: 3.0
       rabbit:
         bindings:
           main-out-0:
             producer:
-              declare-exchange: false
               routing-key-expression: headers['routingKey']
           jobResult-in-0:
             consumer:
-              declare-exchange: false
-              bind-queue: false
+              auto-bind-dlq: true
               queue-name-group-only: true
+              
       
 management:
   endpoints.web.exposure.include: health,prometheus,info

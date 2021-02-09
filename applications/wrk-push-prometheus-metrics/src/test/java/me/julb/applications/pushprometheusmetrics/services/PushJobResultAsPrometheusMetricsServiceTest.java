@@ -24,8 +24,6 @@
 
 package me.julb.applications.pushprometheusmetrics.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +72,6 @@ public class PushJobResultAsPrometheusMetricsServiceTest extends AbstractMessagi
             .durationInSeconds(50L)
             .build();
         //@formatter:on
-
-        System.out.println(new ObjectMapper().writeValueAsString(dto));
 
         pushJobResultAsPrometheusMetricsService.push(dto);
 
