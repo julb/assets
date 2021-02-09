@@ -97,6 +97,10 @@ me.julb.applications.platformhealth.services.dto.incidentcomponent
 me.julb.applications.platformhealth.services.dto.plannedmaintenance
 me.julb.applications.platformhealth.services.dto.plannedmaintenancecomponent
 me.julb.applications.platformhealth.services.impl
+me.julb.applications.pushprometheusmetrics.configurations
+me.julb.applications.pushprometheusmetrics.configurations.properties
+me.julb.applications.pushprometheusmetrics.services
+me.julb.applications.pushprometheusmetrics.services.impl
 me.julb.applications.urlshortener.annotations
 me.julb.applications.urlshortener.configurations
 me.julb.applications.urlshortener.configurations.properties
@@ -208,6 +212,7 @@ me.julb.springbootstarter.mapping.services
 me.julb.springbootstarter.messaging.builders
 me.julb.springbootstarter.messaging.configurations
 me.julb.springbootstarter.messaging.services
+me.julb.springbootstarter.messaging.services.impl
 me.julb.springbootstarter.monitoring.prometheus.healthstatus.configurations
 me.julb.springbootstarter.monitoring.prometheus.pushmetrics.annotations
 me.julb.springbootstarter.monitoring.prometheus.pushmetrics.configurations
