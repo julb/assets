@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.springbootstarter.monitoring.prometheus.configurations;
+package me.julb.springbootstarter.monitoring.prometheus.healthstatus.configurations;
 
 import io.micrometer.core.instrument.MeterRegistry;
 
@@ -45,6 +45,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class HealthMetricsConfiguration {
+
+    /**
+     * The metrics name.
+     */
+    private static final String HEALTH_METRICS_NAME = "up";
 
     /**
      * The gauges values by status.
@@ -77,12 +82,22 @@ public class HealthMetricsConfiguration {
         compositeHealthContributor = CompositeHealthContributor.fromMap(map);
 
         // Put a gauge named "health" in the registry.
-        registry.gauge("health", new ArrayList<>(), compositeHealthContributor, health -> {
-            Set<Status> statuses = health.stream().map((namedContributor -> {
-                return ((HealthIndicator) namedContributor.getContributor()).health().getStatus();
-            })).collect(Collectors.toSet());
-            Status status = statusAggregator.getAggregateStatus(statuses);
-            return GAUGE_VALUES_BY_STATUS.get(status.getCode()).doubleValue();
+        registry.gauge(HEALTH_METRICS_NAME, new ArrayList<>(), compositeHealthContributor, health -> {
+            return convertStatusToMetrics(statusAggregator, health);
         });
+    }
+
+    /**
+     * Converts health status to a metric.
+     * @param statusAggregator the status aggregator.
+     * @param health the composite health contributor.
+     * @return the metrics value.
+     */
+    private double convertStatusToMetrics(StatusAggregator statusAggregator, CompositeHealthContributor health) {
+        Set<Status> statuses = health.stream().map((namedContributor -> {
+            return ((HealthIndicator) namedContributor.getContributor()).health().getStatus();
+        })).collect(Collectors.toSet());
+        Status status = statusAggregator.getAggregateStatus(statuses);
+        return GAUGE_VALUES_BY_STATUS.get(status.getCode()).doubleValue();
     }
 }

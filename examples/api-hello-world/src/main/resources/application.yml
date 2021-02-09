@@ -16,6 +16,19 @@ google.recaptcha:
 
 management.health.probes.enabled: true
 
+#management:
+#  endpoints.web.exposure.include: health,prometheus,info,loggers,caches,metrics
+#  endpoint:
+#    health:
+#      show-details: when-authorized
+#      roles: ACTUATOR
+#    prometheus.enabled: true
+#    loggers.enabled: true
+#    caches.enabled: true
+#    metrics.enabled: true
+
+#prometheus.pushmetrics.pushgateway.endpoint.url: http://localhost:9091
+
 spring.mail.host: smtp.gmail.com
 spring.mail.port: 587
 spring.mail.username: ${MAIL_USERNAME}

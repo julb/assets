@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.rometools:rome'
 	
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
+	implementation project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-healthstatus')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }

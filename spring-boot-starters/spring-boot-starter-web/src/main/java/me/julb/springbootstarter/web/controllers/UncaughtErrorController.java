@@ -81,7 +81,6 @@ public class UncaughtErrorController implements ErrorController {
      */
     @Override
     @Deprecated
-    @SuppressWarnings("deprecation")
     public String getErrorPath() {
         return null;
     }
