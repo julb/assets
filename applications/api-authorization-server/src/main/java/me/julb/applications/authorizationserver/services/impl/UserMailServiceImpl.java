@@ -71,7 +71,7 @@ import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.IAsyncMessagePosterService;
+import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
 import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
 import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
@@ -118,7 +118,7 @@ public class UserMailServiceImpl implements UserMailService {
      * The async message poster service.
      */
     @Autowired
-    private IAsyncMessagePosterService asyncMessagePosterService;
+    private AsyncMessagePosterService asyncMessagePosterService;
 
     /**
      * The password encoder.

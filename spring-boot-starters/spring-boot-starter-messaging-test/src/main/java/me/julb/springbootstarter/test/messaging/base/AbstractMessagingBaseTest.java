@@ -18,6 +18,6 @@ public abstract class AbstractMessagingBaseTest extends AbstractBaseTest {
     /**
      * The output destination.
      */
-    @Autowired
+    @Autowired(required = false)
     protected OutputDestination output;
 }
