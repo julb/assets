@@ -16,6 +16,8 @@ dependencies {
 	implementation project(':spring-boot-starters:spring-boot-starter-web')
     implementation project(':spring-boot-starters:spring-boot-starter-googlerecaptcha')
     implementation project(':spring-boot-starters:spring-boot-starter-mail')
+    implementation project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-healthstatus')
+    implementation project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-pushmetrics')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }

@@ -16,3 +16,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+  prometheus_pushgateway:
+    image: "prom/pushgateway:latest"
+    ports:
+      - "9091:9091"
