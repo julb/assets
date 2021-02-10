@@ -13,7 +13,7 @@ dependencies {
     api project(':spring-boot-starters:spring-boot-starter-validation')
 
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
-	implementation project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-healthstatus')
+	implementation project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-metrics')
     implementation project(':spring-boot-starters:spring-boot-starter-opentracing')
 }
 

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,9 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.springbootstarter.monitoring.prometheus.healthstatus.configurations;
+
+package me.julb.springbootstarter.monitoring.prometheus.metrics.configurations.beans;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.binder.MeterBinder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,24 +34,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.CompositeHealthContributor;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.actuate.health.StatusAggregator;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
- * A configuration class transforming health status to a metrics.
+ * The up meter binder.
  * <P>
  * @author Julb.
  */
-@Configuration
-public class HealthMetricsConfiguration {
+@Component
+public class UpMeterBinder implements MeterBinder {
 
     /**
      * The metrics name.
      */
-    private static final String HEALTH_METRICS_NAME = "up";
+    private static final String UP_METRICS_NAME = "up";
 
     /**
      * The gauges values by status.
@@ -63,17 +66,29 @@ public class HealthMetricsConfiguration {
     //@formatter:on
 
     /**
+     * The status aggregator.
+     */
+    @Autowired
+    private StatusAggregator statusAggregator;
+
+    /**
+     * The health indicators.
+     */
+    @Autowired
+    private List<HealthIndicator> healthIndicators;
+
+    /**
      * The composite health indicator.
      */
     private CompositeHealthContributor compositeHealthContributor;
 
+    // ------------------------------------------ Overridden methods.
+
     /**
-     * Constructor.
-     * @param statusAggregator the status aggregator.
-     * @param healthIndicators the health indicators.
-     * @param registry the registry.
+     * {@inheritDoc}
      */
-    public HealthMetricsConfiguration(StatusAggregator statusAggregator, List<HealthIndicator> healthIndicators, MeterRegistry registry) {
+    @Override
+    public void bindTo(MeterRegistry registry) {
         // Register all health indicators in the composite contributor.
         Map<String, HealthIndicator> map = new HashMap<>();
         for (Integer i = 0; i < healthIndicators.size(); i++) {
@@ -82,7 +97,7 @@ public class HealthMetricsConfiguration {
         compositeHealthContributor = CompositeHealthContributor.fromMap(map);
 
         // Put a gauge named "health" in the registry.
-        registry.gauge(HEALTH_METRICS_NAME, new ArrayList<>(), compositeHealthContributor, health -> {
+        registry.gauge(UP_METRICS_NAME, new ArrayList<>(), compositeHealthContributor, health -> {
             return convertStatusToMetrics(statusAggregator, health);
         });
     }
