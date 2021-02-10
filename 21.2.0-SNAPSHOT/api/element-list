@@ -213,7 +213,7 @@ me.julb.springbootstarter.messaging.builders
 me.julb.springbootstarter.messaging.configurations
 me.julb.springbootstarter.messaging.services
 me.julb.springbootstarter.messaging.services.impl
-me.julb.springbootstarter.monitoring.prometheus.healthstatus.configurations
+me.julb.springbootstarter.monitoring.prometheus.metrics.configurations.beans
 me.julb.springbootstarter.monitoring.prometheus.pushmetrics.annotations
 me.julb.springbootstarter.monitoring.prometheus.pushmetrics.configurations
 me.julb.springbootstarter.monitoring.prometheus.pushmetrics.consumers
