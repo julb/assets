@@ -55,7 +55,7 @@ public class PrometheusPushMetricsConfiguration {
         templateResolver.setSuffix(".txt");
         templateResolver.setTemplateMode(TemplateMode.TEXT);
         templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.toString());
-        templateResolver.setCacheable(false);
+        templateResolver.setCacheable(true);
 
         final TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);

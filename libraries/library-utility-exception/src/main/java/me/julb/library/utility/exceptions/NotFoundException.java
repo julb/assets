@@ -60,4 +60,13 @@ public class NotFoundException extends BaseException {
         super(DEFAULT_MESSAGE, e);
     }
 
+    /**
+     * Constructor.
+     * @param message the message.
+     * @param e the cause.
+     */
+    public NotFoundException(String message, Throwable e) {
+        super(message, e);
+    }
+
 }
