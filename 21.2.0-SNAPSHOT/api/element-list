@@ -244,6 +244,11 @@ me.julb.springbootstarter.security.services
 me.julb.springbootstarter.security.services.dto
 me.julb.springbootstarter.security.services.impl
 me.julb.springbootstarter.security.utilities
+me.julb.springbootstarter.templating.annotations
+me.julb.springbootstarter.templating.configurations
+me.julb.springbootstarter.templating.configurations.beans
+me.julb.springbootstarter.templating.services
+me.julb.springbootstarter.templating.services.impl
 me.julb.springbootstarter.test.base
 me.julb.springbootstarter.test.messaging.base
 me.julb.springbootstarter.test.security.annotations
