@@ -15,9 +15,6 @@ google.recaptcha:
     HELLO: 0.5
 
 templating:
-  fileSystem:
-    enabled: true
-    path: /Users/to125002/Projects/Personal/assets/examples/api-hello-world/src/main/resources/fstemplates
   classpath:
     enabled: true
     path: /templates

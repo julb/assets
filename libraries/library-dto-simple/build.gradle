@@ -8,7 +8,7 @@ plugins {
 dependencies {
 	api platform(project(':bom'))
 	
-	implementation project(':libraries:library-utility-interface')
+	api project(':libraries:library-utility-interface')
     implementation project(':libraries:library-utility-validator')
 }
 

@@ -1,0 +1,7 @@
+spring:
+  cloud.function.scan.packages: me.julb.functions
+  
+templating:
+  classpath:
+    enabled: true
+    path: /templates

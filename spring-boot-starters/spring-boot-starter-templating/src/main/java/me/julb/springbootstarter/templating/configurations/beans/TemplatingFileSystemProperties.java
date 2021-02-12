@@ -77,6 +77,6 @@ public class TemplatingFileSystemProperties {
      * @param modes the value to set.
      */
      //@formatter:on
-    private List<TemplatingMode> modes = Arrays.asList(TemplatingMode.TEXT, TemplatingMode.HTML);
+    private List<TemplatingMode> modes = Arrays.asList(TemplatingMode.HTML, TemplatingMode.TEXT);
 
 }

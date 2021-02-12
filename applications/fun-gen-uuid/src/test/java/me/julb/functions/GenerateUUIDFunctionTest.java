@@ -24,6 +24,7 @@
 
 package me.julb.functions;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -52,10 +53,10 @@ public class GenerateUUIDFunctionTest extends AbstractBaseTest {
      * Unit test method.
      */
     @Test
-    public void whenInvokingFunction_thenSendMail()
+    public void whenInvokingFunction_thenReturnUUID()
         throws Exception {
-        Supplier<ValueDTO> function = functionCatalog.lookup("generateUUIDFunction");
-        ValueDTO uuid = function.get();
+        Supplier<Optional<ValueDTO>> function = functionCatalog.lookup("generateUUIDFunction");
+        ValueDTO uuid = function.get().get();
         Assertions.assertNotNull(uuid);
         Assertions.assertNotNull(uuid.getValue());
         Assertions.assertEquals(Integers.THIRTY_TWO, uuid.getValue().length());

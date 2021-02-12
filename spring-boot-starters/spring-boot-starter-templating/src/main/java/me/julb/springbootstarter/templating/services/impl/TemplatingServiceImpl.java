@@ -64,7 +64,7 @@ public class TemplatingServiceImpl implements TemplatingService {
      * The template engine.
      */
     @Autowired
-    private TemplateEngine templatingEngine;
+    private TemplateEngine templateEngine;
 
     /**
      * {@inheritDoc}
@@ -83,7 +83,7 @@ public class TemplatingServiceImpl implements TemplatingService {
             for (Map.Entry<String, ?> parameterEntry : parameters.entrySet()) {
                 ctx.setVariable(parameterEntry.getKey(), parameterEntry.getValue());
             }
-            String renderedContent = this.templatingEngine.process(relativePath, ctx);
+            String renderedContent = this.templateEngine.process(relativePath, ctx);
 
             // Return result.
             String mimeType = Files.probeContentType(new File(relativePath).toPath());

@@ -21,31 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package me.julb;
 
-package me.julb.functions;
-
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import lombok.extern.slf4j.Slf4j;
-
-import me.julb.library.dto.simple.value.ValueDTO;
-import me.julb.library.utility.identifier.IdentifierUtility;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * The function to provide a UUID.
+ * Main class to launch the application.
  * <P>
  * @author Julb.
  */
-@Slf4j
-public class GenerateUUIDFunction implements Supplier<Optional<ValueDTO>> {
+@SpringBootApplication
+public class Application {
 
     /**
-     * {@inheritDoc}
+     * Method to launch the application.
+     * @param args the arguments.
      */
-    @Override
-    public Optional<ValueDTO> get() {
-        LOGGER.debug("Received invokation to generate UUID.");
-        return Optional.of(new ValueDTO(IdentifierUtility.generateId()));
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
+
 }
