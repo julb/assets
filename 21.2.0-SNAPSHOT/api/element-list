@@ -116,6 +116,7 @@ me.julb.applications.webanalytics.controllers
 me.julb.applications.webanalytics.controllers.params
 me.julb.applications.webanalytics.services.dto
 me.julb.functions
+me.julb.functions.dto
 me.julb.library.dto.googlechat
 me.julb.library.dto.http.alive
 me.julb.library.dto.http.analytics
