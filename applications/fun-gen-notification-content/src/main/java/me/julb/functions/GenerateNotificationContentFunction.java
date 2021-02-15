@@ -68,7 +68,6 @@ public class GenerateNotificationContentFunction implements Function<GenerateNot
     @Override
     public Optional<LargeContentDTO> apply(GenerateNotificationContentDTO generateNotificationContent) {
         try {
-            System.out.println(generateNotificationContent);
             LOGGER.debug("Received invokation to generate notification content with body: {}.", generateNotificationContent.toString());
 
             // Validate

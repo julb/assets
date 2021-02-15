@@ -32,6 +32,7 @@ include 'applications:api-web-analytics'
 include 'applications:fun-gen-uuid'
 include 'applications:fun-gen-notification-content'
 include 'applications:fun-push-prometheus-metrics'
+include 'applications:fun-send-googlechat'
 include 'applications:fun-send-mail'
 include 'applications:wrk-push-prometheus-metrics'
 

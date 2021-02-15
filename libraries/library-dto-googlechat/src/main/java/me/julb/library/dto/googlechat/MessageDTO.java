@@ -43,7 +43,7 @@ import me.julb.library.utility.validator.constraints.GoogleChatThreadKey;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(of = {"room", "threadKey"})
+@ToString
 public class MessageDTO {
 
     //@formatter:off
