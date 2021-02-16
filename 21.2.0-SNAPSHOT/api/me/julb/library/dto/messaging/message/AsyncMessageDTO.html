@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -131,7 +131,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><code><a href="../events/EventCollectorAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">EventCollectorAsyncMessageDTO</a></code>, <code><a href="../events/ResourceEventAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">ResourceEventAsyncMessageDTO</a></code>, <code><a href="../events/WebAnalyticsAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">WebAnalyticsAsyncMessageDTO</a></code></dd>
+<dd><code><a href="../events/EventCollectorAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">EventCollectorAsyncMessageDTO</a></code>, <code><a href="../../notification/events/NotificationDispatchAsyncMessageDTO.html" title="class in me.julb.library.dto.notification.events">NotificationDispatchAsyncMessageDTO</a></code>, <code><a href="../events/ResourceEventAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">ResourceEventAsyncMessageDTO</a></code>, <code><a href="../events/WebAnalyticsAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">WebAnalyticsAsyncMessageDTO</a></code></dd>
 </dl>
 <hr>
 <pre>public class <span class="typeNameLabel">AsyncMessageDTO&lt;T&gt;</span>
@@ -180,55 +180,69 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>java.util.Map&lt;java.lang.String,&#8203;java.lang.String&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getAttributes()">getAttributes</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Getter for <a href="#attributes"><code>attributes</code></a> property.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="AsyncMessageDTO.html" title="type parameter in AsyncMessageDTO">T</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getBody()">getBody</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Getter for <a href="#body"><code>body</code></a> property.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getId()">getId</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Getter for <a href="#id"><code>id</code></a> property.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTimestamp()">getTimestamp</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Getter for <a href="#timestamp"><code>timestamp</code></a> property.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVersion()">getVersion</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Getter for <a href="#version"><code>version</code></a> property.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setAttributes(java.util.Map)">setAttributes</a></span>&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.String&gt;&nbsp;attributes)</code></th>
+<td class="colLast">
+<div class="block">Setter for <a href="#attributes"><code>attributes</code></a> property.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setBody(T)">setBody</a></span>&#8203;(<a href="AsyncMessageDTO.html" title="type parameter in AsyncMessageDTO">T</a>&nbsp;body)</code></th>
 <td class="colLast">
 <div class="block">Setter for <a href="#body"><code>body</code></a> property.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setId(java.lang.String)">setId</a></span>&#8203;(java.lang.String&nbsp;id)</code></th>
 <td class="colLast">
 <div class="block">Setter for <a href="#id"><code>id</code></a> property.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTimestamp(java.lang.String)">setTimestamp</a></span>&#8203;(java.lang.String&nbsp;timestamp)</code></th>
 <td class="colLast">
 <div class="block">Setter for <a href="#timestamp"><code>timestamp</code></a> property.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setVersion(java.lang.Integer)">setVersion</a></span>&#8203;(java.lang.Integer&nbsp;version)</code></th>
 <td class="colLast">
@@ -320,6 +334,20 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a id="getAttributes()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAttributes</h4>
+<pre class="methodSignature">public&nbsp;java.util.Map&lt;java.lang.String,&#8203;java.lang.String&gt;&nbsp;getAttributes()</pre>
+<div class="block">Getter for <a href="#attributes"><code>attributes</code></a> property.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the value.</dd>
+</dl>
+</li>
+</ul>
 <a id="getBody()">
 <!--   -->
 </a>
@@ -373,6 +401,20 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>id</code> - the value to set.</dd>
+</dl>
+</li>
+</ul>
+<a id="setAttributes(java.util.Map)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAttributes</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;setAttributes&#8203;(java.util.Map&lt;java.lang.String,&#8203;java.lang.String&gt;&nbsp;attributes)</pre>
+<div class="block">Setter for <a href="#attributes"><code>attributes</code></a> property.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>attributes</code> - the value to set.</dd>
 </dl>
 </li>
 </ul>

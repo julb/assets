@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6};
+var data = {"i0":6,"i1":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -157,6 +157,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Render the template with given parameters.</div>
 </td>
 </tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../../../library/dto/simple/content/LargeContentDTO.html" title="class in me.julb.library.dto.simple.content">LargeContentDTO</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#render(java.util.Collection,java.util.Map)">render</a></span>&#8203;(java.util.Collection&lt;@NotBlank <a href="../../../library/utility/validator/constraints/TemplateRelativePath.html" title="annotation in me.julb.library.utility.validator.constraints">@TemplateRelativePath</a> java.lang.String&gt;&nbsp;relativePaths,
+      @NotNull java.util.Map&lt;java.lang.String,&#8203;?&gt;&nbsp;parameters)</code></th>
+<td class="colLast">
+<div class="block">Render the template with given parameters.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -174,6 +182,25 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a id="render(java.util.Collection,java.util.Map)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>render</h4>
+<pre class="methodSignature"><a href="../../../library/dto/simple/content/LargeContentDTO.html" title="class in me.julb.library.dto.simple.content">LargeContentDTO</a>&nbsp;render&#8203;(java.util.Collection&lt;@NotBlank <a href="../../../library/utility/validator/constraints/TemplateRelativePath.html" title="annotation in me.julb.library.utility.validator.constraints">@TemplateRelativePath</a> java.lang.String&gt;&nbsp;relativePaths,
+                       @NotNull
+                       @NotNull java.util.Map&lt;java.lang.String,&#8203;?&gt;&nbsp;parameters)</pre>
+<div class="block">Render the template with given parameters.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>relativePaths</code> - the possible paths of the template to render, ordered.</dd>
+<dd><code>parameters</code> - the parameters.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the rendered content.</dd>
+</dl>
+</li>
+</ul>
 <a id="render(java.lang.String,java.util.Map)">
 <!--   -->
 </a>

@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -186,68 +186,76 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#attribute(java.lang.String,java.lang.String)">attribute</a></span>&#8203;(java.lang.String&nbsp;name,
+         java.lang.String&nbsp;value)</code></th>
+<td class="colLast">
+<div class="block">Add an attribute to the message.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#body(T)">body</a></span>&#8203;(<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&nbsp;body)</code></th>
 <td class="colLast">
 <div class="block">Setter for property body.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../library/dto/messaging/events/AuditAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">AuditAsyncMessageDTO</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#build()">build</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Builds the message instance.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#identifier(java.lang.String)">identifier</a></span>&#8203;(java.lang.String&nbsp;identifier)</code></th>
 <td class="colLast">
 <div class="block">Setter for property identifier.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#level(me.julb.library.dto.messaging.events.EventCollectorAsyncMessageLevel)">level</a></span>&#8203;(<a href="../../../library/dto/messaging/events/EventCollectorAsyncMessageLevel.html" title="enum in me.julb.library.dto.messaging.events">EventCollectorAsyncMessageLevel</a>&nbsp;level)</code></th>
 <td class="colLast">
 <div class="block">Setter for property level.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#objectName(java.lang.String)">objectName</a></span>&#8203;(java.lang.String&nbsp;objectName)</code></th>
 <td class="colLast">
 <div class="block">Setter for property objectName.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#objectReference(java.lang.String)">objectReference</a></span>&#8203;(java.lang.String&nbsp;objectReference)</code></th>
 <td class="colLast">
 <div class="block">Setter for property objectReference.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#objectType(java.lang.String)">objectType</a></span>&#8203;(java.lang.String&nbsp;objectType)</code></th>
 <td class="colLast">
 <div class="block">Setter for property objectType.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#product(java.lang.String)">product</a></span>&#8203;(java.lang.String&nbsp;product)</code></th>
 <td class="colLast">
 <div class="block">Setter for property product.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#user(java.lang.String)">user</a></span>&#8203;(java.lang.String&nbsp;user)</code></th>
 <td class="colLast">
 <div class="block">Setter for property user.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#version(java.lang.Integer)">version</a></span>&#8203;(java.lang.Integer&nbsp;version)</code></th>
 <td class="colLast">
@@ -325,6 +333,24 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>version</code> - New value of property version.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the current builder instance.</dd>
+</dl>
+</li>
+</ul>
+<a id="attribute(java.lang.String,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>attribute</h4>
+<pre class="methodSignature">public&nbsp;<a href="AuditAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AuditAsyncMessageBuilder</a>&lt;<a href="AuditAsyncMessageBuilder.html" title="type parameter in AuditAsyncMessageBuilder">T</a>&gt;&nbsp;attribute&#8203;(java.lang.String&nbsp;name,
+                                             java.lang.String&nbsp;value)</pre>
+<div class="block">Add an attribute to the message.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>name</code> - the attribute name to set.</dd>
+<dd><code>value</code> - the attribute value to set.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the current builder instance.</dd>
 </dl>

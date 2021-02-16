@@ -79,6 +79,10 @@ me.julb.applications.jwks.configurations.properties
 me.julb.applications.jwks.controllers
 me.julb.applications.jwks.services
 me.julb.applications.jwks.services.impl
+me.julb.applications.notificationdispatcher.configurations
+me.julb.applications.notificationdispatcher.configurations.properties
+me.julb.applications.notificationdispatcher.services
+me.julb.applications.notificationdispatcher.services.impl
 me.julb.applications.ping.configurations
 me.julb.applications.ping.configurations.properties
 me.julb.applications.ping.controllers
@@ -116,7 +120,6 @@ me.julb.applications.webanalytics.controllers
 me.julb.applications.webanalytics.controllers.params
 me.julb.applications.webanalytics.services.dto
 me.julb.functions
-me.julb.functions.dto
 me.julb.library.dto.googlechat
 me.julb.library.dto.http.alive
 me.julb.library.dto.http.analytics
@@ -125,6 +128,8 @@ me.julb.library.dto.icsfeed
 me.julb.library.dto.mail
 me.julb.library.dto.messaging.events
 me.julb.library.dto.messaging.message
+me.julb.library.dto.notification.events
+me.julb.library.dto.notification.events.parts
 me.julb.library.dto.rssfeed
 me.julb.library.dto.security
 me.julb.library.dto.simple.audit
@@ -135,6 +140,7 @@ me.julb.library.dto.simple.message
 me.julb.library.dto.simple.mobilephone
 me.julb.library.dto.simple.user
 me.julb.library.dto.simple.value
+me.julb.library.dto.sms
 me.julb.library.json.serializers
 me.julb.library.logging.logback
 me.julb.library.mapping.annotations
@@ -248,6 +254,11 @@ me.julb.springbootstarter.security.utilities
 me.julb.springbootstarter.templating.annotations
 me.julb.springbootstarter.templating.configurations
 me.julb.springbootstarter.templating.configurations.beans
+me.julb.springbootstarter.templating.notification.configurations
+me.julb.springbootstarter.templating.notification.configurations.beans
+me.julb.springbootstarter.templating.notification.services
+me.julb.springbootstarter.templating.notification.services.dto
+me.julb.springbootstarter.templating.notification.services.impl
 me.julb.springbootstarter.templating.services
 me.julb.springbootstarter.templating.services.impl
 me.julb.springbootstarter.test.base
