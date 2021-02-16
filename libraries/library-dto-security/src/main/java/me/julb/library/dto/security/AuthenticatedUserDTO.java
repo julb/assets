@@ -200,6 +200,19 @@ public class AuthenticatedUserDTO {
 
     //@formatter:off
      /**
+     * The locale attribute.
+     * -- GETTER --
+     * Getter for {@link #locale} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #locale} property.
+     * @param locale the value to set.
+     */
+     //@formatter:on
+    private String locale;
+
+    //@formatter:off
+     /**
      * The organization attribute.
      * -- GETTER --
      * Getter for {@link #organization} property.

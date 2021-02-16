@@ -1,0 +1,64 @@
+plugins {
+    id 'java-library-distribution'
+    id 'io.freefair.lombok'
+    id 'me.julb.gradleplugins.java11'
+    id 'me.julb.gradleplugins.additionaljars'
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    api platform(project(':bom'))
+
+    implementation project(':libraries:library-dto-googlechat')
+    implementation project(':libraries:library-dto-mail')
+    implementation project(':libraries:library-dto-notification')
+    implementation project(':libraries:library-dto-sms')
+    implementation project(':spring-boot-starters:spring-boot-starter-templating-notification')
+    implementation project(':spring-boot-starters:spring-boot-starter-worker')
+	
+    testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+    testImplementation 'net.javacrumbs.json-unit:json-unit'
+    testImplementation project(':spring-boot-starters:spring-boot-starter-messaging-test')
+}
+
+lombok {
+    config['lombok.log.fieldName'] = 'LOGGER'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'me.julb.Application'
+        )
+    }
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootBuildImage {
+    environment = ["BP_JVM_VERSION" : "11.*"]
+    imageName = "docker.io/julb/${project.name}:${project.version}"
+}
+
+bootJar {
+    classifier = 'boot'
+    mainClass = 'me.julb.Application'
+    layered()
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+            artifact distZip
+            artifact distTar
+	    }
+	}
+}

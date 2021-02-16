@@ -1,0 +1,51 @@
+spring:
+  cloud:
+    kubernetes:
+      enabled: false
+      
+---
+spring:
+  config:
+    activate:
+      on-profile: TEST
+  
+  main:
+    banner-mode: "off"
+  
+logging:
+  level:
+    root: OFF
+    org.springframework: OFF
+  
+---
+spring:
+  config:
+    activate:
+      on-profile: LOCAL
+  cloud:
+    stream:
+      bindings:
+        default.binder: rabbitmq
+        main-out-0:
+          destination: E.main
+        jobResult-in-0:
+          destination: E.main
+          group: Q.job-results
+          consumer:
+            concurrency: 3
+            maxAttempts: 5
+            backOffMultiplier: 3.0
+      rabbit:
+        bindings:
+          main-out-0:
+            producer:
+              routing-key-expression: headers['routingKey']
+          jobResult-in-0:
+            consumer:
+              auto-bind-dlq: true
+              queue-name-group-only: true
+              
+      
+management:
+  endpoints.web.exposure.include: health,prometheus,info
+  endpoint.prometheus.enabled: true

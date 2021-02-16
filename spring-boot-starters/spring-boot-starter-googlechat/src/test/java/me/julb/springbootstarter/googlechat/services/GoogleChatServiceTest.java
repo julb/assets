@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 
-import me.julb.library.dto.googlechat.MessageDTO;
+import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.springbootstarter.googlechat.configurations.GoogleChatConfiguration;
 import me.julb.springbootstarter.googlechat.consumers.GoogleChatFeignClient;
@@ -64,7 +64,7 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
     @Test
     public void whenSendingGoogleChatNotificationWithDefaultThreadKey_thenMessageSentToDefaultThreadKey()
         throws Exception {
-        MessageDTO dto = new MessageDTO();
+        GoogleChatMessageDTO dto = new GoogleChatMessageDTO();
         dto.setRoom("__NAME_A__");
         dto.setText("hello");
         googleChatService.send(dto);
@@ -78,7 +78,7 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
     @Test
     public void whenSendingGoogleChatNotificationWithCustomThreadKey_thenMessageSentToCustomThreadKey()
         throws Exception {
-        MessageDTO dto = new MessageDTO();
+        GoogleChatMessageDTO dto = new GoogleChatMessageDTO();
         dto.setRoom("__NAME_A__");
         dto.setText("hello");
         dto.setThreadKey("__OVERRIDE_THREAD_KEY__");
@@ -94,7 +94,7 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
     @Test
     public void whenSendingGoogleChatNotificationNoThreadKey_thenMessageSentWithoutThreadKey()
         throws Exception {
-        MessageDTO dto = new MessageDTO();
+        GoogleChatMessageDTO dto = new GoogleChatMessageDTO();
         dto.setRoom("__NAME_B__");
         dto.setText("hello");
         googleChatService.send(dto);
@@ -109,7 +109,7 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
     public void whenSendingGoogleChatNotificationWithUnknownRoom_thenThrowsResourceNotFoundException()
         throws Exception {
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-            MessageDTO dto = new MessageDTO();
+            GoogleChatMessageDTO dto = new GoogleChatMessageDTO();
             dto.setRoom("do-not-exist");
             dto.setText("hello");
             googleChatService.send(dto);

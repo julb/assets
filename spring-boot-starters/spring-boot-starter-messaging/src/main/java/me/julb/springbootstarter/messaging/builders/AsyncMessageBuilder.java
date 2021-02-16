@@ -24,6 +24,8 @@
 
 package me.julb.springbootstarter.messaging.builders;
 
+import java.util.HashMap;
+
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
@@ -51,6 +53,7 @@ public class AsyncMessageBuilder<T> {
         this.message.setTimestamp(DateUtility.dateTimeNow());
         this.message.setId(IdentifierUtility.generateId());
         this.message.setVersion(Integers.ONE);
+        this.message.setAttributes(new HashMap<>());
     }
 
     // ------------------------------------------ Class methods.
@@ -72,6 +75,17 @@ public class AsyncMessageBuilder<T> {
      */
     public AsyncMessageBuilder<T> version(Integer version) {
         this.message.setVersion(version);
+        return this;
+    }
+
+    /**
+     * Add an attribute to the message.
+     * @param name the attribute name to set.
+     * @param value the attribute value to set.
+     * @return the current builder instance.
+     */
+    public AsyncMessageBuilder<T> attribute(String name, String value) {
+        this.message.getAttributes().put(name, value);
         return this;
     }
 

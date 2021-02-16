@@ -24,6 +24,7 @@
 
 package me.julb.springbootstarter.templating.services;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
@@ -38,6 +39,14 @@ import me.julb.library.utility.validator.constraints.TemplateRelativePath;
  * @author Julb.
  */
 public interface TemplatingService {
+
+    /**
+     * Render the template with given parameters.
+     * @param relativePaths the possible paths of the template to render, ordered.
+     * @param parameters the parameters.
+     * @return the rendered content.
+     */
+    LargeContentDTO render(Collection<@NotBlank @TemplateRelativePath String> relativePaths, @NotNull Map<String, ?> parameters);
 
     /**
      * Render the template with given parameters.

@@ -164,6 +164,7 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
             .claim(JWTClaims.PREFERRED_USERNAME, userProfile.getDisplayName())
             .claim(JWTClaims.GIVEN_NAME, userProfile.getFirstName())
             .claim(JWTClaims.FAMILY_NAME, userProfile.getLastName())
+            .claim(JWTClaims.LOCALE, "en-US") // FIXME
             .claim(JWTClaims.PICTURE_URL, "https://www.avatar.com") //FIXME
             .claim(JWTClaims.WEBSITE_URL, userProfile.getWebsiteUrl())
             .claim(JWTClaims.MAIL, userMail.getMail())

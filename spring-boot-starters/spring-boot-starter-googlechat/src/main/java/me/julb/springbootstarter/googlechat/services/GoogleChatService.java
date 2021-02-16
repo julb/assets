@@ -26,7 +26,7 @@ package me.julb.springbootstarter.googlechat.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import me.julb.library.dto.googlechat.MessageDTO;
+import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 
 /**
  * GChat service.
@@ -39,6 +39,6 @@ public interface GoogleChatService {
      * Sends the message.
      * @param message the GChat message to send.
      */
-    void send(@NotNull @Valid MessageDTO message);
+    void send(@NotNull @Valid GoogleChatMessageDTO message);
 
 }

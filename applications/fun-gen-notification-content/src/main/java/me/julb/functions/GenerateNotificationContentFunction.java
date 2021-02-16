@@ -24,22 +24,17 @@
 
 package me.julb.functions;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-
-import javax.validation.Validator;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
-import me.julb.functions.dto.GenerateNotificationContentDTO;
 import me.julb.library.dto.simple.content.LargeContentDTO;
-import me.julb.springbootstarter.templating.services.TemplatingService;
+import me.julb.springbootstarter.templating.notification.services.NotificationTemplatingService;
+import me.julb.springbootstarter.templating.notification.services.dto.GenerateNotificationContentDTO;
 
 /**
  * The function to generate the notification content.
@@ -54,13 +49,7 @@ public class GenerateNotificationContentFunction implements Function<GenerateNot
      * The templating service.
      */
     @Autowired
-    private TemplatingService templatingService;
-
-    /**
-     * The validator.
-     */
-    @Autowired
-    private Validator validator;
+    private NotificationTemplatingService notificationTemplatingService;
 
     /**
      * {@inheritDoc}
@@ -69,18 +58,7 @@ public class GenerateNotificationContentFunction implements Function<GenerateNot
     public Optional<LargeContentDTO> apply(GenerateNotificationContentDTO generateNotificationContent) {
         try {
             LOGGER.debug("Received invokation to generate notification content with body: {}.", generateNotificationContent.toString());
-
-            // Validate
-            Assert.notNull(generateNotificationContent, "Bad request: body is requested.");
-            Assert.isTrue(validator.validate(generateNotificationContent).isEmpty(), "Bad request: body must be valid.");
-
-            // Proceed.
-            String templateRelativePath = generateNotificationContent.toPath();
-            Map<String, Object> parameters = generateNotificationContent.getParameters();
-            if (parameters == null) {
-                parameters = new HashMap<>();
-            }
-            LargeContentDTO content = templatingService.render(templateRelativePath, parameters);
+            LargeContentDTO content = notificationTemplatingService.render(generateNotificationContent);
             LOGGER.debug("Method invoked successfully.");
             return Optional.of(content);
         } catch (Exception e) {

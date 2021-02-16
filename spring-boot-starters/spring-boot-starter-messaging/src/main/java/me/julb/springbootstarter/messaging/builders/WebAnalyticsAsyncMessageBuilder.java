@@ -24,6 +24,8 @@
 
 package me.julb.springbootstarter.messaging.builders;
 
+import java.util.HashMap;
+
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageLevel;
 import me.julb.library.utility.constants.Integers;
@@ -52,6 +54,7 @@ public class WebAnalyticsAsyncMessageBuilder<T> {
         this.message.setTimestamp(DateUtility.dateTimeNow());
         this.message.setId(IdentifierUtility.generateId());
         this.message.setVersion(Integers.ONE);
+        this.message.setAttributes(new HashMap<>());
 
         this.message.setLevel(WebAnalyticsAsyncMessageLevel.INFO);
     }
@@ -75,6 +78,17 @@ public class WebAnalyticsAsyncMessageBuilder<T> {
      */
     public WebAnalyticsAsyncMessageBuilder<T> version(Integer version) {
         this.message.setVersion(version);
+        return this;
+    }
+
+    /**
+     * Add an attribute to the message.
+     * @param name the attribute name to set.
+     * @param value the attribute value to set.
+     * @return the current builder instance.
+     */
+    public WebAnalyticsAsyncMessageBuilder<T> attribute(String name, String value) {
+        this.message.getAttributes().put(name, value);
         return this;
     }
 

@@ -24,6 +24,9 @@
 
 package me.julb.library.dto.simple.user;
 
+import java.util.Locale;
+
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,6 +37,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(of = "id")
 public class UserRefDTO {
 
     //@formatter:off
@@ -87,6 +91,32 @@ public class UserRefDTO {
      */
      //@formatter:on
     private String mail;
+
+    //@formatter:off
+     /**
+     * The mobilePhone attribute.
+     * -- GETTER --
+     * Getter for {@link #mobilePhone} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #mobilePhone} property.
+     * @param mobilePhone the value to set.
+     */
+     //@formatter:on
+    private String mobilePhone;
+
+    //@formatter:off
+     /**
+     * The locale attribute.
+     * -- GETTER --
+     * Getter for {@link #locale} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #locale} property.
+     * @param locale the value to set.
+     */
+     //@formatter:on
+    private Locale locale;
 
     //@formatter:off
      /**

@@ -24,6 +24,7 @@
 
 package me.julb.springbootstarter.messaging.builders;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import me.julb.library.dto.messaging.events.EventCollectorAsyncMessageLevel;
@@ -55,6 +56,7 @@ public class JobResultAsyncMessageBuilder<T> {
         this.message.setTimestamp(DateUtility.dateTimeNow());
         this.message.setId(IdentifierUtility.generateId());
         this.message.setVersion(Integers.ONE);
+        this.message.setAttributes(new HashMap<>());
 
         this.message.setLevel(EventCollectorAsyncMessageLevel.INFO);
     }
@@ -78,6 +80,17 @@ public class JobResultAsyncMessageBuilder<T> {
      */
     public JobResultAsyncMessageBuilder<T> version(Integer version) {
         this.message.setVersion(version);
+        return this;
+    }
+
+    /**
+     * Add an attribute to the message.
+     * @param name the attribute name to set.
+     * @param value the attribute value to set.
+     * @return the current builder instance.
+     */
+    public JobResultAsyncMessageBuilder<T> attribute(String name, String value) {
+        this.message.getAttributes().put(name, value);
         return this;
     }
 

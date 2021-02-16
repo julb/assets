@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
@@ -65,6 +66,24 @@ public class TemplatingServiceImpl implements TemplatingService {
      */
     @Autowired
     private TemplateEngine templateEngine;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LargeContentDTO render(Collection<@NotBlank @TemplateRelativePath String> relativePaths, @NotNull Map<String, ?> parameters) {
+        // Try multiple path until finding the good one.
+        for (String relativePath : relativePaths) {
+            try {
+                return render(relativePath, parameters);
+            } catch (ResourceNotFoundException e) {
+                // NOOP : skipping not found to retry with next path.
+            }
+        }
+
+        // If we are there, it means that we have Not found for all templates.
+        throw new ResourceNotFoundException(ITemplateResource.class, Map.<String, String> of("paths", relativePaths.toString()));
+    }
 
     /**
      * {@inheritDoc}

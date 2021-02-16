@@ -24,11 +24,15 @@
 
 package me.julb.springbootstarter.messaging.services.impl;
 
+import java.util.Map;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.integration.support.MessageBuilder;
@@ -43,6 +47,7 @@ import me.julb.library.dto.messaging.events.JobResultAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
+import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO;
 import me.julb.springbootstarter.messaging.builders.AuditAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 
@@ -86,14 +91,19 @@ public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService 
      * {@inheritDoc}
      */
     @Override
-    public <T> void postMessage(@NotNull @NotBlank String routingKeyValue, @NotNull AsyncMessageDTO<T> asyncMessage) {
+    public <T> void postMessage(@NotNull @NotBlank String routingKeyValue, @NotNull @Valid AsyncMessageDTO<T> asyncMessage) {
         // Logs a message.
         LOGGER.debug("Posting message with id <{}> using the routing key <{}>.", asyncMessage.getId(), routingKeyValue);
 
         //@formatter:off
-        Message<AsyncMessageDTO<T>> amqpMessage = MessageBuilder.withPayload(asyncMessage)
-            .setHeader(routingKeyHeaderName, routingKeyValue.toLowerCase())
-            .build();
+        MessageBuilder<AsyncMessageDTO<T>> amqpMessageBuilder = MessageBuilder.withPayload(asyncMessage);
+        if(MapUtils.isNotEmpty(asyncMessage.getAttributes())) {
+            for(Map.Entry<String, String> mapEntry : asyncMessage.getAttributes().entrySet()) {
+                amqpMessageBuilder.setHeader(mapEntry.getKey(), mapEntry.getValue());
+            }
+        }
+        amqpMessageBuilder.setHeader(routingKeyHeaderName, routingKeyValue.toLowerCase());
+        Message<AsyncMessageDTO<T>> amqpMessage = amqpMessageBuilder.build();
         //@formatter:on
         streamBridge.send(String.format("%s-out-0", this.mainProducerChannelName), amqpMessage);
 
@@ -105,7 +115,7 @@ public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService 
      * {@inheritDoc}
      */
     @Override
-    public <T> void postResourceEventMessage(@NotNull ResourceEventAsyncMessageDTO messagingPost) {
+    public <T> void postResourceEventMessage(@NotNull @Valid ResourceEventAsyncMessageDTO messagingPost) {
         String routingKey = String.format("resource.%s.%s", messagingPost.getResourceType(), messagingPost.getEventType().toString()).toLowerCase();
         this.postMessage(routingKey, messagingPost);
 
@@ -128,7 +138,7 @@ public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService 
      * {@inheritDoc}
      */
     @Override
-    public <T> void postEventCollectorMessage(@NotNull @NotBlank String type, @NotNull EventCollectorAsyncMessageDTO<T> messagingPost) {
+    public <T> void postEventCollectorMessage(@NotNull @NotBlank String type, @NotNull @Valid EventCollectorAsyncMessageDTO<T> messagingPost) {
         String routingKey = String.format("%s.%s.created", type, messagingPost.getLevel().toString()).toLowerCase();
         this.postMessage(routingKey, messagingPost);
     }
@@ -137,7 +147,7 @@ public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService 
      * {@inheritDoc}
      */
     @Override
-    public <T> void postJobExecutionResultMessage(@NotNull JobResultAsyncMessageDTO<T> messagingPost) {
+    public <T> void postJobExecutionResultMessage(@NotNull @Valid JobResultAsyncMessageDTO<T> messagingPost) {
         String routingKey = String.format("job-execution-result.%s.created", messagingPost.getLevel().toString()).toLowerCase();
         this.postMessage(routingKey, messagingPost);
     }
@@ -146,7 +156,7 @@ public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService 
      * {@inheritDoc}
      */
     @Override
-    public <T> void postWebAnalyticsMessage(@NotNull WebAnalyticsAsyncMessageDTO<T> messagingPost) {
+    public <T> void postWebAnalyticsMessage(@NotNull @Valid WebAnalyticsAsyncMessageDTO<T> messagingPost) {
         String routingKey = String.format("analytics.%s.created", messagingPost.getLevel().toString()).toLowerCase();
         this.postMessage(routingKey, messagingPost);
     }
@@ -155,9 +165,17 @@ public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService 
      * {@inheritDoc}
      */
     @Override
-    public <T> void postAuditMessage(@NotNull AuditAsyncMessageDTO<T> messagingPost) {
+    public <T> void postAuditMessage(@NotNull @Valid AuditAsyncMessageDTO<T> messagingPost) {
         String routingKey = String.format("audit.%s.created", messagingPost.getLevel().toString()).toLowerCase();
         this.postMessage(routingKey, messagingPost);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> void postNotificationMessage(@NotNull @Valid NotificationDispatchAsyncMessageDTO messagingPost) {
+        this.postMessage("notification.info.posted", messagingPost);
     }
 
 }

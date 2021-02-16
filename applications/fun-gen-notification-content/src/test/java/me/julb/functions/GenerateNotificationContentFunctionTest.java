@@ -1,5 +1,6 @@
 package me.julb.functions;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -29,15 +30,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import javax.validation.ConstraintViolationException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.http.MediaType;
 
-import me.julb.functions.dto.GenerateNotificationContentDTO;
+import me.julb.library.dto.notification.events.NotificationDispatchType;
 import me.julb.library.dto.simple.content.LargeContentDTO;
-import me.julb.springbootstarter.templating.configurations.beans.TemplatingMode;
+import me.julb.springbootstarter.templating.notification.services.NotificationTemplatingService;
+import me.julb.springbootstarter.templating.notification.services.dto.GenerateNotificationContentDTO;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**
@@ -53,23 +59,40 @@ public class GenerateNotificationContentFunctionTest extends AbstractBaseTest {
     private FunctionCatalog functionCatalog;
 
     /**
+     * The notification templating service.
+     */
+    @MockBean
+    private NotificationTemplatingService notificationTemplatingService;
+
+    /**
      * Unit test method.
      */
     @Test
     public void whenInvokingFunction_thenReturnTemplate()
         throws Exception {
-        Function<GenerateNotificationContentDTO, Optional<LargeContentDTO>> function = functionCatalog.lookup("generateNotificationContentFunction");
+
         GenerateNotificationContentDTO dto = new GenerateNotificationContentDTO();
-        dto.setLocale("fr");
+        dto.setLocale(Locale.FRANCE);
         dto.setName("test");
-        dto.setTemplatingMode(TemplatingMode.TEXT);
-        dto.setTrademark("julb.me");
+        dto.setType(NotificationDispatchType.SMS);
+        dto.setTm("julb.me");
         dto.setParameters(Map.of("user", Map.of("displayName", "John")));
+
+        LargeContentDTO largeContent = new LargeContentDTO();
+        largeContent.setMimeType(MediaType.TEXT_PLAIN_VALUE);
+        largeContent.setContent("Hello");
+        Mockito.when(notificationTemplatingService.render(dto)).thenReturn(largeContent);
+
+        // Call function
+        Function<GenerateNotificationContentDTO, Optional<LargeContentDTO>> function = functionCatalog.lookup("generateNotificationContentFunction");
         Optional<LargeContentDTO> contentOptional = function.apply(dto);
+
         Assertions.assertTrue(contentOptional.isPresent());
         LargeContentDTO content = contentOptional.get();
-        Assertions.assertEquals(MediaType.TEXT_PLAIN_VALUE, content.getMimeType());
-        Assertions.assertEquals("Bonjour, John", content.getContent());
+        Assertions.assertEquals(largeContent.getMimeType(), content.getMimeType());
+        Assertions.assertEquals(largeContent.getContent(), content.getContent());
+
+        Mockito.verify(notificationTemplatingService).render(dto);
     }
 
     /**
@@ -78,9 +101,14 @@ public class GenerateNotificationContentFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunctionWithInvalidPayload_thenReturnEmpty()
         throws Exception {
+        Mockito.when(notificationTemplatingService.render(Mockito.any())).thenThrow(ConstraintViolationException.class);
+
         Function<GenerateNotificationContentDTO, Optional<LargeContentDTO>> function = functionCatalog.lookup("generateNotificationContentFunction");
+
         GenerateNotificationContentDTO dto = new GenerateNotificationContentDTO();
         Optional<LargeContentDTO> contentOptional = function.apply(dto);
         Assertions.assertFalse(contentOptional.isPresent());
+
+        Mockito.verify(notificationTemplatingService).render(dto);
     }
 }

@@ -30,6 +30,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import me.julb.library.utility.enums.TemplatingMode;
+
 /**
  * The Templating classpath configuration.
  * <P>

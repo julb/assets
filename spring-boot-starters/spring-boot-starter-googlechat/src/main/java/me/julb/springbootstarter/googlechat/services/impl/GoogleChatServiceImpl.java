@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import me.julb.library.dto.googlechat.MessageDTO;
+import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.springbootstarter.googlechat.annotations.ConditionalOnGoogleChatEnabled;
 import me.julb.springbootstarter.googlechat.configurations.beans.GoogleChatProperties;
@@ -69,7 +69,7 @@ public class GoogleChatServiceImpl implements GoogleChatService {
      * {@inheritDoc}
      */
     @Override
-    public void send(@NotNull @Valid MessageDTO messageDto) {
+    public void send(@NotNull @Valid GoogleChatMessageDTO messageDto) {
         LOGGER.debug("Sending GChat message : {}.", messageDto);
 
         // Find room.

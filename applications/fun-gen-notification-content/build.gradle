@@ -17,7 +17,7 @@ dependencies {
     
     implementation project(':libraries:library-dto-simple')
     implementation project(':libraries:library-utility-constants')
-    implementation project(':spring-boot-starters:spring-boot-starter-templating')
+    implementation project(':spring-boot-starters:spring-boot-starter-templating-notification')
     implementation project(':spring-boot-starters:spring-boot-starter-validation')
     
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')

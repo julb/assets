@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import me.julb.library.dto.googlechat.MessageDTO;
+import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
 
 /**
@@ -39,7 +39,7 @@ import me.julb.springbootstarter.googlechat.services.GoogleChatService;
  * @author Julb.
  */
 @Slf4j
-public class SendGoogleChatFunction implements Consumer<MessageDTO> {
+public class SendGoogleChatFunction implements Consumer<GoogleChatMessageDTO> {
 
     /**
      * The Google chat service.
@@ -51,7 +51,7 @@ public class SendGoogleChatFunction implements Consumer<MessageDTO> {
      * {@inheritDoc}
      */
     @Override
-    public void accept(MessageDTO message) {
+    public void accept(GoogleChatMessageDTO message) {
         try {
             LOGGER.debug("Received invokation to send GoogleChat notification {}.", message.toString());
             googleChatService.send(message);

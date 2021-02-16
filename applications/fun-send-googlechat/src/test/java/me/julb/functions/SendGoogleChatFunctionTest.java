@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
 
-import me.julb.library.dto.googlechat.MessageDTO;
+import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
@@ -61,9 +61,9 @@ public class SendGoogleChatFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenSendGoogleChat()
         throws Exception {
-        Consumer<MessageDTO> function = functionCatalog.lookup("sendGoogleChatFunction");
+        Consumer<GoogleChatMessageDTO> function = functionCatalog.lookup("sendGoogleChatFunction");
 
-        MessageDTO dto = new MessageDTO();
+        GoogleChatMessageDTO dto = new GoogleChatMessageDTO();
         dto.setRoom("Room");
         dto.setText("Hello!");
         function.accept(dto);

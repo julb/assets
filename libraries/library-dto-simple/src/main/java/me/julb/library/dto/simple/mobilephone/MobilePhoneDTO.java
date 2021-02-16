@@ -24,6 +24,7 @@
 
 package me.julb.library.dto.simple.mobilephone;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,6 +35,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"countryCode", "number"})
 public class MobilePhoneDTO {
 
     //@formatter:off

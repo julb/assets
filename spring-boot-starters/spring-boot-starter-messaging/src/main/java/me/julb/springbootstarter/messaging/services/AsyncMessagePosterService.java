@@ -24,6 +24,7 @@
 
 package me.julb.springbootstarter.messaging.services;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -33,6 +34,7 @@ import me.julb.library.dto.messaging.events.JobResultAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
+import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO;
 
 /**
  * The main service to post message.
@@ -47,7 +49,7 @@ public interface AsyncMessagePosterService {
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
-    <T> void postMessage(@NotNull @NotBlank String routingKey, @NotNull AsyncMessageDTO<T> messagingPost);
+    <T> void postMessage(@NotNull @NotBlank String routingKey, @NotNull @Valid AsyncMessageDTO<T> messagingPost);
 
     /**
      * Posts a event collector message to the broker.
@@ -55,34 +57,41 @@ public interface AsyncMessagePosterService {
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
-    <T> void postEventCollectorMessage(@NotNull @NotBlank String type, @NotNull EventCollectorAsyncMessageDTO<T> messagingPost);
+    <T> void postEventCollectorMessage(@NotNull @NotBlank String type, @NotNull @Valid EventCollectorAsyncMessageDTO<T> messagingPost);
 
     /**
      * Posts a resource message to the broker.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
-    <T> void postResourceEventMessage(@NotNull ResourceEventAsyncMessageDTO messagingPost);
+    <T> void postResourceEventMessage(@NotNull @Valid ResourceEventAsyncMessageDTO messagingPost);
 
     /**
      * Posts a job execution result message to the broker.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
-    <T> void postJobExecutionResultMessage(@NotNull JobResultAsyncMessageDTO<T> messagingPost);
+    <T> void postJobExecutionResultMessage(@NotNull @Valid JobResultAsyncMessageDTO<T> messagingPost);
 
     /**
      * Posts a web analytics message to the broker.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
-    <T> void postWebAnalyticsMessage(@NotNull WebAnalyticsAsyncMessageDTO<T> messagingPost);
+    <T> void postWebAnalyticsMessage(@NotNull @Valid WebAnalyticsAsyncMessageDTO<T> messagingPost);
 
     /**
      * Posts a audit message to the broker.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
-    <T> void postAuditMessage(@NotNull AuditAsyncMessageDTO<T> messagingPost);
+    <T> void postAuditMessage(@NotNull @Valid AuditAsyncMessageDTO<T> messagingPost);
+
+    /**
+     * Posts a notification message to the broker.
+     * @param messagingPost the message to post.
+     * @param <T> the type of bean associated to the message.
+     */
+    <T> void postNotificationMessage(@NotNull @Valid NotificationDispatchAsyncMessageDTO messagingPost);
 
 }

@@ -1,0 +1,7 @@
+templating:
+  notification:
+    defaultTrademark: julb.me
+    defaultLocale: en_US
+  classpath:
+    enabled: true
+    path: /templates

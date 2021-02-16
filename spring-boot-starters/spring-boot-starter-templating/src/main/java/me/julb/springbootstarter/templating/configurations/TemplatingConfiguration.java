@@ -40,10 +40,10 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Strings;
+import me.julb.library.utility.enums.TemplatingMode;
 import me.julb.springbootstarter.templating.annotations.ConditionalOnTemplatingEnabled;
 import me.julb.springbootstarter.templating.configurations.beans.TemplatingClasspathProperties;
 import me.julb.springbootstarter.templating.configurations.beans.TemplatingFileSystemProperties;
-import me.julb.springbootstarter.templating.configurations.beans.TemplatingMode;
 import me.julb.springbootstarter.templating.configurations.beans.TemplatingProperties;
 
 /**

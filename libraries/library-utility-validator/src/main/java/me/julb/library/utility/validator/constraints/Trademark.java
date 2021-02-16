@@ -46,7 +46,7 @@ import javax.validation.constraints.Size;
  * @author Julb.
  */
 @Size(max = 128)
-@Pattern(regexp = "^[a-z0-9][a-z0-9\\-\\.]+[a-z0-9]$")
+@Pattern(regexp = "^[a-z0-9][a-z0-9\\-]+[a-z0-9](\\.[a-z]+)?$")
 @Documented
 @Constraint(validatedBy = {})
 @Target({METHOD, FIELD, CONSTRUCTOR, PARAMETER, TYPE_USE})

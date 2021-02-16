@@ -8,11 +8,14 @@ plugins {
 dependencies {
 	api platform(project(':bom'))
 	
+	api 'org.springframework.cloud:spring-cloud-stream'
 	api project(':libraries:library-dto-messaging')
+    api project(':libraries:library-dto-notification')
 	implementation project(':libraries:library-utility-constants')
 	implementation project(':libraries:library-utility-date')
 	implementation project(':libraries:library-utility-identifier')
 	implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.apache.commons:commons-collections4'
 	
 	implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
 	

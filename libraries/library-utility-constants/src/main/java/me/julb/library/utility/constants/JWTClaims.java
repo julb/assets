@@ -97,6 +97,11 @@ public class JWTClaims {
     public static final String PHONE_NUMBER_VERIFIED = "phone_number_verified";
 
     /**
+     * The "locale" attribute.
+     */
+    public static final String LOCALE = "locale";
+
+    /**
      * The "o" attribute.
      */
     public static final String ORGANIZATION = "o";

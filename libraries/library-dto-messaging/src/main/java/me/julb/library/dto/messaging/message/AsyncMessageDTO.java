@@ -23,6 +23,8 @@
  */
 package me.julb.library.dto.messaging.message;
 
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -73,6 +75,19 @@ public class AsyncMessageDTO<T> {
      */
      //@formatter:on
     private String id;
+
+    //@formatter:off
+     /**
+     * The attributes attribute.
+     * -- GETTER --
+     * Getter for {@link #attributes} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #attributes} property.
+     * @param attributes the value to set.
+     */
+     //@formatter:on
+    private Map<String, String> attributes;
 
     //@formatter:off
      /**

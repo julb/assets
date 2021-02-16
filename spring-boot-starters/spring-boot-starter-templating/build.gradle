@@ -10,11 +10,11 @@ dependencies {
 	
 	
 	api project(':spring-boot-starters:spring-boot-starter-core')
+    api project(':spring-boot-starters:spring-boot-starter-validation')
 	
     implementation project(':libraries:library-dto-simple')
 	implementation project(':libraries:library-utility-constants')
 	implementation project(':libraries:library-utility-exception')
-    implementation project(':spring-boot-starters:spring-boot-starter-validation')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.thymeleaf:thymeleaf'
 	
