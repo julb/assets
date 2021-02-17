@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import me.julb.applications.notificationdispatcher.configurations.beans.NotificationDispatcherMeterBinder;
 import me.julb.applications.notificationdispatcher.services.NotificationDispatcherService;
 import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.library.dto.mail.MailDTO;
@@ -75,6 +76,12 @@ public class NotificationDispatcherServiceImpl implements NotificationDispatcher
      */
     @Autowired
     private AsyncMessagePosterService asyncMessagePosterService;
+
+    /**
+     * The meter binder.
+     */
+    @Autowired
+    private NotificationDispatcherMeterBinder notificationDispatcherMeterBinder;
 
     /**
      * {@inheritDoc}
@@ -171,6 +178,9 @@ public class NotificationDispatcherServiceImpl implements NotificationDispatcher
             }
         }
 
+        // Metrics update
+        notificationDispatcherMeterBinder.incrementProcessed();
+
         LOGGER.info("Notification dispatch request processed successfully : {}.", metrics.toString());
     }
 
@@ -192,5 +202,8 @@ public class NotificationDispatcherServiceImpl implements NotificationDispatcher
             .build()
         );
         //@formatter:on
+
+        // Update metrics.
+        notificationDispatcherMeterBinder.incrementDispatched(notificationDispatchType);
     }
 }

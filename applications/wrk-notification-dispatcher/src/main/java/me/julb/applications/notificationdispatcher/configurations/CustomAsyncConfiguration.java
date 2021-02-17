@@ -55,7 +55,7 @@ public class CustomAsyncConfiguration {
      * @return a function to consume job results.
      */
     @Bean
-    public Consumer<NotificationDispatchAsyncMessageDTO> jobResult() {
+    public Consumer<NotificationDispatchAsyncMessageDTO> notificationDispatch() {
         return notificationAsyncMessage -> {
             // Trace input.
             LOGGER.debug("Receiving message <{}>.", notificationAsyncMessage.getId());

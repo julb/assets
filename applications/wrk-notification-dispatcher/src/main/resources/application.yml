@@ -28,9 +28,9 @@ spring:
         default.binder: rabbitmq
         main-out-0:
           destination: E.main
-        jobResult-in-0:
+        notificationDispatch-in-0:
           destination: E.main
-          group: Q.job-results
+          group: Q.notifications
           consumer:
             concurrency: 3
             maxAttempts: 5
@@ -40,11 +40,15 @@ spring:
           main-out-0:
             producer:
               routing-key-expression: headers['routingKey']
-          jobResult-in-0:
+          notificationDispatch-in-0:
             consumer:
               auto-bind-dlq: true
               queue-name-group-only: true
-              
+
+templating:
+  classpath:
+    enabled: true
+    path: /templates              
       
 management:
   endpoints.web.exposure.include: health,prometheus,info
