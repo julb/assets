@@ -1,0 +1,35 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+    id 'me.julb.gradleplugins.java11'
+	id 'me.julb.gradleplugins.additionaljars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+	
+    api project(':libraries:library-dto-sms')
+    
+    implementation project(':libraries:library-utility-constants')
+	implementation project(':spring-boot-starters:spring-boot-starter-logging')
+    implementation project(':spring-boot-starters:spring-boot-starter-validation')
+    
+    testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+lombok {
+    config['lombok.log.fieldName'] = 'LOGGER'
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}
