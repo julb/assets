@@ -79,7 +79,10 @@ me.julb.applications.jwks.configurations.properties
 me.julb.applications.jwks.controllers
 me.julb.applications.jwks.services
 me.julb.applications.jwks.services.impl
+me.julb.applications.mail.configurations
+me.julb.applications.mail.configurations.properties
 me.julb.applications.notificationdispatcher.configurations
+me.julb.applications.notificationdispatcher.configurations.beans
 me.julb.applications.notificationdispatcher.configurations.properties
 me.julb.applications.notificationdispatcher.services
 me.julb.applications.notificationdispatcher.services.impl
@@ -105,6 +108,8 @@ me.julb.applications.pushprometheusmetrics.configurations
 me.julb.applications.pushprometheusmetrics.configurations.properties
 me.julb.applications.pushprometheusmetrics.services
 me.julb.applications.pushprometheusmetrics.services.impl
+me.julb.applications.sms.configurations
+me.julb.applications.sms.configurations.properties
 me.julb.applications.urlshortener.annotations
 me.julb.applications.urlshortener.configurations
 me.julb.applications.urlshortener.configurations.properties
@@ -251,6 +256,11 @@ me.julb.springbootstarter.security.services
 me.julb.springbootstarter.security.services.dto
 me.julb.springbootstarter.security.services.impl
 me.julb.springbootstarter.security.utilities
+me.julb.springbootstarter.sms.annotations
+me.julb.springbootstarter.sms.configurations
+me.julb.springbootstarter.sms.configurations.beans
+me.julb.springbootstarter.sms.services
+me.julb.springbootstarter.sms.services.impl
 me.julb.springbootstarter.templating.annotations
 me.julb.springbootstarter.templating.configurations
 me.julb.springbootstarter.templating.configurations.beans

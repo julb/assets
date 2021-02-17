@@ -284,6 +284,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/functions/SendGoogleChatFunction.html#accept(me.julb.library.dto.googlechat.GoogleChatMessageDTO)">accept(GoogleChatMessageDTO)</a></span> - Method in class me.julb.functions.<a href="me/julb/functions/SendGoogleChatFunction.html" title="class in me.julb.functions">SendGoogleChatFunction</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/functions/SendMailFunction.html#accept(me.julb.library.dto.mail.MailDTO)">accept(MailDTO)</a></span> - Method in class me.julb.functions.<a href="me/julb/functions/SendMailFunction.html" title="class in me.julb.functions">SendMailFunction</a></dt>
+<dt><span class="memberNameLink"><a href="me/julb/functions/SendSmsFunction.html#accept(me.julb.library.dto.sms.SmsMessageDTO)">accept(SmsMessageDTO)</a></span> - Method in class me.julb.functions.<a href="me/julb/functions/SendSmsFunction.html" title="class in me.julb.functions">SendSmsFunction</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/functions/PushPrometheusMetricsFunction.html#accept(me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationWrapperDTO)">accept(MetricsCreationWrapperDTO)</a></span> - Method in class me.julb.functions.<a href="me/julb/functions/PushPrometheusMetricsFunction.html" title="class in me.julb.functions">PushPrometheusMetricsFunction</a></dt>
 <dt><a href="me/julb/applications/authorizationserver/configurations/properties/AccessTokenJwtForgeryProperties.html" title="class in me.julb.applications.authorizationserver.configurations.properties"><span class="typeNameLink">AccessTokenJwtForgeryProperties</span></a> - Class in <a href="me/julb/applications/authorizationserver/configurations/properties/package-summary.html">me.julb.applications.authorizationserver.configurations.properties</a></dt>
 <dd>
@@ -1086,6 +1087,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Method invoked before the step execution.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html#bindTo(io.micrometer.core.instrument.MeterRegistry)">bindTo(MeterRegistry)</a></span> - Method in class me.julb.applications.notificationdispatcher.configurations.beans.<a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html" title="class in me.julb.applications.notificationdispatcher.configurations.beans">NotificationDispatcherMeterBinder</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/monitoring/prometheus/metrics/configurations/beans/BuildInfoMeterBinder.html#bindTo(io.micrometer.core.instrument.MeterRegistry)">bindTo(MeterRegistry)</a></span> - Method in class me.julb.springbootstarter.monitoring.prometheus.metrics.configurations.beans.<a href="me/julb/springbootstarter/monitoring/prometheus/metrics/configurations/beans/BuildInfoMeterBinder.html" title="class in me.julb.springbootstarter.monitoring.prometheus.metrics.configurations.beans">BuildInfoMeterBinder</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/monitoring/prometheus/metrics/configurations/beans/UpMeterBinder.html#bindTo(io.micrometer.core.instrument.MeterRegistry)">bindTo(MeterRegistry)</a></span> - Method in class me.julb.springbootstarter.monitoring.prometheus.metrics.configurations.beans.<a href="me/julb/springbootstarter/monitoring/prometheus/metrics/configurations/beans/UpMeterBinder.html" title="class in me.julb.springbootstarter.monitoring.prometheus.metrics.configurations.beans">UpMeterBinder</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/messaging/builders/AsyncMessageBuilder.html#body(T)">body(T)</a></span> - Method in class me.julb.springbootstarter.messaging.builders.<a href="me/julb/springbootstarter/messaging/builders/AsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">AsyncMessageBuilder</a></dt>
@@ -1579,6 +1581,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="me/julb/springbootstarter/monitoring/prometheus/pushmetrics/annotations/ConditionalOnPrometheusPushMetricsEnabled.html" title="annotation in me.julb.springbootstarter.monitoring.prometheus.pushmetrics.annotations"><span class="typeNameLink">ConditionalOnPrometheusPushMetricsEnabled</span></a> - Annotation Type in <a href="me/julb/springbootstarter/monitoring/prometheus/pushmetrics/annotations/package-summary.html">me.julb.springbootstarter.monitoring.prometheus.pushmetrics.annotations</a></dt>
 <dd>
 <div class="block">Provides a simple conditional on <code>prometheus.pushmetrics.enabled</code>.</div>
+</dd>
+<dt><a href="me/julb/springbootstarter/sms/annotations/ConditionalOnSmsEnabled.html" title="annotation in me.julb.springbootstarter.sms.annotations"><span class="typeNameLink">ConditionalOnSmsEnabled</span></a> - Annotation Type in <a href="me/julb/springbootstarter/sms/annotations/package-summary.html">me.julb.springbootstarter.sms.annotations</a></dt>
+<dd>
+<div class="block">Provides a simple conditional on <code>sms.enabled</code>.</div>
 </dd>
 <dt><a href="me/julb/springbootstarter/templating/annotations/ConditionalOnTemplatingEnabled.html" title="annotation in me.julb.springbootstarter.templating.annotations"><span class="typeNameLink">ConditionalOnTemplatingEnabled</span></a> - Annotation Type in <a href="me/julb/springbootstarter/templating/annotations/package-summary.html">me.julb.springbootstarter.templating.annotations</a></dt>
 <dd>
@@ -2117,6 +2123,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Default constructor.</div>
 </dd>
+<dt><a href="me/julb/applications/mail/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.mail.configurations"><span class="typeNameLink">CustomAsyncConfiguration</span></a> - Class in <a href="me/julb/applications/mail/configurations/package-summary.html">me.julb.applications.mail.configurations</a></dt>
+<dd>
+<div class="block">The local configuration.</div>
+</dd>
 <dt><a href="me/julb/applications/notificationdispatcher/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.notificationdispatcher.configurations"><span class="typeNameLink">CustomAsyncConfiguration</span></a> - Class in <a href="me/julb/applications/notificationdispatcher/configurations/package-summary.html">me.julb.applications.notificationdispatcher.configurations</a></dt>
 <dd>
 <div class="block">The local async configuration.</div>
@@ -2125,9 +2135,17 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The local configuration.</div>
 </dd>
+<dt><a href="me/julb/applications/sms/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.sms.configurations"><span class="typeNameLink">CustomAsyncConfiguration</span></a> - Class in <a href="me/julb/applications/sms/configurations/package-summary.html">me.julb.applications.sms.configurations</a></dt>
+<dd>
+<div class="block">The local configuration.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/mail/configurations/CustomAsyncConfiguration.html#%3Cinit%3E()">CustomAsyncConfiguration()</a></span> - Constructor for class me.julb.applications.mail.configurations.<a href="me/julb/applications/mail/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.mail.configurations">CustomAsyncConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/CustomAsyncConfiguration.html#%3Cinit%3E()">CustomAsyncConfiguration()</a></span> - Constructor for class me.julb.applications.notificationdispatcher.configurations.<a href="me/julb/applications/notificationdispatcher/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.notificationdispatcher.configurations">CustomAsyncConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/pushprometheusmetrics/configurations/CustomAsyncConfiguration.html#%3Cinit%3E()">CustomAsyncConfiguration()</a></span> - Constructor for class me.julb.applications.pushprometheusmetrics.configurations.<a href="me/julb/applications/pushprometheusmetrics/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.pushprometheusmetrics.configurations">CustomAsyncConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/sms/configurations/CustomAsyncConfiguration.html#%3Cinit%3E()">CustomAsyncConfiguration()</a></span> - Constructor for class me.julb.applications.sms.configurations.<a href="me/julb/applications/sms/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.sms.configurations">CustomAsyncConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/springbootstarter/security/configurations/beans/handlers/CustomAuthenticationFailureHandler.html" title="class in me.julb.springbootstarter.security.configurations.beans.handlers"><span class="typeNameLink">CustomAuthenticationFailureHandler</span></a> - Class in <a href="me/julb/springbootstarter/security/configurations/beans/handlers/package-summary.html">me.julb.springbootstarter.security.configurations.beans.handlers</a></dt>
 <dd>
@@ -2179,6 +2197,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The custom configuration.</div>
 </dd>
+<dt><a href="me/julb/applications/mail/configurations/CustomConfiguration.html" title="class in me.julb.applications.mail.configurations"><span class="typeNameLink">CustomConfiguration</span></a> - Class in <a href="me/julb/applications/mail/configurations/package-summary.html">me.julb.applications.mail.configurations</a></dt>
+<dd>
+<div class="block">The local configuration.</div>
+</dd>
 <dt><a href="me/julb/applications/notificationdispatcher/configurations/CustomConfiguration.html" title="class in me.julb.applications.notificationdispatcher.configurations"><span class="typeNameLink">CustomConfiguration</span></a> - Class in <a href="me/julb/applications/notificationdispatcher/configurations/package-summary.html">me.julb.applications.notificationdispatcher.configurations</a></dt>
 <dd>
 <div class="block">The local configuration.</div>
@@ -2192,6 +2214,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">The local configuration.</div>
 </dd>
 <dt><a href="me/julb/applications/pushprometheusmetrics/configurations/CustomConfiguration.html" title="class in me.julb.applications.pushprometheusmetrics.configurations"><span class="typeNameLink">CustomConfiguration</span></a> - Class in <a href="me/julb/applications/pushprometheusmetrics/configurations/package-summary.html">me.julb.applications.pushprometheusmetrics.configurations</a></dt>
+<dd>
+<div class="block">The local configuration.</div>
+</dd>
+<dt><a href="me/julb/applications/sms/configurations/CustomConfiguration.html" title="class in me.julb.applications.sms.configurations"><span class="typeNameLink">CustomConfiguration</span></a> - Class in <a href="me/julb/applications/sms/configurations/package-summary.html">me.julb.applications.sms.configurations</a></dt>
 <dd>
 <div class="block">The local configuration.</div>
 </dd>
@@ -2219,6 +2245,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/jwks/configurations/CustomConfiguration.html#%3Cinit%3E()">CustomConfiguration()</a></span> - Constructor for class me.julb.applications.jwks.configurations.<a href="me/julb/applications/jwks/configurations/CustomConfiguration.html" title="class in me.julb.applications.jwks.configurations">CustomConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/mail/configurations/CustomConfiguration.html#%3Cinit%3E()">CustomConfiguration()</a></span> - Constructor for class me.julb.applications.mail.configurations.<a href="me/julb/applications/mail/configurations/CustomConfiguration.html" title="class in me.julb.applications.mail.configurations">CustomConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/CustomConfiguration.html#%3Cinit%3E()">CustomConfiguration()</a></span> - Constructor for class me.julb.applications.notificationdispatcher.configurations.<a href="me/julb/applications/notificationdispatcher/configurations/CustomConfiguration.html" title="class in me.julb.applications.notificationdispatcher.configurations">CustomConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/CustomConfiguration.html#%3Cinit%3E()">CustomConfiguration()</a></span> - Constructor for class me.julb.applications.ping.configurations.<a href="me/julb/applications/ping/configurations/CustomConfiguration.html" title="class in me.julb.applications.ping.configurations">CustomConfiguration</a></dt>
@@ -2226,6 +2254,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/platformhealth/configurations/CustomConfiguration.html#%3Cinit%3E()">CustomConfiguration()</a></span> - Constructor for class me.julb.applications.platformhealth.configurations.<a href="me/julb/applications/platformhealth/configurations/CustomConfiguration.html" title="class in me.julb.applications.platformhealth.configurations">CustomConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/pushprometheusmetrics/configurations/CustomConfiguration.html#%3Cinit%3E()">CustomConfiguration()</a></span> - Constructor for class me.julb.applications.pushprometheusmetrics.configurations.<a href="me/julb/applications/pushprometheusmetrics/configurations/CustomConfiguration.html" title="class in me.julb.applications.pushprometheusmetrics.configurations">CustomConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/sms/configurations/CustomConfiguration.html#%3Cinit%3E()">CustomConfiguration()</a></span> - Constructor for class me.julb.applications.sms.configurations.<a href="me/julb/applications/sms/configurations/CustomConfiguration.html" title="class in me.julb.applications.sms.configurations">CustomConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/urlshortener/configurations/CustomConfiguration.html#%3Cinit%3E()">CustomConfiguration()</a></span> - Constructor for class me.julb.applications.urlshortener.configurations.<a href="me/julb/applications/urlshortener/configurations/CustomConfiguration.html" title="class in me.julb.applications.urlshortener.configurations">CustomConfiguration</a></dt>
 <dd>&nbsp;</dd>
@@ -2236,6 +2266,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">The local configuration properties.</div>
 </dd>
 <dt><a href="me/julb/applications/helloworld/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.helloworld.configurations.properties"><span class="typeNameLink">CustomConfigurationProperties</span></a> - Class in <a href="me/julb/applications/helloworld/configurations/properties/package-summary.html">me.julb.applications.helloworld.configurations.properties</a></dt>
+<dd>
+<div class="block">The local configuration properties.</div>
+</dd>
+<dt><a href="me/julb/applications/mail/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.mail.configurations.properties"><span class="typeNameLink">CustomConfigurationProperties</span></a> - Class in <a href="me/julb/applications/mail/configurations/properties/package-summary.html">me.julb.applications.mail.configurations.properties</a></dt>
 <dd>
 <div class="block">The local configuration properties.</div>
 </dd>
@@ -2255,6 +2289,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The local configuration properties.</div>
 </dd>
+<dt><a href="me/julb/applications/sms/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.sms.configurations.properties"><span class="typeNameLink">CustomConfigurationProperties</span></a> - Class in <a href="me/julb/applications/sms/configurations/properties/package-summary.html">me.julb.applications.sms.configurations.properties</a></dt>
+<dd>
+<div class="block">The local configuration properties.</div>
+</dd>
 <dt><a href="me/julb/applications/webanalytics/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.webanalytics.configurations.properties"><span class="typeNameLink">CustomConfigurationProperties</span></a> - Class in <a href="me/julb/applications/webanalytics/configurations/properties/package-summary.html">me.julb.applications.webanalytics.configurations.properties</a></dt>
 <dd>
 <div class="block">The local configuration properties.</div>
@@ -2263,6 +2301,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/helloworld/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.helloworld.configurations.properties.<a href="me/julb/applications/helloworld/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.helloworld.configurations.properties">CustomConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/mail/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.mail.configurations.properties.<a href="me/julb/applications/mail/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.mail.configurations.properties">CustomConfigurationProperties</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.notificationdispatcher.configurations.properties.<a href="me/julb/applications/notificationdispatcher/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.notificationdispatcher.configurations.properties">CustomConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.ping.configurations.properties">CustomConfigurationProperties</a></dt>
@@ -2270,6 +2310,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/platformhealth/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.platformhealth.configurations.properties.<a href="me/julb/applications/platformhealth/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.platformhealth.configurations.properties">CustomConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/pushprometheusmetrics/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.pushprometheusmetrics.configurations.properties.<a href="me/julb/applications/pushprometheusmetrics/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.pushprometheusmetrics.configurations.properties">CustomConfigurationProperties</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/sms/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.sms.configurations.properties.<a href="me/julb/applications/sms/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.sms.configurations.properties">CustomConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/webanalytics/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.webanalytics.configurations.properties.<a href="me/julb/applications/webanalytics/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.webanalytics.configurations.properties">CustomConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
@@ -10092,6 +10134,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/platformhealth/services/dto/incident/IncidentUpdateDTO.html#%3Cinit%3E()">IncidentUpdateDTO()</a></span> - Constructor for class me.julb.applications.platformhealth.services.dto.incident.<a href="me/julb/applications/platformhealth/services/dto/incident/IncidentUpdateDTO.html" title="class in me.julb.applications.platformhealth.services.dto.incident">IncidentUpdateDTO</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html#incrementDispatched(me.julb.library.dto.notification.events.NotificationDispatchType)">incrementDispatched(NotificationDispatchType)</a></span> - Method in class me.julb.applications.notificationdispatcher.configurations.beans.<a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html" title="class in me.julb.applications.notificationdispatcher.configurations.beans">NotificationDispatcherMeterBinder</a></dt>
+<dd>
+<div class="block">Increments the number of dispatched notification of given type.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/urlshortener/entities/LinkEntity.html#incrementNumberOfHits()">incrementNumberOfHits()</a></span> - Method in class me.julb.applications.urlshortener.entities.<a href="me/julb/applications/urlshortener/entities/LinkEntity.html" title="class in me.julb.applications.urlshortener.entities">LinkEntity</a></dt>
 <dd>
 <div class="block">Increments the number of hits by 1.</div>
@@ -10103,6 +10149,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/urlshortener/services/LinkService.html#incrementNumberOfHits(java.lang.String)">incrementNumberOfHits(String)</a></span> - Method in interface me.julb.applications.urlshortener.services.<a href="me/julb/applications/urlshortener/services/LinkService.html" title="interface in me.julb.applications.urlshortener.services">LinkService</a></dt>
 <dd>
 <div class="block">Increments the number of hits of a link.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html#incrementProcessed()">incrementProcessed()</a></span> - Method in class me.julb.applications.notificationdispatcher.configurations.beans.<a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html" title="class in me.julb.applications.notificationdispatcher.configurations.beans">NotificationDispatcherMeterBinder</a></dt>
+<dd>
+<div class="block">Increments the number of processed notifications.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/announcement/services/dto/AnnouncementLevel.html#INFO">INFO</a></span> - me.julb.applications.announcement.services.dto.<a href="me/julb/applications/announcement/services/dto/AnnouncementLevel.html" title="enum in me.julb.applications.announcement.services.dto">AnnouncementLevel</a></dt>
 <dd>
@@ -10569,10 +10619,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/dataprocessing/configurations/CustomConfiguration.html#jobExecutionListener()">jobExecutionListener()</a></span> - Method in class me.julb.applications.dataprocessing.configurations.<a href="me/julb/applications/dataprocessing/configurations/CustomConfiguration.html" title="class in me.julb.applications.dataprocessing.configurations">CustomConfiguration</a></dt>
 <dd>
 <div class="block">The job execution listener.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/CustomAsyncConfiguration.html#jobResult()">jobResult()</a></span> - Method in class me.julb.applications.notificationdispatcher.configurations.<a href="me/julb/applications/notificationdispatcher/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.notificationdispatcher.configurations">CustomAsyncConfiguration</a></dt>
-<dd>
-<div class="block">Consumer for job results.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/pushprometheusmetrics/configurations/CustomAsyncConfiguration.html#jobResult()">jobResult()</a></span> - Method in class me.julb.applications.pushprometheusmetrics.configurations.<a href="me/julb/applications/pushprometheusmetrics/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.pushprometheusmetrics.configurations">CustomAsyncConfiguration</a></dt>
 <dd>
@@ -11107,6 +11153,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </a>
 <h2 class="title">M</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="me/julb/applications/mail/configurations/CustomAsyncConfiguration.html#mail()">mail()</a></span> - Method in class me.julb.applications.mail.configurations.<a href="me/julb/applications/mail/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.mail.configurations">CustomAsyncConfiguration</a></dt>
+<dd>
+<div class="block">Consumer for mails.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/messaging/builders/NotificationDispatchAsyncMessageBuilder.html#mail()">mail()</a></span> - Method in class me.julb.springbootstarter.messaging.builders.<a href="me/julb/springbootstarter/messaging/builders/NotificationDispatchAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">NotificationDispatchAsyncMessageBuilder</a></dt>
 <dd>
 <div class="block">Setter for property mail.</div>
@@ -11469,7 +11519,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/jwks/services/impl/package-summary.html">me.julb.applications.jwks.services.impl</a> - package me.julb.applications.jwks.services.impl</dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/mail/configurations/package-summary.html">me.julb.applications.mail.configurations</a> - package me.julb.applications.mail.configurations</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/mail/configurations/properties/package-summary.html">me.julb.applications.mail.configurations.properties</a> - package me.julb.applications.mail.configurations.properties</dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/notificationdispatcher/configurations/package-summary.html">me.julb.applications.notificationdispatcher.configurations</a> - package me.julb.applications.notificationdispatcher.configurations</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/notificationdispatcher/configurations/beans/package-summary.html">me.julb.applications.notificationdispatcher.configurations.beans</a> - package me.julb.applications.notificationdispatcher.configurations.beans</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/notificationdispatcher/configurations/properties/package-summary.html">me.julb.applications.notificationdispatcher.configurations.properties</a> - package me.julb.applications.notificationdispatcher.configurations.properties</dt>
 <dd>&nbsp;</dd>
@@ -11520,6 +11576,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="me/julb/applications/pushprometheusmetrics/services/package-summary.html">me.julb.applications.pushprometheusmetrics.services</a> - package me.julb.applications.pushprometheusmetrics.services</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/pushprometheusmetrics/services/impl/package-summary.html">me.julb.applications.pushprometheusmetrics.services.impl</a> - package me.julb.applications.pushprometheusmetrics.services.impl</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/sms/configurations/package-summary.html">me.julb.applications.sms.configurations</a> - package me.julb.applications.sms.configurations</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/sms/configurations/properties/package-summary.html">me.julb.applications.sms.configurations.properties</a> - package me.julb.applications.sms.configurations.properties</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/urlshortener/annotations/package-summary.html">me.julb.applications.urlshortener.annotations</a> - package me.julb.applications.urlshortener.annotations</dt>
 <dd>&nbsp;</dd>
@@ -11812,6 +11872,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="me/julb/springbootstarter/security/services/impl/package-summary.html">me.julb.springbootstarter.security.services.impl</a> - package me.julb.springbootstarter.security.services.impl</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/springbootstarter/security/utilities/package-summary.html">me.julb.springbootstarter.security.utilities</a> - package me.julb.springbootstarter.security.utilities</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/springbootstarter/sms/annotations/package-summary.html">me.julb.springbootstarter.sms.annotations</a> - package me.julb.springbootstarter.sms.annotations</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/springbootstarter/sms/configurations/package-summary.html">me.julb.springbootstarter.sms.configurations</a> - package me.julb.springbootstarter.sms.configurations</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/springbootstarter/sms/configurations/beans/package-summary.html">me.julb.springbootstarter.sms.configurations.beans</a> - package me.julb.springbootstarter.sms.configurations.beans</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/springbootstarter/sms/services/package-summary.html">me.julb.springbootstarter.sms.services</a> - package me.julb.springbootstarter.sms.services</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/springbootstarter/sms/services/impl/package-summary.html">me.julb.springbootstarter.sms.services.impl</a> - package me.julb.springbootstarter.sms.services.impl</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/springbootstarter/templating/annotations/package-summary.html">me.julb.springbootstarter.templating.annotations</a> - package me.julb.springbootstarter.templating.annotations</dt>
 <dd>&nbsp;</dd>
@@ -12459,6 +12529,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Constructor.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/CustomAsyncConfiguration.html#notificationDispatch()">notificationDispatch()</a></span> - Method in class me.julb.applications.notificationdispatcher.configurations.<a href="me/julb/applications/notificationdispatcher/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.notificationdispatcher.configurations">CustomAsyncConfiguration</a></dt>
+<dd>
+<div class="block">Consumer for job results.</div>
+</dd>
 <dt><a href="me/julb/springbootstarter/messaging/builders/NotificationDispatchAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders"><span class="typeNameLink">NotificationDispatchAsyncMessageBuilder</span></a> - Class in <a href="me/julb/springbootstarter/messaging/builders/package-summary.html">me.julb.springbootstarter.messaging.builders</a></dt>
 <dd>
 <div class="block">A builder for <a href="me/julb/library/dto/notification/events/NotificationDispatchAsyncMessageDTO.html" title="class in me.julb.library.dto.notification.events"><code>NotificationDispatchAsyncMessageDTO</code></a> instances.</div>
@@ -12488,6 +12562,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">A message linked to a resource event.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/notification/events/NotificationDispatchAsyncMessageDTO.html#%3Cinit%3E()">NotificationDispatchAsyncMessageDTO()</a></span> - Constructor for class me.julb.library.dto.notification.events.<a href="me/julb/library/dto/notification/events/NotificationDispatchAsyncMessageDTO.html" title="class in me.julb.library.dto.notification.events">NotificationDispatchAsyncMessageDTO</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html" title="class in me.julb.applications.notificationdispatcher.configurations.beans"><span class="typeNameLink">NotificationDispatcherMeterBinder</span></a> - Class in <a href="me/julb/applications/notificationdispatcher/configurations/beans/package-summary.html">me.julb.applications.notificationdispatcher.configurations.beans</a></dt>
+<dd>
+<div class="block">The up meter binder.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html#%3Cinit%3E()">NotificationDispatcherMeterBinder()</a></span> - Constructor for class me.julb.applications.notificationdispatcher.configurations.beans.<a href="me/julb/applications/notificationdispatcher/configurations/beans/NotificationDispatcherMeterBinder.html" title="class in me.julb.applications.notificationdispatcher.configurations.beans">NotificationDispatcherMeterBinder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/notificationdispatcher/services/NotificationDispatcherService.html" title="interface in me.julb.applications.notificationdispatcher.services"><span class="typeNameLink">NotificationDispatcherService</span></a> - Interface in <a href="me/julb/applications/notificationdispatcher/services/package-summary.html">me.julb.applications.notificationdispatcher.services</a></dt>
 <dd>
@@ -14591,6 +14671,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Sends the mail.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/sms/services/impl/SmsServiceImpl.html#send(me.julb.library.dto.sms.SmsMessageDTO)">send(SmsMessageDTO)</a></span> - Method in class me.julb.springbootstarter.sms.services.impl.<a href="me/julb/springbootstarter/sms/services/impl/SmsServiceImpl.html" title="class in me.julb.springbootstarter.sms.services.impl">SmsServiceImpl</a></dt>
+<dd>
+<div class="block">Sends the SMS.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/sms/services/SmsService.html#send(me.julb.library.dto.sms.SmsMessageDTO)">send(SmsMessageDTO)</a></span> - Method in interface me.julb.springbootstarter.sms.services.<a href="me/julb/springbootstarter/sms/services/SmsService.html" title="interface in me.julb.springbootstarter.sms.services">SmsService</a></dt>
+<dd>
+<div class="block">Sends the SMS.</div>
+</dd>
 <dt><a href="me/julb/functions/SendGoogleChatFunction.html" title="class in me.julb.functions"><span class="typeNameLink">SendGoogleChatFunction</span></a> - Class in <a href="me/julb/functions/package-summary.html">me.julb.functions</a></dt>
 <dd>
 <div class="block">The function to send a google chat notification.</div>
@@ -14602,6 +14690,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">The function to send mail.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/functions/SendMailFunction.html#%3Cinit%3E()">SendMailFunction()</a></span> - Constructor for class me.julb.functions.<a href="me/julb/functions/SendMailFunction.html" title="class in me.julb.functions">SendMailFunction</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/functions/SendSmsFunction.html" title="class in me.julb.functions"><span class="typeNameLink">SendSmsFunction</span></a> - Class in <a href="me/julb/functions/package-summary.html">me.julb.functions</a></dt>
+<dd>
+<div class="block">The function to send SMS.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/functions/SendSmsFunction.html#%3Cinit%3E()">SendSmsFunction()</a></span> - Constructor for class me.julb.functions.<a href="me/julb/functions/SendSmsFunction.html" title="class in me.julb.functions">SendSmsFunction</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/library/dto/simple/value/SensitiveValueDTO.html" title="class in me.julb.library.dto.simple.value"><span class="typeNameLink">SensitiveValueDTO</span></a> - Class in <a href="me/julb/library/dto/simple/value/package-summary.html">me.julb.library.dto.simple.value</a></dt>
 <dd>
@@ -18535,6 +18629,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The "/" character.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/sms/configurations/CustomAsyncConfiguration.html#sms()">sms()</a></span> - Method in class me.julb.applications.sms.configurations.<a href="me/julb/applications/sms/configurations/CustomAsyncConfiguration.html" title="class in me.julb.applications.sms.configurations">CustomAsyncConfiguration</a></dt>
+<dd>
+<div class="block">Consumer for SMS messages.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/messaging/builders/NotificationDispatchAsyncMessageBuilder.html#sms()">sms()</a></span> - Method in class me.julb.springbootstarter.messaging.builders.<a href="me/julb/springbootstarter/messaging/builders/NotificationDispatchAsyncMessageBuilder.html" title="class in me.julb.springbootstarter.messaging.builders">NotificationDispatchAsyncMessageBuilder</a></dt>
 <dd>
 <div class="block">Setter for property sms.</div>
@@ -18543,6 +18641,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The SMS notification dispatch type.</div>
 </dd>
+<dt><a href="me/julb/springbootstarter/sms/configurations/SmsConfiguration.html" title="class in me.julb.springbootstarter.sms.configurations"><span class="typeNameLink">SmsConfiguration</span></a> - Class in <a href="me/julb/springbootstarter/sms/configurations/package-summary.html">me.julb.springbootstarter.sms.configurations</a></dt>
+<dd>
+<div class="block">The SMS configuration.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/sms/configurations/SmsConfiguration.html#%3Cinit%3E()">SmsConfiguration()</a></span> - Constructor for class me.julb.springbootstarter.sms.configurations.<a href="me/julb/springbootstarter/sms/configurations/SmsConfiguration.html" title="class in me.julb.springbootstarter.sms.configurations">SmsConfiguration</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/julb/library/dto/sms/SmsMessageDTO.html" title="class in me.julb.library.dto.sms"><span class="typeNameLink">SmsMessageDTO</span></a> - Class in <a href="me/julb/library/dto/sms/package-summary.html">me.julb.library.dto.sms</a></dt>
 <dd>
 <div class="block">DTO to send a SMS.</div>
@@ -18559,6 +18663,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/notification/events/parts/SmsPartDTO.html#%3Cinit%3E()">SmsPartDTO()</a></span> - Constructor for class me.julb.library.dto.notification.events.parts.<a href="me/julb/library/dto/notification/events/parts/SmsPartDTO.html" title="class in me.julb.library.dto.notification.events.parts">SmsPartDTO</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/julb/springbootstarter/sms/configurations/beans/SmsProperties.html" title="class in me.julb.springbootstarter.sms.configurations.beans"><span class="typeNameLink">SmsProperties</span></a> - Class in <a href="me/julb/springbootstarter/sms/configurations/beans/package-summary.html">me.julb.springbootstarter.sms.configurations.beans</a></dt>
+<dd>
+<div class="block">The SMS properties configuration.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/sms/configurations/beans/SmsProperties.html#%3Cinit%3E()">SmsProperties()</a></span> - Constructor for class me.julb.springbootstarter.sms.configurations.beans.<a href="me/julb/springbootstarter/sms/configurations/beans/SmsProperties.html" title="class in me.julb.springbootstarter.sms.configurations.beans">SmsProperties</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/julb/library/dto/notification/events/parts/SmsRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts"><span class="typeNameLink">SmsRecipientDTO</span></a> - Class in <a href="me/julb/library/dto/notification/events/parts/package-summary.html">me.julb.library.dto.notification.events.parts</a></dt>
 <dd>
 <div class="block">A DTO configuring SMS recipient.</div>
@@ -18566,6 +18676,16 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/notification/events/parts/SmsRecipientDTO.html#%3Cinit%3E()">SmsRecipientDTO()</a></span> - Constructor for class me.julb.library.dto.notification.events.parts.<a href="me/julb/library/dto/notification/events/parts/SmsRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts">SmsRecipientDTO</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/notification/events/parts/SmsRecipientDTO.html#%3Cinit%3E(java.lang.String,java.util.Locale)">SmsRecipientDTO(String, Locale)</a></span> - Constructor for class me.julb.library.dto.notification.events.parts.<a href="me/julb/library/dto/notification/events/parts/SmsRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts">SmsRecipientDTO</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/springbootstarter/sms/services/SmsService.html" title="interface in me.julb.springbootstarter.sms.services"><span class="typeNameLink">SmsService</span></a> - Interface in <a href="me/julb/springbootstarter/sms/services/package-summary.html">me.julb.springbootstarter.sms.services</a></dt>
+<dd>
+<div class="block">SMS service.</div>
+</dd>
+<dt><a href="me/julb/springbootstarter/sms/services/impl/SmsServiceImpl.html" title="class in me.julb.springbootstarter.sms.services.impl"><span class="typeNameLink">SmsServiceImpl</span></a> - Class in <a href="me/julb/springbootstarter/sms/services/impl/package-summary.html">me.julb.springbootstarter.sms.services.impl</a></dt>
+<dd>
+<div class="block">SMS service implementation.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/sms/services/impl/SmsServiceImpl.html#%3Cinit%3E()">SmsServiceImpl()</a></span> - Constructor for class me.julb.springbootstarter.sms.services.impl.<a href="me/julb/springbootstarter/sms/services/impl/SmsServiceImpl.html" title="class in me.julb.springbootstarter.sms.services.impl">SmsServiceImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/utility/constants/PageRequestAttributes.html#SORT_PARAMETER_NAME">SORT_PARAMETER_NAME</a></span> - Static variable in class me.julb.library.utility.constants.<a href="me/julb/library/utility/constants/PageRequestAttributes.html" title="class in me.julb.library.utility.constants">PageRequestAttributes</a></dt>
 <dd>
