@@ -27,6 +27,7 @@ dependencies {
     api project(':spring-boot-starters:spring-boot-starter-opentracing')
     api project(':spring-boot-starters:spring-boot-starter-resource-types')
     api project(':spring-boot-starters:spring-boot-starter-validation')
+	api project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-metrics')
 	
 	implementation 'org.apache.commons:commons-lang3'
 	implementation 'org.apache.commons:commons-collections4'
@@ -37,7 +38,6 @@ dependencies {
     implementation 'com.rometools:rome'
 	
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
-	implementation project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-metrics')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }
