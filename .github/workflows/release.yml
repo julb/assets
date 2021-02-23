@@ -19,7 +19,7 @@ jobs:
     - name: Read current version
       id: current_vars
       run: |
-        echo ::set-output name=version::$(./gradlew -q currentVersion)
+        echo ::set-output name=version::$(./gradlew -q currentReleaseVersion)
 
     - name: Compute release vars
       id: release_vars
@@ -36,7 +36,7 @@ jobs:
       run: ./gradlew build
 
     - name: Updating file versions
-      run: ./gradlew changeVersionCustom -PnewVersion={{ steps.release_vars.outputs.version }}
+      run: ./gradlew changeVersionCustom -PnewVersion=${{ steps.release_vars.outputs.version }}
 
     - name: Update CHANGELOG.md
       uses: heinrichreimer/github-changelog-generator-action@v2.2
