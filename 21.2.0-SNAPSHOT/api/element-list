@@ -27,6 +27,7 @@ me.julb.applications.authorizationserver.services.dto.mail
 me.julb.applications.authorizationserver.services.dto.mobilephone
 me.julb.applications.authorizationserver.services.dto.preferences
 me.julb.applications.authorizationserver.services.dto.profile
+me.julb.applications.authorizationserver.services.dto.recovery
 me.julb.applications.authorizationserver.services.dto.security
 me.julb.applications.authorizationserver.services.dto.session
 me.julb.applications.authorizationserver.services.dto.signup

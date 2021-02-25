@@ -189,9 +189,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#triggerPincodeReset(java.lang.String,me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationRecoveryChannelType,java.lang.String)">triggerPincodeReset</a></span>&#8203;(@NotNull @NotBlank @Email java.lang.String&nbsp;mail,
-                   @NotNull <a href="../services/dto/authentication/UserAuthenticationRecoveryChannelType.html" title="enum in me.julb.applications.authorizationserver.services.dto.authentication">UserAuthenticationRecoveryChannelType</a>&nbsp;recoveryChannelType,
-                   @NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;recoveryChannelDevice)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#triggerPincodeReset(java.lang.String,me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelType,java.lang.String)">triggerPincodeReset</a></span>&#8203;(@NotNull @NotBlank @Email java.lang.String&nbsp;mail,
+                   @NotNull <a href="../services/dto/recovery/RecoveryChannelType.html" title="enum in me.julb.applications.authorizationserver.services.dto.recovery">RecoveryChannelType</a>&nbsp;recoveryChannelDeviceType,
+                   @NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;recoveryChannelDeviceId)</code></th>
 <td class="colLast">
 <div class="block">Trigger the reset process of a authentication by pincode.</div>
 </td>
@@ -239,7 +239,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="triggerPincodeReset(java.lang.String,me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationRecoveryChannelType,java.lang.String)">
+<a id="triggerPincodeReset(java.lang.String,me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelType,java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -251,16 +251,16 @@ extends java.lang.Object</pre>
 @PreAuthorize("permitAll()")
 public&nbsp;void&nbsp;triggerPincodeReset&#8203;(@RequestParam("mail") @NotNull @NotBlank @Email
                                 @NotNull @NotBlank @Email java.lang.String&nbsp;mail,
-                                @RequestParam("recoveryChannelType") @NotNull
-                                @NotNull <a href="../services/dto/authentication/UserAuthenticationRecoveryChannelType.html" title="enum in me.julb.applications.authorizationserver.services.dto.authentication">UserAuthenticationRecoveryChannelType</a>&nbsp;recoveryChannelType,
-                                @RequestParam("recoveryChannelDevice") @NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a>
-                                @NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;recoveryChannelDevice)</pre>
+                                @RequestParam("recoveryChannelDeviceType") @NotNull
+                                @NotNull <a href="../services/dto/recovery/RecoveryChannelType.html" title="enum in me.julb.applications.authorizationserver.services.dto.recovery">RecoveryChannelType</a>&nbsp;recoveryChannelDeviceType,
+                                @RequestParam("recoveryChannelDeviceId") @NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a>
+                                @NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;recoveryChannelDeviceId)</pre>
 <div class="block">Trigger the reset process of a authentication by pincode.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>mail</code> - the user mail.</dd>
-<dd><code>recoveryChannelType</code> - the recovery channel type.</dd>
-<dd><code>recoveryChannelDevice</code> - the recovery channel device identifier.</dd>
+<dd><code>recoveryChannelDeviceType</code> - the recovery channel type.</dd>
+<dd><code>recoveryChannelDeviceId</code> - the recovery channel device identifier.</dd>
 </dl>
 </li>
 </ul>
