@@ -36,7 +36,7 @@ springBoot {
 
 bootBuildImage {
     environment = ["BP_JVM_VERSION" : "11.*"]
-    imageName = "docker.io/julb/${project.name}:${project.version}"
+    imageName = "julb/${project.name}:${project.version}"
 }
 
 bootJar {

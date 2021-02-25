@@ -62,4 +62,13 @@ public interface UserMobilePhoneRepository extends MongoRepository<UserMobilePho
      * @return <code>true</code> if the mail exists, <code>false</code> otherwise.
      */
     boolean existsByTmAndUser_IdAndMobilePhone_CountryCodeIgnoreCaseAndMobilePhone_NumberIgnoreCase(String tm, String userId, String countryCode, String number);
+
+    /**
+     * Finds an user mobile phone by trademark and id.
+     * @param tm the trademark.
+     * @param userId the user ID.
+     * @param id the id.
+     * @return the user mobile phone, or <code>null</code> if not exists.
+     */
+    UserMobilePhoneEntity findByTmAndUser_IdAndIdAndVerifiedIsTrue(String tm, String userId, String id);
 }

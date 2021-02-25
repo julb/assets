@@ -76,4 +76,13 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @return the user mail.
      */
     UserMailEntity findByTmAndMailIgnoreCaseAndVerifiedIsTrue(String tm, String mail);
+
+    /**
+     * Finds an user mail by trademark and id.
+     * @param tm the trademark.
+     * @param userId the user ID.
+     * @param id the id.
+     * @return the user mail, or <code>null</code> if not exists.
+     */
+    UserMailEntity findByTmAndUser_IdAndIdAndVerifiedIsTrue(String tm, String userId, String id);
 }

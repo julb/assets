@@ -90,7 +90,7 @@ public class NotificationTemplatingServiceImpl implements NotificationTemplating
         LargeContentDTO render = templatingService.render(templateRelativePaths, parameters);
 
         // For mail, subject is the first line and content the 3rd line.
-        if (NotificationDispatchType.MAIL.equals(generateNotificationContent.getType())) {
+        if (generateNotificationContent.getType().hasSubject()) {
             try (BufferedReader reader = new BufferedReader(new StringReader(render.getContent()))) {
                 // Read subject
                 String subject = reader.readLine();

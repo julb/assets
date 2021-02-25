@@ -16,11 +16,10 @@ dependencies {
     implementation project(':libraries:library-utility-identifier')
     implementation project(':libraries:library-utility-jose-jwt')
     implementation project(':libraries:library-utility-otp')
+    implementation project(':libraries:library-utility-random')
     implementation project(':spring-boot-starters:spring-boot-starter-messaging')
     implementation project(':spring-boot-starters:spring-boot-starter-web')
     implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb')
-    implementation 'org.apache.commons:commons-lang3'
-    implementation 'org.apache.commons:commons-text'
     implementation 'org.apache.commons:commons-lang3'
     implementation 'com.googlecode.libphonenumber:libphonenumber'
     
@@ -53,21 +52,11 @@ springBoot {
 
 bootBuildImage {
     environment = ["BP_JVM_VERSION" : "11.*"]
-    imageName = "docker.io/julb/${project.name}:${project.version}"
+    imageName = "julb/${project.name}:${project.version}"
 }
 
 bootJar {
     classifier = 'boot'
     mainClass = 'me.julb.Application'
     layered()
-}
-
-publishing {
-	publications {
-	    JavaPublication(MavenPublication) {
-	        from components.java
-            artifact distZip
-            artifact distTar
-	    }
-	}
 }

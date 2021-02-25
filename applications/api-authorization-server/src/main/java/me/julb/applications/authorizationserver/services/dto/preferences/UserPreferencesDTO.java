@@ -24,6 +24,8 @@
 
 package me.julb.applications.authorizationserver.services.dto.preferences;
 
+import java.util.Locale;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,4 +39,17 @@ import me.julb.library.dto.simple.audit.AbstractAuditedDTO;
 @Getter
 @Setter
 public class UserPreferencesDTO extends AbstractAuditedDTO {
+
+    //@formatter:off
+     /**
+     * The language attribute.
+     * -- GETTER --
+     * Getter for {@link #language} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #language} property.
+     * @param language the value to set.
+     */
+     //@formatter:on
+    private Locale language;
 }

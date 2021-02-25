@@ -25,6 +25,7 @@ package me.julb.library.dto.security;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -209,7 +210,7 @@ public class AuthenticatedUserDTO {
      * @param locale the value to set.
      */
      //@formatter:on
-    private String locale;
+    private Locale locale;
 
     //@formatter:off
      /**

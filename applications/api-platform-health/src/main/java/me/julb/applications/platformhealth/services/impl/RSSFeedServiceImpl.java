@@ -121,10 +121,10 @@ public class RSSFeedServiceImpl implements RSSFeedService {
 
         // Build RSS feed.
         RSSFeedDTO rssFeed = new RSSFeedDTO();
-        rssFeed.setTitle(messageSourceService.getMessage("platform.health.rss.feed.incidents.title", new Object[] {tm}, locale));
-        rssFeed.setDescription(messageSourceService.getMessage("platform.health.rss.feed.incidents.description", new Object[] {}, locale));
+        rssFeed.setTitle(messageSourceService.getMessage("platform-health.rss.feed.incidents.title", new Object[] {tm}, locale));
+        rssFeed.setDescription(messageSourceService.getMessage("platform-health.rss.feed.incidents.description", new Object[] {}, locale));
         rssFeed.setLanguage(locale.toLanguageTag());
-        rssFeed.setLink(configSourceService.getProperty("platform.health.rss.feed.incidents.link"));
+        rssFeed.setLink(configSourceService.getProperty("platform-health.rss.feed.incidents.link"));
 
         // Add items.
         String dateTimeThreshold = DateUtility.dateTimeMinus(Integers.THIRTY, ChronoUnit.DAYS);
@@ -136,19 +136,19 @@ public class RSSFeedServiceImpl implements RSSFeedService {
             String localizedTitleContent = contentRenderService.renderToText(incidentEntity.getLocalizedTitle());
 
             // Get severity
-            String localizedSeverity = messageSourceService.getMessage("platform.health.rss.feed.incidents.incident.severity." + incidentEntity.getSeverity(), new Object[] {}, locale);
+            String localizedSeverity = messageSourceService.getMessage("platform-health.rss.feed.incidents.incident.severity." + incidentEntity.getSeverity(), new Object[] {}, locale);
 
             // Get message.
             String localizedMessageContent = contentRenderService.renderToHtml(incidentEntity.getLocalizedMessage());
 
             RSSFeedItemDTO item = new RSSFeedItemDTO();
             item.setId(incidentEntity.getId());
-            item.setTitle(messageSourceService.getMessage("platform.health.rss.feed.incidents.incident.title", new Object[] {localizedTitleContent, localizedSeverity}, locale));
-            item.setLink(configSourceService.getProperty("platform.health.rss.feed.incidents.incident.link", new Object[] {incidentEntity.getId()}));
+            item.setTitle(messageSourceService.getMessage("platform-health.rss.feed.incidents.incident.title", new Object[] {localizedTitleContent, localizedSeverity}, locale));
+            item.setLink(configSourceService.getProperty("platform-health.rss.feed.incidents.incident.link", new Object[] {incidentEntity.getId()}));
             item.getAuthor().setMail(incidentEntity.getUser().getMail());
             item.getAuthor().setDisplayName(incidentEntity.getUser().getDisplayName());
             item.setPublishedDateTime(incidentEntity.getLastUpdatedAt());
-            item.getCategories().add(messageSourceService.getMessage("platform.health.rss.feed.incidents.incident.category", new Object[] {}, locale));
+            item.getCategories().add(messageSourceService.getMessage("platform-health.rss.feed.incidents.incident.category", new Object[] {}, locale));
 
             StringBuffer sb = new StringBuffer();
             sb.append(localizedMessageContent);
@@ -168,7 +168,7 @@ public class RSSFeedServiceImpl implements RSSFeedService {
                 sb.append(Strings.SPACE);
                 sb.append(Strings.DASH);
                 sb.append(Strings.SPACE);
-                sb.append(messageSourceService.getMessage("platform.health.rss.feed.incidents.incident.status." + incidentHistory.getStatus(), new Object[] {}, locale));
+                sb.append(messageSourceService.getMessage("platform-health.rss.feed.incidents.incident.status." + incidentHistory.getStatus(), new Object[] {}, locale));
                 sb.append(Strings.SEMICOLON);
                 sb.append(HTMLTags.STRONG_RT);
                 sb.append(Strings.SPACE);
@@ -193,10 +193,10 @@ public class RSSFeedServiceImpl implements RSSFeedService {
 
         // Build RSS feed.
         RSSFeedDTO rssFeed = new RSSFeedDTO();
-        rssFeed.setTitle(messageSourceService.getMessage("platform.health.rss.feed.planned-maintenances.title", new Object[] {tm}, locale));
-        rssFeed.setDescription(messageSourceService.getMessage("platform.health.rss.feed.planned-maintenances.description", new Object[] {}, locale));
+        rssFeed.setTitle(messageSourceService.getMessage("platform-health.rss.feed.planned-maintenances.title", new Object[] {tm}, locale));
+        rssFeed.setDescription(messageSourceService.getMessage("platform-health.rss.feed.planned-maintenances.description", new Object[] {}, locale));
         rssFeed.setLanguage(locale.toLanguageTag());
-        rssFeed.setLink(configSourceService.getProperty("platform.health.rss.feed.planned-maintenances.link"));
+        rssFeed.setLink(configSourceService.getProperty("platform-health.rss.feed.planned-maintenances.link"));
 
         // Add items.
         String dateTimeThreshold = DateUtility.dateTimeMinus(Integers.THIRTY, ChronoUnit.DAYS);
@@ -208,24 +208,24 @@ public class RSSFeedServiceImpl implements RSSFeedService {
             String localizedTitleContent = contentRenderService.renderToText(plannedMaintenance.getLocalizedTitle());
 
             // Get complexity
-            String localizedComplexity = messageSourceService.getMessage("platform.health.rss.feed.planned-maintenances.planned-maintenance.complexity." + plannedMaintenance.getComplexity(), new Object[] {}, locale);
+            String localizedComplexity = messageSourceService.getMessage("platform-health.rss.feed.planned-maintenances.planned-maintenance.complexity." + plannedMaintenance.getComplexity(), new Object[] {}, locale);
 
             // Get message.
             String localizedMessageContent = contentRenderService.renderToHtml(plannedMaintenance.getLocalizedMessage());
 
             RSSFeedItemDTO item = new RSSFeedItemDTO();
             item.setId(plannedMaintenance.getId());
-            item.setTitle(messageSourceService.getMessage("platform.health.rss.feed.planned-maintenances.planned-maintenance.title", new Object[] {localizedTitleContent, localizedComplexity}, locale));
-            item.setLink(configSourceService.getProperty("platform.health.rss.feed.planned-maintenances.planned-maintenance.link", new Object[] {plannedMaintenance.getId()}));
+            item.setTitle(messageSourceService.getMessage("platform-health.rss.feed.planned-maintenances.planned-maintenance.title", new Object[] {localizedTitleContent, localizedComplexity}, locale));
+            item.setLink(configSourceService.getProperty("platform-health.rss.feed.planned-maintenances.planned-maintenance.link", new Object[] {plannedMaintenance.getId()}));
             item.getAuthor().setMail(plannedMaintenance.getUser().getMail());
             item.getAuthor().setDisplayName(plannedMaintenance.getUser().getDisplayName());
             item.setPublishedDateTime(plannedMaintenance.getLastUpdatedAt());
-            item.getCategories().add(messageSourceService.getMessage("platform.health.rss.feed.planned-maintenances.planned-maintenance.category", new Object[] {}, locale));
+            item.getCategories().add(messageSourceService.getMessage("platform-health.rss.feed.planned-maintenances.planned-maintenance.category", new Object[] {}, locale));
 
             StringBuffer sb = new StringBuffer();
             sb.append(HTMLTags.STRONG_LT);
             sb.append(
-                messageSourceService.getMessage("platform.health.rss.feed.planned-maintenances.planned-maintenance.slot", new Object[] {DateUtility.dateTimeToRfc1123(plannedMaintenance.getSlotDateTime().getFrom(), LocaleContextHolder.getTimeZone()),
+                messageSourceService.getMessage("platform-health.rss.feed.planned-maintenances.planned-maintenance.slot", new Object[] {DateUtility.dateTimeToRfc1123(plannedMaintenance.getSlotDateTime().getFrom(), LocaleContextHolder.getTimeZone()),
                     DateUtility.dateTimeToRfc1123(plannedMaintenance.getSlotDateTime().getTo(), LocaleContextHolder.getTimeZone())}, locale));
             sb.append(HTMLTags.STRONG_RT);
             sb.append(HTMLTags.NEW_LINE);
@@ -248,7 +248,7 @@ public class RSSFeedServiceImpl implements RSSFeedService {
                 sb.append(Strings.SPACE);
                 sb.append(Strings.DASH);
                 sb.append(Strings.SPACE);
-                sb.append(messageSourceService.getMessage("platform.health.rss.feed.planned-maintenances.planned-maintenance.status." + plannedMaintenanceHistory.getStatus(), new Object[] {}, locale));
+                sb.append(messageSourceService.getMessage("platform-health.rss.feed.planned-maintenances.planned-maintenance.status." + plannedMaintenanceHistory.getStatus(), new Object[] {}, locale));
                 sb.append(Strings.SEMICOLON);
                 sb.append(HTMLTags.STRONG_RT);
                 sb.append(Strings.SPACE);

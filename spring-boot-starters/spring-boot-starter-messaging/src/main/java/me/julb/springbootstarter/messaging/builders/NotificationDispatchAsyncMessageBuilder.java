@@ -31,6 +31,7 @@ import java.util.Map;
 import me.julb.library.dto.mail.MailAttachmentDTO;
 import me.julb.library.dto.mail.MailInlineAttachmentDTO;
 import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO;
+import me.julb.library.dto.notification.events.NotificationKind;
 import me.julb.library.dto.notification.events.parts.GoogleChatPartDTO;
 import me.julb.library.dto.notification.events.parts.GoogleChatRoomDTO;
 import me.julb.library.dto.notification.events.parts.MailPartDTO;
@@ -130,7 +131,7 @@ public class NotificationDispatchAsyncMessageBuilder {
      * @param kind New value of property kind.
      * @return the current builder instance.
      */
-    public NotificationDispatchAsyncMessageBuilder kind(String kind) {
+    public NotificationDispatchAsyncMessageBuilder kind(NotificationKind kind) {
         this.message.setKind(kind);
         return this;
     }

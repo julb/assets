@@ -29,10 +29,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions.MongoConverterConfigurationAdapter;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import me.julb.springbootstarter.persistence.mongodb.configurations.support.CustomMongoRepositoryFactoryBean;
+import me.julb.springbootstarter.persistence.mongodb.converters.LocaleReadingConverter;
+import me.julb.springbootstarter.persistence.mongodb.converters.LocaleWritingConverter;
 
 /**
  * The persistence MongoDB configuration.
@@ -61,5 +65,23 @@ public class PersistenceMongoConfiguration {
     @Bean
     public ValidatingMongoEventListener validatingMongoEventListener(Validator validator) {
         return new ValidatingMongoEventListener(validator);
+    }
+
+    /**
+     * MongoDB custom conversions.
+     * @return MongoDB custom conversions.
+     */
+    @Bean
+    public MongoCustomConversions customConversions() {
+        return MongoCustomConversions.create(this::configureConverters);
+    }
+
+    /**
+     * Configuration hook for {@link MongoCustomConversions} creation.
+     * @param converterConfigurationAdapter the adapter to register converters.
+     */
+    protected void configureConverters(MongoConverterConfigurationAdapter converterConfigurationAdapter) {
+        converterConfigurationAdapter.registerConverter(new LocaleReadingConverter());
+        converterConfigurationAdapter.registerConverter(new LocaleWritingConverter());
     }
 }

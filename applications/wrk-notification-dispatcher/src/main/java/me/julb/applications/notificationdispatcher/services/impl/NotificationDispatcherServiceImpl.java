@@ -92,7 +92,7 @@ public class NotificationDispatcherServiceImpl implements NotificationDispatcher
 
         // Generate notification content.
         GenerateNotificationContentDTO generateNotificationContent = new GenerateNotificationContentDTO();
-        generateNotificationContent.setName(notification.getKind());
+        generateNotificationContent.setName(notification.getKind().toString());
         generateNotificationContent.setParameters(notification.getParameters());
         generateNotificationContent.setTm(notification.getTm());
 

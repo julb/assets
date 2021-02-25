@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
@@ -56,6 +57,7 @@ public class UserMobilePhoneVerifyDTO {
     @Schema(description = "The verify token", required = true)
     @NotNull
     @NotBlank
-    @Size(min = 128, max = 128)
+    @Size(min = 8, max = 8)
+    @Pattern(regexp = "^[0-9]+$")
     private String verifyToken;
 }

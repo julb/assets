@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
 
@@ -91,7 +92,7 @@ import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBa
  * <P>
  * @author Julb.
  */
-@Import(TestChannelBinderConfiguration.class)
+@Import({TestChannelBinderConfiguration.class})
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers = AuthenticationByTotpControllerTest.Initializer.class)
 @Testcontainers
@@ -377,6 +378,7 @@ public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest 
                             .header(HttpHeaders.AUTHORIZATION, HttpHeaderUtility.toBearerToken(accessToken))
                             .param("deviceId", userAuthenticationByTotp.getId())
                             .param("totp", validTotpCode)
+                            .locale(Locale.getDefault())
                     )
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
@@ -401,6 +403,7 @@ public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest 
     @Test
     public void whenVerifyingTotpUnauthenticated_thenReturn401()
         throws Exception {
+        System.out.println(mockMvc);
         //@formatter:off
         mockMvc
             .perform(
@@ -408,6 +411,7 @@ public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest 
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .param("deviceId", IdentifierUtility.generateId())
                     .param("totp", "000000")
+                    .header(HttpHeaders.ACCEPT_LANGUAGE, Locale.getDefault().toLanguageTag())
             )
             .andExpect(status().isUnauthorized());
         //@formatter:on

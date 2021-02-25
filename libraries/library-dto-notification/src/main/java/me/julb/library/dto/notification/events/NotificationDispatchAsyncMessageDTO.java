@@ -68,7 +68,7 @@ public class NotificationDispatchAsyncMessageDTO extends AsyncMessageDTO<Void> {
      * @param kind the value to set.
      */
      //@formatter:on
-    private String kind;
+    private NotificationKind kind;
 
     //@formatter:off
      /**

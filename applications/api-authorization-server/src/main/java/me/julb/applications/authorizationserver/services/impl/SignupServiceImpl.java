@@ -30,6 +30,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -198,18 +199,20 @@ public class SignupServiceImpl implements SignupService {
         this.onPersist(entityToCreate);
         UserEntity result = userRepository.save(entityToCreate);
 
+        // Create profile settings
+        userProfileService.create(result.getId(), signup.getProfile());
+
+        // Create preferences settings
+        UserPreferencesCreationDTO userPreferencesCreationDTO = new UserPreferencesCreationDTO();
+        userPreferencesCreationDTO.setLanguage(LocaleContextHolder.getLocale());
+        userPreferencesService.create(result.getId(), userPreferencesCreationDTO);
+
         // Create mail settings.
         UserMailCreationDTO creationDTO = new UserMailCreationDTO();
         creationDTO.setMail(signup.getMail());
         creationDTO.setPrimary(true);
         UserMailDTO mailCreated = userMailService.create(result.getId(), creationDTO);
         userMailService.triggerMailVerify(result.getId(), mailCreated.getId());
-
-        // Create profile settings
-        userProfileService.create(result.getId(), signup.getProfile());
-
-        // Create preferences settings
-        userPreferencesService.create(result.getId(), new UserPreferencesCreationDTO());
 
         // Return result.
         return result;

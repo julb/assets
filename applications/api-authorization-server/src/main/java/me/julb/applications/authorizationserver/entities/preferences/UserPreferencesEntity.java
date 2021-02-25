@@ -24,6 +24,8 @@
 
 package me.julb.applications.authorizationserver.entities.preferences;
 
+import java.util.Locale;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -107,5 +109,19 @@ public class UserPreferencesEntity extends AbstractAuditedEntity implements IIde
     @NotNull
     @DBRef
     private UserEntity user;
+
+    //@formatter:off
+     /**
+     * The language attribute.
+     * -- GETTER --
+     * Getter for {@link #language} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #language} property.
+     * @param language the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    private Locale language;
 
 }

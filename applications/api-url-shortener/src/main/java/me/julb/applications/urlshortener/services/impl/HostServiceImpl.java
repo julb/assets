@@ -88,7 +88,7 @@ public class HostServiceImpl implements HostService {
      * @return the available hosts.
      */
     private List<String> getAvailableHosts() {
-        String[] hosts = configSourceService.getTypedProperty("url.shortener.hosts", String[].class);
+        String[] hosts = configSourceService.getTypedProperty("url-shortener.hosts", String[].class);
         List<String> hostsAsList = new ArrayList<String>();
         if (ArrayUtils.isNotEmpty(hosts)) {
             for (String host : hosts) {

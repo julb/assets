@@ -23,6 +23,8 @@
  */
 package me.julb.springbootstarter.security.configurations.beans.userdetails;
 
+import java.util.Locale;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
@@ -91,7 +93,7 @@ public class AuthenticationByJwtUserDetailsService implements AuthenticationUser
                 dto.setDisplayName(payloadAsJson.getString(JWTClaims.PREFERRED_USERNAME));
                 dto.setFirstName(payloadAsJson.getString(JWTClaims.GIVEN_NAME));
                 dto.setLastName(payloadAsJson.getString(JWTClaims.FAMILY_NAME));
-                dto.setLocale(payloadAsJson.getString(JWTClaims.LOCALE));
+                dto.setLocale(Locale.forLanguageTag(payloadAsJson.getString(JWTClaims.LOCALE)));
                 dto.setMail(payloadAsJson.getString(JWTClaims.MAIL));
                 dto.setMailVerified(payloadAsJson.getBoolean(JWTClaims.MAIL_VERIFIED));
                 dto.setMobilePhone(payloadAsJson.getString(JWTClaims.PHONE_NUMBER));

@@ -24,8 +24,12 @@
 
 package me.julb.springbootstarter.test.base;
 
+import java.util.Locale;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -37,4 +41,12 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ComponentScan(basePackages = "me.julb")
 public abstract class AbstractBaseTest {
+
+    /**
+     * Method triggered during method startup.
+     */
+    @BeforeAll
+    public static void setupBaseAll() {
+        LocaleContextHolder.setLocale(Locale.getDefault());
+    }
 }

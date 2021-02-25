@@ -36,22 +36,27 @@ public enum NotificationDispatchType {
     /**
      * The MAIL notification dispatch type.
      */
-    MAIL(TemplatingMode.HTML),
+    MAIL(TemplatingMode.HTML, true),
 
     /**
      * The SMS notification dispatch type.
      */
-    SMS(TemplatingMode.TEXT),
+    SMS(TemplatingMode.TEXT, false),
 
     /**
      * The Google chat notification dispatch type.
      */
-    GOOGLE_CHAT(TemplatingMode.TEXT),
+    GOOGLE_CHAT(TemplatingMode.TEXT, false),
 
     /**
      * The Web notification dispatch type.
      */
-    WEB(TemplatingMode.HTML);
+    WEB(TemplatingMode.NONE, false),
+
+    /**
+     * The Push notification dispatch type.
+     */
+    PUSH(TemplatingMode.TEXT, true);
 
     /**
      * The templating mode.
@@ -59,10 +64,18 @@ public enum NotificationDispatchType {
     private TemplatingMode templatingMode;
 
     /**
-     * Default constructor.
+     * Flag indicating if the template expects a subject.
      */
-    private NotificationDispatchType(TemplatingMode templatingMode) {
+    private boolean hasSubject;
+
+    /**
+     * Default constructor.
+     * @param templatingMode the templating mode.
+     * @param hasSubject <code>true</code> if the type has a subject, <code>false</code> otherwise.
+     */
+    private NotificationDispatchType(TemplatingMode templatingMode, boolean hasSubject) {
         this.templatingMode = templatingMode;
+        this.hasSubject = hasSubject;
     }
 
     /**
@@ -71,5 +84,13 @@ public enum NotificationDispatchType {
      */
     public TemplatingMode templatingMode() {
         return this.templatingMode;
+    }
+
+    /**
+     * Getter for property hasSubject.
+     * @return Value of property hasSubject.
+     */
+    public boolean hasSubject() {
+        return hasSubject;
     }
 }

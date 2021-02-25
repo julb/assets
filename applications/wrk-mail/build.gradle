@@ -40,21 +40,11 @@ springBoot {
 
 bootBuildImage {
     environment = ["BP_JVM_VERSION" : "11.*"]
-    imageName = "docker.io/julb/${project.name}:${project.version}"
+    imageName = "julb/${project.name}:${project.version}"
 }
 
 bootJar {
     classifier = 'boot'
     mainClass = 'me.julb.Application'
     layered()
-}
-
-publishing {
-	publications {
-	    JavaPublication(MavenPublication) {
-	        from components.java
-            artifact distZip
-            artifact distTar
-	    }
-	}
 }

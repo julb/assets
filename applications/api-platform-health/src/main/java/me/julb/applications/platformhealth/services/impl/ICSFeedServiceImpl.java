@@ -88,7 +88,7 @@ public class ICSFeedServiceImpl implements ICSFeedService {
 
         // Build RSS feed.
         ICSFeedDTO icsFeed = new ICSFeedDTO();
-        icsFeed.setTitle(messageSourceService.getMessage("platform.health.ics.feed.planned-maintenances.title", new Object[] {tm}, locale));
+        icsFeed.setTitle(messageSourceService.getMessage("platform-health.ics.feed.planned-maintenances.title", new Object[] {tm}, locale));
 
         // Add items.
         String dateTimeThreshold = DateUtility.dateTimeMinus(Integers.ONE, ChronoUnit.YEARS);

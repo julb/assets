@@ -31,8 +31,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,13 +56,13 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
+import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecureApiKey;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
@@ -336,20 +334,6 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
     // ------------------------------------------ Utility methods.
 
     /**
-     * Generates a random reset token.
-     * @return a reset token.
-     */
-    protected String generateRandomKey() {
-        //@formatter:off
-        return new RandomStringGenerator.Builder()
-            .withinRange(new char[] {Chars.ZERO, Chars.NINE}, new char[] {Chars.A_LOWERCASE, Chars.Z_LOWERCASE})
-            .filteredBy(CharacterPredicates.DIGITS, CharacterPredicates.ASCII_LOWERCASE_LETTERS)
-            .build()
-            .generate(Integers.SIXTY_FOUR);
-        //@formatter:on
-    }
-
-    /**
      * Builds the API key.
      * @param userId the user ID.
      * @param apiKeyId the api key id.
@@ -357,7 +341,7 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
      */
     protected String buildApiKey(String userId, String apiKeyId) {
         String apiKeyIddUserId = StringUtils.join(apiKeyId, userId);
-        String key = generateRandomKey();
+        String key = RandomUtility.generateAlphaNumericToken(Integers.SIXTY_FOUR).toLowerCase();
 
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < Integers.SIXTY_FOUR; i++) {

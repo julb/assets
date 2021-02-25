@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
@@ -57,5 +58,6 @@ public class UserMailVerifyDTO {
     @NotNull
     @NotBlank
     @Size(min = 128, max = 128)
+    @Pattern(regexp = "^[a-zA-Z0-9]+$")
     private String verifyToken;
 }

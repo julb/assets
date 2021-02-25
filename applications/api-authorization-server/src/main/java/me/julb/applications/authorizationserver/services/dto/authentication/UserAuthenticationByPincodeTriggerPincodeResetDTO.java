@@ -24,8 +24,13 @@
 
 package me.julb.applications.authorizationserver.services.dto.authentication;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import me.julb.library.dto.simple.identifier.IdentifierDTO;
 
 /**
  * The DTO used to trigger a reset the pincode of an authentication.
@@ -35,4 +40,33 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserAuthenticationByPincodeTriggerPincodeResetDTO {
+
+    //@formatter:off
+     /**
+     * The recoveryChannelType attribute.
+     * -- GETTER --
+     * Getter for {@link #recoveryChannelType} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #recoveryChannelType} property.
+     * @param recoveryChannelType the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    private UserAuthenticationRecoveryChannelType recoveryChannelType;
+
+    //@formatter:off
+     /**
+     * The recoveryChannelDevice attribute.
+     * -- GETTER --
+     * Getter for {@link #recoveryChannelDevice} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #recoveryChannelDevice} property.
+     * @param recoveryChannelDevice the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @Valid
+    private IdentifierDTO recoveryChannelDevice;
 }

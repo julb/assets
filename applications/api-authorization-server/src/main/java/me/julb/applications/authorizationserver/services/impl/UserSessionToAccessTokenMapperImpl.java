@@ -45,10 +45,12 @@ import me.julb.applications.authorizationserver.configurations.properties.Applic
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
 import me.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
+import me.julb.applications.authorizationserver.entities.preferences.UserPreferencesEntity;
 import me.julb.applications.authorizationserver.entities.profile.UserProfileEntity;
 import me.julb.applications.authorizationserver.entities.session.UserSessionEntity;
 import me.julb.applications.authorizationserver.repositories.UserMailRepository;
 import me.julb.applications.authorizationserver.repositories.UserMobilePhoneRepository;
+import me.julb.applications.authorizationserver.repositories.UserPreferencesRepository;
 import me.julb.applications.authorizationserver.repositories.UserProfileRepository;
 import me.julb.applications.authorizationserver.services.UserSessionToAccessTokenMapper;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
@@ -93,6 +95,12 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
      */
     @Autowired
     private UserMobilePhoneRepository userMobilePhoneRepository;
+
+    /**
+     * The user preferences repository.
+     */
+    @Autowired
+    private UserPreferencesRepository userPreferencesRepository;
 
     /**
      * The application properties.
@@ -144,6 +152,7 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
         UserProfileEntity userProfile = userProfileRepository.findByTmAndUser_Id(tm, user.getId());
         UserMailEntity userMail = userMailRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId());
         UserMobilePhoneEntity userMobilePhone = userMobilePhoneRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId());
+        UserPreferencesEntity userPreferences = userPreferencesRepository.findByTmAndUser_Id(tm, user.getId());
 
         String expirationDateTime = DateUtility.dateTimePlus(accessTokenJwtForgery.getValidityInSeconds().intValue(), ChronoUnit.SECONDS);
 
@@ -164,7 +173,7 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
             .claim(JWTClaims.PREFERRED_USERNAME, userProfile.getDisplayName())
             .claim(JWTClaims.GIVEN_NAME, userProfile.getFirstName())
             .claim(JWTClaims.FAMILY_NAME, userProfile.getLastName())
-            .claim(JWTClaims.LOCALE, "en-US") // FIXME
+            .claim(JWTClaims.LOCALE, userPreferences.getLanguage().toLanguageTag())
             .claim(JWTClaims.PICTURE_URL, "https://www.avatar.com") //FIXME
             .claim(JWTClaims.WEBSITE_URL, userProfile.getWebsiteUrl())
             .claim(JWTClaims.MAIL, userMail.getMail())

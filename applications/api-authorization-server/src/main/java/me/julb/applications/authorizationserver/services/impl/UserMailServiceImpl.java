@@ -31,11 +31,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +42,9 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
+import me.julb.applications.authorizationserver.entities.preferences.UserPreferencesEntity;
 import me.julb.applications.authorizationserver.repositories.UserMailRepository;
+import me.julb.applications.authorizationserver.repositories.UserPreferencesRepository;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
 import me.julb.applications.authorizationserver.repositories.specifications.ObjectBelongsToUserIdSpecification;
 import me.julb.applications.authorizationserver.services.UserMailService;
@@ -60,16 +58,18 @@ import me.julb.applications.authorizationserver.services.exceptions.InvalidMailV
 import me.julb.applications.authorizationserver.services.exceptions.MailVerifyTokenExpiredException;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.utility.constants.Chars;
-import me.julb.library.utility.constants.Integers;
+import me.julb.library.dto.notification.events.NotificationKind;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
+import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -85,22 +85,27 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
  * @author Julb.
  */
 @Service
-@Slf4j
 @Validated
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 public class UserMailServiceImpl implements UserMailService {
 
     /**
-     * The item repository.
+     * The user repository.
      */
     @Autowired
     private UserRepository userRepository;
 
     /**
-     * The item repository.
+     * The user mail repository.
      */
     @Autowired
     private UserMailRepository userMailRepository;
+
+    /**
+     * The user preferences repository.
+     */
+    @Autowired
+    private UserPreferencesRepository userPreferencesRepository;
 
     /**
      * The mapper.
@@ -119,6 +124,12 @@ public class UserMailServiceImpl implements UserMailService {
      */
     @Autowired
     private AsyncMessagePosterService asyncMessagePosterService;
+
+    /**
+     * The config source service.
+     */
+    @Autowired
+    private ConfigSourceService configSourceService;
 
     /**
      * The password encoder.
@@ -333,18 +344,43 @@ public class UserMailServiceImpl implements UserMailService {
             throw new ResourceNotFoundException(UserMailEntity.class, id);
         }
 
+        // Check that the item exists
+        UserPreferencesEntity preferences = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
+        if (preferences == null) {
+            throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
+        }
+
         if (!existing.getVerified()) {
             // Trigger verification.
-            String verifyToken = generateRandomVerifyToken();
+            String verifyToken = RandomUtility.generateRandomTokenForMailPurpose();
 
             // Enable the reset.
             existing.setUser(user);
             existing.setSecuredMailVerifyToken(passwordEncoderService.encode(verifyToken));
-            existing.setMailVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(Integers.TWO, ChronoUnit.HOURS));
+
+            // Compute expiry.
+            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mail.verify.expiry.value"));
+            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mail.verify.expiry.chrono-unit"));
+            existing.setMailVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
+
             this.onUpdate(existing);
 
-            // FIXME Send notification => PLACE HOLDER TO SEND TOKEN
-            LOGGER.info("*** SIMULATE SEND NOTIF: {}, {}", existing.getId(), verifyToken);
+            //@formatter:off
+            asyncMessagePosterService.postNotificationMessage(
+                new NotificationDispatchAsyncMessageBuilder()
+                    .tm(tm)
+                    .kind(NotificationKind.TRIGGER_MAIL_VERIFY)
+                    .parameter("userId", existing.getUser().getId())
+                    .parameter("userMailId", existing.getId())
+                    .parameter("userMail", existing.getMail())
+                    .parameter("verifyToken", verifyToken)
+                    .parameter("expiryDateTime", existing.getMailVerifyTokenExpiryDateTime())
+                    .mail()
+                        .to(existing.getMail(), preferences.getLanguage())
+                    .and()
+                .build()
+            );
+            //@formatter:on
         }
 
         UserMailEntity result = userMailRepository.save(existing);
@@ -465,21 +501,6 @@ public class UserMailServiceImpl implements UserMailService {
     }
 
     // ------------------------------------------ Utility methods.
-
-    /**
-     * Generates a random verify token.
-     * @return a verify token.
-     */
-    protected String generateRandomVerifyToken() {
-        // Generate an URI.
-        //@formatter:off
-            return new RandomStringGenerator.Builder()
-                .withinRange(new char[] {Chars.ZERO, Chars.NINE}, new char[] {Chars.A_LOWERCASE, Chars.Z_LOWERCASE}, new char[] {Chars.A_UPPERCASE, Chars.Z_UPPERCASE})
-                .filteredBy(CharacterPredicates.DIGITS, CharacterPredicates.ASCII_LETTERS)
-                .build()
-                .generate(Integers.ONE_HUNDRED_TWENTY_EIGHT);
-            //@formatter:on
-    }
 
     // ------------------------------------------ Private methods.
 

@@ -31,7 +31,7 @@ package me.julb.library.utility.enums;
  */
 public enum TemplatingMode {
 
-    TEXT("txt"), HTML("html");
+    TEXT("txt"), HTML("html"), NONE(null);
 
     /**
      * The file extension.

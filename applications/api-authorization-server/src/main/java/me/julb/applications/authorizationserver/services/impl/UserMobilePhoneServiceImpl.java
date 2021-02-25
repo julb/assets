@@ -35,11 +35,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +46,9 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
+import me.julb.applications.authorizationserver.entities.preferences.UserPreferencesEntity;
 import me.julb.applications.authorizationserver.repositories.UserMobilePhoneRepository;
+import me.julb.applications.authorizationserver.repositories.UserPreferencesRepository;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
 import me.julb.applications.authorizationserver.repositories.specifications.ObjectBelongsToUserIdSpecification;
 import me.julb.applications.authorizationserver.services.UserMobilePhoneService;
@@ -63,17 +61,19 @@ import me.julb.applications.authorizationserver.services.exceptions.InvalidMobil
 import me.julb.applications.authorizationserver.services.exceptions.MobilePhoneVerifyTokenExpiredException;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.utility.constants.Chars;
-import me.julb.library.utility.constants.Integers;
+import me.julb.library.dto.notification.events.NotificationKind;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.InternalServerErrorException;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
+import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -89,7 +89,6 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
  * @author Julb.
  */
 @Service
-@Slf4j
 @Validated
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
 public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
@@ -105,6 +104,12 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      */
     @Autowired
     private UserMobilePhoneRepository userMobilePhoneRepository;
+
+    /**
+     * The user preferences repository.
+     */
+    @Autowired
+    private UserPreferencesRepository userPreferencesRepository;
 
     /**
      * The mapper.
@@ -123,6 +128,12 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      */
     @Autowired
     private AsyncMessagePosterService asyncMessagePosterService;
+
+    /**
+     * The config source service.
+     */
+    @Autowired
+    private ConfigSourceService configSourceService;
 
     /**
      * The password encoder.
@@ -292,18 +303,43 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
             throw new ResourceNotFoundException(UserMobilePhoneEntity.class, id);
         }
 
+        // Check that the item exists
+        UserPreferencesEntity preferences = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
+        if (preferences == null) {
+            throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
+        }
+
         if (!existing.getVerified()) {
             // Trigger verification.
-            String verifyToken = generateRandomVerifyToken();
+            String verifyToken = RandomUtility.generateRandomTokenForMobilePhonePurpose();
 
             // Enable the reset.
             existing.setUser(user);
             existing.setSecuredMobilePhoneVerifyToken(passwordEncoderService.encode(verifyToken));
-            existing.setMobilePhoneVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(Integers.TWO, ChronoUnit.HOURS));
+
+            // Compute expiry.
+            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.verify.expiry.value"));
+            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.verify.expiry.chrono-unit"));
+            existing.setMobilePhoneVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
+
             this.onUpdate(existing);
 
-            // FIXME Send notification => PLACE HOLDER TO SEND TOKEN
-            LOGGER.info("*** SIMULATE SEND NOTIF: {}, {}", existing.getId(), verifyToken);
+            //@formatter:off
+            asyncMessagePosterService.postNotificationMessage(
+                new NotificationDispatchAsyncMessageBuilder()
+                    .tm(tm)
+                    .kind(NotificationKind.TRIGGER_MOBILE_PHONE_VERIFY)
+                    .parameter("userId", existing.getUser().getId())
+                    .parameter("userMobilePhoneId", existing.getId())
+                    .parameter("userMobilePhoneE164Number", existing.getMobilePhone().getE164Number())
+                    .parameter("verifyToken", verifyToken)
+                    .parameter("expiryDateTime", existing.getMobilePhoneVerifyTokenExpiryDateTime())
+                    .sms()
+                        .to(existing.getMobilePhone().getE164Number(), preferences.getLanguage())
+                    .and()
+                .build()
+            );
+            //@formatter:on
         }
 
         UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
@@ -385,21 +421,6 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
     }
 
     // ------------------------------------------ Utility methods.
-
-    /**
-     * Generates a random verify token.
-     * @return a verify token.
-     */
-    protected String generateRandomVerifyToken() {
-        // Generate an URI.
-        //@formatter:off
-            return new RandomStringGenerator.Builder()
-                .withinRange(new char[] {Chars.ZERO, Chars.NINE}, new char[] {Chars.A_LOWERCASE, Chars.Z_LOWERCASE}, new char[] {Chars.A_UPPERCASE, Chars.Z_UPPERCASE})
-                .filteredBy(CharacterPredicates.DIGITS, CharacterPredicates.ASCII_LETTERS)
-                .build()
-                .generate(Integers.ONE_HUNDRED_TWENTY_EIGHT);
-            //@formatter:on
-    }
 
     // ------------------------------------------ Private methods.
 

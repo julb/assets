@@ -32,8 +32,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,8 +42,14 @@ import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByPincodeEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByTotpEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
+import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
+import me.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
+import me.julb.applications.authorizationserver.entities.preferences.UserPreferencesEntity;
 import me.julb.applications.authorizationserver.repositories.UserAuthenticationByPincodeRepository;
 import me.julb.applications.authorizationserver.repositories.UserAuthenticationByTotpRepository;
+import me.julb.applications.authorizationserver.repositories.UserMailRepository;
+import me.julb.applications.authorizationserver.repositories.UserMobilePhoneRepository;
+import me.julb.applications.authorizationserver.repositories.UserPreferencesRepository;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
 import me.julb.applications.authorizationserver.services.UserAuthenticationByPincodeService;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeCreationDTO;
@@ -56,21 +60,25 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeTriggerPincodeResetDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeUpdateDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
+import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationRecoveryChannelType;
 import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.applications.authorizationserver.services.exceptions.InvalidPincodeException;
 import me.julb.applications.authorizationserver.services.exceptions.InvalidPincodeResetTokenException;
 import me.julb.applications.authorizationserver.services.exceptions.PincodeResetTokenExpiredException;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.utility.constants.Chars;
+import me.julb.library.dto.notification.events.NotificationKind;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
+import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
@@ -92,6 +100,24 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      */
     @Autowired
     private UserRepository userRepository;
+
+    /**
+     * The user mail repository.
+     */
+    @Autowired
+    private UserMailRepository userMailRepository;
+
+    /**
+     * The item repository.
+     */
+    @Autowired
+    private UserMobilePhoneRepository userMobilePhoneRepository;
+
+    /**
+     * The user preferences repository.
+     */
+    @Autowired
+    private UserPreferencesRepository userPreferencesRepository;
 
     /**
      * The user authentication repository.
@@ -122,6 +148,12 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      */
     @Autowired
     private AsyncMessagePosterService asyncMessagePosterService;
+
+    /**
+     * The config source service.
+     */
+    @Autowired
+    private ConfigSourceService configSourceService;
 
     /**
      * The password encoder.
@@ -300,20 +332,87 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
         }
 
         // Check that the item exists
-        UserAuthenticationByPincodeEntity existing = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE);
+        UserAuthenticationByPincodeEntity existing = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
         if (existing == null) {
             throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
         }
 
+        // Check that the item exists
+        UserPreferencesEntity preferences = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
+        if (preferences == null) {
+            throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
+        }
+
         // Generate a pincode reset token
-        String pincodeResetToken = generateRandomResetToken();
+        if (UserAuthenticationRecoveryChannelType.MAIL.equals(triggerPincodeResetDTO.getRecoveryChannelType())) {
+            // Find the mail.
+            UserMailEntity userMailEntity = userMailRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
+            if (userMailEntity == null) {
+                throw new ResourceNotFoundException(UserMailEntity.class, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
+            }
 
-        // Enable the reset.
-        existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
-        existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(Integers.TWO, ChronoUnit.HOURS));
-        this.onUpdate(existing);
+            // Generate token for mail purpose.
+            String pincodeResetToken = RandomUtility.generateRandomTokenForMailPurpose();
 
-        // FIXME Send notification => PLACE HOLDER TO SEND TOKEN
+            // Update entity.
+            existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
+
+            // Manage expiry
+            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mail.pincode-reset.expiry.value"));
+            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mail.pincode-reset.expiry.chrono-unit"));
+            existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
+
+            this.onUpdate(existing);
+
+            //@formatter:off
+            asyncMessagePosterService.postNotificationMessage(
+                new NotificationDispatchAsyncMessageBuilder()
+                    .tm(tm)
+                    .kind(NotificationKind.TRIGGER_PINCODE_RESET_WITH_MAIL)
+                    .parameter("userMail", userMailEntity.getMail())
+                    .parameter("resetToken", pincodeResetToken)
+                    .parameter("expiryDateTime", existing.getPincodeResetTokenExpiryDateTime())
+                    .sms()
+                        .to(userMailEntity.getMail(), preferences.getLanguage())
+                    .and()
+                .build()
+            );
+            //@formatter:on
+        } else if (UserAuthenticationRecoveryChannelType.MOBILE_PHONE.equals(triggerPincodeResetDTO.getRecoveryChannelType())) {
+            // Find the mail.
+            UserMobilePhoneEntity userMobilePhoneEntity = userMobilePhoneRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
+            if (userMobilePhoneEntity == null) {
+                throw new ResourceNotFoundException(UserMobilePhoneEntity.class, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
+            }
+
+            // Generate token for mobilePhone purpose.
+            String pincodeResetToken = RandomUtility.generateRandomTokenForMobilePhonePurpose();
+
+            // Update entity.
+            existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
+
+            // Manage expiry
+            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.pincode-reset.expiry.value"));
+            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.pincode-reset.expiry.chrono-unit"));
+            existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
+
+            this.onUpdate(existing);
+
+            //@formatter:off
+            asyncMessagePosterService.postNotificationMessage(
+                new NotificationDispatchAsyncMessageBuilder()
+                    .tm(tm)
+                    .kind(NotificationKind.TRIGGER_PINCODE_RESET_WITH_MOBILE_PHONE)
+                    .parameter("userMobilePhoneE164Number", userMobilePhoneEntity.getMobilePhone().getE164Number())
+                    .parameter("resetToken", pincodeResetToken)
+                    .parameter("expiryDateTime", existing.getPincodeResetTokenExpiryDateTime())
+                    .sms()
+                        .to(userMobilePhoneEntity.getMobilePhone().getE164Number(), preferences.getLanguage())
+                    .and()
+                .build()
+            );
+            //@formatter:on
+        }
 
         UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(existing);
         return mappingService.map(result, UserAuthenticationByPincodeDTO.class);
@@ -407,21 +506,6 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
     }
 
     // ------------------------------------------ Utility methods.
-
-    /**
-     * Generates a random reset token.
-     * @return a reset token.
-     */
-    protected String generateRandomResetToken() {
-        // Generate an URI.
-        //@formatter:off
-            return new RandomStringGenerator.Builder()
-                .withinRange(new char[] {Chars.ZERO, Chars.NINE}, new char[] {Chars.A_LOWERCASE, Chars.Z_LOWERCASE}, new char[] {Chars.A_UPPERCASE, Chars.Z_UPPERCASE})
-                .filteredBy(CharacterPredicates.DIGITS, CharacterPredicates.ASCII_LETTERS)
-                .build()
-                .generate(Integers.ONE_HUNDRED_TWENTY_EIGHT);
-            //@formatter:on
-    }
 
     /**
      * Updates the pincode of the user.

@@ -24,6 +24,8 @@
 
 package me.julb.applications.authorizationserver.services.dto.preferences;
 
+import java.util.Locale;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,4 +37,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserPreferencesUpdateDTO {
+
+    //@formatter:off
+     /**
+     * The language attribute.
+     * -- GETTER --
+     * Getter for {@link #language} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #language} property.
+     * @param language the value to set.
+     */
+     //@formatter:on
+    private Locale language;
 }

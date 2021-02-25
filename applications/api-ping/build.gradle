@@ -36,22 +36,40 @@ springBoot {
 }
 
 bootBuildImage {
-    environment = ["BP_JVM_VERSION" : "11.*"]
-    imageName = "docker.io/julb/${project.name}:${project.version}"
+    // Image name.
+    //imageName = "${docker.namespace}/${project.name}:${docker.tag}"
+    
+    // Environment.
+    environment = [
+        "BP_JVM_VERSION" : "11.*"
+    ]
+        /*
+        BP_IMAGE_LABELS:
+        me.julb.end-of-support
+        me.julb.technology
+        me.julb.category
+        me.julb.embedded-features
+        me.julb.description
+        */
+    
+    // Docker creds.
+    docker {
+        builderRegistry {
+            username = System.getProperty('docker.builderRegistry.username')
+            password = System.getProperty('docker.builderRegistry.password')
+            url = System.getProperty('docker.builderRegistry.url', 'docker.io')
+        }
+        
+        publishRegistry {
+            username = System.getProperty('docker.publishRegistry.username')
+            password = System.getProperty('docker.publishRegistry.password')
+            url = System.getProperty('docker.publishRegistry.url', 'docker.io')
+        }
+    }
 }
 
 bootJar {
     classifier = 'boot'
     mainClass = 'me.julb.Application'
     layered()
-}
-
-publishing {
-	publications {
-	    JavaPublication(MavenPublication) {
-	        from components.java
-            artifact distZip
-            artifact distTar
-	    }
-	}
 }

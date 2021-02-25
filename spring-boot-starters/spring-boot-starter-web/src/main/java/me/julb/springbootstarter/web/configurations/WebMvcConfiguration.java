@@ -39,7 +39,6 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.BufferedImageHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -50,7 +49,6 @@ import me.julb.springbootstarter.security.configurations.SecurityConfiguration;
 import me.julb.springbootstarter.web.configurations.beans.CorsProperties;
 import me.julb.springbootstarter.web.filters.RequestLoggingWebContentInterceptor;
 import me.julb.springbootstarter.web.filters.TrademarkFilter;
-import me.julb.springbootstarter.web.resolvers.locale.CustomLocaleContextResolver;
 import me.julb.springbootstarter.web.resolvers.page.CustomPageableHandlerMethodArgumentResolver;
 import me.julb.springbootstarter.web.resolvers.page.CustomSortHandlerMethodArgumentResolver;
 import me.julb.springbootstarter.web.resolvers.search.CustomSearchableHandlerMethodArgumentResolver;
@@ -70,15 +68,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
      */
     @Autowired
     private CorsProperties cors;
-
-    /**
-     * Create a locale resolver for the application.
-     * @return the locale resolver.
-     */
-    @Bean
-    public LocaleResolver localeResolver() {
-        return new CustomLocaleContextResolver();
-    }
 
     /**
      * Builds a filter to intercept trademark.
