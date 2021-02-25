@@ -182,6 +182,7 @@ me.julb.library.utility.josejwt.jwk.impl
 me.julb.library.utility.josejwt.keyloader
 me.julb.library.utility.josejwt.operations
 me.julb.library.utility.otp
+me.julb.library.utility.random
 me.julb.library.utility.size
 me.julb.library.utility.validator.constraints
 me.julb.library.utility.validator.validators
@@ -234,9 +235,11 @@ me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto
 me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.impl
 me.julb.springbootstarter.persistence.core.specifications
 me.julb.springbootstarter.persistence.jpa.configurations
+me.julb.springbootstarter.persistence.jpa.converters
 me.julb.springbootstarter.persistence.jpa.specifications
 me.julb.springbootstarter.persistence.mongodb.configurations
 me.julb.springbootstarter.persistence.mongodb.configurations.support
+me.julb.springbootstarter.persistence.mongodb.converters
 me.julb.springbootstarter.persistence.mongodb.repositories
 me.julb.springbootstarter.persistence.mongodb.specifications
 me.julb.springbootstarter.persistence.mongodb.test.base

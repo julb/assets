@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -246,13 +246,6 @@ implements <a href="../UserMailService.html" title="interface in me.julb.applica
 </td>
 </tr>
 <tr id="i8" class="altColor">
-<td class="colFirst"><code>protected java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#generateRandomVerifyToken()">generateRandomVerifyToken</a></span>()</code></th>
-<td class="colLast">
-<div class="block">Generates a random verify token.</div>
-</td>
-</tr>
-<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../dto/mail/UserMailDTO.html" title="class in me.julb.applications.authorizationserver.services.dto.mail">UserMailDTO</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#patch(java.lang.String,java.lang.String,me.julb.applications.authorizationserver.services.dto.mail.UserMailPatchDTO)">patch</a></span>&#8203;(@NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;userId,
      @NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;id,
@@ -261,7 +254,7 @@ implements <a href="../UserMailService.html" title="interface in me.julb.applica
 <div class="block">Patches a mail.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../dto/mail/UserMailDTO.html" title="class in me.julb.applications.authorizationserver.services.dto.mail">UserMailDTO</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#triggerMailVerify(java.lang.String,java.lang.String)">triggerMailVerify</a></span>&#8203;(@NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;userId,
                  @NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;id)</code></th>
@@ -269,7 +262,7 @@ implements <a href="../UserMailService.html" title="interface in me.julb.applica
 <div class="block">Triggers a mail verification process.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../dto/mail/UserMailDTO.html" title="class in me.julb.applications.authorizationserver.services.dto.mail">UserMailDTO</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#update(java.lang.String,java.lang.String,me.julb.applications.authorizationserver.services.dto.mail.UserMailUpdateDTO)">update</a></span>&#8203;(@NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;userId,
       @NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;id,
@@ -278,7 +271,7 @@ implements <a href="../UserMailService.html" title="interface in me.julb.applica
 <div class="block">Updates a mail.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../dto/mail/UserMailDTO.html" title="class in me.julb.applications.authorizationserver.services.dto.mail">UserMailDTO</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updateVerify(java.lang.String,java.lang.String,me.julb.applications.authorizationserver.services.dto.mail.UserMailVerifyDTO)">updateVerify</a></span>&#8203;(@NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;userId,
             @NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;id,
@@ -287,7 +280,7 @@ implements <a href="../UserMailService.html" title="interface in me.julb.applica
 <div class="block">Verify the mail.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../dto/mail/UserMailDTO.html" title="class in me.julb.applications.authorizationserver.services.dto.mail">UserMailDTO</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updateVerifyWithoutToken(java.lang.String,java.lang.String)">updateVerifyWithoutToken</a></span>&#8203;(@NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;userId,
                         @NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;id)</code></th>
@@ -623,7 +616,7 @@ public&nbsp;<a href="../dto/mail/UserMailDTO.html" title="class in me.julb.appli
 <a id="delete(java.lang.String,java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>delete</h4>
 <pre class="methodSignature">@Transactional(readOnly=false,
@@ -640,20 +633,6 @@ public&nbsp;void&nbsp;delete&#8203;(@NotNull <a href="../../../../library/utilit
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>userId</code> - the user identifier.</dd>
 <dd><code>id</code> - the id of the mail to delete.</dd>
-</dl>
-</li>
-</ul>
-<a id="generateRandomVerifyToken()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>generateRandomVerifyToken</h4>
-<pre class="methodSignature">protected&nbsp;java.lang.String&nbsp;generateRandomVerifyToken()</pre>
-<div class="block">Generates a random verify token.</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a verify token.</dd>
 </dl>
 </li>
 </ul>

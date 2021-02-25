@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -185,6 +185,15 @@ extends org.springframework.data.mongodb.repository.MongoRepository&lt;<a href="
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../entities/mail/UserMailEntity.html" title="class in me.julb.applications.authorizationserver.entities.mail">UserMailEntity</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findByTmAndUser_IdAndIdAndVerifiedIsTrue(java.lang.String,java.lang.String,java.lang.String)">findByTmAndUser_IdAndIdAndVerifiedIsTrue</a></span>&#8203;(java.lang.String&nbsp;tm,
+                                        java.lang.String&nbsp;userId,
+                                        java.lang.String&nbsp;id)</code></th>
+<td class="colLast">
+<div class="block">Finds an user mail by trademark and id.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="../entities/mail/UserMailEntity.html" title="class in me.julb.applications.authorizationserver.entities.mail">UserMailEntity</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#findByTmAndUser_IdAndPrimaryIsTrue(java.lang.String,java.lang.String)">findByTmAndUser_IdAndPrimaryIsTrue</a></span>&#8203;(java.lang.String&nbsp;tm,
                                   java.lang.String&nbsp;userId)</code></th>
 <td class="colLast">
@@ -320,7 +329,7 @@ extends org.springframework.data.mongodb.repository.MongoRepository&lt;<a href="
 <a id="findByTmAndMailIgnoreCaseAndVerifiedIsTrue(java.lang.String,java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>findByTmAndMailIgnoreCaseAndVerifiedIsTrue</h4>
 <pre class="methodSignature"><a href="../entities/mail/UserMailEntity.html" title="class in me.julb.applications.authorizationserver.entities.mail">UserMailEntity</a>&nbsp;findByTmAndMailIgnoreCaseAndVerifiedIsTrue&#8203;(java.lang.String&nbsp;tm,
@@ -332,6 +341,26 @@ extends org.springframework.data.mongodb.repository.MongoRepository&lt;<a href="
 <dd><code>mail</code> - the mail address.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the user mail.</dd>
+</dl>
+</li>
+</ul>
+<a id="findByTmAndUser_IdAndIdAndVerifiedIsTrue(java.lang.String,java.lang.String,java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>findByTmAndUser_IdAndIdAndVerifiedIsTrue</h4>
+<pre class="methodSignature"><a href="../entities/mail/UserMailEntity.html" title="class in me.julb.applications.authorizationserver.entities.mail">UserMailEntity</a>&nbsp;findByTmAndUser_IdAndIdAndVerifiedIsTrue&#8203;(java.lang.String&nbsp;tm,
+                                                        java.lang.String&nbsp;userId,
+                                                        java.lang.String&nbsp;id)</pre>
+<div class="block">Finds an user mail by trademark and id.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>tm</code> - the trademark.</dd>
+<dd><code>userId</code> - the user ID.</dd>
+<dd><code>id</code> - the id.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the user mail, or <code>null</code> if not exists.</dd>
 </dl>
 </li>
 </ul>
