@@ -24,6 +24,8 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
+import java.util.List;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import me.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
@@ -43,6 +45,14 @@ public interface UserMobilePhoneRepository extends MongoRepository<UserMobilePho
      * @return the user mail, or <code>null</code> if not exists.
      */
     UserMobilePhoneEntity findByTmAndUser_IdAndPrimaryIsTrue(String tm, String userId);
+
+    /**
+     * Finds verified user mobile phones by trademark and id.
+     * @param tm the trademark.
+     * @param userId the user ID.
+     * @return the verified user mobile phones, or <code>null</code> if not exists.
+     */
+    List<UserMobilePhoneEntity> findByTmAndUser_IdAndVerifiedIsTrue(String tm, String userId);
 
     /**
      * Finds an user mobile phone by trademark and id.

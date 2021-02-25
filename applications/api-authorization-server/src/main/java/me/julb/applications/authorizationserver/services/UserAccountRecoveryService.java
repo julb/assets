@@ -22,37 +22,31 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.authorizationserver.services.dto.authentication;
+package me.julb.applications.authorizationserver.services;
 
-import javax.validation.Valid;
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceRefDTO;
+import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
+import me.julb.library.utility.validator.constraints.Identifier;
 
 /**
- * The DTO used to trigger a reset the pincode of an authentication.
+ * The user account recovery service.
  * <P>
  * @author Julb.
  */
-@Getter
-@Setter
-public class UserAuthenticationByPincodeTriggerPincodeResetDTO {
+public interface UserAccountRecoveryService {
 
-    //@formatter:off
-     /**
-     * The recoveryChannelDevice attribute.
-     * -- GETTER --
-     * Getter for {@link #recoveryChannelDevice} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #recoveryChannelDevice} property.
-     * @param recoveryChannelDevice the value to set.
+    // ------------------------------------------ Read methods.
+
+    /**
+     * Gets the available recovery channel devices for a user.
+     * @param userId the user identifier.
+     * @return a list of recovery channel devices.
      */
-     //@formatter:on
-    @NotNull
-    @Valid
-    private RecoveryChannelDeviceRefDTO recoveryChannelDevice;
+    List<RecoveryChannelDeviceDTO> findAll(@NotNull @Identifier String userId);
+
+    // ------------------------------------------ Write methods.
+
 }

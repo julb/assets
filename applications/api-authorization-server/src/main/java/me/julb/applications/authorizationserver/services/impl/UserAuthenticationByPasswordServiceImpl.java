@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordTriggerPasswordResetDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordUpdateDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationRecoveryChannelType;
+import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelType;
 import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.applications.authorizationserver.services.exceptions.InvalidPasswordException;
 import me.julb.applications.authorizationserver.services.exceptions.InvalidPasswordResetTokenException;
@@ -70,6 +71,7 @@ import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.notification.events.NotificationKind;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
+import me.julb.library.utility.exceptions.BadRequestException;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
@@ -343,8 +345,14 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
             throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
         }
 
+        // Assert the recovery channel is supported.
+        RecoveryChannelType[] supportedRecoveryChannelTypes = configSourceService.getTypedProperty("authorization-server.account-recovery.channel-types", RecoveryChannelType[].class);
+        if (!ArrayUtils.contains(supportedRecoveryChannelTypes, triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
+            throw new BadRequestException();
+        }
+
         // Generate a password reset token
-        if (UserAuthenticationRecoveryChannelType.MAIL.equals(triggerPasswordResetDTO.getRecoveryChannelType())) {
+        if (RecoveryChannelType.MAIL.equals(triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
             // Find the mail.
             UserMailEntity userMailEntity = userMailRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPasswordResetDTO.getRecoveryChannelDevice().getId());
             if (userMailEntity == null) {
@@ -358,8 +366,8 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
             existing.setSecuredPasswordResetToken(passwordEncoderService.encode(passwordResetToken));
 
             // Compute expiry.
-            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mail.password-reset.expiry.value"));
-            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mail.password-reset.expiry.chrono-unit"));
+            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mail.password-reset.expiry.value", Integer.class);
+            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mail.password-reset.expiry.chrono-unit", ChronoUnit.class);
             existing.setPasswordResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
 
             this.onUpdate(existing);
@@ -378,7 +386,7 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
                 .build()
             );
             //@formatter:on
-        } else if (UserAuthenticationRecoveryChannelType.MOBILE_PHONE.equals(triggerPasswordResetDTO.getRecoveryChannelType())) {
+        } else if (RecoveryChannelType.MOBILE_PHONE.equals(triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
             // Find the mail.
             UserMobilePhoneEntity userMobilePhoneEntity = userMobilePhoneRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPasswordResetDTO.getRecoveryChannelDevice().getId());
             if (userMobilePhoneEntity == null) {
@@ -392,8 +400,8 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
             existing.setSecuredPasswordResetToken(passwordEncoderService.encode(passwordResetToken));
 
             // Manage expiry
-            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.password-reset.expiry.value"));
-            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.password-reset.expiry.chrono-unit"));
+            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mobile-phone.password-reset.expiry.value", Integer.class);
+            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mobile-phone.password-reset.expiry.chrono-unit", ChronoUnit.class);
             existing.setPasswordResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
 
             this.onUpdate(existing);

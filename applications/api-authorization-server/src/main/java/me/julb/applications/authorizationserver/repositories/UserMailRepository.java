@@ -24,6 +24,8 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
+import java.util.List;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
@@ -76,6 +78,14 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @return the user mail.
      */
     UserMailEntity findByTmAndMailIgnoreCaseAndVerifiedIsTrue(String tm, String mail);
+
+    /**
+     * Finds verified user mails by trademark and id.
+     * @param tm the trademark.
+     * @param userId the user ID.
+     * @return the verified user mails, or <code>null</code> if not exists.
+     */
+    List<UserMailEntity> findByTmAndUser_IdAndVerifiedIsTrue(String tm, String userId);
 
     /**
      * Finds an user mail by trademark and id.

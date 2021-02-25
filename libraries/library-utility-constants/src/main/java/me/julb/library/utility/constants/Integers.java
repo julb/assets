@@ -77,6 +77,16 @@ public class Integers {
     public static final int EIGHT = 8;
 
     /**
+     * The '9' value.
+     */
+    public static final int NINE = 9;
+
+    /**
+     * The '10' value.
+     */
+    public static final int TEN = 10;
+
+    /**
      * The '30' value.
      */
     public static final int THIRTY = 30;

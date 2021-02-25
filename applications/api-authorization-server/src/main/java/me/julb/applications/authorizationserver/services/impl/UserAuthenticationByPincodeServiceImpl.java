@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeTriggerPincodeResetDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeUpdateDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationRecoveryChannelType;
+import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelType;
 import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.applications.authorizationserver.services.exceptions.InvalidPincodeException;
 import me.julb.applications.authorizationserver.services.exceptions.InvalidPincodeResetTokenException;
@@ -70,6 +71,7 @@ import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.notification.events.NotificationKind;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
+import me.julb.library.utility.exceptions.BadRequestException;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
@@ -343,8 +345,14 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
             throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
         }
 
+        // Assert the recovery channel is supported.
+        RecoveryChannelType[] supportedRecoveryChannelTypes = configSourceService.getTypedProperty("authorization-server.account-recovery.channel-types", RecoveryChannelType[].class);
+        if (!ArrayUtils.contains(supportedRecoveryChannelTypes, triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
+            throw new BadRequestException();
+        }
+
         // Generate a pincode reset token
-        if (UserAuthenticationRecoveryChannelType.MAIL.equals(triggerPincodeResetDTO.getRecoveryChannelType())) {
+        if (RecoveryChannelType.MAIL.equals(triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
             // Find the mail.
             UserMailEntity userMailEntity = userMailRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
             if (userMailEntity == null) {
@@ -358,8 +366,8 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
             existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
 
             // Manage expiry
-            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mail.pincode-reset.expiry.value"));
-            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mail.pincode-reset.expiry.chrono-unit"));
+            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mail.pincode-reset.expiry.value", Integer.class);
+            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mail.pincode-reset.expiry.chrono-unit", ChronoUnit.class);
             existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
 
             this.onUpdate(existing);
@@ -378,7 +386,7 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
                 .build()
             );
             //@formatter:on
-        } else if (UserAuthenticationRecoveryChannelType.MOBILE_PHONE.equals(triggerPincodeResetDTO.getRecoveryChannelType())) {
+        } else if (RecoveryChannelType.MOBILE_PHONE.equals(triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
             // Find the mail.
             UserMobilePhoneEntity userMobilePhoneEntity = userMobilePhoneRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
             if (userMobilePhoneEntity == null) {
@@ -392,8 +400,8 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
             existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
 
             // Manage expiry
-            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.pincode-reset.expiry.value"));
-            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.pincode-reset.expiry.chrono-unit"));
+            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mobile-phone.pincode-reset.expiry.value", Integer.class);
+            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mobile-phone.pincode-reset.expiry.chrono-unit", ChronoUnit.class);
             existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
 
             this.onUpdate(existing);

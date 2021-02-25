@@ -22,22 +22,56 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.authorizationserver.services.dto.authentication;
+package me.julb.applications.authorizationserver.services.dto.recovery;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import me.julb.library.utility.validator.constraints.Identifier;
 
 /**
- * The channel to reset the authentication.
+ * The DTO representing a channel device.
  * <P>
  * @author Julb.
  */
-public enum UserAuthenticationRecoveryChannelType {
-    /**
-     * The mail channel.
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class RecoveryChannelDeviceRefDTO {
+    //@formatter:off
+     /**
+     * The id attribute.
+     * -- GETTER --
+     * Getter for {@link #id} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #id} property.
+     * @param id the value to set.
      */
-    MAIL,
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    @Identifier
+    private String id;
 
-    /**
-     * The mobile phone channel.
+    //@formatter:off
+     /**
+     * The type attribute.
+     * -- GETTER --
+     * Getter for {@link #type} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #type} property.
+     * @param type the value to set.
      */
-    MOBILE_PHONE
+     //@formatter:on
+    @NotNull
+    private RecoveryChannelType type;
 
 }

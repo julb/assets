@@ -359,8 +359,8 @@ public class UserMailServiceImpl implements UserMailService {
             existing.setSecuredMailVerifyToken(passwordEncoderService.encode(verifyToken));
 
             // Compute expiry.
-            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mail.verify.expiry.value"));
-            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mail.verify.expiry.chrono-unit"));
+            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mail.verify.expiry.value", Integer.class);
+            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mail.verify.expiry.chrono-unit", ChronoUnit.class);
             existing.setMailVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
 
             this.onUpdate(existing);

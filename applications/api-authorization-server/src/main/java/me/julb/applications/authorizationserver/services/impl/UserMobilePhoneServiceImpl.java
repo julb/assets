@@ -318,8 +318,8 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
             existing.setSecuredMobilePhoneVerifyToken(passwordEncoderService.encode(verifyToken));
 
             // Compute expiry.
-            Integer expiryValue = Integer.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.verify.expiry.value"));
-            ChronoUnit expiryChronoUnit = ChronoUnit.valueOf(configSourceService.getProperty("authorization-server.mobile-phone.verify.expiry.chrono-unit"));
+            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mobile-phone.verify.expiry.value", Integer.class);
+            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mobile-phone.verify.expiry.chrono-unit", ChronoUnit.class);
             existing.setMobilePhoneVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
 
             this.onUpdate(existing);

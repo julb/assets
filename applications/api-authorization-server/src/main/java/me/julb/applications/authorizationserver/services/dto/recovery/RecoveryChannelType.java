@@ -22,37 +22,22 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.authorizationserver.services.dto.authentication;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceRefDTO;
+package me.julb.applications.authorizationserver.services.dto.recovery;
 
 /**
- * The DTO used to trigger a reset the pincode of an authentication.
+ * The channel to reset the authentication.
  * <P>
  * @author Julb.
  */
-@Getter
-@Setter
-public class UserAuthenticationByPincodeTriggerPincodeResetDTO {
-
-    //@formatter:off
-     /**
-     * The recoveryChannelDevice attribute.
-     * -- GETTER --
-     * Getter for {@link #recoveryChannelDevice} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #recoveryChannelDevice} property.
-     * @param recoveryChannelDevice the value to set.
+public enum RecoveryChannelType {
+    /**
+     * The mail channel.
      */
-     //@formatter:on
-    @NotNull
-    @Valid
-    private RecoveryChannelDeviceRefDTO recoveryChannelDevice;
+    MAIL,
+
+    /**
+     * The mobile phone channel.
+     */
+    MOBILE_PHONE
+
 }

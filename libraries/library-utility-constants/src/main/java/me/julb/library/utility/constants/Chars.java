@@ -176,4 +176,9 @@ public class Chars {
      */
     public static final char RIGHT_ANGLE_BRACKET = '>';
 
+    /**
+     * The "@" character.
+     */
+    public static final char AT = '@';
+
 }

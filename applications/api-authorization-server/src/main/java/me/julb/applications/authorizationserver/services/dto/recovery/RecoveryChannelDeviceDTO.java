@@ -22,37 +22,55 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.authorizationserver.services.dto.authentication;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+package me.julb.applications.authorizationserver.services.dto.recovery;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceRefDTO;
-
 /**
- * The DTO used to trigger a reset the pincode of an authentication.
+ * The DTO representing a channel device.
  * <P>
  * @author Julb.
  */
 @Getter
 @Setter
-public class UserAuthenticationByPincodeTriggerPincodeResetDTO {
+@NoArgsConstructor
+public class RecoveryChannelDeviceDTO extends RecoveryChannelDeviceRefDTO implements Comparable<RecoveryChannelDeviceDTO> {
 
     //@formatter:off
      /**
-     * The recoveryChannelDevice attribute.
+     * The maskedName attribute.
      * -- GETTER --
-     * Getter for {@link #recoveryChannelDevice} property.
+     * Getter for {@link #maskedName} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #recoveryChannelDevice} property.
-     * @param recoveryChannelDevice the value to set.
+     * Setter for {@link #maskedName} property.
+     * @param maskedName the value to set.
      */
      //@formatter:on
-    @NotNull
-    @Valid
-    private RecoveryChannelDeviceRefDTO recoveryChannelDevice;
+    private String maskedName;
+
+    /**
+     * Default constructor.
+     * @param id the channel identifier.
+     * @param type the channel type.
+     * @param maskedName the maskedName.
+     */
+    public RecoveryChannelDeviceDTO(String id, RecoveryChannelType type, String maskedName) {
+        super(id, type);
+        this.maskedName = maskedName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(RecoveryChannelDeviceDTO o) {
+        if (getType().equals(o.getType())) {
+            return this.maskedName.compareTo(o.getMaskedName());
+        } else {
+            return this.getType().toString().compareTo(o.getType().toString());
+        }
+    }
 }

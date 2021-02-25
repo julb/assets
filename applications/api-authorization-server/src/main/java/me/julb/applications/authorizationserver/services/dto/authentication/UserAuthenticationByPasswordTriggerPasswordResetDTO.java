@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import me.julb.library.dto.simple.identifier.IdentifierDTO;
+import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceRefDTO;
 
 /**
  * The DTO used to trigger a reset the password of an authentication.
@@ -40,20 +40,6 @@ import me.julb.library.dto.simple.identifier.IdentifierDTO;
 @Getter
 @Setter
 public class UserAuthenticationByPasswordTriggerPasswordResetDTO {
-
-    //@formatter:off
-     /**
-     * The recoveryChannelType attribute.
-     * -- GETTER --
-     * Getter for {@link #recoveryChannelType} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #recoveryChannelType} property.
-     * @param recoveryChannelType the value to set.
-     */
-     //@formatter:on
-    @NotNull
-    private UserAuthenticationRecoveryChannelType recoveryChannelType;
 
     //@formatter:off
      /**
@@ -68,5 +54,5 @@ public class UserAuthenticationByPasswordTriggerPasswordResetDTO {
      //@formatter:on
     @NotNull
     @Valid
-    private IdentifierDTO recoveryChannelDevice;
+    private RecoveryChannelDeviceRefDTO recoveryChannelDevice;
 }

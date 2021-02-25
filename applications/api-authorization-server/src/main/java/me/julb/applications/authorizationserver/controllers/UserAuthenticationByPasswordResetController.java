@@ -45,9 +45,9 @@ import me.julb.applications.authorizationserver.services.UserAuthenticationByPas
 import me.julb.applications.authorizationserver.services.UserMailService;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordPasswordResetDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordTriggerPasswordResetDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationRecoveryChannelType;
+import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceRefDTO;
+import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelType;
 import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
-import me.julb.library.dto.simple.identifier.IdentifierDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecurePassword;
 
@@ -80,20 +80,19 @@ public class UserAuthenticationByPasswordResetController {
     /**
      * Trigger the reset process of a authentication by password.
      * @param mail the user mail.
-     * @param recoveryChannelType the recovery channel type.
-     * @param recoveryChannelDevice the recovery channel device identifier.
+     * @param recoveryChannelDeviceType the recovery channel type.
+     * @param recoveryChannelDeviceId the recovery channel device identifier.
      */
     @Operation(summary = "triggers the reset of the authentication by password for the user")
     @PostMapping(path = "/users/authentications/type/password/trigger-reset", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("permitAll()")
-    public void triggerPasswordReset(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("recoveryChannelType") @NotNull UserAuthenticationRecoveryChannelType recoveryChannelType,
-        @RequestParam("recoveryChannelDevice") @NotNull @NotBlank @Identifier String recoveryChannelDevice) {
+    public void triggerPasswordReset(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("recoveryChannelDeviceType") @NotNull RecoveryChannelType recoveryChannelDeviceType,
+        @RequestParam("recoveryChannelDeviceId") @NotNull @NotBlank @Identifier String recoveryChannelDeviceId) {
         UserDTO user = userMailService.findUserByMailVerified(mail);
         if (user != null) {
             UserAuthenticationByPasswordTriggerPasswordResetDTO triggerPasswordResetDTO = new UserAuthenticationByPasswordTriggerPasswordResetDTO();
-            triggerPasswordResetDTO.setRecoveryChannelType(recoveryChannelType);
-            triggerPasswordResetDTO.setRecoveryChannelDevice(new IdentifierDTO(recoveryChannelDevice));
+            triggerPasswordResetDTO.setRecoveryChannelDevice(new RecoveryChannelDeviceRefDTO(recoveryChannelDeviceId, recoveryChannelDeviceType));
             userAuthenticationByPasswordService.triggerPasswordReset(user.getId(), triggerPasswordResetDTO);
         }
     }
