@@ -26,6 +26,8 @@ package me.julb.applications.authorizationserver.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.Objects;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -115,10 +117,10 @@ public class MyCurrentSessionController {
 
         // Generate access token
         UserSessionAccessTokenFromIdTokenCreationDTO creationDTO = new UserSessionAccessTokenFromIdTokenCreationDTO();
-        creationDTO.setBrowser(HttpServletRequestUtility.getBrowser(request));
+        creationDTO.setBrowser(Objects.toString(HttpServletRequestUtility.getBrowser(request)));
         creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
         creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
-        creationDTO.setOperatingSystem(HttpServletRequestUtility.getOperatingSystem(request));
+        creationDTO.setOperatingSystem(Objects.toString(HttpServletRequestUtility.getOperatingSystem(request)));
         creationDTO.setRawIdToken(idToken);
         UserSessionAccessTokenWithIdTokenDTO createAccessToken = myCurrentSessionService.createAccessToken(creationDTO);
 

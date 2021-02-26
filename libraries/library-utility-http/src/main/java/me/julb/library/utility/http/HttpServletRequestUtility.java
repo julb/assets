@@ -26,7 +26,15 @@ package me.julb.library.utility.http;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+
+import me.julb.library.dto.http.client.BrowserDTO;
+import me.julb.library.dto.http.client.DeviceDTO;
+import me.julb.library.dto.http.client.OperatingSystemDTO;
+import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.CustomHttpHeaders;
+import ua_parser.Client;
+import ua_parser.Parser;
 
 /**
  * The HTTP servlet request utility.
@@ -51,13 +59,52 @@ public class HttpServletRequestUtility {
     }
 
     /**
+     * Gets the user agent.
+     * @param httpServletRequest the request.
+     * @return the user agent if available.
+     */
+    public static String getUserAgent(HttpServletRequest httpServletRequest) {
+        return httpServletRequest.getHeader(CustomHttpHeaders.USER_AGENT);
+    }
+
+    /**
+     * Gets the user browser.
+     * @param userAgent the user agent.
+     * @return the browser.
+     */
+    public static BrowserDTO getBrowser(String userAgent) {
+        if (StringUtils.isNotBlank(userAgent)) {
+            Parser uaParser = new Parser();
+            Client client = uaParser.parse(userAgent);
+            return new BrowserDTO(client.userAgent.family, client.userAgent.major, StringUtils.join(new String[] {client.userAgent.major, client.userAgent.minor, client.userAgent.patch}, Chars.DOT));
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Gets the user browser.
      * @param httpServletRequest the request.
      * @return the browser.
      */
-    public static String getBrowser(HttpServletRequest httpServletRequest) {
-        // TODO Auto-generated method stub
-        return "Chrome";
+    public static BrowserDTO getBrowser(HttpServletRequest httpServletRequest) {
+        String userAgent = getUserAgent(httpServletRequest);
+        return getBrowser(userAgent);
+    }
+
+    /**
+     * Gets the operating system.
+     * @param userAgent the user agent.
+     * @return the operating system.
+     */
+    public static OperatingSystemDTO getOperatingSystem(String userAgent) {
+        if (StringUtils.isNotBlank(userAgent)) {
+            Parser uaParser = new Parser();
+            Client client = uaParser.parse(userAgent);
+            return new OperatingSystemDTO(client.os.family, client.os.major, StringUtils.join(new String[] {client.os.major, client.os.minor, client.os.patch, client.os.patchMinor}, Chars.DOT));
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -65,8 +112,33 @@ public class HttpServletRequestUtility {
      * @param httpServletRequest the request.
      * @return the operating system.
      */
-    public static String getOperatingSystem(HttpServletRequest httpServletRequest) {
-        // TODO Auto-generated method stub
-        return "Windows";
+    public static OperatingSystemDTO getOperatingSystem(HttpServletRequest httpServletRequest) {
+        String userAgent = getUserAgent(httpServletRequest);
+        return getOperatingSystem(userAgent);
+    }
+
+    /**
+     * Gets the device.
+     * @param userAgent the user agent.
+     * @return the device.
+     */
+    public static DeviceDTO getDevice(String userAgent) {
+        if (StringUtils.isNotBlank(userAgent)) {
+            Parser uaParser = new Parser();
+            Client client = uaParser.parse(userAgent);
+            return new DeviceDTO(client.device.family);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the device.
+     * @param httpServletRequest the request.
+     * @return the device.
+     */
+    public static DeviceDTO getDevice(HttpServletRequest httpServletRequest) {
+        String userAgent = getUserAgent(httpServletRequest);
+        return getDevice(userAgent);
     }
 }

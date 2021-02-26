@@ -9,6 +9,7 @@ dependencies {
 	api platform(project(':bom'))
 	
 	implementation project(':libraries:library-utility-constants')
+    implementation 'org.apache.commons:commons-lang3'
 }
 
 lombok {

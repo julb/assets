@@ -32,9 +32,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import me.julb.library.dto.security.AuthenticatedUserDTO;
+import me.julb.library.dto.security.LocalAuthenticatedUserDTO;
 import me.julb.library.dto.security.UserRole;
-import me.julb.library.utility.constants.Integers;
-import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.springbootstarter.security.services.ISecurityService;
 import me.julb.springbootstarter.security.services.dto.CustomUserDetails;
 import me.julb.springbootstarter.security.utilities.RoleUtility;
@@ -85,21 +84,9 @@ public class SecurityService implements ISecurityService {
                 return customUserDetails.getDetails();
             } else if (userDetails instanceof UserDetails) {
                 UserDetails user = ((UserDetails) userDetails);
-                AuthenticatedUserDTO authenticatedUser = new AuthenticatedUserDTO();
-                authenticatedUser.setUserId(IdentifierUtility.generateId());
-                authenticatedUser.setDisplayName(user.getUsername());
-                authenticatedUser.setFirstName(user.getUsername());
-                authenticatedUser.setLastName(user.getUsername());
-                authenticatedUser.setMail(user.getUsername() + "@local");
-                return authenticatedUser;
+                return new LocalAuthenticatedUserDTO(user.getUsername());
             } else {
-                // FIXME
-                AuthenticatedUserDTO anonymousUser = new AuthenticatedUserDTO();
-                anonymousUser.setFirstName("Anonymous");
-                anonymousUser.setLastName("User");
-                anonymousUser.setUserId(StringUtils.repeat('0', Integers.THIRTY_TWO));
-                anonymousUser.setMail("anonymous@localhost");
-                return anonymousUser;
+                throw new UnsupportedOperationException();
             }
         }
         return null;

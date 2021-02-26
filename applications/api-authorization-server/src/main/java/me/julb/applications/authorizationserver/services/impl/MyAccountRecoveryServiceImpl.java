@@ -22,40 +22,30 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.authorizationserver.controllers;
+package me.julb.applications.authorizationserver.services.impl;
 
-import io.swagger.v3.oas.annotations.Operation;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
+import me.julb.applications.authorizationserver.services.MyAccountRecoveryService;
 import me.julb.applications.authorizationserver.services.UserAccountRecoveryService;
-import me.julb.applications.authorizationserver.services.UserMailService;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
+import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
- * The rest controller to recover the account.
+ * The account recovery service implementation for the connected user.
  * <P>
  * @author Julb.
  */
-@RestController
+@Service
 @Validated
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserAccountRecoveryController {
+@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+public class MyAccountRecoveryServiceImpl implements MyAccountRecoveryService {
 
     /**
      * The user account recovery service.
@@ -64,33 +54,25 @@ public class UserAccountRecoveryController {
     private UserAccountRecoveryService userAccountRecoveryService;
 
     /**
-     * The user mail service.
+     * The security service.
      */
     @Autowired
-    private UserMailService userMailService;
+    private ISecurityService securityService;
 
     // ------------------------------------------ Read methods.
 
     /**
-     * Gets the list of devices to recover the account.
-     * @param mail the user mail.
-     * @return the list of devices to recover the account.
+     * {@inheritDoc}
      */
-    @Operation(summary = "get the list of devices to recover the account")
-    @GetMapping(path = "/users/recovery-devices", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    @PreAuthorize("permitAll()")
-    public List<RecoveryChannelDeviceDTO> findAllByMailAddress(@RequestParam("mail") @NotNull @NotBlank @Email String mail) {
-        UserDTO user = userMailService.findUserByMailVerified(mail);
-        if (user != null) {
-            return userAccountRecoveryService.findAll(user.getId());
-        } else {
-            return new ArrayList<>();
-        }
+    @Override
+    public List<RecoveryChannelDeviceDTO> findAll() {
+        String userId = securityService.getConnectedUserId();
+        return userAccountRecoveryService.findAll(userId);
     }
 
     // ------------------------------------------ Write methods.
 
     // ------------------------------------------ Utility methods.
 
-    // ------------------------------------------ Overridden methods.
+    // ------------------------------------------ Private methods.
 }

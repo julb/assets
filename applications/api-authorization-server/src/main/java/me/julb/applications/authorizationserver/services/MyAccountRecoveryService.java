@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2019 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,48 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.library.utility.constants;
+
+package me.julb.applications.authorizationserver.services;
+
+import java.util.List;
+
+import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
 
 /**
- * A class to list custom HTTP headers.
+ * The user account recovery service.
  * <P>
  * @author Julb.
  */
-public class CustomHttpHeaders {
+public interface MyAccountRecoveryService {
+
+    // ------------------------------------------ Read methods.
 
     /**
-     * The header for getting trademark.
+     * Gets the available recovery channel devices for the connected user.
+     * @return a list of recovery channel devices.
      */
-    public static final String X_JULB_TM = "x-julb-tm";
+    List<RecoveryChannelDeviceDTO> findAll();
 
-    /**
-     * The header for debug purposes.
-     */
-    public static final String X_JULB_HTTP_TRACE_ENABLED = "x-julb-http-trace-enabled";
-
-    /**
-     * The header for real IP address.
-     */
-    public static final String X_REAL_IP = "x-real-ip";
-
-    /**
-     * The header for X-Forwarded-For value.
-     */
-    public static final String X_FORWARDED_FOR = "x-forwarded-for";
-
-    /**
-     * The header for User-Agent value.
-     */
-    public static final String USER_AGENT = "user-agent";
-
-    /**
-     * The header for Google ReCaptcha token.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_TOKEN = "x-google-recaptcha-token";
-
-    /**
-     * The header for Google ReCaptcha action.
-     */
-    public static final String X_GOOGLE_RECAPTCHA_ACTION = "x-google-recaptcha-action";
+    // ------------------------------------------ Write methods.
 
 }

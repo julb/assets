@@ -26,12 +26,7 @@ package me.julb.applications.authorizationserver.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -39,53 +34,38 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.julb.applications.authorizationserver.services.UserAccountRecoveryService;
-import me.julb.applications.authorizationserver.services.UserMailService;
+import me.julb.applications.authorizationserver.services.MyAccountRecoveryService;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 
 /**
- * The rest controller to recover the account.
+ * The rest controller to list all recovery devices for the connected user.
  * <P>
  * @author Julb.
  */
 @RestController
 @Validated
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserAccountRecoveryController {
+public class MyAccountRecoveryController {
 
     /**
      * The user account recovery service.
      */
     @Autowired
-    private UserAccountRecoveryService userAccountRecoveryService;
-
-    /**
-     * The user mail service.
-     */
-    @Autowired
-    private UserMailService userMailService;
+    private MyAccountRecoveryService myAccountRecoveryService;
 
     // ------------------------------------------ Read methods.
 
     /**
      * Gets the list of devices to recover the account.
-     * @param mail the user mail.
      * @return the list of devices to recover the account.
      */
-    @Operation(summary = "get the list of devices to recover the account")
-    @GetMapping(path = "/users/recovery-devices", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    @PreAuthorize("permitAll()")
-    public List<RecoveryChannelDeviceDTO> findAllByMailAddress(@RequestParam("mail") @NotNull @NotBlank @Email String mail) {
-        UserDTO user = userMailService.findUserByMailVerified(mail);
-        if (user != null) {
-            return userAccountRecoveryService.findAll(user.getId());
-        } else {
-            return new ArrayList<>();
-        }
+    @Operation(summary = "get the list of devices for the connected user to recover the account")
+    @GetMapping(path = "/my/recovery-devices", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
+    public List<RecoveryChannelDeviceDTO> findAll() {
+        return myAccountRecoveryService.findAll();
     }
 
     // ------------------------------------------ Write methods.

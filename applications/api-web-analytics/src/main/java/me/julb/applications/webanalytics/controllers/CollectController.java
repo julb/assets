@@ -41,6 +41,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.julb.applications.webanalytics.controllers.params.AnalyticsRequestParams;
 import me.julb.applications.webanalytics.services.dto.WebAnalyticsEventDTO;
+import me.julb.library.dto.http.client.BrowserDTO;
+import me.julb.library.dto.http.client.DeviceDTO;
+import me.julb.library.dto.http.client.OperatingSystemDTO;
 import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
@@ -90,7 +93,32 @@ public class CollectController {
         event.setScreenColor(analyticsRequestParams.getSd());
         event.setTm(TrademarkContextHolder.getTrademark());
         event.setUserAgent(analyticsRequestParams.getUa());
+
+        // Browser
+        BrowserDTO browser = HttpServletRequestUtility.getBrowser(analyticsRequestParams.getUa());
+        if (browser != null) {
+            event.setUserBrowserName(browser.getName());
+            event.setUserBrowserMajorVersion(browser.getMajorVersion());
+            event.setUserBrowserVersion(browser.getVersion());
+        }
+
+        // Device
+        DeviceDTO device = HttpServletRequestUtility.getDevice(analyticsRequestParams.getUa());
+        if (device != null) {
+            event.setUserDeviceName(device.getType());
+        }
+
+        // IP
         event.setUserIpv4Address(HttpServletRequestUtility.getUserIpv4Address(httpServletRequest));
+
+        // OS
+        OperatingSystemDTO operatingSystem = HttpServletRequestUtility.getOperatingSystem(analyticsRequestParams.getUa());
+        if (operatingSystem != null) {
+            event.setUserOperatingSystemName(operatingSystem.getName());
+            event.setUserOperatingSystemMajorVersion(operatingSystem.getMajorVersion());
+            event.setUserOperatingSystemVersion(operatingSystem.getVersion());
+        }
+
         event.setUserLanguage(analyticsRequestParams.getUl());
         event.setViewportSize(analyticsRequestParams.getVp());
         event.setVisitorId(analyticsRequestParams.getUid());

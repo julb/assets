@@ -23,6 +23,9 @@
  */
 package me.julb.applications.webanalytics.services.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -301,6 +304,109 @@ public class WebAnalyticsEventDTO {
      */
      //@formatter:on
     private String userIpv4Address;
+
+    //@formatter:off
+     /**
+     * The userDeviceName attribute.
+     * -- GETTER --
+     * Getter for {@link #userDeviceName} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #userDeviceName} property.
+     * @param userDeviceName the value to set.
+     */
+     //@formatter:on
+    private String userDeviceName;
+
+    //@formatter:off
+     /**
+     * The userBrowserName attribute.
+     * -- GETTER --
+     * Getter for {@link #userBrowserName} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #userBrowserName} property.
+     * @param userBrowserName the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String userBrowserName;
+
+    //@formatter:off
+     /**
+     * The userBrowserMajorVersion attribute.
+     * -- GETTER --
+     * Getter for {@link #userBrowserMajorVersion} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #userBrowserMajorVersion} property.
+     * @param userBrowserMajorVersion the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String userBrowserMajorVersion;
+
+    //@formatter:off
+     /**
+     * The userBrowserVersion attribute.
+     * -- GETTER --
+     * Getter for {@link #userBrowserVersion} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #userBrowserVersion} property.
+     * @param userBrowserVersion the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String userBrowserVersion;
+
+    //@formatter:off
+     /**
+     * The userOperatingSystemName attribute.
+     * -- GETTER --
+     * Getter for {@link #userOperatingSystemName} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #userOperatingSystemName} property.
+     * @param userOperatingSystemName the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String userOperatingSystemName;
+
+    //@formatter:off
+     /**
+     * The userOperatingSystemMajorVersion attribute.
+     * -- GETTER --
+     * Getter for {@link #userOperatingSystemMajorVersion} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #userOperatingSystemMajorVersion} property.
+     * @param userOperatingSystemMajorVersion the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String userOperatingSystemMajorVersion;
+
+    //@formatter:off
+     /**
+     * The userOperatingSystemVersion attribute.
+     * -- GETTER --
+     * Getter for {@link #userOperatingSystemVersion} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #userOperatingSystemVersion} property.
+     * @param userOperatingSystemVersion the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String userOperatingSystemVersion;
 
     //@formatter:off
     /**

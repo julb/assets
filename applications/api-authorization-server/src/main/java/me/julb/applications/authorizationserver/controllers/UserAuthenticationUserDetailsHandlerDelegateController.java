@@ -24,6 +24,7 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -123,10 +124,10 @@ public class UserAuthenticationUserDetailsHandlerDelegateController implements I
 
                 // Generate access token
                 UserSessionAccessTokenFromIdTokenCreationDTO creationDTO = new UserSessionAccessTokenFromIdTokenCreationDTO();
-                creationDTO.setBrowser(HttpServletRequestUtility.getBrowser(request));
+                creationDTO.setBrowser(Objects.toString(HttpServletRequestUtility.getBrowser(request), null));
                 creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
                 creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
-                creationDTO.setOperatingSystem(HttpServletRequestUtility.getOperatingSystem(request));
+                creationDTO.setOperatingSystem(Objects.toString(HttpServletRequestUtility.getOperatingSystem(request)));
                 creationDTO.setRawIdToken(session.getRawIdToken());
                 UserSessionAccessTokenWithIdTokenDTO sessionToken = userSessionService.createAccessTokenFromIdToken(creationDTO);
 
@@ -138,10 +139,10 @@ public class UserAuthenticationUserDetailsHandlerDelegateController implements I
 
                 // Regenerate an access token.
                 UserSessionAccessTokenFirstCreationDTO creationDTO = new UserSessionAccessTokenFirstCreationDTO();
-                creationDTO.setBrowser(HttpServletRequestUtility.getBrowser(request));
+                creationDTO.setBrowser(Objects.toString(HttpServletRequestUtility.getBrowser(request)));
                 creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
                 creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
-                creationDTO.setOperatingSystem(HttpServletRequestUtility.getOperatingSystem(request));
+                creationDTO.setOperatingSystem(Objects.toString(HttpServletRequestUtility.getOperatingSystem(request)));
                 UserSessionAccessTokenDTO sessionToken = userSessionService.createAccessTokenFirst(userId, userSession.getId(), creationDTO);
 
                 // Write JSON response to body.
