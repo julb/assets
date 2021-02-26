@@ -129,6 +129,7 @@ me.julb.functions
 me.julb.library.dto.googlechat
 me.julb.library.dto.http.alive
 me.julb.library.dto.http.analytics
+me.julb.library.dto.http.client
 me.julb.library.dto.http.error
 me.julb.library.dto.icsfeed
 me.julb.library.dto.mail
