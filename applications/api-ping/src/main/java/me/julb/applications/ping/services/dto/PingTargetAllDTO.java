@@ -22,20 +22,48 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.ping.configurations.properties;
+package me.julb.applications.ping.services.dto;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
- * The local configuration properties.
+ * The DTO to ping all remotes.
  * <P>
  * @author Julb.
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "application")
-public class CustomConfigurationProperties {
+public class PingTargetAllDTO {
+
+    //@formatter:off
+     /**
+     * The metadata attribute.
+     * -- GETTER --
+     * Getter for {@link #metadata} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #metadata} property.
+     * @param metadata the value to set.
+     */
+     //@formatter:on
+    private Map<String, String> metadata = new TreeMap<>();
+
+    //@formatter:off
+     /**
+     * The remotes attribute.
+     * -- GETTER --
+     * Getter for {@link #remotes} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #remotes} property.
+     * @param remotes the value to set.
+     */
+     //@formatter:on
+    private List<PingTargetDTO> remotes = new ArrayList<>();
 }

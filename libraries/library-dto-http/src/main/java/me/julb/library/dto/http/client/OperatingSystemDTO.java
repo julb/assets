@@ -42,7 +42,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = {"name", "version"})
+@ToString(includeFieldNames = false, of = {"name", "version"})
 public class OperatingSystemDTO {
 
     //@formatter:off

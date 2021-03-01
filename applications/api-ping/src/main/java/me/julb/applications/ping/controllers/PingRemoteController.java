@@ -22,42 +22,44 @@
  * SOFTWARE.
  */
 
-package me.julb.library.dto.http.client;
+package me.julb.applications.ping.controllers;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.Operation;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import me.julb.applications.ping.services.PingTargetService;
+import me.julb.applications.ping.services.dto.PingTargetAllDTO;
 
 /**
- * The device DTO.
+ * The REST controller to ping remote servers.
  * <P>
  * @author Julb.
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(includeFieldNames = false, of = {"type"})
-public class DeviceDTO {
+@RestController
+@Validated
+@RequestMapping(path = "/remotes/ping", produces = MediaType.APPLICATION_JSON_VALUE)
+public class PingRemoteController {
 
-    //@formatter:off
-     /**
-     * The type attribute.
-     * -- GETTER --
-     * Getter for {@link #type} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #type} property.
-     * @param type the value to set.
+    /**
+     * The ping remote service.
      */
-     //@formatter:on
-    @NotNull
-    @NotBlank
-    private String type;
+    @Autowired
+    private PingTargetService pingRemoteService;
+
+    /**
+     * This method pings all defined remote and return the response.
+     * @return result of the ping to each remote.
+     */
+    @Operation(summary = "responds to a ping request")
+    @GetMapping()
+    public PingTargetAllDTO pingAllRemotes() {
+        return pingRemoteService.pingAll();
+    }
 
 }

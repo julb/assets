@@ -29,6 +29,13 @@ management:
   endpoints.web.exposure.include: health,prometheus,info
   endpoint.prometheus.enabled: true
   
+application:
+  local:
+    metadata:
+      name: localhost
+    endpoint:
+      url: http://localhost:9096
+  
 ---
 
 spring:

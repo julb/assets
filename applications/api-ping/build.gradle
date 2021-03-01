@@ -9,7 +9,11 @@ plugins {
 dependencies {
     api platform(project(':bom'))
 
+    implementation project(':spring-boot-starters:spring-boot-starter-consumer')
     implementation project(':spring-boot-starters:spring-boot-starter-web')
+    implementation project(':libraries:library-utility-identifier')
+    implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.apache.commons:commons-collections4'
 	
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }

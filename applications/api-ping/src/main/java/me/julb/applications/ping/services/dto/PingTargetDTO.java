@@ -22,71 +22,75 @@
  * SOFTWARE.
  */
 
-package me.julb.library.dto.http.client;
+package me.julb.applications.ping.services.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.Map;
+import java.util.TreeMap;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+
+import me.julb.library.utility.enums.HealthStatus;
 
 /**
- * The browser.
+ * The DTO to describe a remote ping result.
  * <P>
  * @author Julb.
  */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(includeFieldNames = false, of = {"name", "version"})
-public class BrowserDTO {
+public class PingTargetDTO {
 
     //@formatter:off
      /**
-     * The name attribute.
+     * The metadata attribute.
      * -- GETTER --
-     * Getter for {@link #name} property.
+     * Getter for {@link #metadata} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #name} property.
-     * @param name the value to set.
+     * Setter for {@link #metadata} property.
+     * @param metadata the value to set.
      */
      //@formatter:on
-    @NotNull
-    @NotBlank
-    private String name;
+    private Map<String, String> metadata = new TreeMap<>();
 
     //@formatter:off
      /**
-     * The majorVersion attribute.
+     * The status attribute.
      * -- GETTER --
-     * Getter for {@link #majorVersion} property.
+     * Getter for {@link #status} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #majorVersion} property.
-     * @param majorVersion the value to set.
+     * Setter for {@link #status} property.
+     * @param status the value to set.
      */
      //@formatter:on
-    @NotNull
-    @NotBlank
-    private String majorVersion;
+    private HealthStatus status = HealthStatus.UNKNOWN;
 
     //@formatter:off
      /**
-     * The version attribute.
+     * The responseStatusCode attribute.
      * -- GETTER --
-     * Getter for {@link #version} property.
+     * Getter for {@link #responseStatusCode} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #version} property.
-     * @param version the value to set.
+     * Setter for {@link #responseStatusCode} property.
+     * @param responseStatusCode the value to set.
      */
      //@formatter:on
-    @NotNull
-    @NotBlank
-    private String version;
+    private Integer responseStatusCode;
+
+    //@formatter:off
+     /**
+     * The responseTimeMilliseconds attribute.
+     * -- GETTER --
+     * Getter for {@link #responseTimeMilliseconds} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #responseTimeMilliseconds} property.
+     * @param responseTimeMilliseconds the value to set.
+     */
+     //@formatter:on
+    private Long responseTimeMilliseconds;
+
 }

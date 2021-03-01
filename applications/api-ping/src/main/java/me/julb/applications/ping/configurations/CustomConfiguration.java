@@ -24,10 +24,29 @@
 
 package me.julb.applications.ping.configurations;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import java.util.HashMap;
+import java.util.Map;
 
-import me.julb.applications.ping.configurations.properties.CustomConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.openfeign.FeignClientsConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import brave.http.HttpTracing;
+import feign.Client;
+import feign.Contract;
+import feign.Feign;
+import feign.Retryer;
+import feign.codec.Decoder;
+import feign.codec.Encoder;
+import feign.codec.ErrorDecoder;
+import me.julb.applications.ping.configurations.properties.ApplicationProperties;
+import me.julb.applications.ping.configurations.properties.TargetProperties;
+import me.julb.applications.ping.consumers.ApiPingTargetFeignClient;
+import me.julb.springbootstarter.consumer.clients.CustomTracingFeignClient;
+import me.julb.springbootstarter.consumer.utility.FeignClientUtility;
 
 /**
  * The local configuration.
@@ -35,13 +54,50 @@ import me.julb.applications.ping.configurations.properties.CustomConfigurationPr
  * @author Julb.
  */
 @Configuration
-@EnableConfigurationProperties(CustomConfigurationProperties.class)
+@EnableConfigurationProperties(ApplicationProperties.class)
+@Import(FeignClientsConfiguration.class)
 public class CustomConfiguration {
-    // ------------------------------------------ Utility methods.
 
-    // ------------------------------------------ Read methods.
+    /**
+     * The application properties.
+     */
+    @Autowired
+    private ApplicationProperties applicationProperties;
 
-    // ------------------------------------------ Write methods.
+    /**
+     * Builds a list of remote ping feign clients.
+     * @param httpTracing the HTTP tracing.
+     * @param decoder the default feign decoder.
+     * @param encoder the default feign encoder.
+     * @param contract the default feign contract.
+     * @param retryer the retryer.
+     * @param errorDecoder the error decoder.
+     * @return the list of remote ping feign clients.
+     */
+    @Bean
+    public Map<String, ApiPingTargetFeignClient> apiPingTargetFeignClients(HttpTracing httpTracing, Decoder decoder, Encoder encoder, Contract contract, Retryer retryer, ErrorDecoder errorDecoder) {
+        Map<String, ApiPingTargetFeignClient> clients = new HashMap<>();
 
-    // ------------------------------------------ Overridden methods.
+        // Targets to ping.
+        for (TargetProperties targetProperties : applicationProperties.getTargets()) {
+            // Remote properties.
+            Client customClient = FeignClientUtility.feignClientUtil(targetProperties.getEndpoint());
+
+            //@formatter:off
+            ApiPingTargetFeignClient client = Feign.builder()
+                .client(CustomTracingFeignClient.create(httpTracing, customClient))
+                .encoder(encoder)
+                .decoder(decoder)
+                .contract(contract)
+                .retryer(retryer)
+                .errorDecoder(errorDecoder)
+                .target(ApiPingTargetFeignClient.class, targetProperties.getEndpoint().getUrl());
+            //@formatter:on
+
+            clients.put(targetProperties.getId(), client);
+        }
+
+        return clients;
+    }
+
 }

@@ -26,6 +26,8 @@ package me.julb.applications.ping.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +43,7 @@ import me.julb.library.dto.simple.message.MessageDTO;
  */
 @RestController
 @Validated
+@Slf4j
 @RequestMapping(path = "/ping", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PingController {
 
@@ -51,6 +54,7 @@ public class PingController {
     @Operation(summary = "responds to a ping request")
     @GetMapping()
     public MessageDTO respondToPing() {
+        LOGGER.debug("Responding to a ping request.");
         return new MessageDTO("pong");
     }
 

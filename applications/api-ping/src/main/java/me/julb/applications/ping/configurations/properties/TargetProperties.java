@@ -22,42 +22,62 @@
  * SOFTWARE.
  */
 
-package me.julb.library.dto.http.client;
+package me.julb.applications.ping.configurations.properties;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.Map;
+import java.util.TreeMap;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+
+import me.julb.library.utility.identifier.IdentifierUtility;
+import me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties;
 
 /**
- * The device DTO.
+ * The remote properties.
  * <P>
  * @author Julb.
  */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(includeFieldNames = false, of = {"type"})
-public class DeviceDTO {
+public class TargetProperties {
 
     //@formatter:off
      /**
-     * The type attribute.
+     * The id attribute.
      * -- GETTER --
-     * Getter for {@link #type} property.
+     * Getter for {@link #id} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #type} property.
-     * @param type the value to set.
+     * Setter for {@link #id} property.
+     * @param id the value to set.
      */
      //@formatter:on
-    @NotNull
-    @NotBlank
-    private String type;
+    private String id = IdentifierUtility.generateId();
 
+    //@formatter:off
+     /**
+     * The metadata attribute.
+     * -- GETTER --
+     * Getter for {@link #metadata} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #metadata} property.
+     * @param metadata the value to set.
+     */
+     //@formatter:on
+    private Map<String, String> metadata = new TreeMap<>();
+
+    //@formatter:off
+     /**
+     * The endpoint attribute.
+     * -- GETTER --
+     * Getter for {@link #endpoint} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #endpoint} property.
+     * @param endpoint the value to set.
+     */
+     //@formatter:on
+    private ConsumerEndpointProperties endpoint;
 }

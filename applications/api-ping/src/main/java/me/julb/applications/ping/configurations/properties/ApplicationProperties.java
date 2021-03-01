@@ -22,42 +22,66 @@
  * SOFTWARE.
  */
 
-package me.julb.library.dto.http.client;
+package me.julb.applications.ping.configurations.properties;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * The device DTO.
+ * The local configuration properties.
  * <P>
  * @author Julb.
  */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(includeFieldNames = false, of = {"type"})
-public class DeviceDTO {
+@ConfigurationProperties(prefix = "application")
+public class ApplicationProperties {
 
     //@formatter:off
      /**
-     * The type attribute.
+     * The local attribute.
      * -- GETTER --
-     * Getter for {@link #type} property.
+     * Getter for {@link #local} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #type} property.
-     * @param type the value to set.
+     * Setter for {@link #local} property.
+     * @param local the value to set.
      */
      //@formatter:on
-    @NotNull
-    @NotBlank
-    private String type;
+    private TargetProperties local;
 
+    //@formatter:off
+     /**
+     * The remotes attribute.
+     * -- GETTER --
+     * Getter for {@link #remotes} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #remotes} property.
+     * @param remotes the value to set.
+     */
+     //@formatter:on
+    private List<TargetProperties> remotes = new ArrayList<>();
+
+    /**
+     * Gets the targets to ping (local and remotes).
+     * @return the targets to ping.
+     */
+    public Collection<TargetProperties> getTargets() {
+        List<TargetProperties> targets = new ArrayList<>();
+        if (local != null) {
+            targets.add(local);
+        }
+        if (CollectionUtils.isNotEmpty(remotes)) {
+            targets.addAll(remotes);
+        }
+        return targets;
+    }
 }

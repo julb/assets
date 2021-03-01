@@ -22,42 +22,21 @@
  * SOFTWARE.
  */
 
-package me.julb.library.dto.http.client;
+package me.julb.applications.ping.services;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import me.julb.applications.ping.services.dto.PingTargetAllDTO;
 
 /**
- * The device DTO.
+ * The service to ping remote services.
  * <P>
  * @author Julb.
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(includeFieldNames = false, of = {"type"})
-public class DeviceDTO {
+public interface PingTargetService {
 
-    //@formatter:off
-     /**
-     * The type attribute.
-     * -- GETTER --
-     * Getter for {@link #type} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #type} property.
-     * @param type the value to set.
+    /**
+     * Ping all remotes.
+     * @return the result of the ping.
      */
-     //@formatter:on
-    @NotNull
-    @NotBlank
-    private String type;
+    PingTargetAllDTO pingAll();
 
 }
