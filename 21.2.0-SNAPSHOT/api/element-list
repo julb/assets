@@ -89,7 +89,11 @@ me.julb.applications.notificationdispatcher.services
 me.julb.applications.notificationdispatcher.services.impl
 me.julb.applications.ping.configurations
 me.julb.applications.ping.configurations.properties
+me.julb.applications.ping.consumers
 me.julb.applications.ping.controllers
+me.julb.applications.ping.services
+me.julb.applications.ping.services.dto
+me.julb.applications.ping.services.impl
 me.julb.applications.platformhealth.configurations
 me.julb.applications.platformhealth.configurations.properties
 me.julb.applications.platformhealth.controllers

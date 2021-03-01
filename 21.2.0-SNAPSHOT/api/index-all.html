@@ -553,6 +553,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The local consumer properties.</div>
 </dd>
+<dt><a href="me/julb/applications/ping/consumers/ApiPingTargetFeignClient.html" title="interface in me.julb.applications.ping.consumers"><span class="typeNameLink">ApiPingTargetFeignClient</span></a> - Interface in <a href="me/julb/applications/ping/consumers/package-summary.html">me.julb.applications.ping.consumers</a></dt>
+<dd>
+<div class="block">A Feign client to ping a remote ping application.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/CustomConfiguration.html#apiPingTargetFeignClients(brave.http.HttpTracing,feign.codec.Decoder,feign.codec.Encoder,feign.Contract,feign.Retryer,feign.codec.ErrorDecoder)">apiPingTargetFeignClients(HttpTracing, Decoder, Encoder, Contract, Retryer, ErrorDecoder)</a></span> - Method in class me.julb.applications.ping.configurations.<a href="me/julb/applications/ping/configurations/CustomConfiguration.html" title="class in me.julb.applications.ping.configurations">CustomConfiguration</a></dt>
+<dd>
+<div class="block">Builds a list of remote ping feign clients.</div>
+</dd>
 <dt><a href="me/julb/Application.html" title="class in me.julb"><span class="typeNameLink">Application</span></a> - Class in <a href="me/julb/package-summary.html">me.julb</a></dt>
 <dd>
 <div class="block">Main class to launch the application.</div>
@@ -595,6 +603,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The properties for the application.</div>
 </dd>
+<dt><a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.ping.configurations.properties"><span class="typeNameLink">ApplicationProperties</span></a> - Class in <a href="me/julb/applications/ping/configurations/properties/package-summary.html">me.julb.applications.ping.configurations.properties</a></dt>
+<dd>
+<div class="block">The local configuration properties.</div>
+</dd>
 <dt><a href="me/julb/applications/urlshortener/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.urlshortener.configurations.properties"><span class="typeNameLink">ApplicationProperties</span></a> - Class in <a href="me/julb/applications/urlshortener/configurations/properties/package-summary.html">me.julb.applications.urlshortener.configurations.properties</a></dt>
 <dd>
 <div class="block">The local configuration properties.</div>
@@ -608,6 +620,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/disclaimer/configurations/properties/ApplicationProperties.html#%3Cinit%3E()">ApplicationProperties()</a></span> - Constructor for class me.julb.applications.disclaimer.configurations.properties.<a href="me/julb/applications/disclaimer/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.disclaimer.configurations.properties">ApplicationProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/jwks/configurations/properties/ApplicationProperties.html#%3Cinit%3E()">ApplicationProperties()</a></span> - Constructor for class me.julb.applications.jwks.configurations.properties.<a href="me/julb/applications/jwks/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.jwks.configurations.properties">ApplicationProperties</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#%3Cinit%3E()">ApplicationProperties()</a></span> - Constructor for class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.ping.configurations.properties">ApplicationProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/urlshortener/configurations/properties/ApplicationProperties.html#%3Cinit%3E()">ApplicationProperties()</a></span> - Constructor for class me.julb.applications.urlshortener.configurations.properties.<a href="me/julb/applications/urlshortener/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.urlshortener.configurations.properties">ApplicationProperties</a></dt>
 <dd>&nbsp;</dd>
@@ -2306,10 +2320,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The local configuration properties.</div>
 </dd>
-<dt><a href="me/julb/applications/ping/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.ping.configurations.properties"><span class="typeNameLink">CustomConfigurationProperties</span></a> - Class in <a href="me/julb/applications/ping/configurations/properties/package-summary.html">me.julb.applications.ping.configurations.properties</a></dt>
-<dd>
-<div class="block">The local configuration properties.</div>
-</dd>
 <dt><a href="me/julb/applications/platformhealth/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.platformhealth.configurations.properties"><span class="typeNameLink">CustomConfigurationProperties</span></a> - Class in <a href="me/julb/applications/platformhealth/configurations/properties/package-summary.html">me.julb.applications.platformhealth.configurations.properties</a></dt>
 <dd>
 <div class="block">The local configuration properties.</div>
@@ -2333,8 +2343,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/mail/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.mail.configurations.properties.<a href="me/julb/applications/mail/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.mail.configurations.properties">CustomConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/notificationdispatcher/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.notificationdispatcher.configurations.properties.<a href="me/julb/applications/notificationdispatcher/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.notificationdispatcher.configurations.properties">CustomConfigurationProperties</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.ping.configurations.properties">CustomConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/platformhealth/configurations/properties/CustomConfigurationProperties.html#%3Cinit%3E()">CustomConfigurationProperties()</a></span> - Constructor for class me.julb.applications.platformhealth.configurations.properties.<a href="me/julb/applications/platformhealth/configurations/properties/CustomConfigurationProperties.html" title="class in me.julb.applications.platformhealth.configurations.properties">CustomConfigurationProperties</a></dt>
 <dd>&nbsp;</dd>
@@ -5845,6 +5853,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Getter for <a href="me/julb/applications/helloworld/consumers/ApiHelloWorldFeignClient.LocalConsumerProperties.html#endpoint"><code>ApiHelloWorldFeignClient.LocalConsumerProperties.endpoint</code></a> property.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#getEndpoint()">getEndpoint()</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/TargetProperties.html" title="class in me.julb.applications.ping.configurations.properties">TargetProperties</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#endpoint"><code>TargetProperties.endpoint</code></a> property.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/googlechat/consumers/GoogleChatFeignClient.LocalConsumerProperties.html#getEndpoint()">getEndpoint()</a></span> - Method in class me.julb.springbootstarter.googlechat.consumers.<a href="me/julb/springbootstarter/googlechat/consumers/GoogleChatFeignClient.LocalConsumerProperties.html" title="class in me.julb.springbootstarter.googlechat.consumers">GoogleChatFeignClient.LocalConsumerProperties</a></dt>
 <dd>
 <div class="block">Getter for <a href="me/julb/springbootstarter/googlechat/consumers/GoogleChatFeignClient.LocalConsumerProperties.html#endpoint"><code>GoogleChatFeignClient.LocalConsumerProperties.endpoint</code></a> property.</div>
@@ -6173,6 +6185,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/helloworld/entities/UserEntity.html#getId()">getId()</a></span> - Method in class me.julb.applications.helloworld.entities.<a href="me/julb/applications/helloworld/entities/UserEntity.html" title="class in me.julb.applications.helloworld.entities">UserEntity</a></dt>
 <dd>
 <div class="block">Getter for <a href="me/julb/applications/helloworld/entities/UserEntity.html#id"><code>UserEntity.id</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#getId()">getId()</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/TargetProperties.html" title="class in me.julb.applications.ping.configurations.properties">TargetProperties</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#id"><code>TargetProperties.id</code></a> property.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/platformhealth/entities/ComponentCategoryEntity.html#getId()">getId()</a></span> - Method in class me.julb.applications.platformhealth.entities.<a href="me/julb/applications/platformhealth/entities/ComponentCategoryEntity.html" title="class in me.julb.applications.platformhealth.entities">ComponentCategoryEntity</a></dt>
 <dd>
@@ -6674,6 +6690,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/urlshortener/services/dto/ShortUrlHitAnalyticsEventDTO.html#getLinkId()">getLinkId()</a></span> - Method in class me.julb.applications.urlshortener.services.dto.<a href="me/julb/applications/urlshortener/services/dto/ShortUrlHitAnalyticsEventDTO.html" title="class in me.julb.applications.urlshortener.services.dto">ShortUrlHitAnalyticsEventDTO</a></dt>
 <dd>
 <div class="block">Getter for <a href="me/julb/applications/urlshortener/services/dto/ShortUrlHitAnalyticsEventDTO.html#linkId"><code>ShortUrlHitAnalyticsEventDTO.linkId</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#getLocal()">getLocal()</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.ping.configurations.properties">ApplicationProperties</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#local"><code>ApplicationProperties.local</code></a> property.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/notification/events/parts/GoogleChatRoomDTO.html#getLocale()">getLocale()</a></span> - Method in class me.julb.library.dto.notification.events.parts.<a href="me/julb/library/dto/notification/events/parts/GoogleChatRoomDTO.html" title="class in me.julb.library.dto.notification.events.parts">GoogleChatRoomDTO</a></dt>
 <dd>
@@ -7179,6 +7199,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/library/utility/exceptions/BaseException.html#getMessageArgs()">getMessageArgs()</a></span> - Method in exception me.julb.library.utility.exceptions.<a href="me/julb/library/utility/exceptions/BaseException.html" title="class in me.julb.library.utility.exceptions">BaseException</a></dt>
 <dd>
 <div class="block">Gets the message arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#getMetadata()">getMetadata()</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/TargetProperties.html" title="class in me.julb.applications.ping.configurations.properties">TargetProperties</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#metadata"><code>TargetProperties.metadata</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#getMetadata()">getMetadata()</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetAllDTO</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#metadata"><code>PingTargetAllDTO.metadata</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#getMetadata()">getMetadata()</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#metadata"><code>PingTargetDTO.metadata</code></a> property.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/messaging/events/JobResultAsyncMessageDTO.html#getMetric(java.lang.String)">getMetric(String)</a></span> - Method in class me.julb.library.dto.messaging.events.<a href="me/julb/library/dto/messaging/events/JobResultAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">JobResultAsyncMessageDTO</a></dt>
 <dd>
@@ -7991,6 +8023,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Getter for <a href="me/julb/library/utility/exceptions/ResourceStillReferencedException.html#referringResourceClass"><code>ResourceStillReferencedException.referringResourceClass</code></a> property.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#getRemotes()">getRemotes()</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.ping.configurations.properties">ApplicationProperties</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#remotes"><code>ApplicationProperties.remotes</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#getRemotes()">getRemotes()</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetAllDTO</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#remotes"><code>PingTargetAllDTO.remotes</code></a> property.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/persistence/mongodb/configurations/support/CustomMongoRepositoryFactory.html#getRepositoryBaseClass(org.springframework.data.repository.core.RepositoryMetadata)">getRepositoryBaseClass(RepositoryMetadata)</a></span> - Method in class me.julb.springbootstarter.persistence.mongodb.configurations.support.<a href="me/julb/springbootstarter/persistence/mongodb/configurations/support/CustomMongoRepositoryFactory.html" title="class in me.julb.springbootstarter.persistence.mongodb.configurations.support">CustomMongoRepositoryFactory</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/core/localization/CustomLocaleContext.html#getRequestLanguageRange()">getRequestLanguageRange()</a></span> - Method in class me.julb.springbootstarter.core.localization.<a href="me/julb/springbootstarter/core/localization/CustomLocaleContext.html" title="class in me.julb.springbootstarter.core.localization">CustomLocaleContext</a></dt>
 <dd>
@@ -8047,6 +8087,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/messaging/events/ResourceEventAsyncMessageDTO.html#getResourceType()">getResourceType()</a></span> - Method in class me.julb.library.dto.messaging.events.<a href="me/julb/library/dto/messaging/events/ResourceEventAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">ResourceEventAsyncMessageDTO</a></dt>
 <dd>
 <div class="block">Getter for <a href="me/julb/library/dto/messaging/events/ResourceEventAsyncMessageDTO.html#resourceType"><code>ResourceEventAsyncMessageDTO.resourceType</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#getResponseStatusCode()">getResponseStatusCode()</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#responseStatusCode"><code>PingTargetDTO.responseStatusCode</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#getResponseTimeMilliseconds()">getResponseTimeMilliseconds()</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#responseTimeMilliseconds"><code>PingTargetDTO.responseTimeMilliseconds</code></a> property.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/messaging/events/JobResultAsyncMessageDTO.html#getResult()">getResult()</a></span> - Method in class me.julb.library.dto.messaging.events.<a href="me/julb/library/dto/messaging/events/JobResultAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">JobResultAsyncMessageDTO</a></dt>
 <dd>
@@ -8276,6 +8324,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Getter for <a href="me/julb/applications/webanalytics/controllers/params/AnalyticsRequestParams.html#sr"><code>AnalyticsRequestParams.sr</code></a> property.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#getStatus()">getStatus()</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>
+<div class="block">Getter for <a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#status"><code>PingTargetDTO.status</code></a> property.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/platformhealth/entities/IncidentEntity.html#getStatus()">getStatus()</a></span> - Method in class me.julb.applications.platformhealth.entities.<a href="me/julb/applications/platformhealth/entities/IncidentEntity.html" title="class in me.julb.applications.platformhealth.entities">IncidentEntity</a></dt>
 <dd>
 <div class="block">Getter for <a href="me/julb/applications/platformhealth/entities/IncidentEntity.html#status"><code>IncidentEntity.status</code></a> property.</div>
@@ -8459,6 +8511,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/urlshortener/services/dto/LinkUpdateDTO.html#getTags()">getTags()</a></span> - Method in class me.julb.applications.urlshortener.services.dto.<a href="me/julb/applications/urlshortener/services/dto/LinkUpdateDTO.html" title="class in me.julb.applications.urlshortener.services.dto">LinkUpdateDTO</a></dt>
 <dd>
 <div class="block">Getter for <a href="me/julb/applications/urlshortener/services/dto/LinkUpdateDTO.html#tags"><code>LinkUpdateDTO.tags</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#getTargets()">getTargets()</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.ping.configurations.properties">ApplicationProperties</a></dt>
+<dd>
+<div class="block">Gets the targets to ping (local and remotes).</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/utility/interfaces/ISecurable.html#getTargetType()">getTargetType()</a></span> - Method in interface me.julb.library.utility.interfaces.<a href="me/julb/library/utility/interfaces/ISecurable.html" title="interface in me.julb.library.utility.interfaces">ISecurable</a></dt>
 <dd>
@@ -11772,7 +11828,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/ping/configurations/properties/package-summary.html">me.julb.applications.ping.configurations.properties</a> - package me.julb.applications.ping.configurations.properties</dt>
 <dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/ping/consumers/package-summary.html">me.julb.applications.ping.consumers</a> - package me.julb.applications.ping.consumers</dt>
+<dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/ping/controllers/package-summary.html">me.julb.applications.ping.controllers</a> - package me.julb.applications.ping.controllers</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/ping/services/package-summary.html">me.julb.applications.ping.services</a> - package me.julb.applications.ping.services</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/ping/services/dto/package-summary.html">me.julb.applications.ping.services.dto</a> - package me.julb.applications.ping.services.dto</dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/ping/services/impl/package-summary.html">me.julb.applications.ping.services.impl</a> - package me.julb.applications.ping.services.impl</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/applications/platformhealth/configurations/package-summary.html">me.julb.applications.platformhealth.configurations</a> - package me.julb.applications.platformhealth.configurations</dt>
 <dd>&nbsp;</dd>
@@ -13798,11 +13862,55 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Default constructor.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/consumers/ApiPingTargetFeignClient.html#ping()">ping()</a></span> - Method in interface me.julb.applications.ping.consumers.<a href="me/julb/applications/ping/consumers/ApiPingTargetFeignClient.html" title="interface in me.julb.applications.ping.consumers">ApiPingTargetFeignClient</a></dt>
+<dd>
+<div class="block">Pings someone.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/impl/PingTargetServiceImpl.html#pingAll()">pingAll()</a></span> - Method in class me.julb.applications.ping.services.impl.<a href="me/julb/applications/ping/services/impl/PingTargetServiceImpl.html" title="class in me.julb.applications.ping.services.impl">PingTargetServiceImpl</a></dt>
+<dd>
+<div class="block">Ping all remotes.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/PingTargetService.html#pingAll()">pingAll()</a></span> - Method in interface me.julb.applications.ping.services.<a href="me/julb/applications/ping/services/PingTargetService.html" title="interface in me.julb.applications.ping.services">PingTargetService</a></dt>
+<dd>
+<div class="block">Ping all remotes.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/controllers/PingRemoteController.html#pingAllRemotes()">pingAllRemotes()</a></span> - Method in class me.julb.applications.ping.controllers.<a href="me/julb/applications/ping/controllers/PingRemoteController.html" title="class in me.julb.applications.ping.controllers">PingRemoteController</a></dt>
+<dd>
+<div class="block">This method pings all defined remote and return the response.</div>
+</dd>
 <dt><a href="me/julb/applications/ping/controllers/PingController.html" title="class in me.julb.applications.ping.controllers"><span class="typeNameLink">PingController</span></a> - Class in <a href="me/julb/applications/ping/controllers/package-summary.html">me.julb.applications.ping.controllers</a></dt>
 <dd>
 <div class="block">The REST controller to handle ping requests.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/ping/controllers/PingController.html#%3Cinit%3E()">PingController()</a></span> - Constructor for class me.julb.applications.ping.controllers.<a href="me/julb/applications/ping/controllers/PingController.html" title="class in me.julb.applications.ping.controllers">PingController</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/ping/controllers/PingRemoteController.html" title="class in me.julb.applications.ping.controllers"><span class="typeNameLink">PingRemoteController</span></a> - Class in <a href="me/julb/applications/ping/controllers/package-summary.html">me.julb.applications.ping.controllers</a></dt>
+<dd>
+<div class="block">The REST controller to ping remote servers.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/controllers/PingRemoteController.html#%3Cinit%3E()">PingRemoteController()</a></span> - Constructor for class me.julb.applications.ping.controllers.<a href="me/julb/applications/ping/controllers/PingRemoteController.html" title="class in me.julb.applications.ping.controllers">PingRemoteController</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html" title="class in me.julb.applications.ping.services.dto"><span class="typeNameLink">PingTargetAllDTO</span></a> - Class in <a href="me/julb/applications/ping/services/dto/package-summary.html">me.julb.applications.ping.services.dto</a></dt>
+<dd>
+<div class="block">The DTO to ping all remotes.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#%3Cinit%3E()">PingTargetAllDTO()</a></span> - Constructor for class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetAllDTO</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto"><span class="typeNameLink">PingTargetDTO</span></a> - Class in <a href="me/julb/applications/ping/services/dto/package-summary.html">me.julb.applications.ping.services.dto</a></dt>
+<dd>
+<div class="block">The DTO to describe a remote ping result.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#%3Cinit%3E()">PingTargetDTO()</a></span> - Constructor for class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="me/julb/applications/ping/services/PingTargetService.html" title="interface in me.julb.applications.ping.services"><span class="typeNameLink">PingTargetService</span></a> - Interface in <a href="me/julb/applications/ping/services/package-summary.html">me.julb.applications.ping.services</a></dt>
+<dd>
+<div class="block">The service to ping remote services.</div>
+</dd>
+<dt><a href="me/julb/applications/ping/services/impl/PingTargetServiceImpl.html" title="class in me.julb.applications.ping.services.impl"><span class="typeNameLink">PingTargetServiceImpl</span></a> - Class in <a href="me/julb/applications/ping/services/impl/package-summary.html">me.julb.applications.ping.services.impl</a></dt>
+<dd>
+<div class="block">The service to ping all targets.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/impl/PingTargetServiceImpl.html#%3Cinit%3E()">PingTargetServiceImpl()</a></span> - Constructor for class me.julb.applications.ping.services.impl.<a href="me/julb/applications/ping/services/impl/PingTargetServiceImpl.html" title="class in me.julb.applications.ping.services.impl">PingTargetServiceImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/utility/constants/Chars.html#PIPE">PIPE</a></span> - Static variable in class me.julb.library.utility.constants.<a href="me/julb/library/utility/constants/Chars.html" title="class in me.julb.library.utility.constants">Chars</a></dt>
 <dd>
@@ -15771,6 +15879,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Setter for <a href="me/julb/applications/helloworld/consumers/ApiHelloWorldFeignClient.LocalConsumerProperties.html#endpoint"><code>ApiHelloWorldFeignClient.LocalConsumerProperties.endpoint</code></a> property.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#setEndpoint(me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties)">setEndpoint(ConsumerEndpointProperties)</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/TargetProperties.html" title="class in me.julb.applications.ping.configurations.properties">TargetProperties</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#endpoint"><code>TargetProperties.endpoint</code></a> property.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/googlechat/consumers/GoogleChatFeignClient.LocalConsumerProperties.html#setEndpoint(me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties)">setEndpoint(ConsumerEndpointProperties)</a></span> - Method in class me.julb.springbootstarter.googlechat.consumers.<a href="me/julb/springbootstarter/googlechat/consumers/GoogleChatFeignClient.LocalConsumerProperties.html" title="class in me.julb.springbootstarter.googlechat.consumers">GoogleChatFeignClient.LocalConsumerProperties</a></dt>
 <dd>
 <div class="block">Setter for <a href="me/julb/springbootstarter/googlechat/consumers/GoogleChatFeignClient.LocalConsumerProperties.html#endpoint"><code>GoogleChatFeignClient.LocalConsumerProperties.endpoint</code></a> property.</div>
@@ -16082,6 +16194,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/helloworld/entities/UserEntity.html#setId(java.lang.String)">setId(String)</a></span> - Method in class me.julb.applications.helloworld.entities.<a href="me/julb/applications/helloworld/entities/UserEntity.html" title="class in me.julb.applications.helloworld.entities">UserEntity</a></dt>
 <dd>
 <div class="block">Setter for <a href="me/julb/applications/helloworld/entities/UserEntity.html#id"><code>UserEntity.id</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#setId(java.lang.String)">setId(String)</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/TargetProperties.html" title="class in me.julb.applications.ping.configurations.properties">TargetProperties</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#id"><code>TargetProperties.id</code></a> property.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/platformhealth/entities/ComponentCategoryEntity.html#setId(java.lang.String)">setId(String)</a></span> - Method in class me.julb.applications.platformhealth.entities.<a href="me/julb/applications/platformhealth/entities/ComponentCategoryEntity.html" title="class in me.julb.applications.platformhealth.entities">ComponentCategoryEntity</a></dt>
 <dd>
@@ -16567,6 +16683,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Setter for <a href="me/julb/applications/urlshortener/services/dto/ShortUrlHitAnalyticsEventDTO.html#linkId"><code>ShortUrlHitAnalyticsEventDTO.linkId</code></a> property.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#setLocal(me.julb.applications.ping.configurations.properties.TargetProperties)">setLocal(TargetProperties)</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.ping.configurations.properties">ApplicationProperties</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#local"><code>ApplicationProperties.local</code></a> property.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/notification/events/parts/GoogleChatRoomDTO.html#setLocale(java.util.Locale)">setLocale(Locale)</a></span> - Method in class me.julb.library.dto.notification.events.parts.<a href="me/julb/library/dto/notification/events/parts/GoogleChatRoomDTO.html" title="class in me.julb.library.dto.notification.events.parts">GoogleChatRoomDTO</a></dt>
 <dd>
 <div class="block">Setter for <a href="me/julb/library/dto/notification/events/parts/GoogleChatRoomDTO.html#locale"><code>GoogleChatRoomDTO.locale</code></a> property.</div>
@@ -16975,6 +17095,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/simple/message/MessageDTO.html#setMessage(java.lang.String)">setMessage(String)</a></span> - Method in class me.julb.library.dto.simple.message.<a href="me/julb/library/dto/simple/message/MessageDTO.html" title="class in me.julb.library.dto.simple.message">MessageDTO</a></dt>
 <dd>
 <div class="block">Setter for <a href="me/julb/library/dto/simple/message/MessageDTO.html#message"><code>MessageDTO.message</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#setMetadata(java.util.Map)">setMetadata(Map&lt;String, String&gt;)</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/TargetProperties.html" title="class in me.julb.applications.ping.configurations.properties">TargetProperties</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#metadata"><code>TargetProperties.metadata</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#setMetadata(java.util.Map)">setMetadata(Map&lt;String, String&gt;)</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetAllDTO</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#metadata"><code>PingTargetAllDTO.metadata</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#setMetadata(java.util.Map)">setMetadata(Map&lt;String, String&gt;)</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#metadata"><code>PingTargetDTO.metadata</code></a> property.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/monitoring/prometheus/pushmetrics/services/dto/MetricsCreationWrapperDTO.html#setMetrics(java.util.Collection)">setMetrics(Collection&lt;MetricsCreationDTO&gt;)</a></span> - Method in class me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.<a href="me/julb/springbootstarter/monitoring/prometheus/pushmetrics/services/dto/MetricsCreationWrapperDTO.html" title="class in me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto">MetricsCreationWrapperDTO</a></dt>
 <dd>
@@ -17708,6 +17840,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Setter for <a href="me/julb/applications/authorizationserver/services/dto/authentication/UserAuthenticationByPincodeTriggerPincodeResetDTO.html#recoveryChannelDevice"><code>UserAuthenticationByPincodeTriggerPincodeResetDTO.recoveryChannelDevice</code></a> property.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#setRemotes(java.util.List)">setRemotes(List&lt;TargetProperties&gt;)</a></span> - Method in class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html" title="class in me.julb.applications.ping.configurations.properties">ApplicationProperties</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/configurations/properties/ApplicationProperties.html#remotes"><code>ApplicationProperties.remotes</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#setRemotes(java.util.List)">setRemotes(List&lt;PingTargetDTO&gt;)</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetAllDTO</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/services/dto/PingTargetAllDTO.html#remotes"><code>PingTargetAllDTO.remotes</code></a> property.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/core/localization/CustomLocaleContext.html#setRequestLanguageRange(java.lang.String)">setRequestLanguageRange(String)</a></span> - Method in class me.julb.springbootstarter.core.localization.<a href="me/julb/springbootstarter/core/localization/CustomLocaleContext.html" title="class in me.julb.springbootstarter.core.localization">CustomLocaleContext</a></dt>
 <dd>
 <div class="block">Setter for <a href="me/julb/springbootstarter/core/localization/CustomLocaleContext.html#requestLanguageRange"><code>CustomLocaleContext.requestLanguageRange</code></a> property.</div>
@@ -17747,6 +17887,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/messaging/events/ResourceEventAsyncMessageDTO.html#setResourceType(java.lang.String)">setResourceType(String)</a></span> - Method in class me.julb.library.dto.messaging.events.<a href="me/julb/library/dto/messaging/events/ResourceEventAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">ResourceEventAsyncMessageDTO</a></dt>
 <dd>
 <div class="block">Setter for <a href="me/julb/library/dto/messaging/events/ResourceEventAsyncMessageDTO.html#resourceType"><code>ResourceEventAsyncMessageDTO.resourceType</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#setResponseStatusCode(java.lang.Integer)">setResponseStatusCode(Integer)</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#responseStatusCode"><code>PingTargetDTO.responseStatusCode</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#setResponseTimeMilliseconds(java.lang.Long)">setResponseTimeMilliseconds(Long)</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#responseTimeMilliseconds"><code>PingTargetDTO.responseTimeMilliseconds</code></a> property.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/messaging/events/JobResultAsyncMessageDTO.html#setResult(me.julb.library.dto.messaging.events.JobResultStatus)">setResult(JobResultStatus)</a></span> - Method in class me.julb.library.dto.messaging.events.<a href="me/julb/library/dto/messaging/events/JobResultAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">JobResultAsyncMessageDTO</a></dt>
 <dd>
@@ -17991,6 +18139,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/applications/platformhealth/services/dto/plannedmaintenance/PlannedMaintenanceHistoryDTO.html#setStatus(me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceStatus)">setStatus(PlannedMaintenanceStatus)</a></span> - Method in class me.julb.applications.platformhealth.services.dto.plannedmaintenance.<a href="me/julb/applications/platformhealth/services/dto/plannedmaintenance/PlannedMaintenanceHistoryDTO.html" title="class in me.julb.applications.platformhealth.services.dto.plannedmaintenance">PlannedMaintenanceHistoryDTO</a></dt>
 <dd>
 <div class="block">Setter for <a href="me/julb/applications/platformhealth/services/dto/plannedmaintenance/PlannedMaintenanceHistoryDTO.html#status"><code>PlannedMaintenanceHistoryDTO.status</code></a> property.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#setStatus(me.julb.library.utility.enums.HealthStatus)">setStatus(HealthStatus)</a></span> - Method in class me.julb.applications.ping.services.dto.<a href="me/julb/applications/ping/services/dto/PingTargetDTO.html" title="class in me.julb.applications.ping.services.dto">PingTargetDTO</a></dt>
+<dd>
+<div class="block">Setter for <a href="me/julb/applications/ping/services/dto/PingTargetDTO.html#status"><code>PingTargetDTO.status</code></a> property.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/mail/MailDTO.html#setSubject(java.lang.String)">setSubject(String)</a></span> - Method in class me.julb.library.dto.mail.<a href="me/julb/library/dto/mail/MailDTO.html" title="class in me.julb.library.dto.mail">MailDTO</a></dt>
 <dd>
@@ -19248,6 +19400,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Validator to check that the String is a valid tag.</div>
 </dd>
+<dt><a href="me/julb/applications/ping/configurations/properties/TargetProperties.html" title="class in me.julb.applications.ping.configurations.properties"><span class="typeNameLink">TargetProperties</span></a> - Class in <a href="me/julb/applications/ping/configurations/properties/package-summary.html">me.julb.applications.ping.configurations.properties</a></dt>
+<dd>
+<div class="block">The remote properties.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/properties/TargetProperties.html#%3Cinit%3E()">TargetProperties()</a></span> - Constructor for class me.julb.applications.ping.configurations.properties.<a href="me/julb/applications/ping/configurations/properties/TargetProperties.html" title="class in me.julb.applications.ping.configurations.properties">TargetProperties</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/applications/dataprocessing/configurations/CustomConfiguration.html#taskExecutor">taskExecutor</a></span> - Variable in class me.julb.applications.dataprocessing.configurations.<a href="me/julb/applications/dataprocessing/configurations/CustomConfiguration.html" title="class in me.julb.applications.dataprocessing.configurations">CustomConfiguration</a></dt>
 <dd>
 <div class="block">The task executor.</div>
@@ -19715,6 +19873,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/http/alive/AliveDTO.html#toString()">toString()</a></span> - Method in class me.julb.library.dto.http.alive.<a href="me/julb/library/dto/http/alive/AliveDTO.html" title="class in me.julb.library.dto.http.alive">AliveDTO</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/http/client/BrowserDTO.html#toString()">toString()</a></span> - Method in class me.julb.library.dto.http.client.<a href="me/julb/library/dto/http/client/BrowserDTO.html" title="class in me.julb.library.dto.http.client">BrowserDTO</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="me/julb/library/dto/http/client/DeviceDTO.html#toString()">toString()</a></span> - Method in class me.julb.library.dto.http.client.<a href="me/julb/library/dto/http/client/DeviceDTO.html" title="class in me.julb.library.dto.http.client">DeviceDTO</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/dto/http/client/OperatingSystemDTO.html#toString()">toString()</a></span> - Method in class me.julb.library.dto.http.client.<a href="me/julb/library/dto/http/client/OperatingSystemDTO.html" title="class in me.julb.library.dto.http.client">OperatingSystemDTO</a></dt>
 <dd>&nbsp;</dd>
