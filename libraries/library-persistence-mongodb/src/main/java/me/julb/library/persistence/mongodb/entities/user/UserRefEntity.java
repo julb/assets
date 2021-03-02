@@ -24,6 +24,8 @@
 
 package me.julb.library.persistence.mongodb.entities.user;
 
+import java.util.Locale;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,6 +36,7 @@ import lombok.Setter;
 
 import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.mapping.annotations.ObjectMappingFactory;
+import me.julb.library.utility.validator.constraints.E164Number;
 import me.julb.library.utility.validator.constraints.Identifier;
 
 /**
@@ -58,6 +61,7 @@ public class UserRefEntity {
      */
      //@formatter:on
     @NotNull
+    @NotBlank
     @Identifier
     private String id;
 
@@ -72,6 +76,7 @@ public class UserRefEntity {
      * @param firstName the value to set.
      */
      //@formatter:on
+    @NotNull
     @NotBlank
     @Size(max = 128)
     private String firstName;
@@ -87,6 +92,7 @@ public class UserRefEntity {
      * @param lastName the value to set.
      */
      //@formatter:on
+    @NotNull
     @NotBlank
     @Size(max = 128)
     private String lastName;
@@ -102,9 +108,40 @@ public class UserRefEntity {
      * @param mail the value to set.
      */
      //@formatter:on
+    @NotNull
     @NotBlank
     @Email
     private String mail;
+
+    //@formatter:off
+     /**
+     * The e164Number attribute.
+     * -- GETTER --
+     * Getter for {@link #e164Number} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #e164Number} property.
+     * @param e164Number the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    @E164Number
+    private String e164Number;
+
+    //@formatter:off
+     /**
+     * The locale attribute.
+     * -- GETTER --
+     * Getter for {@link #locale} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #locale} property.
+     * @param locale the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    private Locale locale;
 
     //@formatter:off
      /**

@@ -96,7 +96,7 @@ public class AuthenticationByJwtUserDetailsService implements AuthenticationUser
                 dto.setLocale(Locale.forLanguageTag(payloadAsJson.getString(JWTClaims.LOCALE)));
                 dto.setMail(payloadAsJson.getString(JWTClaims.MAIL));
                 dto.setMailVerified(payloadAsJson.getBoolean(JWTClaims.MAIL_VERIFIED));
-                dto.setMobilePhone(payloadAsJson.getString(JWTClaims.PHONE_NUMBER));
+                dto.setE164Number(payloadAsJson.getString(JWTClaims.PHONE_NUMBER));
                 dto.setMobilePhoneVerified(payloadAsJson.getBoolean(JWTClaims.PHONE_NUMBER_VERIFIED));
                 dto.setMfaVerified(payloadAsJson.getBoolean(JWTClaims.MFA_VERIFIED));
                 dto.setName(payloadAsJson.getString(JWTClaims.NAME));

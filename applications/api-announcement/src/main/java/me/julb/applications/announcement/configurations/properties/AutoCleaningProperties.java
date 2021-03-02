@@ -33,7 +33,7 @@ import lombok.Setter;
 import me.julb.library.utility.constants.Integers;
 
 /**
- * The auto-claening configuration properties.
+ * The auto-cleaning configuration properties.
  * <P>
  * @author Julb.
  */

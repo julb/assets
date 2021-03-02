@@ -175,16 +175,16 @@ public class AuthenticatedUserDTO {
 
     //@formatter:off
      /**
-     * The mobilePhone attribute.
+     * The e164Number attribute.
      * -- GETTER --
-     * Getter for {@link #mobilePhone} property.
+     * Getter for {@link #e164Number} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #mobilePhone} property.
-     * @param mobilePhone the value to set.
+     * Setter for {@link #e164Number} property.
+     * @param e164Number the value to set.
      */
      //@formatter:on
-    private String mobilePhone;
+    private String e164Number;
 
     //@formatter:off
      /**

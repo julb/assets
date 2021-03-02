@@ -49,6 +49,7 @@ import me.julb.library.dto.notification.events.parts.GoogleChatRoomDTO;
 import me.julb.library.dto.simple.content.LargeContentDTO;
 import me.julb.library.dto.simple.content.LargeContentWithSubjectDTO;
 import me.julb.library.dto.sms.SmsMessageDTO;
+import me.julb.library.dto.webnotification.WebNotificationMessageDTO;
 import me.julb.springbootstarter.messaging.builders.AsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.templating.notification.services.NotificationTemplatingService;
@@ -150,6 +151,24 @@ public class NotificationDispatcherServiceImpl implements NotificationDispatcher
         }
 
         // Web notif.
+        if (notification.getWeb() != null) {
+            // Configure the generation DTO.
+            generateNotificationContent.setType(NotificationDispatchType.WEB);
+
+            // Build a web notification message DTO and post it.
+            WebNotificationMessageDTO webNotificationMessage = new WebNotificationMessageDTO();
+            webNotificationMessage.setExpiryDateTime(notification.getWeb().getExpiryDateTime());
+            webNotificationMessage.setKind(notification.getKind());
+            webNotificationMessage.getParameters().putAll(notification.getParameters());
+            webNotificationMessage.setPriority(notification.getWeb().getPriority());
+            webNotificationMessage.getUsers().addAll(notification.getWeb().getTos());
+
+            // Dispatch message.
+            dispatchNotification(generateNotificationContent.getTm(), generateNotificationContent.getType(), webNotificationMessage);
+
+            // Increment metrics.
+            metrics.get(generateNotificationContent.getType()).incrementAndGet();
+        }
 
         // Google Chat Room
         if (notification.getGoogleChat() != null) {
@@ -188,16 +207,27 @@ public class NotificationDispatcherServiceImpl implements NotificationDispatcher
      * Dispatch a notification.
      * @param <T> the body type.
      * @param trademark the current trademark.
+     * @param notificationDispatchType the notification dispatch type.
+     * @param body the body.
+     */
+    protected <T> void dispatchNotification(String trademark, NotificationDispatchType notificationDispatchType, T body) {
+        dispatchNotification(trademark, notificationDispatchType, null, body);
+    }
+
+    /**
+     * Dispatch a notification.
+     * @param <T> the body type.
+     * @param trademark the current trademark.
      * @param locale the locale.
      * @param notificationDispatchType the notification dispatch type.
      * @param body the body.
      */
     protected <T> void dispatchNotification(String trademark, NotificationDispatchType notificationDispatchType, Locale locale, T body) {
         //@formatter:off
-        asyncMessagePosterService.postMessage(null, new AsyncMessageBuilder<>()
+        asyncMessagePosterService.postMessage("notification.info.dispatched", new AsyncMessageBuilder<>()
             .attribute("tm", trademark)
             .attribute("notificationDispatchType", notificationDispatchType.toString())
-            .attribute("locale", locale.toLanguageTag())
+            .attribute("locale", locale != null ? locale.toLanguageTag() : null)
             .body(body)
             .build()
         );

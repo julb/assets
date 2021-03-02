@@ -131,4 +131,9 @@ public class ResourceTypes {
      */
     public static final String USER_PREFERENCES = "user-preferences";
 
+    /**
+     * The "web-notification" resource type.
+     */
+    public static final String WEB_NOTIFICATION = "web-notification";
+
 }

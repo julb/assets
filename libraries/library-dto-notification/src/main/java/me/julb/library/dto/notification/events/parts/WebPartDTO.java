@@ -25,15 +25,18 @@ package me.julb.library.dto.notification.events.parts;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import me.julb.library.dto.notification.events.WebNotificationPriority;
+import me.julb.library.dto.simple.user.UserRefDTO;
+import me.julb.library.utility.validator.constraints.DateTimeISO8601;
+import me.julb.library.utility.validator.constraints.DateTimeInFuture;
 
 /**
  * A DTO configuring web notification.
@@ -59,40 +62,36 @@ public class WebPartDTO {
      //@formatter:on
     @NotEmpty
     @Valid
-    private Collection<WebRecipientDTO> tos = new HashSet<>();
+    private Collection<UserRefDTO> tos = new HashSet<>();
 
-    /**
-     * Gets the requested locales.
-     * @return the requested locales.
+    //@formatter:off
+     /**
+     * The expiryDateTime attribute.
+     * -- GETTER --
+     * Getter for {@link #expiryDateTime} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #expiryDateTime} property.
+     * @param expiryDateTime the value to set.
      */
-    public Collection<Locale> requestedLocales() {
-        Set<Locale> locales = new HashSet<>();
-        tos.forEach((recipient) -> {
-            locales.add(recipient.getLocale());
-        });
-        return locales;
-    }
+     //@formatter:on
+    @NotNull
+    @DateTimeISO8601
+    @DateTimeInFuture
+    private String expiryDateTime;
 
-    /**
-     * Gets the recipients per locale.
-     * @param locale the locale.
-     * @return the recipients per locale.
+    //@formatter:off
+     /**
+     * The priority attribute.
+     * -- GETTER --
+     * Getter for {@link #priority} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #priority} property.
+     * @param priority the value to set.
      */
-    public Collection<WebRecipientDTO> tos(Locale locale) {
-        return tos.stream().filter((recipient) -> {
-            return recipient.getLocale().equals(locale);
-        }).collect(Collectors.toList());
-    }
-
-    /**
-     * Gets the user IDs per locale.
-     * @param locale the locale.
-     * @return the user IDs numbers per locale.
-     */
-    public Collection<String> toIds(Locale locale) {
-        return tos.stream().filter((recipient) -> {
-            return recipient.getLocale().equals(locale);
-        }).map(WebRecipientDTO::getId).collect(Collectors.toList());
-    }
+     //@formatter:on
+    @NotNull
+    private WebNotificationPriority priority = WebNotificationPriority.L3_LOW;
 
 }

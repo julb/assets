@@ -26,9 +26,14 @@ package me.julb.library.dto.simple.user;
 
 import java.util.Locale;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import me.julb.library.utility.validator.constraints.E164Number;
 
 /**
  * The user.
@@ -94,16 +99,19 @@ public class UserRefDTO {
 
     //@formatter:off
      /**
-     * The mobilePhone attribute.
+     * The e164Number attribute.
      * -- GETTER --
-     * Getter for {@link #mobilePhone} property.
+     * Getter for {@link #e164Number} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #mobilePhone} property.
-     * @param mobilePhone the value to set.
+     * Setter for {@link #e164Number} property.
+     * @param e164Number the value to set.
      */
      //@formatter:on
-    private String mobilePhone;
+    @NotNull
+    @NotBlank
+    @E164Number
+    private String e164Number;
 
     //@formatter:off
      /**

@@ -323,9 +323,11 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
         AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
         entity.setUser(new UserRefEntity());
         entity.getUser().setDisplayName(connnectedUser.getDisplayName());
+        entity.getUser().setE164Number(connnectedUser.getE164Number());
         entity.getUser().setFirstName(connnectedUser.getFirstName());
         entity.getUser().setId(connnectedUser.getUserId());
         entity.getUser().setLastName(connnectedUser.getLastName());
+        entity.getUser().setLocale(connnectedUser.getLocale());
         entity.getUser().setMail(connnectedUser.getMail());
 
         postResourceEvent(entity, ResourceEventType.CREATED);

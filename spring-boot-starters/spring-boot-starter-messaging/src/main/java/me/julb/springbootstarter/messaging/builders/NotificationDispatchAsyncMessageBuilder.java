@@ -24,6 +24,8 @@
 
 package me.julb.springbootstarter.messaging.builders;
 
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +34,7 @@ import me.julb.library.dto.mail.MailAttachmentDTO;
 import me.julb.library.dto.mail.MailInlineAttachmentDTO;
 import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO;
 import me.julb.library.dto.notification.events.NotificationKind;
+import me.julb.library.dto.notification.events.WebNotificationPriority;
 import me.julb.library.dto.notification.events.parts.GoogleChatPartDTO;
 import me.julb.library.dto.notification.events.parts.GoogleChatRoomDTO;
 import me.julb.library.dto.notification.events.parts.MailPartDTO;
@@ -39,7 +42,6 @@ import me.julb.library.dto.notification.events.parts.MailRecipientDTO;
 import me.julb.library.dto.notification.events.parts.SmsPartDTO;
 import me.julb.library.dto.notification.events.parts.SmsRecipientDTO;
 import me.julb.library.dto.notification.events.parts.WebPartDTO;
-import me.julb.library.dto.notification.events.parts.WebRecipientDTO;
 import me.julb.library.dto.simple.mobilephone.MobilePhoneDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.utility.constants.Integers;
@@ -386,7 +388,7 @@ public class NotificationDispatchAsyncMessageBuilder {
          */
         public SmsPartBuilder to(UserRefDTO... to) {
             for (UserRefDTO user : to) {
-                this.part.getTos().add(new SmsRecipientDTO(user.getMobilePhone(), user.getLocale()));
+                this.part.getTos().add(new SmsRecipientDTO(user.getE164Number(), user.getLocale()));
             }
             return this;
         }
@@ -437,9 +439,27 @@ public class NotificationDispatchAsyncMessageBuilder {
          * @return the current builder instance.
          */
         public WebPartBuilder to(UserRefDTO... to) {
-            for (UserRefDTO user : to) {
-                this.part.getTos().add(new WebRecipientDTO(user.getId(), user.getLocale()));
-            }
+            this.part.getTos().addAll(Arrays.asList(to));
+            return this;
+        }
+
+        /**
+         * Setter for property expiresInDays.
+         * @param expiresInDays New value of property expiresInDays.
+         * @return the current builder instance.
+         */
+        public WebPartBuilder expiresInDays(Integer expiresInDays) {
+            this.part.setExpiryDateTime(DateUtility.dateTimePlus(expiresInDays, ChronoUnit.DAYS));
+            return this;
+        }
+
+        /**
+         * Setter for property priority.
+         * @param priority New value of property priority.
+         * @return the current builder instance.
+         */
+        public WebPartBuilder priority(WebNotificationPriority priority) {
+            this.part.setPriority(priority);
             return this;
         }
 

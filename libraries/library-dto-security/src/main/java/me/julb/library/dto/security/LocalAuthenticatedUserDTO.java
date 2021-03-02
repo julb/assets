@@ -23,6 +23,8 @@
  */
 package me.julb.library.dto.security;
 
+import java.util.Locale;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,8 +54,10 @@ public class LocalAuthenticatedUserDTO extends AuthenticatedUserDTO {
         super();
         setUserId(StringUtils.repeat(Chars.ZERO, Integers.THIRTY_TWO));
         setDisplayName(userName);
+        setE164Number("+33000000000");
         setFirstName(userName);
         setLastName(userName);
+        setLocale(Locale.getDefault());
         setMail(userName + "@local");
     }
 }

@@ -35,22 +35,22 @@ import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
 /**
- * Validator to check for Aspire code structure.
+ * Validator to check for E164 number structure.
  * <P>
  * @author Julb.
  */
-@Pattern(regexp = "^[a-zA-Z0-9]{3,7}$")
+@Pattern(regexp = "^\\+[0-9]+$")
 @Documented
 @Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {})
-public @interface AspireCode {
+public @interface E164Number {
 
     /**
      * The error message.
      * @return the error message.
      */
-    String message() default "{me.julb.library.utility.validator.constraints.AspireCode.message}";
+    String message() default "{me.julb.library.utility.validator.constraints.E164Number.message}";
 
     /**
      * Returns the validation groups.

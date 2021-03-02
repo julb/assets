@@ -13,6 +13,7 @@ dependencies {
     implementation project(':libraries:library-dto-mail')
     implementation project(':libraries:library-dto-notification')
     implementation project(':libraries:library-dto-sms')
+    implementation project(':libraries:library-dto-webnotification')
     implementation project(':spring-boot-starters:spring-boot-starter-templating-notification')
     implementation project(':spring-boot-starters:spring-boot-starter-worker')
 	

@@ -26,6 +26,8 @@ package me.julb.springbootstarter.messaging.builders;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
@@ -86,6 +88,19 @@ public class AsyncMessageBuilder<T> {
      */
     public AsyncMessageBuilder<T> attribute(String name, String value) {
         this.message.getAttributes().put(name, value);
+        return this;
+    }
+
+    /**
+     * Add an attribute to the message.
+     * @param name the attribute name to set.
+     * @param value the attribute value to set.
+     * @return the current builder instance.
+     */
+    public AsyncMessageBuilder<T> attributeIfNotBlank(String name, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            this.message.getAttributes().put(name, value);
+        }
         return this;
     }
 
