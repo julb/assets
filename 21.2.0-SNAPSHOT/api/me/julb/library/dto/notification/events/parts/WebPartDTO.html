@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -176,38 +176,45 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.util.Collection&lt;<a href="WebRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts">WebRecipientDTO</a>&gt;</code></td>
+<td class="colFirst"><code>java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getExpiryDateTime()">getExpiryDateTime</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Getter for <a href="#expiryDateTime"><code>expiryDateTime</code></a> property.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../WebNotificationPriority.html" title="enum in me.julb.library.dto.notification.events">WebNotificationPriority</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getPriority()">getPriority</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Getter for <a href="#priority"><code>priority</code></a> property.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.util.Collection&lt;<a href="../../../simple/user/UserRefDTO.html" title="class in me.julb.library.dto.simple.user">UserRefDTO</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTos()">getTos</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Getter for <a href="#tos"><code>tos</code></a> property.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.util.Collection&lt;java.util.Locale&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#requestedLocales()">requestedLocales</a></span>()</code></th>
-<td class="colLast">
-<div class="block">Gets the requested locales.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTos(java.util.Collection)">setTos</a></span>&#8203;(java.util.Collection&lt;<a href="WebRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts">WebRecipientDTO</a>&gt;&nbsp;tos)</code></th>
-<td class="colLast">
-<div class="block">Setter for <a href="#tos"><code>tos</code></a> property.</div>
-</td>
-</tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.util.Collection&lt;java.lang.String&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toIds(java.util.Locale)">toIds</a></span>&#8203;(java.util.Locale&nbsp;locale)</code></th>
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setExpiryDateTime(java.lang.String)">setExpiryDateTime</a></span>&#8203;(java.lang.String&nbsp;expiryDateTime)</code></th>
 <td class="colLast">
-<div class="block">Gets the user IDs per locale.</div>
+<div class="block">Setter for <a href="#expiryDateTime"><code>expiryDateTime</code></a> property.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>java.util.Collection&lt;<a href="WebRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts">WebRecipientDTO</a>&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#tos(java.util.Locale)">tos</a></span>&#8203;(java.util.Locale&nbsp;locale)</code></th>
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setPriority(me.julb.library.dto.notification.events.WebNotificationPriority)">setPriority</a></span>&#8203;(<a href="../WebNotificationPriority.html" title="enum in me.julb.library.dto.notification.events">WebNotificationPriority</a>&nbsp;priority)</code></th>
 <td class="colLast">
-<div class="block">Gets the recipients per locale.</div>
+<div class="block">Setter for <a href="#priority"><code>priority</code></a> property.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTos(java.util.Collection)">setTos</a></span>&#8203;(java.util.Collection&lt;<a href="../../../simple/user/UserRefDTO.html" title="class in me.julb.library.dto.simple.user">UserRefDTO</a>&gt;&nbsp;tos)</code></th>
+<td class="colLast">
+<div class="block">Setter for <a href="#tos"><code>tos</code></a> property.</div>
 </td>
 </tr>
 </table>
@@ -253,60 +260,42 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="requestedLocales()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>requestedLocales</h4>
-<pre class="methodSignature">public&nbsp;java.util.Collection&lt;java.util.Locale&gt;&nbsp;requestedLocales()</pre>
-<div class="block">Gets the requested locales.</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the requested locales.</dd>
-</dl>
-</li>
-</ul>
-<a id="tos(java.util.Locale)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>tos</h4>
-<pre class="methodSignature">public&nbsp;java.util.Collection&lt;<a href="WebRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts">WebRecipientDTO</a>&gt;&nbsp;tos&#8203;(java.util.Locale&nbsp;locale)</pre>
-<div class="block">Gets the recipients per locale.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>locale</code> - the locale.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the recipients per locale.</dd>
-</dl>
-</li>
-</ul>
-<a id="toIds(java.util.Locale)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>toIds</h4>
-<pre class="methodSignature">public&nbsp;java.util.Collection&lt;java.lang.String&gt;&nbsp;toIds&#8203;(java.util.Locale&nbsp;locale)</pre>
-<div class="block">Gets the user IDs per locale.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>locale</code> - the locale.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the user IDs numbers per locale.</dd>
-</dl>
-</li>
-</ul>
 <a id="getTos()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTos</h4>
-<pre class="methodSignature">public&nbsp;java.util.Collection&lt;<a href="WebRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts">WebRecipientDTO</a>&gt;&nbsp;getTos()</pre>
+<pre class="methodSignature">public&nbsp;java.util.Collection&lt;<a href="../../../simple/user/UserRefDTO.html" title="class in me.julb.library.dto.simple.user">UserRefDTO</a>&gt;&nbsp;getTos()</pre>
 <div class="block">Getter for <a href="#tos"><code>tos</code></a> property.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the value.</dd>
+</dl>
+</li>
+</ul>
+<a id="getExpiryDateTime()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getExpiryDateTime</h4>
+<pre class="methodSignature">public&nbsp;java.lang.String&nbsp;getExpiryDateTime()</pre>
+<div class="block">Getter for <a href="#expiryDateTime"><code>expiryDateTime</code></a> property.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the value.</dd>
+</dl>
+</li>
+</ul>
+<a id="getPriority()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPriority</h4>
+<pre class="methodSignature">public&nbsp;<a href="../WebNotificationPriority.html" title="enum in me.julb.library.dto.notification.events">WebNotificationPriority</a>&nbsp;getPriority()</pre>
+<div class="block">Getter for <a href="#priority"><code>priority</code></a> property.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the value.</dd>
@@ -316,14 +305,42 @@ extends java.lang.Object</pre>
 <a id="setTos(java.util.Collection)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setTos</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;setTos&#8203;(java.util.Collection&lt;<a href="WebRecipientDTO.html" title="class in me.julb.library.dto.notification.events.parts">WebRecipientDTO</a>&gt;&nbsp;tos)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;setTos&#8203;(java.util.Collection&lt;<a href="../../../simple/user/UserRefDTO.html" title="class in me.julb.library.dto.simple.user">UserRefDTO</a>&gt;&nbsp;tos)</pre>
 <div class="block">Setter for <a href="#tos"><code>tos</code></a> property.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>tos</code> - the value to set.</dd>
+</dl>
+</li>
+</ul>
+<a id="setExpiryDateTime(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setExpiryDateTime</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;setExpiryDateTime&#8203;(java.lang.String&nbsp;expiryDateTime)</pre>
+<div class="block">Setter for <a href="#expiryDateTime"><code>expiryDateTime</code></a> property.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>expiryDateTime</code> - the value to set.</dd>
+</dl>
+</li>
+</ul>
+<a id="setPriority(me.julb.library.dto.notification.events.WebNotificationPriority)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setPriority</h4>
+<pre class="methodSignature">public&nbsp;void&nbsp;setPriority&#8203;(<a href="../WebNotificationPriority.html" title="enum in me.julb.library.dto.notification.events">WebNotificationPriority</a>&nbsp;priority)</pre>
+<div class="block">Setter for <a href="#priority"><code>priority</code></a> property.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>priority</code> - the value to set.</dd>
 </dl>
 </li>
 </ul>

@@ -129,6 +129,14 @@ me.julb.applications.webanalytics.configurations.properties
 me.julb.applications.webanalytics.controllers
 me.julb.applications.webanalytics.controllers.params
 me.julb.applications.webanalytics.services.dto
+me.julb.applications.webnotification.configurations
+me.julb.applications.webnotification.configurations.properties
+me.julb.applications.webnotification.controllers
+me.julb.applications.webnotification.entities
+me.julb.applications.webnotification.repositories
+me.julb.applications.webnotification.services
+me.julb.applications.webnotification.services.dto
+me.julb.applications.webnotification.services.impl
 me.julb.functions
 me.julb.library.dto.googlechat
 me.julb.library.dto.http.alive
@@ -152,6 +160,7 @@ me.julb.library.dto.simple.mobilephone
 me.julb.library.dto.simple.user
 me.julb.library.dto.simple.value
 me.julb.library.dto.sms
+me.julb.library.dto.webnotification
 me.julb.library.json.serializers
 me.julb.library.logging.logback
 me.julb.library.mapping.annotations

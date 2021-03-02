@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10};
+var data = {"i0":10,"i1":10,"i2":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -195,6 +195,15 @@ implements <a href="../NotificationDispatcherService.html" title="interface in m
 </td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>protected &lt;T&gt;&nbsp;void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#dispatchNotification(java.lang.String,me.julb.library.dto.notification.events.NotificationDispatchType,T)">dispatchNotification</a></span>&#8203;(java.lang.String&nbsp;trademark,
+                    <a href="../../../../library/dto/notification/events/NotificationDispatchType.html" title="enum in me.julb.library.dto.notification.events">NotificationDispatchType</a>&nbsp;notificationDispatchType,
+                    T&nbsp;body)</code></th>
+<td class="colLast">
+<div class="block">Dispatch a notification.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#process(me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO)">process</a></span>&#8203;(@NotNull @Valid <a href="../../../../library/dto/notification/events/NotificationDispatchAsyncMessageDTO.html" title="class in me.julb.library.dto.notification.events">NotificationDispatchAsyncMessageDTO</a>&nbsp;notification)</code></th>
 <td class="colLast">
@@ -258,6 +267,28 @@ implements <a href="../NotificationDispatcherService.html" title="interface in m
 <dd><code><a href="../NotificationDispatcherService.html#process(me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO)">process</a></code>&nbsp;in interface&nbsp;<code><a href="../NotificationDispatcherService.html" title="interface in me.julb.applications.notificationdispatcher.services">NotificationDispatcherService</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>notification</code> - the notification.</dd>
+</dl>
+</li>
+</ul>
+<a id="dispatchNotification(java.lang.String,me.julb.library.dto.notification.events.NotificationDispatchType,java.lang.Object)">
+<!--   -->
+</a><a id="dispatchNotification(java.lang.String,me.julb.library.dto.notification.events.NotificationDispatchType,T)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>dispatchNotification</h4>
+<pre class="methodSignature">protected&nbsp;&lt;T&gt;&nbsp;void&nbsp;dispatchNotification&#8203;(java.lang.String&nbsp;trademark,
+                                        <a href="../../../../library/dto/notification/events/NotificationDispatchType.html" title="enum in me.julb.library.dto.notification.events">NotificationDispatchType</a>&nbsp;notificationDispatchType,
+                                        T&nbsp;body)</pre>
+<div class="block">Dispatch a notification.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - the body type.</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>trademark</code> - the current trademark.</dd>
+<dd><code>notificationDispatchType</code> - the notification dispatch type.</dd>
+<dd><code>body</code> - the body.</dd>
 </dl>
 </li>
 </ul>
