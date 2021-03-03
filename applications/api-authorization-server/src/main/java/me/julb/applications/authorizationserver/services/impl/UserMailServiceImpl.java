@@ -368,7 +368,6 @@ public class UserMailServiceImpl implements UserMailService {
             //@formatter:off
             asyncMessagePosterService.postNotificationMessage(
                 new NotificationDispatchAsyncMessageBuilder()
-                    .tm(tm)
                     .kind(NotificationKind.TRIGGER_MAIL_VERIFY)
                     .parameter("userId", existing.getUser().getId())
                     .parameter("userMailId", existing.getId())

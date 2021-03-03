@@ -8,7 +8,8 @@ plugins {
 dependencies {
 	api platform(project(':bom'))
 	
-	api 'org.springframework.boot:spring-boot-starter-test'
+    implementation project(':spring-boot-starters:spring-boot-starter-core')
+    api 'org.springframework.boot:spring-boot-starter-test'
 	api 'org.springframework.security:spring-security-test'
 }
 

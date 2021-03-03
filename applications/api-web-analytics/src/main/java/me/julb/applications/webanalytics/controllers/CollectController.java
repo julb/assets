@@ -124,7 +124,7 @@ public class CollectController {
         event.setVisitorId(analyticsRequestParams.getUid());
 
         //@formatter:off
-        asyncMessagePosterService.postWebAnalyticsMessage( 
+        asyncMessagePosterService.postWebAnalyticsMessage(
             new WebAnalyticsAsyncMessageBuilder<WebAnalyticsEventDTO>()
                 .level(analyticsRequestParams.getL())
                 .body(event)

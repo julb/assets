@@ -26,16 +26,18 @@ package me.julb.applications.webnotification.configurations;
 
 import java.util.function.Consumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
 
 import me.julb.applications.webnotification.services.WebNotificationIngestionService;
+import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
+import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.library.dto.webnotification.WebNotificationMessageDTO;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.messaging.configurations.AbstractAsyncConsumerConfiguration;
+import me.julb.springbootstarter.resourcetypes.ResourceTypes;
 
 /**
  * The local async configuration.
@@ -43,8 +45,7 @@ import me.julb.springbootstarter.core.context.TrademarkContextHolder;
  * @author Julb.
  */
 @Configuration
-@Slf4j
-public class CustomAsyncConfiguration {
+public class CustomAsyncConfiguration extends AbstractAsyncConsumerConfiguration {
 
     /**
      * The web notification ingestion service.
@@ -53,26 +54,43 @@ public class CustomAsyncConfiguration {
     private WebNotificationIngestionService webNotificationIngestionService;
 
     /**
+     * Consumer for the resource event.
+     * @return a function to consume resource event.
+     */
+    @Bean
+    public Consumer<Message<ResourceEventAsyncMessageDTO>> resourceEvent() {
+        return resourceEventAsyncMessage -> {
+            onReceiveStart(resourceEventAsyncMessage);
+
+            // The payload.
+            ResourceEventAsyncMessageDTO payload = resourceEventAsyncMessage.getPayload();
+
+            // The resource concerns a user.
+            if (ResourceTypes.USER.equals(payload.getResourceType())) {
+                if (ResourceEventType.UPDATED.equals(payload.getEventType())) {
+
+                } else if (ResourceEventType.DELETED.equals(payload.getEventType())) {
+
+                }
+            }
+
+            onReceiveEnd(resourceEventAsyncMessage);
+        };
+    }
+
+    /**
      * Consumer for dispatched web notifications.
      * @return a function to consume dispatched web notifications.
      */
     @Bean
-    public Consumer<AsyncMessageDTO<WebNotificationMessageDTO>> dispatchedWebNotification() {
+    public Consumer<Message<AsyncMessageDTO<WebNotificationMessageDTO>>> dispatchedWebNotification() {
         return notificationAsyncMessage -> {
-            // Trace input.
-            LOGGER.debug("Receiving message <{}>.", notificationAsyncMessage.getId());
-
-            // Set trademark.
-            TrademarkContextHolder.setTrademark(notificationAsyncMessage.getAttributes().get("tm"));
+            onReceiveStart(notificationAsyncMessage);
 
             // Invoke consumer.
-            webNotificationIngestionService.ingest(notificationAsyncMessage.getBody());
+            webNotificationIngestionService.ingest(notificationAsyncMessage.getPayload().getBody());
 
-            // Unset trademark.
-            TrademarkContextHolder.unsetTrademark();
-
-            // Trace finished.
-            LOGGER.debug("Message <{}> processed successfully.", notificationAsyncMessage.getId());
+            onReceiveEnd(notificationAsyncMessage);
         };
     }
 }

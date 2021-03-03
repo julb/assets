@@ -134,7 +134,7 @@ public class RedirectController {
             event.setUserLanguage(LocaleContextHolder.getLocale().toLanguageTag());
 
             //@formatter:off
-            asyncMessagePosterService.postWebAnalyticsMessage( 
+            asyncMessagePosterService.postWebAnalyticsMessage(
                 new WebAnalyticsAsyncMessageBuilder<ShortUrlHitAnalyticsEventDTO>()
                     .level(WebAnalyticsAsyncMessageLevel.INFO)
                     .body(event)

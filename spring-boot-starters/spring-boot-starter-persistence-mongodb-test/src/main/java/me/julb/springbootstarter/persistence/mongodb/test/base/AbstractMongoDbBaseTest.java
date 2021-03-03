@@ -24,12 +24,10 @@
 
 package me.julb.springbootstarter.persistence.mongodb.test.base;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**
@@ -40,23 +38,10 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
 public abstract class AbstractMongoDbBaseTest extends AbstractBaseTest {
 
     /**
-     * The tm.
-     */
-    protected static String TM = "test.io";
-
-    /**
      * The mongo-template to create collections.
      */
     @Autowired
     private MongoTemplate mongoTemplate;
-
-    /**
-     * Method triggered during method startup.
-     */
-    @BeforeAll
-    public static void setupAll() {
-        TrademarkContextHolder.setTrademark(TM);
-    }
 
     /**
      * Method triggered during method startup.

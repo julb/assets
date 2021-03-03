@@ -375,7 +375,6 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
             //@formatter:off
             asyncMessagePosterService.postNotificationMessage(
                 new NotificationDispatchAsyncMessageBuilder()
-                    .tm(tm)
                     .kind(NotificationKind.TRIGGER_PINCODE_RESET_WITH_MAIL)
                     .parameter("userMail", userMailEntity.getMail())
                     .parameter("resetToken", pincodeResetToken)
@@ -409,7 +408,6 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
             //@formatter:off
             asyncMessagePosterService.postNotificationMessage(
                 new NotificationDispatchAsyncMessageBuilder()
-                    .tm(tm)
                     .kind(NotificationKind.TRIGGER_PINCODE_RESET_WITH_MOBILE_PHONE)
                     .parameter("userMobilePhoneE164Number", userMobilePhoneEntity.getMobilePhone().getE164Number())
                     .parameter("resetToken", pincodeResetToken)

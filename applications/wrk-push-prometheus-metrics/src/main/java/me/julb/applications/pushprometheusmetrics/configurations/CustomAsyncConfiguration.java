@@ -26,14 +26,14 @@ package me.julb.applications.pushprometheusmetrics.configurations;
 
 import java.util.function.Consumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
 
 import me.julb.applications.pushprometheusmetrics.services.PushJobResultAsPrometheusMetricsService;
 import me.julb.library.dto.messaging.events.JobResultAsyncMessageDTO;
+import me.julb.springbootstarter.messaging.configurations.AbstractAsyncConsumerConfiguration;
 
 /**
  * The local configuration.
@@ -41,8 +41,7 @@ import me.julb.library.dto.messaging.events.JobResultAsyncMessageDTO;
  * @author Julb.
  */
 @Configuration
-@Slf4j
-public class CustomAsyncConfiguration {
+public class CustomAsyncConfiguration extends AbstractAsyncConsumerConfiguration {
 
     /**
      * The service to push job metrics to Prometheus.
@@ -55,16 +54,16 @@ public class CustomAsyncConfiguration {
      * @return a function to consume job results.
      */
     @Bean
-    public Consumer<JobResultAsyncMessageDTO<?>> jobResult() {
+    public Consumer<Message<JobResultAsyncMessageDTO<?>>> jobResult() {
         return jobResultAsyncMessage -> {
             // Trace input.
-            LOGGER.debug("Receiving message <{}>.", jobResultAsyncMessage.getId());
+            onReceiveStart(jobResultAsyncMessage);
 
             // Invoke consumer.
-            pushJobResultAsPrometheusMetricsService.push(jobResultAsyncMessage);
+            pushJobResultAsPrometheusMetricsService.push(jobResultAsyncMessage.getPayload());
 
             // Trace finished.
-            LOGGER.debug("Message <{}> processed successfully.", jobResultAsyncMessage.getId());
+            onReceiveEnd(jobResultAsyncMessage);
         };
     }
 }

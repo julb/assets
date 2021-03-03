@@ -26,14 +26,14 @@ package me.julb.applications.sms.configurations;
 
 import java.util.function.Consumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
 
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.library.dto.sms.SmsMessageDTO;
+import me.julb.springbootstarter.messaging.configurations.AbstractAsyncConsumerConfiguration;
 import me.julb.springbootstarter.sms.services.SmsService;
 
 /**
@@ -42,8 +42,7 @@ import me.julb.springbootstarter.sms.services.SmsService;
  * @author Julb.
  */
 @Configuration
-@Slf4j
-public class CustomAsyncConfiguration {
+public class CustomAsyncConfiguration extends AbstractAsyncConsumerConfiguration {
 
     /**
      * The SMS service.
@@ -56,16 +55,14 @@ public class CustomAsyncConfiguration {
      * @return a function to consume SMS messages.
      */
     @Bean
-    public Consumer<AsyncMessageDTO<SmsMessageDTO>> sms() {
+    public Consumer<Message<AsyncMessageDTO<SmsMessageDTO>>> sms() {
         return smsMessage -> {
-            // Trace input.
-            LOGGER.debug("Receiving message <{}>.", smsMessage.getId());
+            onReceiveStart(smsMessage);
 
             // Invoke consumer.
-            smsService.send(smsMessage.getBody());
+            smsService.send(smsMessage.getPayload().getBody());
 
-            // Trace finished.
-            LOGGER.debug("Message <{}> processed successfully.", smsMessage.getId());
+            onReceiveEnd(smsMessage);
         };
     }
 }

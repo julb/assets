@@ -32,6 +32,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+
 /**
  * Base class for unit test.
  * <P>
@@ -43,10 +45,16 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class AbstractBaseTest {
 
     /**
+     * The tm.
+     */
+    protected static String TM = "test.io";
+
+    /**
      * Method triggered during method startup.
      */
     @BeforeAll
     public static void setupBaseAll() {
         LocaleContextHolder.setLocale(Locale.getDefault());
+        TrademarkContextHolder.setTrademark(TM);
     }
 }

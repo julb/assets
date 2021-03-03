@@ -14,6 +14,8 @@ dependencies {
 	implementation project(':libraries:library-utility-constants')
 	implementation project(':libraries:library-utility-date')
 	implementation project(':libraries:library-utility-identifier')
+    implementation project(':libraries:library-utility-validator')
+    implementation project(':spring-boot-starters:spring-boot-starter-core')
 	implementation 'org.apache.commons:commons-lang3'
     implementation 'org.apache.commons:commons-collections4'
 	

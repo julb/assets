@@ -26,15 +26,15 @@ package me.julb.applications.mail.configurations;
 
 import java.util.function.Consumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
 
 import me.julb.library.dto.mail.MailDTO;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.springbootstarter.mail.services.MailService;
+import me.julb.springbootstarter.messaging.configurations.AbstractAsyncConsumerConfiguration;
 
 /**
  * The local configuration.
@@ -42,8 +42,7 @@ import me.julb.springbootstarter.mail.services.MailService;
  * @author Julb.
  */
 @Configuration
-@Slf4j
-public class CustomAsyncConfiguration {
+public class CustomAsyncConfiguration extends AbstractAsyncConsumerConfiguration {
 
     /**
      * The service to send email.
@@ -56,16 +55,16 @@ public class CustomAsyncConfiguration {
      * @return a function to consume mails.
      */
     @Bean
-    public Consumer<AsyncMessageDTO<MailDTO>> mail() {
+    public Consumer<Message<AsyncMessageDTO<MailDTO>>> mail() {
         return mailMessage -> {
             // Trace input.
-            LOGGER.debug("Receiving message <{}>.", mailMessage.getId());
+            onReceiveStart(mailMessage);
 
             // Invoke consumer.
-            mailService.send(mailMessage.getBody());
+            mailService.send(mailMessage.getPayload().getBody());
 
             // Trace finished.
-            LOGGER.debug("Message <{}> processed successfully.", mailMessage.getId());
+            onReceiveEnd(mailMessage);
         };
     }
 }

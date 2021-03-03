@@ -107,28 +107,6 @@ public class NotificationDispatchAsyncMessageBuilder {
     }
 
     /**
-     * Setter for property tm.
-     * @param tm New value of property tm.
-     * @return the current builder instance.
-     */
-    public NotificationDispatchAsyncMessageBuilder tm(String tm) {
-        this.message.setTm(tm);
-        return this;
-    }
-
-    /**
-     * Alias for {@link #tm(String)}.
-     * <P>
-     * Setter for property trademark.
-     * @param trademark New value of property trademark.
-     * @return the current builder instance.
-     */
-    public NotificationDispatchAsyncMessageBuilder trademark(String trademark) {
-        this.message.setTm(trademark);
-        return this;
-    }
-
-    /**
      * Setter for property kind.
      * @param kind New value of property kind.
      * @return the current builder instance.

@@ -375,7 +375,6 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
             //@formatter:off
             asyncMessagePosterService.postNotificationMessage(
                 new NotificationDispatchAsyncMessageBuilder()
-                    .tm(tm)
                     .kind(NotificationKind.TRIGGER_PASSWORD_RESET_WITH_MAIL)
                     .parameter("userMail", userMailEntity.getMail())
                     .parameter("resetToken", passwordResetToken)
@@ -409,7 +408,6 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
             //@formatter:off
             asyncMessagePosterService.postNotificationMessage(
                 new NotificationDispatchAsyncMessageBuilder()
-                    .tm(tm)
                     .kind(NotificationKind.TRIGGER_PASSWORD_RESET_WITH_MOBILE_PHONE)
                     .parameter("userMobilePhoneE164Number", userMobilePhoneEntity.getMobilePhone().getE164Number())
                     .parameter("resetToken", passwordResetToken)

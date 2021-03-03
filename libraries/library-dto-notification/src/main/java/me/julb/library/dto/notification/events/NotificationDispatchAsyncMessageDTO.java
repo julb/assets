@@ -46,19 +46,6 @@ public class NotificationDispatchAsyncMessageDTO extends AsyncMessageDTO<Void> {
 
     //@formatter:off
      /**
-     * The tm attribute.
-     * -- GETTER --
-     * Getter for {@link #tm} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #tm} property.
-     * @param tm the value to set.
-     */
-     //@formatter:on
-    private String tm;
-
-    //@formatter:off
-     /**
      * The kind attribute.
      * -- GETTER --
      * Getter for {@link #kind} property.

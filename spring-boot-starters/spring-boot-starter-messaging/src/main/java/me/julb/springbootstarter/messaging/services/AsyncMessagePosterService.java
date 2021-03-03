@@ -24,6 +24,8 @@
 
 package me.julb.springbootstarter.messaging.services;
 
+import java.util.Locale;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -35,6 +37,7 @@ import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO;
+import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The main service to post message.
@@ -52,7 +55,18 @@ public interface AsyncMessagePosterService {
     <T> void postMessage(@NotNull @NotBlank String routingKey, @NotNull @Valid AsyncMessageDTO<T> messagingPost);
 
     /**
+     * Posts a message to the broker.
+     * @param trademark the trademark.
+     * @param locale the locale.
+     * @param routingKey the routing key to use.
+     * @param messagingPost the message to post.
+     * @param <T> the type of bean associated to the message.
+     */
+    <T> void postMessage(@NotNull @NotBlank @Trademark String trademark, @NotNull Locale locale, @NotNull @NotBlank String routingKey, @NotNull @Valid AsyncMessageDTO<T> messagingPost);
+
+    /**
      * Posts a event collector message to the broker.
+     * @param trademark the trademark.
      * @param type the type of the event.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
@@ -61,6 +75,7 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a resource message to the broker.
+     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
@@ -68,6 +83,7 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a job execution result message to the broker.
+     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
@@ -75,6 +91,7 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a web analytics message to the broker.
+     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
@@ -82,6 +99,7 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a audit message to the broker.
+     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
@@ -89,6 +107,7 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a notification message to the broker.
+     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */

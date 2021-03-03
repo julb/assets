@@ -26,14 +26,14 @@ package me.julb.applications.notificationdispatcher.configurations;
 
 import java.util.function.Consumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
 
 import me.julb.applications.notificationdispatcher.services.NotificationDispatcherService;
 import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO;
+import me.julb.springbootstarter.messaging.configurations.AbstractAsyncConsumerConfiguration;
 
 /**
  * The local async configuration.
@@ -41,8 +41,7 @@ import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageD
  * @author Julb.
  */
 @Configuration
-@Slf4j
-public class CustomAsyncConfiguration {
+public class CustomAsyncConfiguration extends AbstractAsyncConsumerConfiguration {
 
     /**
      * The notification dispatcher service.
@@ -55,16 +54,14 @@ public class CustomAsyncConfiguration {
      * @return a function to consume job results.
      */
     @Bean
-    public Consumer<NotificationDispatchAsyncMessageDTO> notificationDispatch() {
+    public Consumer<Message<NotificationDispatchAsyncMessageDTO>> notificationDispatch() {
         return notificationAsyncMessage -> {
-            // Trace input.
-            LOGGER.debug("Receiving message <{}>.", notificationAsyncMessage.getId());
+            onReceiveStart(notificationAsyncMessage);
 
             // Invoke consumer.
-            notificationDispatcherService.process(notificationAsyncMessage);
+            notificationDispatcherService.process(notificationAsyncMessage.getPayload());
 
-            // Trace finished.
-            LOGGER.debug("Message <{}> processed successfully.", notificationAsyncMessage.getId());
+            onReceiveEnd(notificationAsyncMessage);
         };
     }
 }

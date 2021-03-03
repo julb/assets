@@ -50,6 +50,7 @@ import me.julb.library.dto.simple.content.LargeContentDTO;
 import me.julb.library.dto.simple.content.LargeContentWithSubjectDTO;
 import me.julb.library.dto.sms.SmsMessageDTO;
 import me.julb.library.dto.webnotification.WebNotificationMessageDTO;
+import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.messaging.builders.AsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.templating.notification.services.NotificationTemplatingService;
@@ -89,13 +90,15 @@ public class NotificationDispatcherServiceImpl implements NotificationDispatcher
      */
     @Override
     public void process(@NotNull @Valid NotificationDispatchAsyncMessageDTO notification) {
+        String tm = TrademarkContextHolder.getTrademark();
+
         EnumMap<NotificationDispatchType, AtomicLong> metrics = new EnumMap<>(NotificationDispatchType.class);
 
         // Generate notification content.
         GenerateNotificationContentDTO generateNotificationContent = new GenerateNotificationContentDTO();
         generateNotificationContent.setName(notification.getKind().toString());
         generateNotificationContent.setParameters(notification.getParameters());
-        generateNotificationContent.setTm(notification.getTm());
+        generateNotificationContent.setTm(tm);
 
         // Mail notification
         if (notification.getMail() != null) {
@@ -224,10 +227,8 @@ public class NotificationDispatcherServiceImpl implements NotificationDispatcher
      */
     protected <T> void dispatchNotification(String trademark, NotificationDispatchType notificationDispatchType, Locale locale, T body) {
         //@formatter:off
-        asyncMessagePosterService.postMessage("notification.info.dispatched", new AsyncMessageBuilder<>()
-            .attribute("tm", trademark)
+        asyncMessagePosterService.postMessage(trademark, locale, "notification.info.dispatched", new AsyncMessageBuilder<>()
             .attribute("notificationDispatchType", notificationDispatchType.toString())
-            .attribute("locale", locale != null ? locale.toLanguageTag() : null)
             .body(body)
             .build()
         );

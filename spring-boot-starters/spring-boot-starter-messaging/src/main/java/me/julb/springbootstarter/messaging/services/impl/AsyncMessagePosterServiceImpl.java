@@ -24,6 +24,7 @@
 
 package me.julb.springbootstarter.messaging.services.impl;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -35,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,9 @@ import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO;
+import me.julb.library.utility.constants.CustomMessagingHeaders;
+import me.julb.library.utility.validator.constraints.Trademark;
+import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.messaging.builders.AuditAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 
@@ -62,7 +67,7 @@ import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService {
 
     /**
-     * Thee routing key header name.
+     * The routing key header name.
      */
     private static final String ROUTING_KEY_DEFAULT_HEADER_NAME = "routingKey";
 
@@ -77,9 +82,19 @@ public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService 
     private String mainProducerChannelName = MAIN_PRODUCER_DEFAULT_CHANNEL_NAME;
 
     /**
-     * The routing key heeader name.
+     * The routing key header name.
      */
     private String routingKeyHeaderName = ROUTING_KEY_DEFAULT_HEADER_NAME;
+
+    /**
+     * The trademark header name.
+     */
+    private String trademarkHeaderName = CustomMessagingHeaders.X_JULB_TM;
+
+    /**
+     * The locale header name.
+     */
+    private String localeHeaderName = CustomMessagingHeaders.X_JULB_LOCALE;
 
     /**
      * The bridge to post messages.
@@ -92,19 +107,27 @@ public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService 
      */
     @Override
     public <T> void postMessage(@NotNull @NotBlank String routingKeyValue, @NotNull @Valid AsyncMessageDTO<T> asyncMessage) {
+        this.postMessage(TrademarkContextHolder.getTrademark(), LocaleContextHolder.getLocale(), routingKeyValue, asyncMessage);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> void postMessage(@NotNull @NotBlank @Trademark String trademark, @NotNull Locale locale, @NotNull @NotBlank String routingKeyValue, @NotNull @Valid AsyncMessageDTO<T> asyncMessage) {
         // Logs a message.
         LOGGER.debug("Posting message with id <{}> using the routing key <{}>.", asyncMessage.getId(), routingKeyValue);
 
-        //@formatter:off
         MessageBuilder<AsyncMessageDTO<T>> amqpMessageBuilder = MessageBuilder.withPayload(asyncMessage);
-        if(MapUtils.isNotEmpty(asyncMessage.getAttributes())) {
-            for(Map.Entry<String, String> mapEntry : asyncMessage.getAttributes().entrySet()) {
+        if (MapUtils.isNotEmpty(asyncMessage.getAttributes())) {
+            for (Map.Entry<String, String> mapEntry : asyncMessage.getAttributes().entrySet()) {
                 amqpMessageBuilder.setHeader(mapEntry.getKey(), mapEntry.getValue());
             }
         }
         amqpMessageBuilder.setHeader(routingKeyHeaderName, routingKeyValue.toLowerCase());
+        amqpMessageBuilder.setHeader(trademarkHeaderName, trademark.toLowerCase());
+        amqpMessageBuilder.setHeader(localeHeaderName, locale.toLanguageTag());
         Message<AsyncMessageDTO<T>> amqpMessage = amqpMessageBuilder.build();
-        //@formatter:on
         streamBridge.send(String.format("%s-out-0", this.mainProducerChannelName), amqpMessage);
 
         // Logs successful

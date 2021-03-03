@@ -327,7 +327,6 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
             //@formatter:off
             asyncMessagePosterService.postNotificationMessage(
                 new NotificationDispatchAsyncMessageBuilder()
-                    .tm(tm)
                     .kind(NotificationKind.TRIGGER_MOBILE_PHONE_VERIFY)
                     .parameter("userId", existing.getUser().getId())
                     .parameter("userMobilePhoneId", existing.getId())
