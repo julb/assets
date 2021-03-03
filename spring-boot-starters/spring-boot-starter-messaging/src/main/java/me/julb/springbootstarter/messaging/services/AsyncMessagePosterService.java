@@ -66,7 +66,6 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a event collector message to the broker.
-     * @param trademark the trademark.
      * @param type the type of the event.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
@@ -75,7 +74,6 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a resource message to the broker.
-     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
@@ -83,7 +81,6 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a job execution result message to the broker.
-     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
@@ -91,7 +88,6 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a web analytics message to the broker.
-     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
@@ -99,7 +95,6 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a audit message to the broker.
-     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */
@@ -107,7 +102,6 @@ public interface AsyncMessagePosterService {
 
     /**
      * Posts a notification message to the broker.
-     * @param trademark the trademark.
      * @param messagingPost the message to post.
      * @param <T> the type of bean associated to the message.
      */

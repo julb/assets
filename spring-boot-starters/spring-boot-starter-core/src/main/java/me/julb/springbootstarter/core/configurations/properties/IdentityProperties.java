@@ -29,7 +29,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * The consumer client ID - client Secret configuration properties.
@@ -40,7 +39,6 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "identity")
-@Validated
 public class IdentityProperties {
 
     //@formatter:off
