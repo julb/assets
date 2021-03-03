@@ -122,7 +122,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../../springbootstarter/messaging/configurations/AbstractAsyncConsumerConfiguration.html" title="class in me.julb.springbootstarter.messaging.configurations">me.julb.springbootstarter.messaging.configurations.AbstractAsyncConsumerConfiguration</a></li>
+<li>
+<ul class="inheritance">
 <li>me.julb.applications.pushprometheusmetrics.configurations.CustomAsyncConfiguration</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -132,7 +137,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <hr>
 <pre>@Configuration
 public class <span class="typeNameLabel">CustomAsyncConfiguration</span>
-extends java.lang.Object</pre>
+extends <a href="../../../springbootstarter/messaging/configurations/AbstractAsyncConsumerConfiguration.html" title="class in me.julb.springbootstarter.messaging.configurations">AbstractAsyncConsumerConfiguration</a></pre>
 <div class="block">The local configuration.
  <P></div>
 </li>
@@ -177,13 +182,20 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.util.function.Consumer&lt;<a href="../../../library/dto/messaging/events/JobResultAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">JobResultAsyncMessageDTO</a>&lt;?&gt;&gt;</code></td>
+<td class="colFirst"><code>java.util.function.Consumer&lt;org.springframework.messaging.Message&lt;<a href="../../../library/dto/messaging/events/JobResultAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">JobResultAsyncMessageDTO</a>&lt;?&gt;&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#jobResult()">jobResult</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Consumer for job results.</div>
 </td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a id="methods.inherited.from.class.me.julb.springbootstarter.messaging.configurations.AbstractAsyncConsumerConfiguration">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;me.julb.springbootstarter.messaging.configurations.<a href="../../../springbootstarter/messaging/configurations/AbstractAsyncConsumerConfiguration.html" title="class in me.julb.springbootstarter.messaging.configurations">AbstractAsyncConsumerConfiguration</a></h3>
+<code><a href="../../../springbootstarter/messaging/configurations/AbstractAsyncConsumerConfiguration.html#onReceiveEnd(org.springframework.messaging.Message)">onReceiveEnd</a>, <a href="../../../springbootstarter/messaging/configurations/AbstractAsyncConsumerConfiguration.html#onReceiveStart(org.springframework.messaging.Message)">onReceiveStart</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
 <!--   -->
@@ -233,7 +245,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>jobResult</h4>
 <pre class="methodSignature">@Bean
-public&nbsp;java.util.function.Consumer&lt;<a href="../../../library/dto/messaging/events/JobResultAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">JobResultAsyncMessageDTO</a>&lt;?&gt;&gt;&nbsp;jobResult()</pre>
+public&nbsp;java.util.function.Consumer&lt;org.springframework.messaging.Message&lt;<a href="../../../library/dto/messaging/events/JobResultAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">JobResultAsyncMessageDTO</a>&lt;?&gt;&gt;&gt;&nbsp;jobResult()</pre>
 <div class="block">Consumer for job results.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>

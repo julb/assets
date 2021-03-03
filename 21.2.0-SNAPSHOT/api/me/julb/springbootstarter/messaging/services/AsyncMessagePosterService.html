@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -173,7 +173,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#postMessage(java.lang.String,me.julb.library.dto.messaging.message.AsyncMessageDTO)">postMessage</a></span>&#8203;(@NotNull @NotBlank java.lang.String&nbsp;routingKey,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#postMessage(java.lang.String,java.util.Locale,java.lang.String,me.julb.library.dto.messaging.message.AsyncMessageDTO)">postMessage</a></span>&#8203;(@NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Trademark.html" title="annotation in me.julb.library.utility.validator.constraints">@Trademark</a> java.lang.String&nbsp;trademark,
+           @NotNull java.util.Locale&nbsp;locale,
+           @NotNull @NotBlank java.lang.String&nbsp;routingKey,
            @NotNull @Valid <a href="../../../library/dto/messaging/message/AsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.message">AsyncMessageDTO</a>&lt;T&gt;&nbsp;messagingPost)</code></th>
 <td class="colLast">
 <div class="block">Posts a message to the broker.</div>
@@ -181,19 +183,27 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#postMessage(java.lang.String,me.julb.library.dto.messaging.message.AsyncMessageDTO)">postMessage</a></span>&#8203;(@NotNull @NotBlank java.lang.String&nbsp;routingKey,
+           @NotNull @Valid <a href="../../../library/dto/messaging/message/AsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.message">AsyncMessageDTO</a>&lt;T&gt;&nbsp;messagingPost)</code></th>
+<td class="colLast">
+<div class="block">Posts a message to the broker.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#postNotificationMessage(me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO)">postNotificationMessage</a></span>&#8203;(@NotNull @Valid <a href="../../../library/dto/notification/events/NotificationDispatchAsyncMessageDTO.html" title="class in me.julb.library.dto.notification.events">NotificationDispatchAsyncMessageDTO</a>&nbsp;messagingPost)</code></th>
 <td class="colLast">
 <div class="block">Posts a notification message to the broker.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#postResourceEventMessage(me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO)">postResourceEventMessage</a></span>&#8203;(@NotNull @Valid <a href="../../../library/dto/messaging/events/ResourceEventAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">ResourceEventAsyncMessageDTO</a>&nbsp;messagingPost)</code></th>
 <td class="colLast">
 <div class="block">Posts a resource message to the broker.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#postWebAnalyticsMessage(me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO)">postWebAnalyticsMessage</a></span>&#8203;(@NotNull @Valid <a href="../../../library/dto/messaging/events/WebAnalyticsAsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.events">WebAnalyticsAsyncMessageDTO</a>&lt;T&gt;&nbsp;messagingPost)</code></th>
 <td class="colLast">
@@ -232,6 +242,32 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - the type of bean associated to the message.</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>routingKey</code> - the routing key to use.</dd>
+<dd><code>messagingPost</code> - the message to post.</dd>
+</dl>
+</li>
+</ul>
+<a id="postMessage(java.lang.String,java.util.Locale,java.lang.String,me.julb.library.dto.messaging.message.AsyncMessageDTO)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>postMessage</h4>
+<pre class="methodSignature">&lt;T&gt;&nbsp;void&nbsp;postMessage&#8203;(@NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Trademark.html" title="annotation in me.julb.library.utility.validator.constraints">@Trademark</a>
+                     @NotNull @NotBlank <a href="../../../library/utility/validator/constraints/Trademark.html" title="annotation in me.julb.library.utility.validator.constraints">@Trademark</a> java.lang.String&nbsp;trademark,
+                     @NotNull
+                     @NotNull java.util.Locale&nbsp;locale,
+                     @NotNull @NotBlank
+                     @NotNull @NotBlank java.lang.String&nbsp;routingKey,
+                     @NotNull @Valid
+                     @NotNull @Valid <a href="../../../library/dto/messaging/message/AsyncMessageDTO.html" title="class in me.julb.library.dto.messaging.message">AsyncMessageDTO</a>&lt;T&gt;&nbsp;messagingPost)</pre>
+<div class="block">Posts a message to the broker.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - the type of bean associated to the message.</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>trademark</code> - the trademark.</dd>
+<dd><code>locale</code> - the locale.</dd>
 <dd><code>routingKey</code> - the routing key to use.</dd>
 <dd><code>messagingPost</code> - the message to post.</dd>
 </dl>

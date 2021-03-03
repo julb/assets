@@ -26,8 +26,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":9,"i3":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var data = {"i0":10,"i1":10,"i2":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -94,7 +94,7 @@ loadScripts(document, 'script');</script>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -152,21 +152,13 @@ extends <a href="../../../../test/base/AbstractBaseTest.html" title="class in me
 <!--   -->
 </a>
 <h3>Field Summary</h3>
-<table class="memberSummary">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colSecond" scope="col">Field</th>
-<th class="colLast" scope="col">Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected static java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#TM">TM</a></span></code></th>
-<td class="colLast">
-<div class="block">The tm.</div>
-</td>
-</tr>
-</table>
+<ul class="blockList">
+<li class="blockList"><a id="fields.inherited.from.class.me.julb.springbootstarter.test.base.AbstractBaseTest">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;me.julb.springbootstarter.test.base.<a href="../../../../test/base/AbstractBaseTest.html" title="class in me.julb.springbootstarter.test.base">AbstractBaseTest</a></h3>
+<code><a href="../../../../test/base/AbstractBaseTest.html#TM">TM</a></code></li>
+</ul>
 </li>
 </ul>
 </section>
@@ -199,7 +191,7 @@ extends <a href="../../../../test/base/AbstractBaseTest.html" title="class in me
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
@@ -220,13 +212,6 @@ extends <a href="../../../../test/base/AbstractBaseTest.html" title="class in me
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setupAll()">setupAll</a></span>()</code></th>
-<td class="colLast">
-<div class="block">Method triggered during method startup.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setupData()">setupData</a></span>()</code></th>
 <td class="colLast">
@@ -257,26 +242,6 @@ extends <a href="../../../../test/base/AbstractBaseTest.html" title="class in me
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<section role="region">
-<ul class="blockList">
-<li class="blockList"><a id="field.detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a id="TM">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>TM</h4>
-<pre>protected static&nbsp;java.lang.String TM</pre>
-<div class="block">The tm.</div>
-</li>
-</ul>
-</li>
-</ul>
-</section>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <section role="region">
 <ul class="blockList">
@@ -303,17 +268,6 @@ extends <a href="../../../../test/base/AbstractBaseTest.html" title="class in me
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="setupAll()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setupAll</h4>
-<pre class="methodSignature">@BeforeAll
-public static&nbsp;void&nbsp;setupAll()</pre>
-<div class="block">Method triggered during method startup.</div>
-</li>
-</ul>
 <a id="setUp()">
 <!--   -->
 </a>
@@ -407,7 +361,7 @@ public&nbsp;void&nbsp;setUp()</pre>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
