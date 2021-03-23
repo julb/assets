@@ -27,17 +27,17 @@ package me.julb.applications.ping.configurations;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
+import org.springframework.cloud.sleuth.instrument.web.client.feign.SleuthFeignBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import brave.http.HttpTracing;
 import feign.Client;
 import feign.Contract;
-import feign.Feign;
 import feign.Retryer;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
@@ -45,7 +45,6 @@ import feign.codec.ErrorDecoder;
 import me.julb.applications.ping.configurations.properties.ApplicationProperties;
 import me.julb.applications.ping.configurations.properties.TargetProperties;
 import me.julb.applications.ping.consumers.ApiPingTargetFeignClient;
-import me.julb.springbootstarter.consumer.clients.CustomTracingFeignClient;
 import me.julb.springbootstarter.consumer.utility.FeignClientUtility;
 
 /**
@@ -66,7 +65,7 @@ public class CustomConfiguration {
 
     /**
      * Builds a list of remote ping feign clients.
-     * @param httpTracing the HTTP tracing.
+     * @param beanFactory the bean factory.
      * @param decoder the default feign decoder.
      * @param encoder the default feign encoder.
      * @param contract the default feign contract.
@@ -75,7 +74,7 @@ public class CustomConfiguration {
      * @return the list of remote ping feign clients.
      */
     @Bean
-    public Map<String, ApiPingTargetFeignClient> apiPingTargetFeignClients(HttpTracing httpTracing, Decoder decoder, Encoder encoder, Contract contract, Retryer retryer, ErrorDecoder errorDecoder) {
+    public Map<String, ApiPingTargetFeignClient> apiPingTargetFeignClients(BeanFactory beanFactory, Decoder decoder, Encoder encoder, Contract contract, Retryer retryer, ErrorDecoder errorDecoder) {
         Map<String, ApiPingTargetFeignClient> clients = new HashMap<>();
 
         // Targets to ping.
@@ -84,8 +83,8 @@ public class CustomConfiguration {
             Client customClient = FeignClientUtility.feignClientUtil(targetProperties.getEndpoint());
 
             //@formatter:off
-            ApiPingTargetFeignClient client = Feign.builder()
-                .client(CustomTracingFeignClient.create(httpTracing, customClient))
+            ApiPingTargetFeignClient client = SleuthFeignBuilder
+                .builder(beanFactory, customClient)
                 .encoder(encoder)
                 .decoder(decoder)
                 .contract(contract)

@@ -25,6 +25,8 @@ package me.julb.springbootstarter.consumer.encoders;
 
 import java.lang.reflect.Type;
 
+import org.springframework.cloud.openfeign.support.PageableSpringEncoder;
+
 import feign.RequestTemplate;
 import feign.codec.EncodeException;
 import feign.codec.Encoder;
@@ -66,7 +68,7 @@ public class SearchableAndPageableSpringEncoder implements Encoder {
             SearchableAndPageable sap = (SearchableAndPageable) object;
 
             // Encode pageable
-            CustomPageableSpringEncoder pageableEncoder = new CustomPageableSpringEncoder(null);
+            PageableSpringEncoder pageableEncoder = new PageableSpringEncoder(null);
             pageableEncoder.encode(sap.getPageable(), bodyType, template);
 
             // Encode searchable

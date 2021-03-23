@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.support.PageJacksonModule;
+import org.springframework.cloud.openfeign.support.PageableSpringEncoder;
 import org.springframework.cloud.openfeign.support.SortJacksonModule;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +45,6 @@ import feign.form.FormEncoder;
 import me.julb.springbootstarter.consumer.decoders.DefaultClientErrorDecoder;
 import me.julb.springbootstarter.consumer.decoders.DefaultRetryer;
 import me.julb.springbootstarter.consumer.decoders.JsonStringDecoder;
-import me.julb.springbootstarter.consumer.encoders.CustomPageableSpringEncoder;
 import me.julb.springbootstarter.consumer.encoders.JsonStringEncoder;
 import me.julb.springbootstarter.consumer.encoders.SearchableAndPageableSpringEncoder;
 import me.julb.springbootstarter.consumer.encoders.SearchableSpringEncoder;
@@ -66,7 +66,7 @@ public class ConsumerClientDefaultConfiguration {
     @Primary
     @ConditionalOnBean(HttpMessageConverters.class)
     public Encoder defaultEncoder(ObjectFactory<HttpMessageConverters> messageConverters) {
-        return new FormEncoder(new SearchableAndPageableSpringEncoder(new SearchableSpringEncoder(new CustomPageableSpringEncoder(new SpringEncoder(messageConverters)))));
+        return new FormEncoder(new SearchableAndPageableSpringEncoder(new SearchableSpringEncoder(new PageableSpringEncoder(new SpringEncoder(messageConverters)))));
     }
 
     /**
@@ -77,7 +77,7 @@ public class ConsumerClientDefaultConfiguration {
     @Primary
     @ConditionalOnMissingBean(HttpMessageConverters.class)
     public Encoder encoder() {
-        return new FormEncoder(new SearchableAndPageableSpringEncoder(new SearchableSpringEncoder(new CustomPageableSpringEncoder(new JsonStringEncoder()))));
+        return new FormEncoder(new SearchableAndPageableSpringEncoder(new SearchableSpringEncoder(new PageableSpringEncoder(new JsonStringEncoder()))));
     }
 
     /**
