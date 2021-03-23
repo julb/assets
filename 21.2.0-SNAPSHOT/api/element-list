@@ -201,7 +201,6 @@ me.julb.library.utility.random
 me.julb.library.utility.size
 me.julb.library.utility.validator.constraints
 me.julb.library.utility.validator.validators
-me.julb.springbootstarter.consumer.clients
 me.julb.springbootstarter.consumer.configurations
 me.julb.springbootstarter.consumer.configurations.properties
 me.julb.springbootstarter.consumer.decoders

@@ -180,7 +180,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,&#8203;<a href="../consumers/ApiPingTargetFeignClient.html" title="interface in me.julb.applications.ping.consumers">ApiPingTargetFeignClient</a>&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#apiPingTargetFeignClients(brave.http.HttpTracing,feign.codec.Decoder,feign.codec.Encoder,feign.Contract,feign.Retryer,feign.codec.ErrorDecoder)">apiPingTargetFeignClients</a></span>&#8203;(brave.http.HttpTracing&nbsp;httpTracing,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#apiPingTargetFeignClients(org.springframework.beans.factory.BeanFactory,feign.codec.Decoder,feign.codec.Encoder,feign.Contract,feign.Retryer,feign.codec.ErrorDecoder)">apiPingTargetFeignClients</a></span>&#8203;(org.springframework.beans.factory.BeanFactory&nbsp;beanFactory,
                          feign.codec.Decoder&nbsp;decoder,
                          feign.codec.Encoder&nbsp;encoder,
                          feign.Contract&nbsp;contract,
@@ -233,14 +233,14 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="apiPingTargetFeignClients(brave.http.HttpTracing,feign.codec.Decoder,feign.codec.Encoder,feign.Contract,feign.Retryer,feign.codec.ErrorDecoder)">
+<a id="apiPingTargetFeignClients(org.springframework.beans.factory.BeanFactory,feign.codec.Decoder,feign.codec.Encoder,feign.Contract,feign.Retryer,feign.codec.ErrorDecoder)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>apiPingTargetFeignClients</h4>
 <pre class="methodSignature">@Bean
-public&nbsp;java.util.Map&lt;java.lang.String,&#8203;<a href="../consumers/ApiPingTargetFeignClient.html" title="interface in me.julb.applications.ping.consumers">ApiPingTargetFeignClient</a>&gt;&nbsp;apiPingTargetFeignClients&#8203;(brave.http.HttpTracing&nbsp;httpTracing,
+public&nbsp;java.util.Map&lt;java.lang.String,&#8203;<a href="../consumers/ApiPingTargetFeignClient.html" title="interface in me.julb.applications.ping.consumers">ApiPingTargetFeignClient</a>&gt;&nbsp;apiPingTargetFeignClients&#8203;(org.springframework.beans.factory.BeanFactory&nbsp;beanFactory,
                                                                                                 feign.codec.Decoder&nbsp;decoder,
                                                                                                 feign.codec.Encoder&nbsp;encoder,
                                                                                                 feign.Contract&nbsp;contract,
@@ -249,7 +249,7 @@ public&nbsp;java.util.Map&lt;java.lang.String,&#8203;<a href="../consumers/ApiPi
 <div class="block">Builds a list of remote ping feign clients.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>httpTracing</code> - the HTTP tracing.</dd>
+<dd><code>beanFactory</code> - the bean factory.</dd>
 <dd><code>decoder</code> - the default feign decoder.</dd>
 <dd><code>encoder</code> - the default feign encoder.</dd>
 <dd><code>contract</code> - the default feign contract.</dd>

@@ -563,7 +563,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">A Feign client to ping a remote ping application.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/CustomConfiguration.html#apiPingTargetFeignClients(brave.http.HttpTracing,feign.codec.Decoder,feign.codec.Encoder,feign.Contract,feign.Retryer,feign.codec.ErrorDecoder)">apiPingTargetFeignClients(HttpTracing, Decoder, Encoder, Contract, Retryer, ErrorDecoder)</a></span> - Method in class me.julb.applications.ping.configurations.<a href="me/julb/applications/ping/configurations/CustomConfiguration.html" title="class in me.julb.applications.ping.configurations">CustomConfiguration</a></dt>
+<dt><span class="memberNameLink"><a href="me/julb/applications/ping/configurations/CustomConfiguration.html#apiPingTargetFeignClients(org.springframework.beans.factory.BeanFactory,feign.codec.Decoder,feign.codec.Encoder,feign.Contract,feign.Retryer,feign.codec.ErrorDecoder)">apiPingTargetFeignClients(BeanFactory, Decoder, Encoder, Contract, Retryer, ErrorDecoder)</a></span> - Method in class me.julb.applications.ping.configurations.<a href="me/julb/applications/ping/configurations/CustomConfiguration.html" title="class in me.julb.applications.ping.configurations">CustomConfiguration</a></dt>
 <dd>
 <div class="block">Builds a list of remote ping feign clients.</div>
 </dd>
@@ -2121,8 +2121,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Creates a agreement.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/clients/CustomTracingFeignClient.html#create(brave.http.HttpTracing,feign.Client)">create(HttpTracing, Client)</a></span> - Static method in class me.julb.springbootstarter.consumer.clients.<a href="me/julb/springbootstarter/consumer/clients/CustomTracingFeignClient.html" title="class in me.julb.springbootstarter.consumer.clients">CustomTracingFeignClient</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/monitoring/prometheus/pushmetrics/consumers/PrometheusPushGatewayFeignClient.html#create(java.lang.String,java.lang.String,java.lang.String)">create(String, String, String)</a></span> - Method in interface me.julb.springbootstarter.monitoring.prometheus.pushmetrics.consumers.<a href="me/julb/springbootstarter/monitoring/prometheus/pushmetrics/consumers/PrometheusPushGatewayFeignClient.html" title="interface in me.julb.springbootstarter.monitoring.prometheus.pushmetrics.consumers">PrometheusPushGatewayFeignClient</a></dt>
 <dd>
 <div class="block">Push metrics to Prometheus Push gateway.</div>
@@ -2490,14 +2488,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Constructor.</div>
 </dd>
-<dt><a href="me/julb/springbootstarter/consumer/encoders/CustomPageableSpringEncoder.html" title="class in me.julb.springbootstarter.consumer.encoders"><span class="typeNameLink">CustomPageableSpringEncoder</span></a> - Class in <a href="me/julb/springbootstarter/consumer/encoders/package-summary.html">me.julb.springbootstarter.consumer.encoders</a></dt>
-<dd>
-<div class="block">The custom pageable encoder fixing sort issues.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/encoders/CustomPageableSpringEncoder.html#%3Cinit%3E(feign.codec.Encoder)">CustomPageableSpringEncoder(Encoder)</a></span> - Constructor for class me.julb.springbootstarter.consumer.encoders.<a href="me/julb/springbootstarter/consumer/encoders/CustomPageableSpringEncoder.html" title="class in me.julb.springbootstarter.consumer.encoders">CustomPageableSpringEncoder</a></dt>
-<dd>
-<div class="block">Creates a new PageableSpringEncoder with the given delegate for fallback.</div>
-</dd>
 <dt><a href="me/julb/springbootstarter/security/configurations/beans/access/CustomPermissionEvaluator.html" title="class in me.julb.springbootstarter.security.configurations.beans.access"><span class="typeNameLink">CustomPermissionEvaluator</span></a> - Class in <a href="me/julb/springbootstarter/security/configurations/beans/access/package-summary.html">me.julb.springbootstarter.security.configurations.beans.access</a></dt>
 <dd>
 <div class="block">A custom permission evaluator.</div>
@@ -2519,10 +2509,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/web/resolvers/page/CustomSortHandlerMethodArgumentResolver.html#%3Cinit%3E()">CustomSortHandlerMethodArgumentResolver()</a></span> - Constructor for class me.julb.springbootstarter.web.resolvers.page.<a href="me/julb/springbootstarter/web/resolvers/page/CustomSortHandlerMethodArgumentResolver.html" title="class in me.julb.springbootstarter.web.resolvers.page">CustomSortHandlerMethodArgumentResolver</a></dt>
 <dd>
 <div class="block">Constructor.</div>
-</dd>
-<dt><a href="me/julb/springbootstarter/consumer/clients/CustomTracingFeignClient.html" title="class in me.julb.springbootstarter.consumer.clients"><span class="typeNameLink">CustomTracingFeignClient</span></a> - Class in <a href="me/julb/springbootstarter/consumer/clients/package-summary.html">me.julb.springbootstarter.consumer.clients</a></dt>
-<dd>
-<div class="block">This is a custom tracing feign client to be used when creating.</div>
 </dd>
 <dt><a href="me/julb/springbootstarter/security/services/dto/CustomUserDetails.html" title="class in me.julb.springbootstarter.security.services.dto"><span class="typeNameLink">CustomUserDetails</span></a> - Class in <a href="me/julb/springbootstarter/security/services/dto/package-summary.html">me.julb.springbootstarter.security.services.dto</a></dt>
 <dd>
@@ -3381,7 +3367,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Encodes the given value.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/encoders/CustomPageableSpringEncoder.html#encode(java.lang.Object,java.lang.reflect.Type,feign.RequestTemplate)">encode(Object, Type, RequestTemplate)</a></span> - Method in class me.julb.springbootstarter.consumer.encoders.<a href="me/julb/springbootstarter/consumer/encoders/CustomPageableSpringEncoder.html" title="class in me.julb.springbootstarter.consumer.encoders">CustomPageableSpringEncoder</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/encoders/JsonStringEncoder.html#encode(java.lang.Object,java.lang.reflect.Type,feign.RequestTemplate)">encode(Object, Type, RequestTemplate)</a></span> - Method in class me.julb.springbootstarter.consumer.encoders.<a href="me/julb/springbootstarter/consumer/encoders/JsonStringEncoder.html" title="class in me.julb.springbootstarter.consumer.encoders">JsonStringEncoder</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/encoders/SearchableAndPageableSpringEncoder.html#encode(java.lang.Object,java.lang.reflect.Type,feign.RequestTemplate)">encode(Object, Type, RequestTemplate)</a></span> - Method in class me.julb.springbootstarter.consumer.encoders.<a href="me/julb/springbootstarter/consumer/encoders/SearchableAndPageableSpringEncoder.html" title="class in me.julb.springbootstarter.consumer.encoders">SearchableAndPageableSpringEncoder</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/encoders/SearchableSpringEncoder.html#encode(java.lang.Object,java.lang.reflect.Type,feign.RequestTemplate)">encode(Object, Type, RequestTemplate)</a></span> - Method in class me.julb.springbootstarter.consumer.encoders.<a href="me/julb/springbootstarter/consumer/encoders/SearchableSpringEncoder.html" title="class in me.julb.springbootstarter.consumer.encoders">SearchableSpringEncoder</a></dt>
@@ -3535,8 +3520,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The "!" character.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/clients/CustomTracingFeignClient.html#execute(feign.Request,feign.Request.Options)">execute(Request, Request.Options)</a></span> - Method in class me.julb.springbootstarter.consumer.clients.<a href="me/julb/springbootstarter/consumer/clients/CustomTracingFeignClient.html" title="class in me.julb.springbootstarter.consumer.clients">CustomTracingFeignClient</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="me/julb/library/utility/josejwt/operations/TokenDecryptionOperation.html#execute(java.lang.String)">execute(String)</a></span> - Method in class me.julb.library.utility.josejwt.operations.<a href="me/julb/library/utility/josejwt/operations/TokenDecryptionOperation.html" title="class in me.julb.library.utility.josejwt.operations">TokenDecryptionOperation</a></dt>
 <dd>
 <div class="block">Execute the operation.</div>
@@ -12328,8 +12311,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/library/utility/validator/validators/package-summary.html">me.julb.library.utility.validator.validators</a> - package me.julb.library.utility.validator.validators</dt>
 <dd>&nbsp;</dd>
-<dt><a href="me/julb/springbootstarter/consumer/clients/package-summary.html">me.julb.springbootstarter.consumer.clients</a> - package me.julb.springbootstarter.consumer.clients</dt>
-<dd>&nbsp;</dd>
 <dt><a href="me/julb/springbootstarter/consumer/configurations/package-summary.html">me.julb.springbootstarter.consumer.configurations</a> - package me.julb.springbootstarter.consumer.configurations</dt>
 <dd>&nbsp;</dd>
 <dt><a href="me/julb/springbootstarter/consumer/configurations/properties/package-summary.html">me.julb.springbootstarter.consumer.configurations.properties</a> - package me.julb.springbootstarter.consumer.configurations.properties</dt>
@@ -19805,10 +19786,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/security/configurations/beans/providers/AuthenticationByPasswordAuthenticationProvider.html#supports(java.lang.Class)">supports(Class&lt;?&gt;)</a></span> - Method in class me.julb.springbootstarter.security.configurations.beans.providers.<a href="me/julb/springbootstarter/security/configurations/beans/providers/AuthenticationByPasswordAuthenticationProvider.html" title="class in me.julb.springbootstarter.security.configurations.beans.providers">AuthenticationByPasswordAuthenticationProvider</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/security/configurations/beans/providers/AuthenticationByPincodeAuthenticationProvider.html#supports(java.lang.Class)">supports(Class&lt;?&gt;)</a></span> - Method in class me.julb.springbootstarter.security.configurations.beans.providers.<a href="me/julb/springbootstarter/security/configurations/beans/providers/AuthenticationByPincodeAuthenticationProvider.html" title="class in me.julb.springbootstarter.security.configurations.beans.providers">AuthenticationByPincodeAuthenticationProvider</a></dt>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/security/configurations/beans/providers/AuthenticationByTotpAuthenticationProvider.html#supports(java.lang.Class)">supports(Class&lt;?&gt;)</a></span> - Method in class me.julb.springbootstarter.security.configurations.beans.providers.<a href="me/julb/springbootstarter/security/configurations/beans/providers/AuthenticationByTotpAuthenticationProvider.html" title="class in me.julb.springbootstarter.security.configurations.beans.providers">AuthenticationByTotpAuthenticationProvider</a></dt>
-<dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/encoders/CustomPageableSpringEncoder.html#supports(java.lang.Object)">supports(Object)</a></span> - Method in class me.julb.springbootstarter.consumer.encoders.<a href="me/julb/springbootstarter/consumer/encoders/CustomPageableSpringEncoder.html" title="class in me.julb.springbootstarter.consumer.encoders">CustomPageableSpringEncoder</a></dt>
-<dd>
-<div class="block">Returns <code>true</code> if the object should be processed by this encoder.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="me/julb/springbootstarter/consumer/encoders/SearchableAndPageableSpringEncoder.html#supports(java.lang.Object)">supports(Object)</a></span> - Method in class me.julb.springbootstarter.consumer.encoders.<a href="me/julb/springbootstarter/consumer/encoders/SearchableAndPageableSpringEncoder.html" title="class in me.julb.springbootstarter.consumer.encoders">SearchableAndPageableSpringEncoder</a></dt>
 <dd>
 <div class="block">Checks if the given object should be encoded by this encoder or not.</div>
