@@ -82,7 +82,7 @@ public class SearchableSpringEncoder implements Encoder {
             if (delegate != null) {
                 delegate.encode(object, bodyType, template);
             } else {
-                throw new EncodeException("PageableSpringEncoder does not support the given object " + object.getClass() + " and no delegate was provided for fallback!");
+                throw new EncodeException("SearchableSpringEncoder does not support the given object " + object.getClass() + " and no delegate was provided for fallback!");
             }
         }
     }

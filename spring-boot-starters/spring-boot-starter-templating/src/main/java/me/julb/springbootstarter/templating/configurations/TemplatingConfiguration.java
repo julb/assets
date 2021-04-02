@@ -62,7 +62,7 @@ public class TemplatingConfiguration {
      * @return the templating engine.
      */
     @Bean
-    public TemplateEngine templatingEngine(TemplatingProperties templatingProperties) {
+    public TemplateEngine templateEngine(TemplatingProperties templatingProperties) {
         final TemplateEngine templateEngine = new TemplateEngine();
         int order = 1;
 
