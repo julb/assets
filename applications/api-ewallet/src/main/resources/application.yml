@@ -1,0 +1,120 @@
+spring:
+  cloud:
+    kubernetes:
+      enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: NO_OUTPUT
+  main:
+    banner-mode: "off"
+  
+logging:
+  level:
+    root: OFF
+    org.springframework: OFF
+
+---
+spring:
+  config:
+    activate:
+      on-profile: TEST
+  main:
+    banner-mode: "off"
+  
+logging:
+  level:
+    root: OFF
+    org.springframework: OFF
+  
+---
+spring:
+  config:
+    activate:
+      on-profile: LOCAL
+  cloud:
+    stream:
+      bindings:
+        default.binder: rabbitmq
+        main-producer:
+          destination: main-exchange-point
+      rabbit:
+        bindings:
+          main-producer:
+            producer:
+              routing-key-expression: headers['routingKey']
+
+#mongodb
+spring.data.mongodb:
+   host: localhost
+   port: 27017
+   database: app1
+   autoIndexCreation: true
+
+#
+security.jwt:
+  enabled: true
+  issuer: julb.io
+  audience: julb.io
+  signature-key:
+    algorithm: RS512
+    key-id: sign.test
+    key-path: classpath:/jwt.sign.key.pub
+
+# Application
+application:
+
+management:
+  endpoints.web.exposure.include: health,prometheus,info
+  endpoint.prometheus.enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: OAS3
+
+springdoc:
+   cache.disabled: true
+   api-docs:
+      enabled: true
+   swagger-ui:
+      enabled: false
+   packages-to-scan: me.julb
+   additional-properties:
+      name: ${build.name}
+      version: ${build.version}
+      description: desc
+      servers:
+         - url: "http://localhost:8080"
+           description: "Hello"
+      authentication:
+         authentication-headers:
+            - display-name: header1
+              header-name: X-Header-1
+            - display-name: header2
+              header-name: X-Header-2
+      extra-info:
+        display-name: Ping API
+        long-description: |
+          # Hello API
+        tags: abc,def,ghi
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: DEV,INT,VAL,STG,PROD
+  cloud:
+    kubernetes:
+      enabled: true
+      reload:
+        enabled: true
+      config:
+        sources:
+        - name: api-default-java
+        - name: api-default-backend-java
+        - name: ${APPLICATION_FULL_NAME}

@@ -136,4 +136,14 @@ public class ResourceTypes {
      */
     public static final String WEB_NOTIFICATION = "web-notification";
 
+    /**
+     * The "money-voucher" resource type.
+     */
+    public static final String MONEY_VOUCHER = "money-voucher";
+
+    /**
+     * The "electronic-purse" resource type.
+     */
+    public static final String ELECTRONIC_PURSE = "electronic-purse";
+
 }

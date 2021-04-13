@@ -26,14 +26,17 @@ package me.julb.library.dto.simple.user;
 
 import java.util.Locale;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import me.julb.library.utility.validator.constraints.E164Number;
+import me.julb.library.utility.validator.constraints.Identifier;
 
 /**
  * The user.
@@ -56,6 +59,9 @@ public class UserRefDTO {
      * @param id the value to set.
      */
      //@formatter:on
+    @NotNull
+    @NotBlank
+    @Identifier
     private String id;
 
     //@formatter:off
@@ -69,6 +75,9 @@ public class UserRefDTO {
      * @param firstName the value to set.
      */
      //@formatter:on
+    @NotNull
+    @NotBlank
+    @Size(max = 128)
     private String firstName;
 
     //@formatter:off
@@ -82,6 +91,9 @@ public class UserRefDTO {
      * @param lastName the value to set.
      */
      //@formatter:on
+    @NotNull
+    @NotBlank
+    @Size(max = 128)
     private String lastName;
 
     //@formatter:off
@@ -95,6 +107,9 @@ public class UserRefDTO {
      * @param mail the value to set.
      */
      //@formatter:on
+    @NotNull
+    @NotBlank
+    @Email
     private String mail;
 
     //@formatter:off
@@ -124,6 +139,7 @@ public class UserRefDTO {
      * @param locale the value to set.
      */
      //@formatter:on
+    @NotNull
     private Locale locale;
 
     //@formatter:off
@@ -137,5 +153,7 @@ public class UserRefDTO {
      * @param displayName the value to set.
      */
      //@formatter:on
+    @NotBlank
+    @NotNull
     private String displayName;
 }

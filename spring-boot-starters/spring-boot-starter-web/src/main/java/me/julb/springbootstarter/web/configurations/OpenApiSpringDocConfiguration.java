@@ -25,7 +25,9 @@ package me.julb.springbootstarter.web.configurations;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
@@ -33,7 +35,9 @@ import io.swagger.v3.oas.models.servers.Server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springdoc.core.SpringDocUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,15 +82,53 @@ public class OpenApiSpringDocConfiguration {
         //@formatter:off
         return new OpenAPI()
              .components(components())
-             .info(
-                 new Info()
-                     .title(openApiConfigurationProperties.getName())
-                     .version(openApiConfigurationProperties.getVersion())
-                     .description(openApiConfigurationProperties.getDescription())
-             )
+             .info(info())
              .servers(servers())
              .addSecurityItem(securityRequirement());
         //@formatter:on
+    }
+
+    /**
+     * Builds a info bean.
+     * @return the info bean.
+     */
+    private Info info() {
+        //@formatter:off
+        Info info = new Info()
+            .title(openApiConfigurationProperties.getName())
+            .version(openApiConfigurationProperties.getVersion())
+            .description(openApiConfigurationProperties.getDescription())
+            .termsOfService(openApiConfigurationProperties.getTermsOfService())
+            .contact(null)
+            .license(null);
+        //@formatter:on
+
+        if (openApiConfigurationProperties.getLicense() != null) {
+            //@formatter:off
+            info.license(
+                new License()
+                    .name(openApiConfigurationProperties.getLicense().getName())
+                    .url(openApiConfigurationProperties.getLicense().getUrl())
+            );
+            //@formatter:on
+        }
+
+        if (openApiConfigurationProperties.getContact() != null) {
+            //@formatter:off
+            info.contact(
+                new Contact()
+                    .name(openApiConfigurationProperties.getContact().getName())
+                    .email(openApiConfigurationProperties.getContact().getMail())
+                    .url(openApiConfigurationProperties.getContact().getUrl())
+            );
+            //@formatter:on
+        }
+
+        if (openApiConfigurationProperties.getExtraInfo() != null) {
+            info.extensions(Map.of("x-julb-oas3-info", openApiConfigurationProperties.getExtraInfo()));
+        }
+
+        return info;
     }
 
     /**
@@ -95,8 +137,10 @@ public class OpenApiSpringDocConfiguration {
      */
     private List<Server> servers() {
         List<Server> servers = new ArrayList<Server>();
-        for (OpenApiSpringDocConfigurationServerProperties serverProperties : openApiConfigurationProperties.getServers()) {
-            servers.add(new Server().url(serverProperties.getUrl()).description(serverProperties.getDescription()));
+        if (CollectionUtils.isNotEmpty(openApiConfigurationProperties.getServers())) {
+            for (OpenApiSpringDocConfigurationServerProperties serverProperties : openApiConfigurationProperties.getServers()) {
+                servers.add(new Server().url(serverProperties.getUrl()).description(serverProperties.getDescription()));
+            }
         }
         return servers;
     }
@@ -107,8 +151,10 @@ public class OpenApiSpringDocConfiguration {
      */
     private Components components() {
         Components components = new Components();
-        for (OpenApiSpringDocConfigurationAuthenticationHeaderProperties header : openApiConfigurationProperties.getAuthentication().getAuthenticationHeaders()) {
-            components.addSecuritySchemes(header.getDisplayName(), new SecurityScheme().type(SecurityScheme.Type.APIKEY).name(header.getHeaderName()).in(In.HEADER));
+        if (openApiConfigurationProperties.getAuthentication() != null) {
+            for (OpenApiSpringDocConfigurationAuthenticationHeaderProperties header : openApiConfigurationProperties.getAuthentication().getAuthenticationHeaders()) {
+                components.addSecuritySchemes(header.getDisplayName(), new SecurityScheme().type(SecurityScheme.Type.APIKEY).name(header.getHeaderName()).in(In.HEADER));
+            }
         }
         return components;
     }
@@ -119,8 +165,10 @@ public class OpenApiSpringDocConfiguration {
      */
     private SecurityRequirement securityRequirement() {
         SecurityRequirement securityRequirement = new SecurityRequirement();
-        for (OpenApiSpringDocConfigurationAuthenticationHeaderProperties header : openApiConfigurationProperties.getAuthentication().getAuthenticationHeaders()) {
-            securityRequirement.addList(header.getDisplayName());
+        if (openApiConfigurationProperties.getAuthentication() != null) {
+            for (OpenApiSpringDocConfigurationAuthenticationHeaderProperties header : openApiConfigurationProperties.getAuthentication().getAuthenticationHeaders()) {
+                securityRequirement.addList(header.getDisplayName());
+            }
         }
         return securityRequirement;
     }
