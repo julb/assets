@@ -146,4 +146,9 @@ public class ResourceTypes {
      */
     public static final String ELECTRONIC_PURSE = "electronic-purse";
 
+    /**
+     * The "electronic-purse-operation" resource type.
+     */
+    public static final String ELECTRONIC_PURSE_OPERATION = "electronic-purse-operation";
+
 }

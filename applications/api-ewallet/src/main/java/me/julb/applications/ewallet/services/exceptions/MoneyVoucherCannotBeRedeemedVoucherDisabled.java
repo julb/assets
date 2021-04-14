@@ -29,7 +29,7 @@ package me.julb.applications.ewallet.services.exceptions;
  * <P>
  * @author Julb.
  */
-public class MoneyVoucherCannotBeRedeemedVoucherDisabled extends AbstractCannotRedeemMoneyVoucherException {
+public class MoneyVoucherCannotBeRedeemedVoucherDisabled extends AbstractMoneyVoucherCannotBeRedeemedException {
 
     /**
      * Default constructor.

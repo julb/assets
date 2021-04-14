@@ -24,26 +24,29 @@
 
 package me.julb.applications.ewallet.services.exceptions;
 
+import me.julb.library.utility.enums.ISO4217Currency;
+
 /**
- * The exception is triggered when a voucher cannot be redeemed because the voucher is expired.
+ * The exception is triggered when an operation on an electronic purse cannot be done due to insufficient balance.
  * <P>
  * @author Julb.
  */
-public class MoneyVoucherCannotBeRedeemedVoucherExpired extends AbstractMoneyVoucherCannotBeRedeemedException {
+public class ElectronicPurseOperationCannotBeExecutedInsufficientBalance extends AbstractElectronicPurseOperationCannotBeExecutedException {
 
     /**
-     * The expiration date time.
+     * The final balance amount in cents.
      */
-    private String expiryDateTime;
+    private Long newBalanceAmountInCts;
 
     /**
      * Default constructor.
-     * @param moneyVoucherId the money voucher ID.
-     * @param expiryDateTime the expiry date time.
+     * @param electronicPurseId the electronic purse identifier.
+     * @param electronicPurseCurrency the electronic purse currency.
+     * @param newBalanceAmountInCts the new balance of the purse in cents.
      */
-    public MoneyVoucherCannotBeRedeemedVoucherExpired(String moneyVoucherId, String expiryDateTime) {
-        super(moneyVoucherId);
-        this.expiryDateTime = expiryDateTime;
+    public ElectronicPurseOperationCannotBeExecutedInsufficientBalance(String electronicPurseId, ISO4217Currency electronicPurseCurrency, Long newBalanceAmountInCts) {
+        super(electronicPurseId, electronicPurseCurrency);
+        this.newBalanceAmountInCts = newBalanceAmountInCts;
     }
 
     /**
@@ -51,6 +54,6 @@ public class MoneyVoucherCannotBeRedeemedVoucherExpired extends AbstractMoneyVou
      */
     @Override
     public Object[] getMessageArgs() {
-        return new Object[] {this.getMoneyVoucherId(), this.expiryDateTime};
+        return new Object[] {this.getElectronicPurseId(), this.getElectronicPurseCurrency(), this.newBalanceAmountInCts};
     }
 }

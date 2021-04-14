@@ -80,7 +80,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 import me.julb.springbootstarter.security.services.PasswordEncoderService;
 
 /**
- * The announcement service implementation.
+ * The money voucher service implementation.
  * <P>
  * @author Julb.
  */
@@ -90,7 +90,7 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
 public class MoneyVoucherServiceImpl implements MoneyVoucherService {
 
     /**
-     * The announcement repository.
+     * The money voucher repository.
      */
     @Autowired
     private MoneyVoucherRepository moneyVoucherRepository;
@@ -165,7 +165,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
     public MoneyVoucherDTO findOne(@NotNull @Identifier String id) {
         String tm = TrademarkContextHolder.getTrademark();
 
-        // Check that the announcement exists
+        // Check that the money voucher exists
         MoneyVoucherEntity result = moneyVoucherRepository.findByTmAndId(tm, id);
         if (result == null) {
             throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
@@ -191,7 +191,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
         String rawVoucherCode = buildVoucherCode();
         String voucherCodeHash = hash(rawVoucherCode);
 
-        // Check if not overlapping another one.
+        // Check if the code hasn't already used.
         if (moneyVoucherRepository.existsByTmAndHashIgnoreCase(tm, voucherCodeHash)) {
             throw new ResourceAlreadyExistsException(MoneyVoucherEntity.class, "hash", voucherCodeHash);
         }
@@ -223,7 +223,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
     public MoneyVoucherDTO redeem(@NotNull @Identifier String id) {
         String tm = TrademarkContextHolder.getTrademark();
 
-        // Check that the announcement exists
+        // Check that the money voucher exists
         MoneyVoucherEntity existing = moneyVoucherRepository.findByTmAndId(tm, id);
         if (existing == null) {
             throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
@@ -231,7 +231,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
 
         // Check if money voucher is already redeemed
         if (BooleanUtils.isTrue(existing.getRedeemed())) {
-            throw new MoneyVoucherCannotBeRedeemedAlreadyRedeemed(existing.getId(), existing.getRedeemedAt());
+            throw new MoneyVoucherCannotBeRedeemedAlreadyRedeemed(existing.getId(), existing.getRedemptionDateTime());
         }
 
         // Check if money voucher is enabled
@@ -246,7 +246,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
 
         // Redeem
         existing.setRedeemed(true);
-        existing.setRedeemedAt(DateUtility.dateTimeNow());
+        existing.setRedemptionDateTime(DateUtility.dateTimeNow());
         AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
         existing.setRedeemedBy(new UserRefEntity());
         existing.getRedeemedBy().setDisplayName(connnectedUser.getDisplayName());
@@ -272,7 +272,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
     public MoneyVoucherDTO update(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherUpdateDTO updateDTO) {
         String tm = TrademarkContextHolder.getTrademark();
 
-        // Check that the announcement exists
+        // Check that the money voucher exists
         MoneyVoucherEntity existing = moneyVoucherRepository.findByTmAndId(tm, id);
         if (existing == null) {
             throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
@@ -294,7 +294,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
     public MoneyVoucherDTO patch(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherPatchDTO patchDTO) {
         String tm = TrademarkContextHolder.getTrademark();
 
-        // Check that the announcement exists
+        // Check that the money voucher exists
         MoneyVoucherEntity existing = moneyVoucherRepository.findByTmAndId(tm, id);
         if (existing == null) {
             throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
@@ -316,7 +316,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
     public void delete(@NotNull @Identifier String id) {
         String tm = TrademarkContextHolder.getTrademark();
 
-        // Check that the announcement exists
+        // Check that the money voucher exists
         MoneyVoucherEntity existing = moneyVoucherRepository.findByTmAndId(tm, id);
         if (existing == null) {
             throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
@@ -353,7 +353,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
     // ------------------------------------------ Private methods.
 
     /**
-     * Method called when persisting an announcement.
+     * Method called when persisting a money voucher.
      * @param entity the entity.
      */
     private void onPersist(MoneyVoucherEntity entity) {
@@ -377,7 +377,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
     }
 
     /**
-     * Method called when updating a announcement.
+     * Method called when updating a money voucher.
      * @param entity the entity.
      */
     private void onUpdate(MoneyVoucherEntity entity) {
@@ -386,7 +386,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
     }
 
     /**
-     * Method called when deleting a announcement.
+     * Method called when deleting a money voucher.
      * @param entity the entity.
      */
     private void onDelete(MoneyVoucherEntity entity) {

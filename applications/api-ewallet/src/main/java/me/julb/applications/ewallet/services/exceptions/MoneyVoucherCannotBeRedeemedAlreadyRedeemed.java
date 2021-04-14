@@ -29,21 +29,21 @@ package me.julb.applications.ewallet.services.exceptions;
  * <P>
  * @author Julb.
  */
-public class MoneyVoucherCannotBeRedeemedAlreadyRedeemed extends AbstractCannotRedeemMoneyVoucherException {
+public class MoneyVoucherCannotBeRedeemedAlreadyRedeemed extends AbstractMoneyVoucherCannotBeRedeemedException {
 
     /**
      * The money voucher ID.
      */
-    private String redeemedAt;
+    private String redemptionDateTime;
 
     /**
      * Default constructor.
      * @param moneyVoucherId the money voucher ID.
-     * @param redeemedAt the time at which the voucher has been redeemed.
+     * @param redemptionDateTime the time at which the voucher has been redeemed.
      */
-    public MoneyVoucherCannotBeRedeemedAlreadyRedeemed(String moneyVoucherId, String redeemedAt) {
+    public MoneyVoucherCannotBeRedeemedAlreadyRedeemed(String moneyVoucherId, String redemptionDateTime) {
         super(moneyVoucherId);
-        this.redeemedAt = redeemedAt;
+        this.redemptionDateTime = redemptionDateTime;
     }
 
     /**
@@ -51,6 +51,6 @@ public class MoneyVoucherCannotBeRedeemedAlreadyRedeemed extends AbstractCannotR
      */
     @Override
     public Object[] getMessageArgs() {
-        return new Object[] {this.getMoneyVoucherId(), this.redeemedAt};
+        return new Object[] {this.getMoneyVoucherId(), this.redemptionDateTime};
     }
 }

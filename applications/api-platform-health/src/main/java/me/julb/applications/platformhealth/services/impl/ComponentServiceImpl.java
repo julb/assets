@@ -249,6 +249,7 @@ public class ComponentServiceImpl implements ComponentService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String componentCategoryId) {
         String tm = TrademarkContextHolder.getTrademark();
 

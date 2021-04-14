@@ -24,6 +24,8 @@
 
 package me.julb.applications.ewallet.entities;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -31,45 +33,44 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherCreationDTO;
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherDTO;
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherPatchDTO;
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherUpdateDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationCreationDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationPatchDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationType;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationUpdateDTO;
 import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
+import me.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.enums.ISO4217Currency;
 import me.julb.library.utility.interfaces.IIdentifiable;
 import me.julb.library.utility.validator.constraints.DateTimeISO8601;
-import me.julb.library.utility.validator.constraints.DateTimeInFuture;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.Tag;
 import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
- * The money voucher entity.
+ * The electronic purse operation.
  * <P>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = MoneyVoucherCreationDTO.class, patch = MoneyVoucherPatchDTO.class, read = MoneyVoucherDTO.class, update = MoneyVoucherUpdateDTO.class)
+@ObjectMappingFactory(creation = ElectronicPurseOperationCreationDTO.class, patch = ElectronicPurseOperationPatchDTO.class, read = ElectronicPurseOperationDTO.class, update = ElectronicPurseOperationUpdateDTO.class)
+@Document("electronic-purses-operations")
 @Getter
 @Setter
-@ToString
 @EqualsAndHashCode(callSuper = false, of = "id")
 @NoArgsConstructor
-@Document("money-vouchers")
-public class MoneyVoucherEntity extends AbstractAuditedEntity implements IIdentifiable {
+public class ElectronicPurseOperationEntity extends AbstractAuditedEntity implements IIdentifiable {
 
     //@formatter:off
      /**
@@ -104,6 +105,51 @@ public class MoneyVoucherEntity extends AbstractAuditedEntity implements IIdenti
 
     //@formatter:off
      /**
+     * The electronicPurse attribute.
+     * -- GETTER --
+     * Getter for {@link #electronicPurse} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #electronicPurse} property.
+     * @param electronicPurse the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @DBRef
+    private ElectronicPurseEntity electronicPurse;
+
+    //@formatter:off
+     /**
+     * The localizedMessage attribute.
+     * -- GETTER --
+     * Getter for {@link #localizedMessage} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #localizedMessage} property.
+     * @param localizedMessage the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @Valid
+    private Map<String, LargeMessageEntity> localizedMessage = new HashMap<String, LargeMessageEntity>();
+
+    //@formatter:off
+     /**
+     * The user attribute.
+     * -- GETTER --
+     * Getter for {@link #user} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #user} property.
+     * @param user the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    @Valid
+    private UserRefEntity user;
+
+    //@formatter:off
+     /**
      * The amountInCts attribute.
      * -- GETTER --
      * Getter for {@link #amountInCts} property.
@@ -133,121 +179,47 @@ public class MoneyVoucherEntity extends AbstractAuditedEntity implements IIdenti
 
     //@formatter:off
      /**
-     * The securedCode attribute.
+     * The executionDateTime attribute.
      * -- GETTER --
-     * Getter for {@link #securedCode} property.
+     * Getter for {@link #executionDateTime} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #securedCode} property.
-     * @param securedCode the value to set.
-     */
-     //@formatter:on
-    @NotNull
-    @NotBlank
-    @Size(max = 128)
-    private String securedCode;
-
-    //@formatter:off
-     /**
-     * The code hash to prevent any duplication.
-     * -- GETTER --
-     * Getter for {@link #hash} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #hash} property.
-     * @param hash the value to set.
-     */
-     //@formatter:on
-    @NotNull
-    @NotBlank
-    @Size(max = 128)
-    private String hash;
-
-    //@formatter:off
-     /**
-     * The expiryDateTime attribute.
-     * -- GETTER --
-     * Getter for {@link #expiryDateTime} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #expiryDateTime} property.
-     * @param expiryDateTime the value to set.
-     */
-     //@formatter:on
-    @DateTimeISO8601
-    @DateTimeInFuture
-    private String expiryDateTime;
-
-    //@formatter:off
-     /**
-     * The enabled attribute.
-     * -- GETTER --
-     * Getter for {@link #enabled} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #enabled} property.
-     * @param enabled the value to set.
-     */
-     //@formatter:on
-    @NotNull
-    private Boolean enabled;
-
-    //@formatter:off
-     /**
-     * The redeemed attribute.
-     * -- GETTER --
-     * Getter for {@link #redeemed} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #redeemed} property.
-     * @param redeemed the value to set.
-     */
-     //@formatter:on
-    @NotNull
-    private Boolean redeemed;
-
-    //@formatter:off
-     /**
-     * The redeemedBy attribute.
-     * -- GETTER --
-     * Getter for {@link #redeemedBy} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #redeemedBy} property.
-     * @param redeemedBy the value to set.
-     */
-     //@formatter:on
-    @Valid
-    private UserRefEntity redeemedBy;
-
-    //@formatter:off
-     /**
-     * The redemptionDateTime attribute.
-     * -- GETTER --
-     * Getter for {@link #redemptionDateTime} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #redemptionDateTime} property.
-     * @param redemptionDateTime the value to set.
-     */
-     //@formatter:on
-    @DateTimeISO8601
-    private String redemptionDateTime;
-
-    //@formatter:off
-     /**
-     * The user attribute.
-     * -- GETTER --
-     * Getter for {@link #user} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #user} property.
-     * @param user the value to set.
+     * Setter for {@link #executionDateTime} property.
+     * @param executionDateTime the value to set.
      */
      //@formatter:on
     @NotNull
     @Valid
-    private UserRefEntity user;
+    @DateTimeISO8601
+    private String executionDateTime;
+
+    //@formatter:off
+     /**
+     * The type attribute.
+     * -- GETTER --
+     * Getter for {@link #type} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #type} property.
+     * @param type the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    private ElectronicPurseOperationType type;
+
+    //@formatter:off
+     /**
+     * The sendNotification attribute.
+     * -- GETTER --
+     * Getter for {@link #sendNotification} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #sendNotification} property.
+     * @param sendNotification the value to set.
+     */
+     //@formatter:on
+    @NotNull
+    private Boolean sendNotification;
 
     //@formatter:off
      /**

@@ -83,7 +83,7 @@ public class MyElectronicPurseController {
      * @param redeemMoneyVoucherDTO the DTO to update the electronic purse.
      * @return the response.
      */
-    @Operation(summary = "redeem a money voucher into the electronic purse")
+    @Operation(summary = "redeem a money voucher into my electronic purse")
     @PostMapping(path = "/.redeem", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
     public ElectronicPurseDTO redeem(@RequestBody @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucherDTO) {

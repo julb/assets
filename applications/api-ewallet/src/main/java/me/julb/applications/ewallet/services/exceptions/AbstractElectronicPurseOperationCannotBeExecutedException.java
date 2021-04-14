@@ -24,33 +24,50 @@
 
 package me.julb.applications.ewallet.services.exceptions;
 
+import me.julb.library.utility.enums.ISO4217Currency;
+import me.julb.library.utility.exceptions.BadRequestException;
+
 /**
- * The exception is triggered when a voucher cannot be redeemed because the voucher is expired.
+ * The exception is triggered when a electronic purse operation cannot be executed.
  * <P>
  * @author Julb.
  */
-public class MoneyVoucherCannotBeRedeemedVoucherExpired extends AbstractMoneyVoucherCannotBeRedeemedException {
+public abstract class AbstractElectronicPurseOperationCannotBeExecutedException extends BadRequestException {
 
     /**
-     * The expiration date time.
+     * The electronic purse ID.
      */
-    private String expiryDateTime;
+    private String electronicPurseId;
+
+    /**
+     * The actual currency
+     */
+    private ISO4217Currency electronicPurseCurrency;
 
     /**
      * Default constructor.
-     * @param moneyVoucherId the money voucher ID.
-     * @param expiryDateTime the expiry date time.
+     * @param electronicPurseId the electronic purse ID.
+     * @param electronicPurseCurrency the electronic purse currency.
      */
-    public MoneyVoucherCannotBeRedeemedVoucherExpired(String moneyVoucherId, String expiryDateTime) {
-        super(moneyVoucherId);
-        this.expiryDateTime = expiryDateTime;
+    public AbstractElectronicPurseOperationCannotBeExecutedException(String electronicPurseId, ISO4217Currency electronicPurseCurrency) {
+        super();
+        this.electronicPurseId = electronicPurseId;
+        this.electronicPurseCurrency = electronicPurseCurrency;
     }
 
     /**
-     * {@inheritDoc}
+     * Getter for property electronicPurseId.
+     * @return Value of property electronicPurseId.
      */
-    @Override
-    public Object[] getMessageArgs() {
-        return new Object[] {this.getMoneyVoucherId(), this.expiryDateTime};
+    public String getElectronicPurseId() {
+        return electronicPurseId;
+    }
+
+    /**
+     * Getter for property electronicPurseCurrency.
+     * @return Value of property electronicPurseCurrency.
+     */
+    public ISO4217Currency getElectronicPurseCurrency() {
+        return electronicPurseCurrency;
     }
 }

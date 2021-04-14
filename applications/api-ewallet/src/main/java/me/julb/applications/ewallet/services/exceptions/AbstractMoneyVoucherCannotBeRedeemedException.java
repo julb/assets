@@ -24,33 +24,34 @@
 
 package me.julb.applications.ewallet.services.exceptions;
 
+import me.julb.library.utility.exceptions.BadRequestException;
+
 /**
- * The exception is triggered when a voucher cannot be redeemed because the voucher is expired.
+ * The exception is triggered when a voucher cannot be redeemed because the voucher has already been redeemed.
  * <P>
  * @author Julb.
  */
-public class MoneyVoucherCannotBeRedeemedVoucherExpired extends AbstractMoneyVoucherCannotBeRedeemedException {
+public abstract class AbstractMoneyVoucherCannotBeRedeemedException extends BadRequestException {
 
     /**
-     * The expiration date time.
+     * The money voucher ID.
      */
-    private String expiryDateTime;
+    private String moneyVoucherId;
 
     /**
      * Default constructor.
      * @param moneyVoucherId the money voucher ID.
-     * @param expiryDateTime the expiry date time.
      */
-    public MoneyVoucherCannotBeRedeemedVoucherExpired(String moneyVoucherId, String expiryDateTime) {
-        super(moneyVoucherId);
-        this.expiryDateTime = expiryDateTime;
+    public AbstractMoneyVoucherCannotBeRedeemedException(String moneyVoucherId) {
+        super();
+        this.moneyVoucherId = moneyVoucherId;
     }
 
     /**
-     * {@inheritDoc}
+     * Getter for property moneyVoucherId.
+     * @return Value of property moneyVoucherId.
      */
-    @Override
-    public Object[] getMessageArgs() {
-        return new Object[] {this.getMoneyVoucherId(), this.expiryDateTime};
+    public String getMoneyVoucherId() {
+        return moneyVoucherId;
     }
 }

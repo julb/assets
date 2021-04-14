@@ -28,18 +28,22 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.ewallet.services.ElectronicPurseOperationExecutionService;
+import me.julb.applications.ewallet.services.ElectronicPurseOperationService;
 import me.julb.applications.ewallet.services.ElectronicPurseService;
-import me.julb.applications.ewallet.services.UserElectronicPurseService;
+import me.julb.applications.ewallet.services.UserElectronicPurseOperationService;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseDTO;
-import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPursePatchDTO;
-import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseUpdateDTO;
-import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationPatchDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationUpdateDTO;
+import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 
 /**
@@ -50,7 +54,7 @@ import me.julb.library.utility.validator.constraints.Identifier;
 @Service
 @Validated
 @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-public class UserElectronicPurseServiceImpl implements UserElectronicPurseService {
+public class UserElectronicPurseOperationServiceImpl implements UserElectronicPurseOperationService {
 
     /**
      * The electronic purse service.
@@ -59,7 +63,13 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
     private ElectronicPurseService electronicPurseService;
 
     /**
-     * The electronic purse operation e xecution service.
+     * The electronic purse operation service.
+     */
+    @Autowired
+    private ElectronicPurseOperationService electronicPurseOperationService;
+
+    /**
+     * The electronic purse operation execution service.
      */
     @Autowired
     private ElectronicPurseOperationExecutionService electronicPurseOperationExecutionService;
@@ -70,8 +80,18 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      * {@inheritDoc}
      */
     @Override
-    public ElectronicPurseDTO findOne(@NotNull @Identifier String userId) {
-        return electronicPurseService.findByUserId(userId);
+    public Page<ElectronicPurseOperationDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
+        return electronicPurseOperationService.findAll(electronicPurse.getId(), searchable, pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ElectronicPurseOperationDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
+        return electronicPurseOperationService.findOne(electronicPurse.getId(), id);
     }
 
     // ------------------------------------------ Write methods.
@@ -81,9 +101,9 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Identifier String userId, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher) {
+    public ElectronicPurseOperationDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
         ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseOperationExecutionService.redeemMoneyVoucher(electronicPurse.getId(), redeemMoneyVoucher);
+        return electronicPurseOperationService.update(electronicPurse.getId(), id, updateDTO);
     }
 
     /**
@@ -91,9 +111,9 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO update(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
+    public ElectronicPurseOperationDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
         ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseService.update(electronicPurse.getId(), updateDTO);
+        return electronicPurseOperationService.patch(electronicPurse.getId(), id, patchDTO);
     }
 
     /**
@@ -101,19 +121,9 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO patch(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPursePatchDTO patchDTO) {
+    public void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
         ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseService.patch(electronicPurse.getId(), patchDTO);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        electronicPurseService.delete(electronicPurse.getId());
+        electronicPurseOperationExecutionService.deleteOperationExecution(electronicPurse.getId(), id);
     }
 
     // ------------------------------------------ Utility methods.

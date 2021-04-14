@@ -248,6 +248,7 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String incidentId) {
         String tm = TrademarkContextHolder.getTrademark();
 

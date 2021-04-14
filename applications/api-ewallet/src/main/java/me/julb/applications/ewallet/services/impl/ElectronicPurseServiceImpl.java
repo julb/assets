@@ -24,7 +24,7 @@
 
 package me.julb.applications.ewallet.services.impl;
 
-import com.google.common.base.Objects;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -39,15 +39,14 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.ewallet.entities.ElectronicPurseEntity;
 import me.julb.applications.ewallet.repositories.ElectronicPurseRepository;
+import me.julb.applications.ewallet.services.ElectronicPurseOperationService;
 import me.julb.applications.ewallet.services.ElectronicPurseService;
-import me.julb.applications.ewallet.services.MoneyVoucherService;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseCreationWithUserDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPursePatchDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseUpdateDTO;
-import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherDTO;
-import me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedCurrencyMismatch;
+import me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedInsufficientBalance;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.utility.constants.Integers;
@@ -86,10 +85,10 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
     private ElectronicPurseRepository electronicPurseRepository;
 
     /**
-     * The money voucher service.
+     * The electronic purse operation service.
      */
     @Autowired
-    private MoneyVoucherService moneyVoucherService;
+    private ElectronicPurseOperationService electronicPurseOperationService;
 
     /**
      * The mapper.
@@ -194,7 +193,7 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Identifier String id, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher) {
+    public ElectronicPurseDTO refreshBalance(@NotNull @Identifier String id) {
         String tm = TrademarkContextHolder.getTrademark();
 
         // Check that the item exists
@@ -203,27 +202,22 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
             throw new ResourceNotFoundException(ElectronicPurseEntity.class, "id", id);
         }
 
-        // Finds the money voucher
-        MoneyVoucherDTO moneyVoucher = moneyVoucherService.findByCode(redeemMoneyVoucher.getCode());
-        if (moneyVoucher == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, "code", redeemMoneyVoucher.getCode());
+        // Update the entity
+        Long balanceInCts = 0L;
+        List<ElectronicPurseOperationDTO> allOperations = electronicPurseOperationService.findAll(existing.getId());
+        for (ElectronicPurseOperationDTO operation : allOperations) {
+            balanceInCts += operation.getSignedAmountInCts();
         }
 
-        // The currencies are not matching.
-        if (!Objects.equal(existing.getCurrency(), moneyVoucher.getCurrency())) {
-            throw new MoneyVoucherCannotBeRedeemedCurrencyMismatch(moneyVoucher.getId(), moneyVoucher.getCurrency(), existing.getId(), existing.getCurrency());
+        // If balance < 0, throw exception.
+        if (balanceInCts < 0) {
+            throw new ElectronicPurseOperationCannotBeExecutedInsufficientBalance(existing.getId(), existing.getCurrency(), balanceInCts);
         }
 
-        // Everything seems to be fine. Redeem money voucher.
-        MoneyVoucherDTO moneyVoucherRedeemed = moneyVoucherService.redeem(moneyVoucher.getId());
+        // Update purse balance
+        existing.setAmountInCts(balanceInCts);
+        this.onUpdate(existing);
 
-        // Add amount to electronic purse.
-        existing.setAmountInCts(existing.getAmountInCts() + moneyVoucherRedeemed.getAmountInCts());
-
-        // Track history.
-        // TODO
-
-        // Return electronic purse updated.
         ElectronicPurseEntity result = electronicPurseRepository.save(existing);
         return mappingService.map(result, ElectronicPurseDTO.class);
     }
@@ -285,6 +279,9 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
         if (existing == null) {
             throw new ResourceNotFoundException(ElectronicPurseEntity.class, "id", id);
         }
+
+        // Delete operations linked to purse.
+        electronicPurseOperationService.delete(id);
 
         // Delete entity.
         electronicPurseRepository.delete(existing);

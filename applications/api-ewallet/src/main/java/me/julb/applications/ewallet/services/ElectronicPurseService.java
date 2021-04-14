@@ -34,7 +34,6 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPursePatchDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseUpdateDTO;
-import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 
@@ -79,12 +78,11 @@ public interface ElectronicPurseService {
     ElectronicPurseDTO create(@NotNull @Valid ElectronicPurseCreationWithUserDTO electronicPurseCreationDTO);
 
     /**
-     * Redeems a money voucher to the electronic purse.
+     * Refresh the balance of the electronic purse.
      * @param id the electronic purse ID.
-     * @param redeemMoneyVoucher the DTO to redeem a money voucher.
-     * @return the updated electronic purse.
+     * @return the electronic purse updated.
      */
-    ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Identifier String id, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher);
+    ElectronicPurseDTO refreshBalance(@NotNull @Identifier String id);
 
     /**
      * Updates a electronic purse.

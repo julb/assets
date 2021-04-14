@@ -249,6 +249,7 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String plannedMaintenanceId) {
         String tm = TrademarkContextHolder.getTrademark();
 

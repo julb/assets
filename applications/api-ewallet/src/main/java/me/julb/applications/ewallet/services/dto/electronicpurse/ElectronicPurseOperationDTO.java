@@ -22,31 +22,33 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.ewallet.services.dto.moneyvoucher;
+package me.julb.applications.ewallet.services.dto.electronicpurse;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.commons.lang3.BooleanUtils;
-
 import me.julb.library.dto.simple.audit.AbstractAuditedDTO;
+import me.julb.library.dto.simple.content.LargeContentDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.enums.ISO4217Currency;
+import me.julb.library.utility.validator.constraints.Tag;
 
 /**
- * The DTO used to return a money voucher.
+ * The DTO used to return an electronic purse operation.
  * <P>
  * @author Julb.
  */
 @Getter
 @Setter
-public class MoneyVoucherDTO extends AbstractAuditedDTO {
+public class ElectronicPurseOperationDTO extends AbstractAuditedDTO {
 
     //@formatter:off
      /**
@@ -59,8 +61,36 @@ public class MoneyVoucherDTO extends AbstractAuditedDTO {
      * @param id the value to set.
      */
      //@formatter:on
-    @Schema(description = "Unique ID for the money voucher")
+    @Schema(description = "Unique ID for the operation")
     private String id;
+
+   //@formatter:off
+    /**
+    * The localizedMessage attribute.
+    * -- GETTER --
+    * Getter for {@link #localizedMessage} property.
+    * @return the value.
+    * -- SETTER --
+    * Setter for {@link #localizedMessage} property.
+    * @param localizedMessage the value to set.
+    */
+    //@formatter:on
+    @Schema(description = "Localized message for the operation")
+    private Map<String, LargeContentDTO> localizedMessage;
+
+    //@formatter:off
+     /**
+     * The user attribute.
+     * -- GETTER --
+     * Getter for {@link #user} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #user} property.
+     * @param user the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Author of the operation")
+    private UserRefDTO user;
 
     //@formatter:off
      /**
@@ -73,7 +103,7 @@ public class MoneyVoucherDTO extends AbstractAuditedDTO {
      * @param amountInCts the value to set.
      */
      //@formatter:on
-    @Schema(description = "The amount in cents of the money voucher")
+    @Schema(description = "Amount in cents of the operation")
     private Long amountInCts;
 
     //@formatter:off
@@ -87,92 +117,50 @@ public class MoneyVoucherDTO extends AbstractAuditedDTO {
      * @param currency the value to set.
      */
      //@formatter:on
-    @Schema(description = "The currency of the money voucher")
+    @Schema(description = "Currency of the operation")
     private ISO4217Currency currency;
 
     //@formatter:off
      /**
-     * The expiryDateTime attribute.
+     * The executionDateTime attribute.
      * -- GETTER --
-     * Getter for {@link #expiryDateTime} property.
+     * Getter for {@link #executionDateTime} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #expiryDateTime} property.
-     * @param expiryDateTime the value to set.
+     * Setter for {@link #executionDateTime} property.
+     * @param executionDateTime the value to set.
      */
      //@formatter:on
-    @Schema(description = "The expiration of the money voucher")
-    private String expiryDateTime;
+    @Schema(description = "Execution date time of the operation")
+    private String executionDateTime;
 
     //@formatter:off
      /**
-     * The enabled attribute.
+     * The type attribute.
      * -- GETTER --
-     * Getter for {@link #enabled} property.
+     * Getter for {@link #type} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #enabled} property.
-     * @param enabled the value to set.
+     * Setter for {@link #type} property.
+     * @param type the value to set.
      */
      //@formatter:on
-    @Schema(description = "The flag indicating if the money voucher is enabled or not")
-    private Boolean enabled;
+    @Schema(description = "Type of the operation")
+    private ElectronicPurseOperationType type;
 
     //@formatter:off
      /**
-     * The redeemed attribute.
+     * The sendNotification attribute.
      * -- GETTER --
-     * Getter for {@link #redeemed} property.
+     * Getter for {@link #sendNotification} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #redeemed} property.
-     * @param redeemed the value to set.
+     * Setter for {@link #sendNotification} property.
+     * @param sendNotification the value to set.
      */
      //@formatter:on
-    @Schema(description = "The flag indicating if the money voucher is redeemed or not")
-    private Boolean redeemed;
-
-    //@formatter:off
-     /**
-     * The redeemedBy attribute.
-     * -- GETTER --
-     * Getter for {@link #redeemedBy} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #redeemedBy} property.
-     * @param redeemedBy the value to set.
-     */
-     //@formatter:on
-    @Schema(description = "User who has redeemed the money voucher")
-    private UserRefDTO redeemedBy;
-
-    //@formatter:off
-     /**
-     * The redemptionDateTime attribute.
-     * -- GETTER --
-     * Getter for {@link #redemptionDateTime} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #redemptionDateTime} property.
-     * @param redemptionDateTime the value to set.
-     */
-     //@formatter:on
-    @Schema(description = "Datetime at which the money voucher has been redeemed")
-    private String redemptionDateTime;
-
-    //@formatter:off
-     /**
-     * The user attribute.
-     * -- GETTER --
-     * Getter for {@link #user} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #user} property.
-     * @param user the value to set.
-     */
-     //@formatter:on
-    @Schema(description = "Author of the money voucher")
-    private UserRefDTO user;
+    @Schema(description = "Flag to send notification related to this operation")
+    private Boolean sendNotification;
 
     //@formatter:off
      /**
@@ -185,14 +173,25 @@ public class MoneyVoucherDTO extends AbstractAuditedDTO {
      * @param tags the value to set.
      */
      //@formatter:on
-    @Schema(description = "Tags to associate to the money voucher")
-    private SortedSet<String> tags = new TreeSet<String>();
+    private SortedSet<@NotNull @Tag String> tags = new TreeSet<String>();
 
     /**
-     * Returns <code>true</code> if the voucher can be redeemed, <code>false</code> otherwise.
-     * @return <code>true</code> if the voucher can be redeemed, <code>false</code> otherwise.
+     * Gets the amount in cents as signed value.
+     * <P>
+     * Will be positive if the operation kind is {@link ElectronicPurseOperationKind#CREDIT}.
+     * <P>
+     * Will be negative if the operation kind is {@link ElectronicPurseOperationKind#DEBIT}.
+     * <P>
+     * @return the signed amount in cents.
      */
-    public Boolean getRedeemable() {
-        return BooleanUtils.isTrue(enabled) && BooleanUtils.isFalse(redeemed) && (expiryDateTime == null || DateUtility.dateTimeAfterNow(expiryDateTime));
+    public Long getSignedAmountInCts() {
+        switch (type.kind()) {
+            case DEBIT:
+                return -this.amountInCts;
+            case CREDIT:
+                return this.amountInCts;
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 }

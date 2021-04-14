@@ -22,35 +22,22 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.ewallet.services.exceptions;
+package me.julb.applications.ewallet.services.dto.electronicpurse;
 
 /**
- * The exception is triggered when a voucher cannot be redeemed because the voucher is expired.
+ * The electronic purse operation type.
  * <P>
  * @author Julb.
  */
-public class MoneyVoucherCannotBeRedeemedVoucherExpired extends AbstractMoneyVoucherCannotBeRedeemedException {
+public enum ElectronicPurseOperationKind {
 
     /**
-     * The expiration date time.
+     * Operation which has credited the purse.
      */
-    private String expiryDateTime;
+    CREDIT,
 
     /**
-     * Default constructor.
-     * @param moneyVoucherId the money voucher ID.
-     * @param expiryDateTime the expiry date time.
+     * Operation which has debited the purse.
      */
-    public MoneyVoucherCannotBeRedeemedVoucherExpired(String moneyVoucherId, String expiryDateTime) {
-        super(moneyVoucherId);
-        this.expiryDateTime = expiryDateTime;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object[] getMessageArgs() {
-        return new Object[] {this.getMoneyVoucherId(), this.expiryDateTime};
-    }
+    DEBIT
 }

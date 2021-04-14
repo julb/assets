@@ -22,36 +22,39 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.ewallet.services.exceptions;
-
-import me.julb.library.utility.exceptions.BadRequestException;
+package me.julb.applications.ewallet.services.dto.electronicpurse;
 
 /**
- * The exception is triggered when a voucher cannot be redeemed because the voucher has already been redeemed.
+ * The electronic purse operation type.
  * <P>
  * @author Julb.
  */
-public abstract class AbstractCannotRedeemMoneyVoucherException extends BadRequestException {
+public enum ElectronicPurseOperationType {
 
     /**
-     * The money voucher ID.
+     * Credits the purse with a money voucher
      */
-    private String moneyVoucherId;
+    CREDIT_MONEY_VOUCHER_REDEMPTION(ElectronicPurseOperationKind.CREDIT);
+
+    /**
+     * The operation kind.
+     */
+    private ElectronicPurseOperationKind kind;
 
     /**
      * Default constructor.
-     * @param moneyVoucherId the money voucher ID.
+     * @param kind the operation kind.
      */
-    public AbstractCannotRedeemMoneyVoucherException(String moneyVoucherId) {
-        super();
-        this.moneyVoucherId = moneyVoucherId;
+    private ElectronicPurseOperationType(ElectronicPurseOperationKind kind) {
+        this.kind = kind;
     }
 
     /**
-     * Getter for property moneyVoucherId.
-     * @return Value of property moneyVoucherId.
+     * The operation kind.
+     * @return the corresponding operation kind.
      */
-    public String getMoneyVoucherId() {
-        return moneyVoucherId;
+    public ElectronicPurseOperationKind kind() {
+        return this.kind;
     }
+
 }

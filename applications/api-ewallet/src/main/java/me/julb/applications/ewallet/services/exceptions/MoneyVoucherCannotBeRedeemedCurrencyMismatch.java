@@ -31,7 +31,7 @@ import me.julb.library.utility.enums.ISO4217Currency;
  * <P>
  * @author Julb.
  */
-public class MoneyVoucherCannotBeRedeemedCurrencyMismatch extends AbstractCannotRedeemMoneyVoucherException {
+public class MoneyVoucherCannotBeRedeemedCurrencyMismatch extends AbstractMoneyVoucherCannotBeRedeemedException {
 
     /**
      * The expected currency.

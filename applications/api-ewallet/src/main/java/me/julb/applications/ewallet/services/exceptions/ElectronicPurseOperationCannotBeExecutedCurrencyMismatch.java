@@ -24,26 +24,29 @@
 
 package me.julb.applications.ewallet.services.exceptions;
 
+import me.julb.library.utility.enums.ISO4217Currency;
+
 /**
- * The exception is triggered when a voucher cannot be redeemed because the voucher is expired.
+ * The exception is triggered when an operation on an electronic purse cannot be done due to currency mismatch.
  * <P>
  * @author Julb.
  */
-public class MoneyVoucherCannotBeRedeemedVoucherExpired extends AbstractMoneyVoucherCannotBeRedeemedException {
+public class ElectronicPurseOperationCannotBeExecutedCurrencyMismatch extends AbstractElectronicPurseOperationCannotBeExecutedException {
 
     /**
-     * The expiration date time.
+     * The expected currency.
      */
-    private String expiryDateTime;
+    private ISO4217Currency operationCurrency;
 
     /**
      * Default constructor.
-     * @param moneyVoucherId the money voucher ID.
-     * @param expiryDateTime the expiry date time.
+     * @param electronicPurseId the electronic purse identifier.
+     * @param electronicPurseCurrency the electronic purse currency.
+     * @param operationCurrency the operation currency.
      */
-    public MoneyVoucherCannotBeRedeemedVoucherExpired(String moneyVoucherId, String expiryDateTime) {
-        super(moneyVoucherId);
-        this.expiryDateTime = expiryDateTime;
+    public ElectronicPurseOperationCannotBeExecutedCurrencyMismatch(String electronicPurseId, ISO4217Currency electronicPurseCurrency, ISO4217Currency operationCurrency) {
+        super(electronicPurseId, electronicPurseCurrency);
+        this.operationCurrency = operationCurrency;
     }
 
     /**
@@ -51,6 +54,6 @@ public class MoneyVoucherCannotBeRedeemedVoucherExpired extends AbstractMoneyVou
      */
     @Override
     public Object[] getMessageArgs() {
-        return new Object[] {this.getMoneyVoucherId(), this.expiryDateTime};
+        return new Object[] {this.getElectronicPurseId(), this.getElectronicPurseCurrency(), this.operationCurrency};
     }
 }
