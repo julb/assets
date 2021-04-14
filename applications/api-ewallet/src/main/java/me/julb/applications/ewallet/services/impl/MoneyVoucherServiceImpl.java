@@ -54,7 +54,7 @@ import me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRede
 import me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedVoucherExpired;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.security.AuthenticatedUserDTO;
+import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Integers;
@@ -247,15 +247,8 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
         // Redeem
         existing.setRedeemed(true);
         existing.setRedemptionDateTime(DateUtility.dateTimeNow());
-        AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
-        existing.setRedeemedBy(new UserRefEntity());
-        existing.getRedeemedBy().setDisplayName(connnectedUser.getDisplayName());
-        existing.getRedeemedBy().setE164Number(connnectedUser.getE164Number());
-        existing.getRedeemedBy().setFirstName(connnectedUser.getFirstName());
-        existing.getRedeemedBy().setId(connnectedUser.getUserId());
-        existing.getRedeemedBy().setLastName(connnectedUser.getLastName());
-        existing.getRedeemedBy().setLocale(connnectedUser.getLocale());
-        existing.getRedeemedBy().setMail(connnectedUser.getMail());
+        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
+        existing.setRedeemedBy(mappingService.map(connnectedUser, UserRefEntity.class));
 
         // Update
         this.onUpdate(existing);
@@ -363,15 +356,8 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
         // Add author.
-        AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
-        entity.setUser(new UserRefEntity());
-        entity.getUser().setDisplayName(connnectedUser.getDisplayName());
-        entity.getUser().setE164Number(connnectedUser.getE164Number());
-        entity.getUser().setFirstName(connnectedUser.getFirstName());
-        entity.getUser().setId(connnectedUser.getUserId());
-        entity.getUser().setLastName(connnectedUser.getLastName());
-        entity.getUser().setLocale(connnectedUser.getLocale());
-        entity.getUser().setMail(connnectedUser.getMail());
+        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
+        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

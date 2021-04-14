@@ -83,6 +83,13 @@ public interface UserElectronicPurseOperationService {
     ElectronicPurseOperationDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO electronicPurseOperationPatchDTO);
 
     /**
+     * Cancel an operation.
+     * @param userId the user ID.
+     * @param id the electronic purse operation ID.
+     */
+    void cancel(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+
+    /**
      * Deletes a purse operation.
      * @param userId the user ID.
      * @param id the electronic purse operation ID.

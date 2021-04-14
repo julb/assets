@@ -45,6 +45,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationCreationDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationKind;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationPatchDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationType;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationUpdateDTO;
@@ -209,6 +210,20 @@ public class ElectronicPurseOperationEntity extends AbstractAuditedEntity implem
 
     //@formatter:off
      /**
+     * Indicates the original operation in case the current refers to a previous one, such as a cancellation for instance.
+     * -- GETTER --
+     * Getter for {@link #originalOperation} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #originalOperation} property.
+     * @param originalOperation the value to set.
+     */
+     //@formatter:on
+    @DBRef
+    private ElectronicPurseOperationEntity originalOperation;
+
+    //@formatter:off
+     /**
      * The sendNotification attribute.
      * -- GETTER --
      * Getter for {@link #sendNotification} property.
@@ -233,4 +248,40 @@ public class ElectronicPurseOperationEntity extends AbstractAuditedEntity implem
      */
      //@formatter:on
     private SortedSet<@NotNull @Tag String> tags = new TreeSet<String>();
+
+    /**
+     * Gets the operation kind.
+     * @return the operation kind.
+     */
+    public ElectronicPurseOperationKind getKind() {
+        if (type != null) {
+            return type.kind();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the amount in cents as signed value.
+     * <P>
+     * Will be positive if the operation kind is {@link ElectronicPurseOperationKind#CREDIT}.
+     * <P>
+     * Will be negative if the operation kind is {@link ElectronicPurseOperationKind#DEBIT}.
+     * <P>
+     * @return the signed amount in cents.
+     */
+    public Long getSignedAmountInCts() {
+        if (type != null) {
+            switch (type.kind()) {
+                case DEBIT:
+                    return -this.amountInCts;
+                case CREDIT:
+                    return this.amountInCts;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+        } else {
+            return null;
+        }
+    }
 }

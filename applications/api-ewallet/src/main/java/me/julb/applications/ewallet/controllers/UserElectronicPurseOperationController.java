@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -130,6 +131,19 @@ public class UserElectronicPurseOperationController {
     @PreAuthorize("hasPermission(#id, 'electronic-purse-operation', 'update')")
     public ElectronicPurseOperationDTO patch(@PathVariable @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
         return userElectronicPurseOperationService.patch(userId, id, patchDTO);
+    }
+
+    /**
+     * Cancels a electronic purse operation.
+     * @param userId the electronic purse ID.
+     * @param id the ID.
+     */
+    @Operation(summary = "cancels an operation of an a user electronic purse")
+    @PostMapping(path = "/{id}/.cancel")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasPermission(#id, 'electronic-purse-operation', 'cancel')")
+    public void cancel(@PathVariable @Identifier String userId, @PathVariable @Identifier String id) {
+        userElectronicPurseOperationService.cancel(userId, id);
     }
 
     /**

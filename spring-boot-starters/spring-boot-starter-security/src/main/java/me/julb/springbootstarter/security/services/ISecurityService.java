@@ -26,6 +26,7 @@ package me.julb.springbootstarter.security.services;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import me.julb.library.dto.security.AuthenticatedUserDTO;
+import me.julb.library.dto.simple.user.UserRefDTO;
 
 /**
  * The security service description.
@@ -51,6 +52,12 @@ public interface ISecurityService {
      * @return the current connected user.
      */
     AuthenticatedUserDTO getConnectedUserIdentity();
+
+    /**
+     * Gets the current connected user.
+     * @return the current connected user.
+     */
+    UserRefDTO getConnectedUserRefIdentity();
 
     /**
      * Returns the identifier of the connected user, or null if the user is not connected.

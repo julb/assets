@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import me.julb.library.dto.security.AuthenticatedUserDTO;
 import me.julb.library.dto.security.LocalAuthenticatedUserDTO;
 import me.julb.library.dto.security.UserRole;
+import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.springbootstarter.security.services.ISecurityService;
 import me.julb.springbootstarter.security.services.dto.CustomUserDetails;
 import me.julb.springbootstarter.security.utilities.RoleUtility;
@@ -90,6 +91,27 @@ public class SecurityService implements ISecurityService {
             }
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UserRefDTO getConnectedUserRefIdentity() {
+        AuthenticatedUserDTO connectedUser = getConnectedUserIdentity();
+        if (connectedUser != null) {
+            UserRefDTO userRefDto = new UserRefDTO();
+            userRefDto.setDisplayName(connectedUser.getDisplayName());
+            userRefDto.setE164Number(connectedUser.getE164Number());
+            userRefDto.setFirstName(connectedUser.getFirstName());
+            userRefDto.setId(connectedUser.getUserId());
+            userRefDto.setLastName(connectedUser.getLastName());
+            userRefDto.setLocale(connectedUser.getLocale());
+            userRefDto.setMail(connectedUser.getMail());
+            return userRefDto;
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -44,6 +44,7 @@ import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.mapping.services.MappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
@@ -64,6 +65,12 @@ public class WebNotificationIngestionServiceImpl implements WebNotificationInges
      */
     @Autowired
     private WebNotificationRepository webNotificationRepository;
+
+    /**
+     * The mapping service.
+     */
+    @Autowired
+    private MappingService mappingService;
 
     /**
      * The security service.
@@ -98,14 +105,7 @@ public class WebNotificationIngestionServiceImpl implements WebNotificationInges
             webNotificationEntity.setParameters(webNotificationMessage.getParameters());
             webNotificationEntity.setPriority(webNotificationMessage.getPriority());
             webNotificationEntity.setRead(Boolean.FALSE);
-            webNotificationEntity.setUser(new UserRefEntity());
-            webNotificationEntity.getUser().setDisplayName(user.getDisplayName());
-            webNotificationEntity.getUser().setE164Number(user.getE164Number());
-            webNotificationEntity.getUser().setFirstName(user.getFirstName());
-            webNotificationEntity.getUser().setId(user.getId());
-            webNotificationEntity.getUser().setLastName(user.getLastName());
-            webNotificationEntity.getUser().setLocale(user.getLocale());
-            webNotificationEntity.getUser().setMail(user.getMail());
+            webNotificationEntity.setUser(mappingService.map(user, UserRefEntity.class));
             this.onPersist(webNotificationEntity);
             webNotifications.add(webNotificationEntity);
         }

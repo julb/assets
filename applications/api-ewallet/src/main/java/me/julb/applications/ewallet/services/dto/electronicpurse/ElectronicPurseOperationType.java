@@ -34,7 +34,17 @@ public enum ElectronicPurseOperationType {
     /**
      * Credits the purse with a money voucher
      */
-    CREDIT_MONEY_VOUCHER_REDEMPTION(ElectronicPurseOperationKind.CREDIT);
+    CREDIT_MONEY_VOUCHER_REDEMPTION(ElectronicPurseOperationKind.CREDIT),
+
+    /**
+     * Credits the purse by cancelling a debit operation.
+     */
+    CREDIT_DEBIT_OPERATION_CANCELLED(ElectronicPurseOperationKind.CREDIT),
+
+    /**
+     * Debits the purse by cancelling a credit operation.
+     */
+    DEBIT_CREDIT_OPERATION_CANCELLED(ElectronicPurseOperationKind.DEBIT);
 
     /**
      * The operation kind.

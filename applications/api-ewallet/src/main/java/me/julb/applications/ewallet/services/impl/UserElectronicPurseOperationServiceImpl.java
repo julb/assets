@@ -121,6 +121,16 @@ public class UserElectronicPurseOperationServiceImpl implements UserElectronicPu
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void cancel(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
+        electronicPurseOperationExecutionService.cancelOperation(electronicPurse.getId(), id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
         ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
         electronicPurseOperationExecutionService.deleteOperationExecution(electronicPurse.getId(), id);

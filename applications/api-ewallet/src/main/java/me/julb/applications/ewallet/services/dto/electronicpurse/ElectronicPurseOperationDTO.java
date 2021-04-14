@@ -108,6 +108,20 @@ public class ElectronicPurseOperationDTO extends AbstractAuditedDTO {
 
     //@formatter:off
      /**
+     * The signedAmountInCts attribute.
+     * -- GETTER --
+     * Getter for {@link #signedAmountInCts} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #signedAmountInCts} property.
+     * @param signedAmountInCts the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Signed amount in cents of the operation")
+    private Long signedAmountInCts;
+
+    //@formatter:off
+     /**
      * The currency attribute.
      * -- GETTER --
      * Getter for {@link #currency} property.
@@ -150,6 +164,20 @@ public class ElectronicPurseOperationDTO extends AbstractAuditedDTO {
 
     //@formatter:off
      /**
+     * The kind attribute.
+     * -- GETTER --
+     * Getter for {@link #kind} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #kind} property.
+     * @param kind the value to set.
+     */
+     //@formatter:on
+    @Schema(description = "Kind of the operation")
+    private ElectronicPurseOperationKind kind;
+
+    //@formatter:off
+     /**
      * The sendNotification attribute.
      * -- GETTER --
      * Getter for {@link #sendNotification} property.
@@ -174,24 +202,4 @@ public class ElectronicPurseOperationDTO extends AbstractAuditedDTO {
      */
      //@formatter:on
     private SortedSet<@NotNull @Tag String> tags = new TreeSet<String>();
-
-    /**
-     * Gets the amount in cents as signed value.
-     * <P>
-     * Will be positive if the operation kind is {@link ElectronicPurseOperationKind#CREDIT}.
-     * <P>
-     * Will be negative if the operation kind is {@link ElectronicPurseOperationKind#DEBIT}.
-     * <P>
-     * @return the signed amount in cents.
-     */
-    public Long getSignedAmountInCts() {
-        switch (type.kind()) {
-            case DEBIT:
-                return -this.amountInCts;
-            case CREDIT:
-                return this.amountInCts;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
 }

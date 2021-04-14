@@ -119,6 +119,19 @@ public class ElectronicPurseOperationExecutionServiceImpl implements ElectronicP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ElectronicPurseDTO cancelOperation(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
+        // Cancel operation.
+        electronicPurseOperationService.cancel(electronicPurseId, id);
+
+        // Refresh balance and get electronic purse updated.
+        return electronicPurseService.refreshBalance(electronicPurseId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ElectronicPurseDTO deleteOperationExecution(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
         // Delete operation.
         electronicPurseOperationService.delete(electronicPurseId, id);

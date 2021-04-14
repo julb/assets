@@ -26,7 +26,9 @@ package me.julb.applications.ewallet.services.impl;
 
 import com.google.common.base.Objects;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -48,14 +50,16 @@ import me.julb.applications.ewallet.services.ElectronicPurseOperationService;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationCreationDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationPatchDTO;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationType;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationUpdateDTO;
 import me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedCurrencyMismatch;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.security.AuthenticatedUserDTO;
+import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
+import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
@@ -262,6 +266,53 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void cancel(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
+        String tm = TrademarkContextHolder.getTrademark();
+
+        // Check that the electronic purse exists
+        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
+        if (electronicPurse == null) {
+            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
+        }
+
+        // Check that the electronic purse operation exists
+        ElectronicPurseOperationEntity originalOperation = electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id);
+        if (originalOperation == null) {
+            throw new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id);
+        }
+
+        // Check if the operation to cancel has not already been cancelled in another context
+        ElectronicPurseOperationType cancellingOperationType;
+        switch (originalOperation.getKind()) {
+            case CREDIT:
+                cancellingOperationType = ElectronicPurseOperationType.DEBIT_CREDIT_OPERATION_CANCELLED;
+                break;
+            case DEBIT:
+                cancellingOperationType = ElectronicPurseOperationType.CREDIT_DEBIT_OPERATION_CANCELLED;
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+        ElectronicPurseOperationEntity existingCancellingOperation = electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndTypeAndOriginalOperation(tm, electronicPurseId, cancellingOperationType, originalOperation);
+        if (existingCancellingOperation != null) {
+            throw new ResourceAlreadyExistsException(ElectronicPurseOperationEntity.class, Map.of("electronicPurseId", electronicPurseId, "type", cancellingOperationType.toString(), "originalOperation", originalOperation.getId()));
+        }
+
+        // Create cancel operation.
+        ElectronicPurseOperationCreationDTO cancelOperation = new ElectronicPurseOperationCreationDTO();
+        cancelOperation.setAmountInCts(originalOperation.getAmountInCts());
+        cancelOperation.setCurrency(originalOperation.getCurrency());
+        cancelOperation.setLocalizedMessage(new HashMap<>());
+        cancelOperation.setSendNotification(true);
+        cancelOperation.setType(cancellingOperationType);
+        create(electronicPurseId, cancelOperation);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String electronicPurseId) {
         String tm = TrademarkContextHolder.getTrademark();
 
@@ -324,15 +375,8 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
         // Add author.
-        AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
-        entity.setUser(new UserRefEntity());
-        entity.getUser().setDisplayName(connnectedUser.getDisplayName());
-        entity.getUser().setE164Number(connnectedUser.getE164Number());
-        entity.getUser().setFirstName(connnectedUser.getFirstName());
-        entity.getUser().setId(connnectedUser.getUserId());
-        entity.getUser().setLastName(connnectedUser.getLastName());
-        entity.getUser().setLocale(connnectedUser.getLocale());
-        entity.getUser().setMail(connnectedUser.getMail());
+        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
+        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

@@ -29,6 +29,7 @@ import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import me.julb.applications.ewallet.entities.ElectronicPurseOperationEntity;
+import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationType;
 import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
 
 /**
@@ -53,4 +54,14 @@ public interface ElectronicPurseOperationRepository extends MongoRepository<Elec
      * @return the electronic purse operation entity, <code>null</code> otherwise.
      */
     ElectronicPurseOperationEntity findByTmAndElectronicPurseIdAndId(String tm, String electronicPurseId, String id);
+
+    /**
+     * Finds an electronic purse operation by its trademark, electronic purse, type and original operation id.
+     * @param tm the trademark.
+     * @param electronicPurseId the electronic purse ID.
+     * @param operationType the operation type.
+     * @param originalOperation the original operation.
+     * @return the electronic purse operation entity, <code>null</code> otherwise.
+     */
+    ElectronicPurseOperationEntity findByTmAndElectronicPurseIdAndTypeAndOriginalOperation(String tm, String electronicPurseId, ElectronicPurseOperationType operationType, ElectronicPurseOperationEntity originalOperation);
 }

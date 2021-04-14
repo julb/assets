@@ -51,6 +51,14 @@ public interface ElectronicPurseOperationExecutionService {
     ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Identifier String electronicPurseId, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher);
 
     /**
+     * Cancels the operation by doing the opposite action.
+     * @param electronicPurseId the electronic purse ID.
+     * @param id the operation id.
+     * @return the updated electronic purse.
+     */
+    ElectronicPurseDTO cancelOperation(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id);
+
+    /**
      * Delete any traces of an operation to the electronic purse.
      * @param electronicPurseId the electronic purse ID.
      * @param id the operation id.
