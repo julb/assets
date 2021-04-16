@@ -44,7 +44,7 @@ import me.julb.library.utility.validator.constraints.Identifier;
  * <P>
  * @author Julb.
  */
-@ObjectMappingFactory(read = UserRefDTO.class)
+@ObjectMappingFactory(creation = UserRefDTO.class, read = UserRefDTO.class)
 @Getter
 @Setter
 public class UserRefEntity {

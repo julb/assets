@@ -164,6 +164,7 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public PlannedMaintenanceComponentDTO create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId) {
         String tm = TrademarkContextHolder.getTrademark();
 
@@ -199,6 +200,7 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      * /** {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String plannedMaintenanceId) {
         String tm = TrademarkContextHolder.getTrademark();
 
@@ -223,6 +225,7 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId) {
         String tm = TrademarkContextHolder.getTrademark();
 

@@ -168,6 +168,7 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public IncidentComponentDTO create(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentCreationDTO creationDTO) {
         String tm = TrademarkContextHolder.getTrademark();
 
@@ -203,6 +204,7 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public IncidentComponentDTO update(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentUpdateDTO updateDTO) {
         String tm = TrademarkContextHolder.getTrademark();
 
@@ -236,6 +238,7 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public IncidentComponentDTO patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentPatchDTO patchDTO) {
         String tm = TrademarkContextHolder.getTrademark();
 
@@ -269,6 +272,7 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * /** {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String incidentId) {
         String tm = TrademarkContextHolder.getTrademark();
 
@@ -293,6 +297,7 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId) {
         String tm = TrademarkContextHolder.getTrademark();
 

@@ -34,6 +34,7 @@ import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.BufferedImageHttpMessageConverter;
@@ -61,6 +62,7 @@ import me.julb.springbootstarter.web.resolvers.search.CustomSearchableHandlerMet
 @Configuration
 @Import(SecurityConfiguration.class)
 @EnableConfigurationProperties(CorsProperties.class)
+@PropertySource(value = "classpath:META-INF/build-info.properties", ignoreResourceNotFound = true)
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
     /**

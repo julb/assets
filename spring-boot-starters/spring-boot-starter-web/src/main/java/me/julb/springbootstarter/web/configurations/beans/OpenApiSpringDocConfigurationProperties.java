@@ -23,7 +23,6 @@
  */
 package me.julb.springbootstarter.web.configurations.beans;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -57,7 +56,7 @@ public class OpenApiSpringDocConfigurationProperties {
 
     //@formatter:off
     /**
-     * The OpenApi docket API title.
+     * The OpenApi docket API version.
      * -- GETTER --
      * Getter for {@link #version} property.
      * @return the value.
@@ -69,7 +68,7 @@ public class OpenApiSpringDocConfigurationProperties {
     private String version;
 
     //@formatter:off
-    /**
+     /**
      * The OpenApi docket API description.
      * -- GETTER --
      * Getter for {@link #description} property.
@@ -83,6 +82,58 @@ public class OpenApiSpringDocConfigurationProperties {
 
     //@formatter:off
      /**
+     * The OpenApi docket API terms of service.
+     * -- GETTER --
+     * Getter for {@link #termsOfService} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #termsOfService} property.
+     * @param termsOfService the value to set.
+     */
+     //@formatter:on
+    private String termsOfService;
+
+    //@formatter:off
+     /**
+     * The license attribute.
+     * -- GETTER --
+     * Getter for {@link #license} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #license} property.
+     * @param license the value to set.
+     */
+     //@formatter:on
+    private OpenApiSpringDocConfigurationLicenseProperties license;
+
+    //@formatter:off
+     /**
+     * The contact attribute.
+     * -- GETTER --
+     * Getter for {@link #contact} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #contact} property.
+     * @param contact the value to set.
+     */
+     //@formatter:on
+    private OpenApiSpringDocConfigurationContactProperties contact;
+
+    //@formatter:off
+     /**
+     * The extraInfo attribute.
+     * -- GETTER --
+     * Getter for {@link #extraInfo} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #extraInfo} property.
+     * @param extraInfo the value to set.
+     */
+     //@formatter:on
+    private OpenApiSpringDocConfigurationExtraInfoProperties extraInfo;
+
+    //@formatter:off
+     /**
      * The servers attribute.
      * -- GETTER --
      * Getter for {@link #servers} property.
@@ -92,7 +143,7 @@ public class OpenApiSpringDocConfigurationProperties {
      * @param servers the value to set.
      */
      //@formatter:on
-    private List<OpenApiSpringDocConfigurationServerProperties> servers = new ArrayList<OpenApiSpringDocConfigurationServerProperties>();
+    private List<OpenApiSpringDocConfigurationServerProperties> servers;
 
     //@formatter:off
      /**
@@ -105,7 +156,7 @@ public class OpenApiSpringDocConfigurationProperties {
      * @param authentication the value to set.
      */
      //@formatter:on
-    private OpenApiSpringDocConfigurationAuthenticationProperties authentication = new OpenApiSpringDocConfigurationAuthenticationProperties();
+    private OpenApiSpringDocConfigurationAuthenticationProperties authentication;
 
     //@formatter:off
      /**

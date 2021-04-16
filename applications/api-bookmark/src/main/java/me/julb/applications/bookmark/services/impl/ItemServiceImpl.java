@@ -60,8 +60,8 @@ import me.julb.applications.bookmark.services.dto.item.AbstractItemUpdateDTO;
 import me.julb.applications.bookmark.services.exceptions.CannotMoveFolderInSubfolderException;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.security.AuthenticatedUserDTO;
 import me.julb.library.dto.simple.identifier.IdentifierDTO;
+import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.dto.simple.value.PositiveIntegerValueDTO;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.constants.Chars;
@@ -526,15 +526,8 @@ public class ItemServiceImpl implements ItemService {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
         // Add author.
-        AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
-        entity.setUser(new UserRefEntity());
-        entity.getUser().setDisplayName(connnectedUser.getDisplayName());
-        entity.getUser().setE164Number(connnectedUser.getE164Number());
-        entity.getUser().setFirstName(connnectedUser.getFirstName());
-        entity.getUser().setId(connnectedUser.getUserId());
-        entity.getUser().setLastName(connnectedUser.getLastName());
-        entity.getUser().setLocale(connnectedUser.getLocale());
-        entity.getUser().setMail(connnectedUser.getMail());
+        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
+        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

@@ -4,6 +4,8 @@ plugins {
     id 'me.julb.gradleplugins.java11'
     id 'me.julb.gradleplugins.additionaljars'
     id 'org.springframework.boot'
+    id 'com.github.johnrengelman.processes'
+    id 'org.springdoc.openapi-gradle-plugin'
 }
 
 dependencies {
@@ -43,6 +45,10 @@ test {
 
 springBoot {
     buildInfo()
+}
+
+openApi {
+    forkProperties = "-Dspring.profiles.active=NO_OUTPUT,OAS3"
 }
 
 bootBuildImage {

@@ -49,7 +49,7 @@ import me.julb.applications.platformhealth.services.dto.plannedmaintenance.Plann
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceHistoryUpdateDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.security.AuthenticatedUserDTO;
+import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
@@ -249,6 +249,7 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void delete(@NotNull @Identifier String plannedMaintenanceId) {
         String tm = TrademarkContextHolder.getTrademark();
 
@@ -320,15 +321,8 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
         // Add author.
-        AuthenticatedUserDTO connnectedUser = securityService.getConnectedUserIdentity();
-        entity.setUser(new UserRefEntity());
-        entity.getUser().setDisplayName(connnectedUser.getDisplayName());
-        entity.getUser().setE164Number(connnectedUser.getE164Number());
-        entity.getUser().setFirstName(connnectedUser.getFirstName());
-        entity.getUser().setId(connnectedUser.getUserId());
-        entity.getUser().setLastName(connnectedUser.getLastName());
-        entity.getUser().setLocale(connnectedUser.getLocale());
-        entity.getUser().setMail(connnectedUser.getMail());
+        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
+        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

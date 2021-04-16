@@ -1,6 +1,7 @@
 plugins {
     id 'me.julb.gradleplugins.asciidoctor'
     id 'me.julb.gradleplugins.aggregatejavadoc'
+    id 'me.julb.gradleplugins.aggregatespringdocopenapidocs'
 }
 
 // Aggregate the JavaDoc.
@@ -19,7 +20,7 @@ asciidoctor {
 
 // Prepare document.
 task docs(type: Copy) {
-    dependsOn 'asciidoctor', 'aggregateJavadoc'
+    dependsOn 'asciidoctor', 'aggregateJavadoc', 'aggregateSpringDocOpenApiDocs'
 
     into("$buildDir/packaged-docs/$version")
 
@@ -36,6 +37,10 @@ task docs(type: Copy) {
 	
     from (aggregateJavadoc.outputDir) {
         into 'api'
+    }
+    
+    from (aggregateSpringDocOpenApiDocs.outputDir) {
+        into 'oas3'
     }
 }
 

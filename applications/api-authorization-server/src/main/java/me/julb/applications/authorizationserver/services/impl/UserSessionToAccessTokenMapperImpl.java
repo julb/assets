@@ -115,22 +115,22 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
     @PostConstruct
     public void init()
         throws IOException {
-        AccessTokenJwtKeyProperties accessTokenJwtSignature = applicationProperties.getAccessTokenJwtForgery().getSignature();
+        if (applicationProperties.getAccessTokenJwtForgery() != null) {
+            AccessTokenJwtKeyProperties accessTokenJwtSignature = applicationProperties.getAccessTokenJwtForgery().getSignature();
 
-        KeyPair keyPair = PEMKeyLoader.loadPasswordProtectedPrivateKey(accessTokenJwtSignature.getKeyPath().getInputStream(), accessTokenJwtSignature.getKeyPassword());
+            KeyPair keyPair = PEMKeyLoader.loadPasswordProtectedPrivateKey(accessTokenJwtSignature.getKeyPath().getInputStream(), accessTokenJwtSignature.getKeyPassword());
 
-        // @formatter:off
-        ManualAsymmetricJWKProvider signatureKey = new ManualAsymmetricJWKProvider.Builder()
-            .algorithm(accessTokenJwtSignature.getAlgorithm())
-            .keyId(accessTokenJwtSignature.getKeyId())
-            .keyPair(keyPair)
-            .useForSignature()
-            .build();
+            // @formatter:off
+            ManualAsymmetricJWKProvider signatureKey = new ManualAsymmetricJWKProvider.Builder()
+                .algorithm(accessTokenJwtSignature.getAlgorithm())
+                .keyId(accessTokenJwtSignature.getKeyId())
+                .keyPair(keyPair)
+                .useForSignature()
+                .build();
+            // @formatter:on
 
-        this.tokenEmitter = new TokenEmitter()
-            .setSignatureJWKProvider(signatureKey);
-        
-        // @formatter:on
+            this.tokenEmitter = new TokenEmitter().setSignatureJWKProvider(signatureKey);
+        }
     }
 
     // ------------------------------------------ Read methods.
@@ -142,6 +142,10 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
      */
     @Override
     public UserSessionAccessTokenDTO map(@NotNull UserSessionEntity userSession) {
+        if (this.tokenEmitter == null) {
+            throw new UnsupportedOperationException();
+        }
+
         // Trademark.
         String tm = TrademarkContextHolder.getTrademark();
 
