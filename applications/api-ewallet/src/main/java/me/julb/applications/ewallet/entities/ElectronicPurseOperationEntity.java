@@ -30,7 +30,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -52,8 +51,8 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
+import me.julb.library.persistence.mongodb.entities.moneyamount.MoneyAmountEntity;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
-import me.julb.library.utility.enums.ISO4217Currency;
 import me.julb.library.utility.interfaces.IIdentifiable;
 import me.julb.library.utility.validator.constraints.DateTimeISO8601;
 import me.julb.library.utility.validator.constraints.Identifier;
@@ -151,32 +150,18 @@ public class ElectronicPurseOperationEntity extends AbstractAuditedEntity implem
 
     //@formatter:off
      /**
-     * The amountInCts attribute.
+     * The amount attribute.
      * -- GETTER --
-     * Getter for {@link #amountInCts} property.
+     * Getter for {@link #amount} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #amountInCts} property.
-     * @param amountInCts the value to set.
+     * Setter for {@link #amount} property.
+     * @param amount the value to set.
      */
      //@formatter:on
     @NotNull
-    @Min(0)
-    private Long amountInCts;
-
-    //@formatter:off
-     /**
-     * The currency attribute.
-     * -- GETTER --
-     * Getter for {@link #currency} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #currency} property.
-     * @param currency the value to set.
-     */
-     //@formatter:on
-    @NotNull
-    private ISO4217Currency currency;
+    @Valid
+    private MoneyAmountEntity amount;
 
     //@formatter:off
      /**
@@ -262,7 +247,7 @@ public class ElectronicPurseOperationEntity extends AbstractAuditedEntity implem
     }
 
     /**
-     * Gets the amount in cents as signed value.
+     * Gets the amount as signed value.
      * <P>
      * Will be positive if the operation kind is {@link ElectronicPurseOperationKind#CREDIT}.
      * <P>
@@ -270,13 +255,13 @@ public class ElectronicPurseOperationEntity extends AbstractAuditedEntity implem
      * <P>
      * @return the signed amount in cents.
      */
-    public Long getSignedAmountInCts() {
+    public MoneyAmountEntity getSignedAmount() {
         if (type != null) {
             switch (type.kind()) {
                 case DEBIT:
-                    return -this.amountInCts;
+                    return this.amount.toNegative();
                 case CREDIT:
-                    return this.amountInCts;
+                    return this.amount;
                 default:
                     throw new UnsupportedOperationException();
             }

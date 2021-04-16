@@ -32,12 +32,9 @@ import java.util.TreeSet;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.commons.lang3.BooleanUtils;
-
 import me.julb.library.dto.simple.audit.AbstractAuditedDTO;
+import me.julb.library.dto.simple.moneyamount.MoneyAmountDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.utility.date.DateUtility;
-import me.julb.library.utility.enums.ISO4217Currency;
 
 /**
  * The DTO used to return a money voucher.
@@ -64,31 +61,17 @@ public class MoneyVoucherDTO extends AbstractAuditedDTO {
 
     //@formatter:off
      /**
-     * The amountInCts attribute.
+     * The amount attribute.
      * -- GETTER --
-     * Getter for {@link #amountInCts} property.
+     * Getter for {@link #amount} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #amountInCts} property.
-     * @param amountInCts the value to set.
+     * Setter for {@link #amount} property.
+     * @param amount the value to set.
      */
      //@formatter:on
-    @Schema(description = "The amount in cents of the money voucher")
-    private Long amountInCts;
-
-    //@formatter:off
-     /**
-     * The currency attribute.
-     * -- GETTER --
-     * Getter for {@link #currency} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #currency} property.
-     * @param currency the value to set.
-     */
-     //@formatter:on
-    @Schema(description = "The currency of the money voucher")
-    private ISO4217Currency currency;
+    @Schema(description = "The amount of the money voucher")
+    private MoneyAmountDTO amount;
 
     //@formatter:off
      /**
@@ -187,12 +170,4 @@ public class MoneyVoucherDTO extends AbstractAuditedDTO {
      //@formatter:on
     @Schema(description = "Tags to associate to the money voucher")
     private SortedSet<String> tags = new TreeSet<String>();
-
-    /**
-     * Returns <code>true</code> if the voucher can be redeemed, <code>false</code> otherwise.
-     * @return <code>true</code> if the voucher can be redeemed, <code>false</code> otherwise.
-     */
-    public Boolean getRedeemable() {
-        return BooleanUtils.isTrue(enabled) && BooleanUtils.isFalse(redeemed) && (expiryDateTime == null || DateUtility.dateTimeAfterNow(expiryDateTime));
-    }
 }

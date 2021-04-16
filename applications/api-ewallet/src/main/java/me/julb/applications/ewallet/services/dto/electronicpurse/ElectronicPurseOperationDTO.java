@@ -37,8 +37,8 @@ import lombok.Setter;
 
 import me.julb.library.dto.simple.audit.AbstractAuditedDTO;
 import me.julb.library.dto.simple.content.LargeContentDTO;
+import me.julb.library.dto.simple.moneyamount.MoneyAmountDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.utility.enums.ISO4217Currency;
 import me.julb.library.utility.validator.constraints.Tag;
 
 /**
@@ -94,45 +94,31 @@ public class ElectronicPurseOperationDTO extends AbstractAuditedDTO {
 
     //@formatter:off
      /**
-     * The amountInCts attribute.
+     * The amount attribute.
      * -- GETTER --
-     * Getter for {@link #amountInCts} property.
+     * Getter for {@link #amount} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #amountInCts} property.
-     * @param amountInCts the value to set.
+     * Setter for {@link #amount} property.
+     * @param amount the value to set.
      */
      //@formatter:on
-    @Schema(description = "Amount in cents of the operation")
-    private Long amountInCts;
+    @Schema(description = "The amount of the operation")
+    private MoneyAmountDTO amount;
 
     //@formatter:off
      /**
-     * The signedAmountInCts attribute.
+     * The signedAmount attribute.
      * -- GETTER --
-     * Getter for {@link #signedAmountInCts} property.
+     * Getter for {@link #signedAmount} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #signedAmountInCts} property.
-     * @param signedAmountInCts the value to set.
+     * Setter for {@link #signedAmount} property.
+     * @param signedAmount the value to set.
      */
      //@formatter:on
-    @Schema(description = "Signed amount in cents of the operation")
-    private Long signedAmountInCts;
-
-    //@formatter:off
-     /**
-     * The currency attribute.
-     * -- GETTER --
-     * Getter for {@link #currency} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #currency} property.
-     * @param currency the value to set.
-     */
-     //@formatter:on
-    @Schema(description = "Currency of the operation")
-    private ISO4217Currency currency;
+    @Schema(description = "The signed amount of the operation")
+    private MoneyAmountDTO signedAmount;
 
     //@formatter:off
      /**

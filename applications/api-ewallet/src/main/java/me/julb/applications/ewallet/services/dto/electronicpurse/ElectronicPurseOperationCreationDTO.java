@@ -31,14 +31,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import me.julb.library.dto.simple.content.LargeContentCreationDTO;
-import me.julb.library.utility.enums.ISO4217Currency;
+import me.julb.library.dto.simple.moneyamount.MoneyAmountDTO;
 import me.julb.library.utility.validator.constraints.Tag;
 
 /**
@@ -67,34 +66,17 @@ public class ElectronicPurseOperationCreationDTO {
 
     //@formatter:off
      /**
-     * The amountInCts attribute.
+     * The amount attribute.
      * -- GETTER --
-     * Getter for {@link #amountInCts} property.
+     * Getter for {@link #amount} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #amountInCts} property.
-     * @param amountInCts the value to set.
+     * Setter for {@link #amount} property.
+     * @param amount the value to set.
      */
      //@formatter:on
-    @Schema(description = "Amount in cents for the operation", required = true)
-    @NotNull
-    @Min(0)
-    private Long amountInCts;
-
-    //@formatter:off
-     /**
-     * The currency attribute.
-     * -- GETTER --
-     * Getter for {@link #currency} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #currency} property.
-     * @param currency the value to set.
-     */
-     //@formatter:on
-    @Schema(description = "Currency for the operation", required = true)
-    @NotNull
-    private ISO4217Currency currency;
+    @Schema(description = "The amount of the operation")
+    private MoneyAmountDTO amount;
 
    //@formatter:off
     /**

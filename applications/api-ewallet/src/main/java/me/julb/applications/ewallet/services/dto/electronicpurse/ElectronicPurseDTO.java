@@ -33,8 +33,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import me.julb.library.dto.simple.audit.AbstractAuditedDTO;
+import me.julb.library.dto.simple.moneyamount.MoneyAmountDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.utility.enums.ISO4217Currency;
 
 /**
  * The DTO used to return an electronic purse.
@@ -61,31 +61,17 @@ public class ElectronicPurseDTO extends AbstractAuditedDTO {
 
     //@formatter:off
      /**
-     * The amountInCts attribute.
+     * The amount attribute.
      * -- GETTER --
-     * Getter for {@link #amountInCts} property.
+     * Getter for {@link #amount} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #amountInCts} property.
-     * @param amountInCts the value to set.
+     * Setter for {@link #amount} property.
+     * @param amount the value to set.
      */
      //@formatter:on
-    @Schema(description = "Amount in cents available in the electronic purse")
-    private Long amountInCts;
-
-    //@formatter:off
-     /**
-     * The currency attribute.
-     * -- GETTER --
-     * Getter for {@link #currency} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #currency} property.
-     * @param currency the value to set.
-     */
-     //@formatter:on
-    @Schema(description = "Currency of the electronic purse")
-    private ISO4217Currency currency;
+    @Schema(description = "The amount available in the purse")
+    private MoneyAmountDTO amount;
 
     //@formatter:off
      /**

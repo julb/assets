@@ -16,6 +16,7 @@ dependencies {
     implementation project(':libraries:library-dto-security')
     implementation project(':libraries:library-utility-date')
     implementation project(':libraries:library-utility-identifier')
+    implementation project(':libraries:library-utility-moneyamount')
     implementation project(':libraries:library-utility-random')
     implementation project(':spring-boot-starters:spring-boot-starter-messaging')
     implementation project(':spring-boot-starters:spring-boot-starter-web')

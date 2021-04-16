@@ -22,76 +22,65 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.ewallet.services.dto.moneyvoucher;
+package me.julb.library.persistence.mongodb.entities.moneyamount;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import me.julb.library.dto.simple.moneyamount.AmountDTO;
-import me.julb.library.utility.validator.constraints.DateTimeISO8601;
-import me.julb.library.utility.validator.constraints.DateTimeInFuture;
-import me.julb.library.utility.validator.constraints.Tag;
+import me.julb.library.dto.simple.moneyamount.MoneyAmountDTO;
+import me.julb.library.mapping.annotations.ObjectMappingFactory;
+import me.julb.library.utility.enums.ISO4217Currency;
 
 /**
- * The DTO used to create a money voucher.
+ * The money amount entity.
  * <P>
  * @author Julb.
  */
+@ObjectMappingFactory(creation = {AmountDTO.class, MoneyAmountDTO.class}, read = {AmountDTO.class, MoneyAmountDTO.class})
 @Getter
 @Setter
-public class MoneyVoucherCreationDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class MoneyAmountEntity {
 
     //@formatter:off
      /**
-     * The amount attribute.
+     * The value attribute expressed in cents.
      * -- GETTER --
-     * Getter for {@link #amount} property.
+     * Getter for {@link #value} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #amount} property.
-     * @param amount the value to set.
+     * Setter for {@link #value} property.
+     * @param value the value to set.
      */
      //@formatter:on
-    @Schema(description = "The amount in cents of the money voucher")
     @NotNull
-    @Valid
-    private AmountDTO amount;
+    private Long value;
 
     //@formatter:off
      /**
-     * The expiryDateTime attribute.
+     * The currency attribute.
      * -- GETTER --
-     * Getter for {@link #expiryDateTime} property.
+     * Getter for {@link #currency} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #expiryDateTime} property.
-     * @param expiryDateTime the value to set.
+     * Setter for {@link #currency} property.
+     * @param currency the value to set.
      */
      //@formatter:on
-    @Schema(description = "The expiration of the money voucher")
-    @DateTimeISO8601
-    @DateTimeInFuture
-    private String expiryDateTime;
+    @NotNull
+    private ISO4217Currency currency;
 
-    //@formatter:off
-     /**
-     * The tags attribute.
-     * -- GETTER --
-     * Getter for {@link #tags} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #tags} property.
-     * @param tags the value to set.
+    /**
+     * Returns the negative value of this amount.
+     * @return the negative value.
      */
-     //@formatter:on
-    @Schema(description = "Tags to associate to the money voucher")
-    private SortedSet<@NotNull @Tag String> tags = new TreeSet<String>();
+    public MoneyAmountEntity toNegative() {
+        return new MoneyAmountEntity(-this.value, currency);
+    }
 }

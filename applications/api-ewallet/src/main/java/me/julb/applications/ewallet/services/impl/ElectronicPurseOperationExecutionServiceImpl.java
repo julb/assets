@@ -94,8 +94,8 @@ public class ElectronicPurseOperationExecutionServiceImpl implements ElectronicP
         MoneyVoucherDTO moneyVoucher = moneyVoucherService.findByCode(redeemMoneyVoucher.getCode());
 
         // The currencies are not matching.
-        if (!Objects.equal(existing.getCurrency(), moneyVoucher.getCurrency())) {
-            throw new MoneyVoucherCannotBeRedeemedCurrencyMismatch(moneyVoucher.getId(), moneyVoucher.getCurrency(), existing.getId(), existing.getCurrency());
+        if (!Objects.equal(existing.getAmount().getCurrency(), moneyVoucher.getAmount().getCurrency())) {
+            throw new MoneyVoucherCannotBeRedeemedCurrencyMismatch(moneyVoucher.getId(), moneyVoucher.getAmount().getCurrency(), existing.getId(), existing.getAmount().getCurrency());
         }
 
         // Everything seems to be fine. Redeem money voucher.
@@ -103,8 +103,7 @@ public class ElectronicPurseOperationExecutionServiceImpl implements ElectronicP
 
         // Record operation.
         ElectronicPurseOperationCreationDTO operation = new ElectronicPurseOperationCreationDTO();
-        operation.setAmountInCts(moneyVoucherRedeemed.getAmountInCts());
-        operation.setCurrency(moneyVoucherRedeemed.getCurrency());
+        operation.setAmount(moneyVoucherRedeemed.getAmount());
         operation.setLocalizedMessage(new HashMap<>());
         operation.setSendNotification(false);
         operation.setType(ElectronicPurseOperationType.CREDIT_MONEY_VOUCHER_REDEMPTION);

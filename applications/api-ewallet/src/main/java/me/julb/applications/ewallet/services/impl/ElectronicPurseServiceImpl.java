@@ -49,6 +49,8 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedInsufficientBalance;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
+import me.julb.library.dto.simple.moneyamount.MoneyAmountDTO;
+import me.julb.library.persistence.mongodb.entities.moneyamount.MoneyAmountEntity;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
@@ -56,6 +58,7 @@ import me.julb.library.utility.enums.ISO4217Currency;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
+import me.julb.library.utility.moneyamount.MoneyAmountBuilder;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
@@ -180,8 +183,7 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
 
         // Create the electronic purse
         ElectronicPurseEntity entityToCreate = mappingService.map(creationDTO, ElectronicPurseEntity.class);
-        entityToCreate.setAmountInCts(Long.valueOf(Integers.ZERO));
-        entityToCreate.setCurrency(currency);
+        entityToCreate.setAmount(new MoneyAmountEntity(Long.valueOf(Integers.ZERO), currency));
         this.onPersist(entityToCreate);
 
         ElectronicPurseEntity result = electronicPurseRepository.save(entityToCreate);
@@ -202,20 +204,21 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
             throw new ResourceNotFoundException(ElectronicPurseEntity.class, "id", id);
         }
 
-        // Update the entity
-        Long balanceInCts = 0L;
+        // Compute the new balance.
+        MoneyAmountBuilder builder = new MoneyAmountBuilder(existing.getAmount().getCurrency());
+
         List<ElectronicPurseOperationDTO> allOperations = electronicPurseOperationService.findAll(existing.getId());
-        for (ElectronicPurseOperationDTO operation : allOperations) {
-            balanceInCts += operation.getSignedAmountInCts();
-        }
+        allOperations.stream().map(ElectronicPurseOperationDTO::getSignedAmount).forEach(builder::add);
+
+        MoneyAmountDTO balance = builder.build();
 
         // If balance < 0, throw exception.
-        if (balanceInCts < 0) {
-            throw new ElectronicPurseOperationCannotBeExecutedInsufficientBalance(existing.getId(), existing.getCurrency(), balanceInCts);
+        if (balance.getValue() < 0) {
+            throw new ElectronicPurseOperationCannotBeExecutedInsufficientBalance(existing.getId(), existing.getAmount().getCurrency(), balance.getValue());
         }
 
         // Update purse balance
-        existing.setAmountInCts(balanceInCts);
+        existing.getAmount().setValue(balance.getValue());
         this.onUpdate(existing);
 
         ElectronicPurseEntity result = electronicPurseRepository.save(existing);

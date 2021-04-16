@@ -198,7 +198,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
 
         // Create the voucher code
         MoneyVoucherEntity entityToCreate = mappingService.map(creationDTO, MoneyVoucherEntity.class);
-        entityToCreate.setCurrency(currency);
+        entityToCreate.getAmount().setCurrency(currency);
         entityToCreate.setEnabled(false);
         entityToCreate.setHash(voucherCodeHash);
         entityToCreate.setRedeemed(false);

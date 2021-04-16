@@ -55,6 +55,7 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedCurrencyMismatch;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
+import me.julb.library.dto.simple.moneyamount.MoneyAmountDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
@@ -189,8 +190,8 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
         }
 
         // Check that operation currency is matching electronic purse currency.
-        if (!Objects.equal(electronicPurse.getCurrency(), creationDTO.getCurrency())) {
-            throw new ElectronicPurseOperationCannotBeExecutedCurrencyMismatch(electronicPurse.getId(), electronicPurse.getCurrency(), creationDTO.getCurrency());
+        if (!Objects.equal(electronicPurse.getAmount().getCurrency(), creationDTO.getAmount().getCurrency())) {
+            throw new ElectronicPurseOperationCannotBeExecutedCurrencyMismatch(electronicPurse.getId(), electronicPurse.getAmount().getCurrency(), creationDTO.getAmount().getCurrency());
         }
 
         // Update the entity
@@ -300,8 +301,7 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
 
         // Create cancel operation.
         ElectronicPurseOperationCreationDTO cancelOperation = new ElectronicPurseOperationCreationDTO();
-        cancelOperation.setAmountInCts(originalOperation.getAmountInCts());
-        cancelOperation.setCurrency(originalOperation.getCurrency());
+        cancelOperation.setAmount(mappingService.map(originalOperation.getAmount(), MoneyAmountDTO.class));
         cancelOperation.setLocalizedMessage(new HashMap<>());
         cancelOperation.setSendNotification(true);
         cancelOperation.setType(cancellingOperationType);
