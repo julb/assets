@@ -266,6 +266,152 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </li>
 <li class="blockList">
 <section role="region">
+<h2 title="Package">Package&nbsp;me.julb.applications.ewallet.services.exceptions</h2>
+<ul class="blockList">
+<li class="blockList"><a id="me.julb.applications.ewallet.services.exceptions.AbstractElectronicPurseOperationCannotBeExecutedException">
+<!--   -->
+</a>
+<h3>Class <a href="me/julb/applications/ewallet/services/exceptions/AbstractElectronicPurseOperationCannotBeExecutedException.html" title="class in me.julb.applications.ewallet.services.exceptions">me.julb.applications.ewallet.services.exceptions.AbstractElectronicPurseOperationCannotBeExecutedException</a> extends <a href="me/julb/library/utility/exceptions/BadRequestException.html" title="class in me.julb.library.utility.exceptions">BadRequestException</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>electronicPurseCurrency</h4>
+<pre><a href="me/julb/library/utility/enums/ISO4217Currency.html" title="enum in me.julb.library.utility.enums">ISO4217Currency</a> electronicPurseCurrency</pre>
+<div class="block">The actual currency</div>
+</li>
+<li class="blockListLast">
+<h4>electronicPurseId</h4>
+<pre>java.lang.String electronicPurseId</pre>
+<div class="block">The electronic purse ID.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a id="me.julb.applications.ewallet.services.exceptions.AbstractMoneyVoucherCannotBeRedeemedException">
+<!--   -->
+</a>
+<h3>Class <a href="me/julb/applications/ewallet/services/exceptions/AbstractMoneyVoucherCannotBeRedeemedException.html" title="class in me.julb.applications.ewallet.services.exceptions">me.julb.applications.ewallet.services.exceptions.AbstractMoneyVoucherCannotBeRedeemedException</a> extends <a href="me/julb/library/utility/exceptions/BadRequestException.html" title="class in me.julb.library.utility.exceptions">BadRequestException</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>moneyVoucherId</h4>
+<pre>java.lang.String moneyVoucherId</pre>
+<div class="block">The money voucher ID.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a id="me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedCurrencyMismatch">
+<!--   -->
+</a>
+<h3>Class <a href="me/julb/applications/ewallet/services/exceptions/ElectronicPurseOperationCannotBeExecutedCurrencyMismatch.html" title="class in me.julb.applications.ewallet.services.exceptions">me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedCurrencyMismatch</a> extends <a href="me/julb/applications/ewallet/services/exceptions/AbstractElectronicPurseOperationCannotBeExecutedException.html" title="class in me.julb.applications.ewallet.services.exceptions">AbstractElectronicPurseOperationCannotBeExecutedException</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>operationCurrency</h4>
+<pre><a href="me/julb/library/utility/enums/ISO4217Currency.html" title="enum in me.julb.library.utility.enums">ISO4217Currency</a> operationCurrency</pre>
+<div class="block">The expected currency.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a id="me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedInsufficientBalance">
+<!--   -->
+</a>
+<h3>Class <a href="me/julb/applications/ewallet/services/exceptions/ElectronicPurseOperationCannotBeExecutedInsufficientBalance.html" title="class in me.julb.applications.ewallet.services.exceptions">me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedInsufficientBalance</a> extends <a href="me/julb/applications/ewallet/services/exceptions/AbstractElectronicPurseOperationCannotBeExecutedException.html" title="class in me.julb.applications.ewallet.services.exceptions">AbstractElectronicPurseOperationCannotBeExecutedException</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>newBalanceAmountInCts</h4>
+<pre>java.lang.Long newBalanceAmountInCts</pre>
+<div class="block">The final balance amount in cents.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a id="me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedAlreadyRedeemed">
+<!--   -->
+</a>
+<h3>Class <a href="me/julb/applications/ewallet/services/exceptions/MoneyVoucherCannotBeRedeemedAlreadyRedeemed.html" title="class in me.julb.applications.ewallet.services.exceptions">me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedAlreadyRedeemed</a> extends <a href="me/julb/applications/ewallet/services/exceptions/AbstractMoneyVoucherCannotBeRedeemedException.html" title="class in me.julb.applications.ewallet.services.exceptions">AbstractMoneyVoucherCannotBeRedeemedException</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>redemptionDateTime</h4>
+<pre>java.lang.String redemptionDateTime</pre>
+<div class="block">The money voucher ID.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a id="me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedCurrencyMismatch">
+<!--   -->
+</a>
+<h3>Class <a href="me/julb/applications/ewallet/services/exceptions/MoneyVoucherCannotBeRedeemedCurrencyMismatch.html" title="class in me.julb.applications.ewallet.services.exceptions">me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedCurrencyMismatch</a> extends <a href="me/julb/applications/ewallet/services/exceptions/AbstractMoneyVoucherCannotBeRedeemedException.html" title="class in me.julb.applications.ewallet.services.exceptions">AbstractMoneyVoucherCannotBeRedeemedException</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>electronicPurseCurrency</h4>
+<pre><a href="me/julb/library/utility/enums/ISO4217Currency.html" title="enum in me.julb.library.utility.enums">ISO4217Currency</a> electronicPurseCurrency</pre>
+<div class="block">The actual currency</div>
+</li>
+<li class="blockList">
+<h4>electronicPurseId</h4>
+<pre>java.lang.String electronicPurseId</pre>
+<div class="block">The electronic purse ID.</div>
+</li>
+<li class="blockListLast">
+<h4>moneyVoucherCurrency</h4>
+<pre><a href="me/julb/library/utility/enums/ISO4217Currency.html" title="enum in me.julb.library.utility.enums">ISO4217Currency</a> moneyVoucherCurrency</pre>
+<div class="block">The expected currency.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a id="me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedVoucherDisabled">
+<!--   -->
+</a>
+<h3>Class <a href="me/julb/applications/ewallet/services/exceptions/MoneyVoucherCannotBeRedeemedVoucherDisabled.html" title="class in me.julb.applications.ewallet.services.exceptions">me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedVoucherDisabled</a> extends <a href="me/julb/applications/ewallet/services/exceptions/AbstractMoneyVoucherCannotBeRedeemedException.html" title="class in me.julb.applications.ewallet.services.exceptions">AbstractMoneyVoucherCannotBeRedeemedException</a> implements Serializable</h3>
+</li>
+<li class="blockList"><a id="me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedVoucherExpired">
+<!--   -->
+</a>
+<h3>Class <a href="me/julb/applications/ewallet/services/exceptions/MoneyVoucherCannotBeRedeemedVoucherExpired.html" title="class in me.julb.applications.ewallet.services.exceptions">me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedVoucherExpired</a> extends <a href="me/julb/applications/ewallet/services/exceptions/AbstractMoneyVoucherCannotBeRedeemedException.html" title="class in me.julb.applications.ewallet.services.exceptions">AbstractMoneyVoucherCannotBeRedeemedException</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>expiryDateTime</h4>
+<pre>java.lang.String expiryDateTime</pre>
+<div class="block">The expiration date time.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</li>
+<li class="blockList">
+<section role="region">
 <h2 title="Package">Package&nbsp;me.julb.library.dto.simple.content</h2>
 <ul class="blockList">
 <li class="blockList"><a id="me.julb.library.dto.simple.content.LargeContentCreationDTO">

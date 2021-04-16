@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -178,20 +178,27 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../library/dto/simple/user/UserRefDTO.html" title="class in me.julb.library.dto.simple.user">UserRefDTO</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getConnectedUserRefIdentity()">getConnectedUserRefIdentity</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Gets the current connected user.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isAdministrator()">isAdministrator</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns <code>true</code> if the connected user is an administrator, <code>false</code> otherwise.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isAuthenticated()">isAuthenticated</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns <code>true</code> if the connected user is authenticated, <code>false</code> otherwise.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isUser(java.lang.String)">isUser</a></span>&#8203;(java.lang.String&nbsp;userId)</code></th>
 <td class="colLast">
@@ -250,6 +257,20 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="blockList">
 <h4>getConnectedUserIdentity</h4>
 <pre class="methodSignature"><a href="../../../library/dto/security/AuthenticatedUserDTO.html" title="class in me.julb.library.dto.security">AuthenticatedUserDTO</a>&nbsp;getConnectedUserIdentity()</pre>
+<div class="block">Gets the current connected user.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the current connected user.</dd>
+</dl>
+</li>
+</ul>
+<a id="getConnectedUserRefIdentity()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConnectedUserRefIdentity</h4>
+<pre class="methodSignature"><a href="../../../library/dto/simple/user/UserRefDTO.html" title="class in me.julb.library.dto.simple.user">UserRefDTO</a>&nbsp;getConnectedUserRefIdentity()</pre>
 <div class="block">Gets the current connected user.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>

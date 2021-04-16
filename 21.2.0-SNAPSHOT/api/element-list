@@ -67,6 +67,17 @@ me.julb.applications.disclaimer.services.dto.agreement
 me.julb.applications.disclaimer.services.dto.disclaimer
 me.julb.applications.disclaimer.services.exceptions
 me.julb.applications.disclaimer.services.impl
+me.julb.applications.ewallet.configurations
+me.julb.applications.ewallet.configurations.properties
+me.julb.applications.ewallet.controllers
+me.julb.applications.ewallet.entities
+me.julb.applications.ewallet.repositories
+me.julb.applications.ewallet.repositories.specifications
+me.julb.applications.ewallet.services
+me.julb.applications.ewallet.services.dto.electronicpurse
+me.julb.applications.ewallet.services.dto.moneyvoucher
+me.julb.applications.ewallet.services.exceptions
+me.julb.applications.ewallet.services.impl
 me.julb.applications.helloworld.configurations
 me.julb.applications.helloworld.configurations.properties
 me.julb.applications.helloworld.consumers
@@ -157,6 +168,7 @@ me.julb.library.dto.simple.identifier
 me.julb.library.dto.simple.interval.date
 me.julb.library.dto.simple.message
 me.julb.library.dto.simple.mobilephone
+me.julb.library.dto.simple.moneyamount
 me.julb.library.dto.simple.user
 me.julb.library.dto.simple.value
 me.julb.library.dto.sms
@@ -169,6 +181,7 @@ me.julb.library.persistence.mongodb.entities
 me.julb.library.persistence.mongodb.entities.date
 me.julb.library.persistence.mongodb.entities.message
 me.julb.library.persistence.mongodb.entities.mobilephone
+me.julb.library.persistence.mongodb.entities.moneyamount
 me.julb.library.persistence.mongodb.entities.user
 me.julb.library.utility.barcode.ean13
 me.julb.library.utility.barcode.pdf417
@@ -196,6 +209,7 @@ me.julb.library.utility.josejwt.jwk
 me.julb.library.utility.josejwt.jwk.impl
 me.julb.library.utility.josejwt.keyloader
 me.julb.library.utility.josejwt.operations
+me.julb.library.utility.moneyamount
 me.julb.library.utility.otp
 me.julb.library.utility.random
 me.julb.library.utility.size

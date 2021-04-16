@@ -137,6 +137,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>@Configuration
 @Import(<a href="../../security/configurations/SecurityConfiguration.html" title="class in me.julb.springbootstarter.security.configurations">SecurityConfiguration.class</a>)
 @EnableConfigurationProperties(<a href="beans/CorsProperties.html" title="class in me.julb.springbootstarter.web.configurations.beans">CorsProperties.class</a>)
+@PropertySource(value="classpath:META-INF/build-info.properties",
+                ignoreResourceNotFound=true)
 public class <span class="typeNameLabel">WebMvcConfiguration</span>
 extends java.lang.Object
 implements org.springframework.web.servlet.config.annotation.WebMvcConfigurer</pre>

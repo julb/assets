@@ -419,7 +419,10 @@ public&nbsp;<a href="../dto/incident/IncidentHistoryDTO.html" title="class in me
 <ul class="blockList">
 <li class="blockList">
 <h4>delete</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;delete&#8203;(@NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a>
+<pre class="methodSignature">@Transactional(readOnly=false,
+               propagation=REQUIRED,
+               rollbackFor=java.lang.Exception.class)
+public&nbsp;void&nbsp;delete&#8203;(@NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a>
                    @NotNull <a href="../../../../library/utility/validator/constraints/Identifier.html" title="annotation in me.julb.library.utility.validator.constraints">@Identifier</a> java.lang.String&nbsp;incidentId)</pre>
 <div class="block">Deletes all incident history.</div>
 <dl>

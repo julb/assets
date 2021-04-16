@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -210,20 +210,27 @@ implements <a href="../ISecurityService.html" title="interface in me.julb.spring
 </td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../../library/dto/simple/user/UserRefDTO.html" title="class in me.julb.library.dto.simple.user">UserRefDTO</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getConnectedUserRefIdentity()">getConnectedUserRefIdentity</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Gets the current connected user.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isAdministrator()">isAdministrator</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns <code>true</code> if the connected user is an administrator, <code>false</code> otherwise.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isAuthenticated()">isAuthenticated</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Returns <code>true</code> if the connected user is authenticated, <code>false</code> otherwise.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isUser(java.lang.String)">isUser</a></span>&#8203;(java.lang.String&nbsp;userId)</code></th>
 <td class="colLast">
@@ -316,6 +323,22 @@ implements <a href="../ISecurityService.html" title="interface in me.julb.spring
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../ISecurityService.html#getConnectedUserIdentity()">getConnectedUserIdentity</a></code>&nbsp;in interface&nbsp;<code><a href="../ISecurityService.html" title="interface in me.julb.springbootstarter.security.services">ISecurityService</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the current connected user.</dd>
+</dl>
+</li>
+</ul>
+<a id="getConnectedUserRefIdentity()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConnectedUserRefIdentity</h4>
+<pre class="methodSignature">public&nbsp;<a href="../../../../library/dto/simple/user/UserRefDTO.html" title="class in me.julb.library.dto.simple.user">UserRefDTO</a>&nbsp;getConnectedUserRefIdentity()</pre>
+<div class="block">Gets the current connected user.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../ISecurityService.html#getConnectedUserRefIdentity()">getConnectedUserRefIdentity</a></code>&nbsp;in interface&nbsp;<code><a href="../ISecurityService.html" title="interface in me.julb.springbootstarter.security.services">ISecurityService</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the current connected user.</dd>
 </dl>
