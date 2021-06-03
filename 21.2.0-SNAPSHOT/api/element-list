@@ -53,6 +53,9 @@ me.julb.applications.bookmark.services.dto.item
 me.julb.applications.bookmark.services.dto.object
 me.julb.applications.bookmark.services.exceptions
 me.julb.applications.bookmark.services.impl
+me.julb.applications.configuration.configurations
+me.julb.applications.configuration.configurations.properties
+me.julb.applications.configuration.controllers
 me.julb.applications.dataprocessing.configurations
 me.julb.applications.dataprocessing.configurations.beans
 me.julb.applications.dataprocessing.services.processors

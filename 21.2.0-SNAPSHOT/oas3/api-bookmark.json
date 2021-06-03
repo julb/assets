@@ -441,12 +441,12 @@
             "format": "int32",
             "type": "integer"
           },
-          "last": {
-            "type": "boolean"
-          },
           "size": {
             "format": "int32",
             "type": "integer"
+          },
+          "last": {
+            "type": "boolean"
           },
           "numberOfElements": {
             "format": "int32",
@@ -462,14 +462,14 @@
           "sort": {
             "$ref": "#/components/schemas/Sort"
           },
-          "first": {
-            "type": "boolean"
-          },
           "content": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AbstractItemDTO"
             }
+          },
+          "first": {
+            "type": "boolean"
           },
           "totalElements": {
             "format": "int64",

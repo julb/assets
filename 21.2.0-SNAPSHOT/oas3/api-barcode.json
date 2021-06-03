@@ -143,11 +143,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -195,11 +195,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -428,11 +428,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -480,11 +480,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -919,11 +919,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -971,11 +971,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1090,11 +1090,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1142,11 +1142,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1422,9 +1422,6 @@
                                   "format": "int32",
                                   "type": "integer"
                                 },
-                                "transformed": {
-                                  "type": "boolean"
-                                },
                                 "missingGlyphCode": {
                                   "format": "int32",
                                   "type": "integer"
@@ -1434,6 +1431,9 @@
                                     "type": "object"
                                   },
                                   "type": "object"
+                                },
+                                "transformed": {
+                                  "type": "boolean"
                                 },
                                 "family": {
                                   "type": "string"
@@ -1495,11 +1495,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1547,11 +1547,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1647,11 +1647,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1767,9 +1767,6 @@
                               "format": "int32",
                               "type": "integer"
                             },
-                            "transformed": {
-                              "type": "boolean"
-                            },
                             "missingGlyphCode": {
                               "format": "int32",
                               "type": "integer"
@@ -1779,6 +1776,9 @@
                                 "type": "object"
                               },
                               "type": "object"
+                            },
+                            "transformed": {
+                              "type": "boolean"
                             },
                             "family": {
                               "type": "string"
@@ -1945,11 +1945,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1997,11 +1997,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2254,11 +2254,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2306,11 +2306,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2523,11 +2523,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -2575,11 +2575,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -2852,11 +2852,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2904,11 +2904,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3161,11 +3161,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3213,11 +3213,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3430,11 +3430,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3482,11 +3482,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3678,8 +3678,8 @@
               }
             }
           },
-          "415": {
-            "description": "Unsupported Media Type",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3688,8 +3688,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "415": {
+            "description": "Unsupported Media Type",
             "content": {
               "*/*": {
                 "schema": {
@@ -3848,8 +3848,8 @@
               }
             }
           },
-          "415": {
-            "description": "Unsupported Media Type",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3858,8 +3858,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "415": {
+            "description": "Unsupported Media Type",
             "content": {
               "*/*": {
                 "schema": {
@@ -3999,11 +3999,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4051,11 +4051,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4284,11 +4284,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -4336,11 +4336,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -4775,11 +4775,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4827,11 +4827,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4946,11 +4946,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4998,11 +4998,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -5278,9 +5278,6 @@
                                   "format": "int32",
                                   "type": "integer"
                                 },
-                                "transformed": {
-                                  "type": "boolean"
-                                },
                                 "missingGlyphCode": {
                                   "format": "int32",
                                   "type": "integer"
@@ -5290,6 +5287,9 @@
                                     "type": "object"
                                   },
                                   "type": "object"
+                                },
+                                "transformed": {
+                                  "type": "boolean"
                                 },
                                 "family": {
                                   "type": "string"
@@ -5351,11 +5351,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5403,11 +5403,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5503,11 +5503,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -5623,9 +5623,6 @@
                               "format": "int32",
                               "type": "integer"
                             },
-                            "transformed": {
-                              "type": "boolean"
-                            },
                             "missingGlyphCode": {
                               "format": "int32",
                               "type": "integer"
@@ -5635,6 +5632,9 @@
                                 "type": "object"
                               },
                               "type": "object"
+                            },
+                            "transformed": {
+                              "type": "boolean"
                             },
                             "family": {
                               "type": "string"
@@ -5801,11 +5801,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5853,11 +5853,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6110,11 +6110,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6162,11 +6162,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6379,11 +6379,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -6431,11 +6431,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -6708,11 +6708,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6760,11 +6760,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7017,11 +7017,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7069,11 +7069,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7286,11 +7286,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7338,11 +7338,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7534,8 +7534,8 @@
               }
             }
           },
-          "415": {
-            "description": "Unsupported Media Type",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -7544,8 +7544,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "415": {
+            "description": "Unsupported Media Type",
             "content": {
               "*/*": {
                 "schema": {
@@ -7715,11 +7715,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7767,11 +7767,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8000,11 +8000,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -8052,11 +8052,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -8491,11 +8491,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8543,11 +8543,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8662,11 +8662,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8714,11 +8714,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8994,9 +8994,6 @@
                                   "format": "int32",
                                   "type": "integer"
                                 },
-                                "transformed": {
-                                  "type": "boolean"
-                                },
                                 "missingGlyphCode": {
                                   "format": "int32",
                                   "type": "integer"
@@ -9006,6 +9003,9 @@
                                     "type": "object"
                                   },
                                   "type": "object"
+                                },
+                                "transformed": {
+                                  "type": "boolean"
                                 },
                                 "family": {
                                   "type": "string"
@@ -9067,11 +9067,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9119,11 +9119,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9219,11 +9219,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -9339,9 +9339,6 @@
                               "format": "int32",
                               "type": "integer"
                             },
-                            "transformed": {
-                              "type": "boolean"
-                            },
                             "missingGlyphCode": {
                               "format": "int32",
                               "type": "integer"
@@ -9351,6 +9348,9 @@
                                 "type": "object"
                               },
                               "type": "object"
+                            },
+                            "transformed": {
+                              "type": "boolean"
                             },
                             "family": {
                               "type": "string"
@@ -9517,11 +9517,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9569,11 +9569,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9826,11 +9826,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9878,11 +9878,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10095,11 +10095,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -10147,11 +10147,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -10424,11 +10424,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10476,11 +10476,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10733,11 +10733,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10785,11 +10785,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -11002,11 +11002,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -11054,11 +11054,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -11250,8 +11250,8 @@
               }
             }
           },
-          "415": {
-            "description": "Unsupported Media Type",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -11260,8 +11260,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "415": {
+            "description": "Unsupported Media Type",
             "content": {
               "*/*": {
                 "schema": {
