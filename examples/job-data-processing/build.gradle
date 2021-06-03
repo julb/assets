@@ -35,8 +35,7 @@ springBoot {
 }
 
 bootBuildImage {
-    environment = ["BP_JVM_VERSION" : "11.*"]
-    imageName = "julb/${project.name}:${project.version}"
+    enabled = false
 }
 
 bootJar {

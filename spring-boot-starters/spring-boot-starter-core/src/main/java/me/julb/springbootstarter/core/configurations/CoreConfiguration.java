@@ -26,7 +26,6 @@ package me.julb.springbootstarter.core.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.localization.LocaleService;
@@ -39,7 +38,6 @@ import me.julb.springbootstarter.core.rendering.ContentRenderService;
  * @author Julb.
  */
 @Configuration
-@PropertySource("classpath:tm.properties")
 public class CoreConfiguration {
 
     /**

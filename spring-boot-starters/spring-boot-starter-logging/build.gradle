@@ -9,6 +9,7 @@ dependencies {
 	api platform(project(':bom'))
 	
 	implementation project(':libraries:library-logging-logback')
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 lombok {

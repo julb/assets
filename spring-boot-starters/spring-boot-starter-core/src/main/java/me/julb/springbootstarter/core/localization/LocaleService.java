@@ -62,7 +62,12 @@ public class LocaleService {
      * @return th supported locales.
      */
     public List<Locale> getSupportedLocales() {
-        return Arrays.asList(configSourceService.getTypedProperty(ConfigSourceConstants.LOCALES, Locale[].class));
+        Locale[] locales = configSourceService.getTypedProperty(ConfigSourceConstants.LOCALES, Locale[].class);
+        if (locales != null) {
+            return Arrays.asList(locales);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     /**

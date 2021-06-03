@@ -24,13 +24,26 @@
 
 package me.julb.springbootstarter.core.configs;
 
+import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.lang.Nullable;
 
 import me.julb.library.utility.constants.Strings;
+import me.julb.library.utility.exceptions.InternalServerErrorException;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 
 /**
@@ -38,13 +51,50 @@ import me.julb.springbootstarter.core.context.TrademarkContextHolder;
  * <P>
  * @author Julb.
  */
-public class ConfigSourceService {
+public class ConfigSourceService implements ApplicationListener<ContextRefreshedEvent> {
 
     /**
-     * The Spring environment.
+     * The SENSITIVE_KEY_PREFIX attribute.
+     */
+    private static final String SENSITIVE_VALUE_PREFIX = "{secure}";
+
+    /**
+     * The SENSITIVE_REDACTED_VALUE attribute.
+     */
+    private static final String SENSITIVE_VALUE_REDACTED = "$$REDACTED$$";
+
+    /**
+     * The config source properties.
+     */
+    @Value("classpath:tm.properties")
+    private Resource configSourcePropertiesResource;
+
+    /**
+     * The conversion service.
      */
     @Autowired
-    private Environment environment;
+    private ConversionService mvcConversionService;
+
+    /**
+     * The config source properties.
+     */
+    private Properties configSourceProperties;
+
+    // ------------------------------------------ Init methods.
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        try {
+            this.configSourceProperties = PropertiesLoaderUtils.loadProperties(configSourcePropertiesResource);
+        } catch (IOException e) {
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    // ------------------------------------------ Read methods.
 
     /**
      * Try to resolve the config value.
@@ -80,11 +130,133 @@ public class ConfigSourceService {
     public <T> T getTypedProperty(String code, Class<T> targetType) {
         String tm = TrademarkContextHolder.getTrademark();
 
-        T tmProperty = environment.getProperty(StringUtils.join(tm, Strings.DOT, code), targetType);
-        if (tmProperty == null) {
-            return environment.getProperty(code, targetType);
-        } else {
-            return tmProperty;
+        // Get property value.
+        String tmPropertyValue = configSourceProperties.getProperty(StringUtils.join(Strings.LEFT_BRACKET, tm, Strings.RIGHT_BRACKET, code));
+        if (tmPropertyValue == null) {
+            tmPropertyValue = configSourceProperties.getProperty(code);
         }
+
+        // Get raw value if sensitive.
+        if (isValueSensitive(tmPropertyValue)) {
+            tmPropertyValue = getRawValue(tmPropertyValue);
+        }
+
+        // If property value provided, convert it.
+        if (tmPropertyValue != null) {
+            return mvcConversionService.convert(tmPropertyValue, targetType);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns all properties, starting with given prefix if provided.
+     * @param prefix the prefix to filter on, or <code>null</code> if no filter is needed.
+     * @param redactSensitive <code>true</code> to redact sensitive value, <code>false</code> otherwise.
+     * @return the properties.
+     */
+    public Map<String, String> findAll(@Nullable String prefix, Boolean redactSensitive) {
+        // Get trademark.
+        String tm = TrademarkContextHolder.getTrademark();
+
+        //@formatter:off
+        Map<String, String> defaultProperties = configSourceProperties.entrySet().stream()
+            .filter((e) -> {
+                // Get property key.
+                String propertyKey = (String) e.getKey();
+                return !StringUtils.startsWith(propertyKey, Strings.LEFT_BRACKET)
+                    && (StringUtils.isBlank(prefix) || StringUtils.startsWith((String) e.getKey(), prefix));
+            })
+            .map((e) -> {
+                // Transform key and value into String keypairs.
+                String key = e.getKey().toString().toLowerCase();
+                String value = e.getValue().toString();
+                
+                // If redact sensitive and sensitive, redact value.
+                if (isValueSensitive(value)) {
+                    if(redactSensitive) {
+                        value = SENSITIVE_VALUE_REDACTED;
+                    } else {
+                        value = getRawValue(value);
+                    }
+                }
+                
+                // Return immutable pairs.
+                return new ImmutablePair<String, String>(key, value);
+            })
+            .collect(
+                Collectors.toMap(
+                     e -> e.getKey(),
+                     e -> e.getValue()
+                )
+            );
+        //@formatter:on
+
+        // Determine tm properties prefix.
+        String tmPropertiesPrefix = StringUtils.join(Strings.LEFT_BRACKET, tm, Strings.RIGHT_BRACKET);
+
+        // The lookup should include the given prefix.
+        String tmPropertiesPrefixFiltering = StringUtils.join(tmPropertiesPrefix, StringUtils.defaultIfBlank(prefix, Strings.EMPTY));
+
+        //@formatter:off
+        Map<String, String> tmProperties = configSourceProperties.entrySet().stream()
+            .filter((e) -> {
+                // Get property key.
+                String propertyKey = (String) e.getKey();
+                
+                // If property starts with [trademark]prefix, keep it.
+                return StringUtils.startsWith(propertyKey, tmPropertiesPrefixFiltering);
+            })
+            .map((e) -> {
+                // Transform key and value into String keypairs.
+                String key = StringUtils.removeStart(e.getKey().toString().toLowerCase(), tmPropertiesPrefix);
+                String value = e.getValue().toString();
+                
+                // If redact sensitive and sensitive, redact value.
+                if (isValueSensitive(value)) {
+                    if(redactSensitive) {
+                        value = SENSITIVE_VALUE_REDACTED;
+                    } else {
+                        value = getRawValue(value);
+                    }
+                }
+                
+                // Return immutable pairs.
+                return new ImmutablePair<String, String>(key, value);
+            })
+            .collect(
+                Collectors.toMap(
+                     e -> e.getKey(),
+                     e -> e.getValue()
+                )
+            );
+        //@formatter:on
+
+        Map<String, String> finalProperties = new TreeMap<>();
+        finalProperties.putAll(defaultProperties);
+        finalProperties.putAll(tmProperties);
+        return finalProperties;
+    }
+
+    // ------------------------------------------ Write methods.
+
+    // ------------------------------------------ Utility methods.
+
+    /**
+     * Returns <code>true</code> if the value is sensitive, <code>false</code> otherwise.
+     * @param propertyValue the property value.
+     * @return <code>true</code> if the value is sensitive, <code>false</code> otherwise.
+     */
+    protected Boolean isValueSensitive(@Nullable String propertyValue) {
+        return propertyValue != null && propertyValue.startsWith(SENSITIVE_VALUE_PREFIX);
+    }
+
+    /**
+     * Returns the raw value for the given sensitive property value.
+     * @param sensitivePropertyValue the sensitive property value.
+     * @return the raw value for the given sensitive property value.
+     */
+    protected String getRawValue(@Nullable String sensitivePropertyValue) {
+        return StringUtils.removeStart(sensitivePropertyValue, SENSITIVE_VALUE_PREFIX);
     }
 }

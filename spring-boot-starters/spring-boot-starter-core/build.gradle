@@ -13,6 +13,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-autoconfigure'
     implementation 'org.jsoup:jsoup'
 	implementation project(':libraries:library-utility-constants')
+    implementation project(':libraries:library-utility-exception')
     implementation project(':libraries:library-utility-interface')
 }
 

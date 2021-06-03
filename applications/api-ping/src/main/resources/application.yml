@@ -35,6 +35,13 @@ spring:
   config:
     activate:
       on-profile: LOCAL
+  sleuth:
+    baggage:
+      remote-fields: x-request-id
+      correlation-fields: x-request-id
+
+info.test: lol
+
 server:
   port: 9096
 

@@ -47,7 +47,7 @@ openApi {
 
 bootBuildImage {
     // Image name.
-    //imageName = "${docker.namespace}/${project.name}:${docker.tag}"
+    imageName = "${System.getProperty('docker.namespace')}/${project.name}:${project.version}"
     
     // Environment.
     environment = [

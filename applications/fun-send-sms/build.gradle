@@ -38,6 +38,10 @@ springBoot {
     buildInfo()
 }
 
+bootBuildImage {
+    enabled = false
+}
+
 shadowJar {
     classifier = 'aws'
     dependencies {

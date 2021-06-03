@@ -1,0 +1,55 @@
+plugins {
+    id 'java-library-distribution'
+    id 'io.freefair.lombok'
+    id 'me.julb.gradleplugins.java11'
+    id 'me.julb.gradleplugins.additionaljars'
+    id 'org.springframework.boot'
+    id 'com.github.johnrengelman.processes'
+    id 'org.springdoc.openapi-gradle-plugin'
+}
+
+dependencies {
+    api platform(project(':bom'))
+
+    implementation project(':spring-boot-starters:spring-boot-starter-web')
+    implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.apache.commons:commons-collections4'
+	
+    testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+lombok {
+    config['lombok.log.fieldName'] = 'LOGGER'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'me.julb.Application'
+        )
+    }
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+springBoot {
+    buildInfo()
+}
+
+openApi {
+    forkProperties = "-Dspring.profiles.active=NO_OUTPUT,OAS3"
+}
+
+bootBuildImage {
+    environment = ["BP_JVM_VERSION" : "11.*"]
+    imageName = "${System.getProperty('docker.namespace')}/${project.name}:${project.version}"
+}
+
+bootJar {
+    classifier = 'boot'
+    mainClass = 'me.julb.Application'
+    layered()
+}

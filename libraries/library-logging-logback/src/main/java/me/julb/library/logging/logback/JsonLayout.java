@@ -50,86 +50,32 @@ public class JsonLayout extends ch.qos.logback.contrib.json.classic.JsonLayout {
     private static final String MESSAGE_WITH_EXCEPTION_FORMAT = "{0}. Error is: {1}";
 
     /**
-     * The zone attribute.
+     * The IADN attribute.
      */
-    private static final String LOG_ATTR_ZONE = "zone";
+    private static final String LOG_ATTR_IADN = "iadn";
 
     /**
-     * The environment attribute.
+     * The time attribute.
      */
-    private static final String LOG_ATTR_ENVIRONMENT = "env";
+    private static final String LOG_ATTR_TIME = "time";
 
     /**
-     * The API Name attribute.
+     * The request ID attribute.
      */
-    private static final String LOG_ATTR_NAME = "name";
-
-    /**
-     * The API version attribute.
-     */
-    private static final String LOG_ATTR_VERSION = "version";
-
-    /**
-     * The correlation ID attribute.
-     */
-    private static final String LOG_ATTR_OPENTRACING_TRACE_ID = "traceId";
-
-    /**
-     * The correlation ID attribute.
-     */
-    private static final String LOG_ATTR_CORRELATION_ID = "correlationId";
+    private static final String LOG_ATTR_X_REQUEST_ID = "x-request-id";
 
     //@formatter:off
      /**
-     * The zone attribute.
+     * The iadn attribute.
      * -- GETTER --
-     * Getter for {@link #zone} property.
+     * Getter for {@link #iadn} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #zone} property.
-     * @param zone the value to set.
+     * Setter for {@link #iadn} property.
+     * @param iadn the value to set.
      */
      //@formatter:on
-    private String zone;
-
-    //@formatter:off
-     /**
-     * The environment attribute.
-     * -- GETTER --
-     * Getter for {@link #environment} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #environment} property.
-     * @param environment the value to set.
-     */
-     //@formatter:on
-    private String environment;
-
-    //@formatter:off
-     /**
-     * The name attribute.
-     * -- GETTER --
-     * Getter for {@link #name} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #name} property.
-     * @param name the value to set.
-     */
-     //@formatter:on
-    private String name;
-
-    //@formatter:off
-     /**
-     * The version attribute.
-     * -- GETTER --
-     * Getter for {@link #version} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #version} property.
-     * @param version the value to set.
-     */
-     //@formatter:on
-    private String version;
+    private String iadn;
 
     //@formatter:off
      /**
@@ -169,11 +115,22 @@ public class JsonLayout extends ch.qos.logback.contrib.json.classic.JsonLayout {
             map.remove(MDC_ATTR_NAME);
         }
 
-        // Add common attributes.
-        map.put(LOG_ATTR_ENVIRONMENT, environment);
-        map.put(LOG_ATTR_ZONE, zone);
-        map.put(LOG_ATTR_NAME, name);
-        map.put(LOG_ATTR_VERSION, version);
+        // Add iadn
+        map.put(LOG_ATTR_IADN, iadn);
+
+        // Rename time field
+        if (map.containsKey(TIMESTAMP_ATTR_NAME)) {
+            map.put(LOG_ATTR_TIME, map.get(TIMESTAMP_ATTR_NAME));
+            map.remove(TIMESTAMP_ATTR_NAME);
+        }
+
+        // Lowercase level.
+        map.put(LEVEL_ATTR_NAME, ((String) map.get(LEVEL_ATTR_NAME)).toLowerCase());
+
+        // Add default tracking ID.
+        if (!map.containsKey(LOG_ATTR_X_REQUEST_ID)) {
+            map.put(LOG_ATTR_X_REQUEST_ID, "");
+        }
 
         if (map.containsKey(EXCEPTION_ATTR_NAME)) {
             String exception = (String) map.get(EXCEPTION_ATTR_NAME);
@@ -185,12 +142,5 @@ public class JsonLayout extends ch.qos.logback.contrib.json.classic.JsonLayout {
                 map.put(FORMATTED_MESSAGE_ATTR_NAME, exception);
             }
         }
-
-        if (map.containsKey(LOG_ATTR_OPENTRACING_TRACE_ID)) {
-            map.put(LOG_ATTR_CORRELATION_ID, map.get(LOG_ATTR_OPENTRACING_TRACE_ID));
-        } else {
-            map.put(LOG_ATTR_CORRELATION_ID, "");
-        }
     }
-
 }

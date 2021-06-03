@@ -98,9 +98,7 @@ public class CollectControllerTest extends AbstractMessagingBaseTest {
             .perform(get("/collect").contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isBadRequest())
             .andDo((handler) -> {
-                Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
-                    output.receive();
-                });
+                Assertions.assertNull(output.receive());
             });
         //@formatter:on
     }
@@ -125,9 +123,7 @@ public class CollectControllerTest extends AbstractMessagingBaseTest {
             )
             .andExpect(status().isUnauthorized())
             .andDo((handler) -> {
-                Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
-                    output.receive();
-                });
+                Assertions.assertNull(output.receive());
             });
         //@formatter:on
     }

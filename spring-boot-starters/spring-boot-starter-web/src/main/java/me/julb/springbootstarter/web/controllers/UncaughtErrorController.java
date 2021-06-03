@@ -75,13 +75,4 @@ public class UncaughtErrorController implements ErrorController {
         HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
         return new ResponseEntity<>(status, httpStatus);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Deprecated
-    public String getErrorPath() {
-        return null;
-    }
 }
