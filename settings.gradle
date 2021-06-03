@@ -6,6 +6,7 @@ pluginManagement {
         id 'org.springframework.boot.experimental.thin-launcher' version '1.0.25.RELEASE'
         id 'com.github.johnrengelman.processes' version '0.5.0'
         id 'org.springdoc.openapi-gradle-plugin' version '1.3.2'
+        id 'com.github.ben-manes.versions' version '0.39.0'
         id 'me.julb.gradleplugins.additionaljars' version '1.0.5'
         id 'me.julb.gradleplugins.aggregatejavadoc' version '1.0.5'
         id 'me.julb.gradleplugins.aggregatespringdocopenapidocs' version '1.0.5'
