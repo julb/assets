@@ -93,4 +93,19 @@ afterEvaluate {
             logger.info "> docker mappings written to ${outputPropertiesFile.path}."
         }
     }
+    
+    
+    
+    def isNonStable = { String version ->
+        def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { keyword -> version.toUpperCase().contains(keyword) }
+        def regex = /^[0-9,.v-]+(-r)?$/
+        def yearHourRegex = /^[0-9]{8,8}[.][0-9]{6,6}$/
+        return !stableKeyword && (!(version ==~ regex) || version ==~ yearHourRegex)
+    }
+    
+    tasks.named("dependencyUpdates").configure {
+        rejectVersionIf {
+            isNonStable(it.candidate.version)
+        }
+    }
 }
