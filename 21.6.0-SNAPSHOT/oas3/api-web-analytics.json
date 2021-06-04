@@ -1,0 +1,441 @@
+{
+  "security": [
+    {
+      "header2": [],
+      "header1": []
+    }
+  ],
+  "components": {
+    "schemas": {
+      "AnalyticsRequestParams": {
+        "type": "object",
+        "required": [
+          "an",
+          "av",
+          "ds",
+          "t",
+          "uid"
+        ],
+        "properties": {
+          "de": {
+            "type": "string"
+          },
+          "qt": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "dh": {
+            "type": "string"
+          },
+          "dl": {
+            "type": "string"
+          },
+          "l": {
+            "type": "string",
+            "enum": [
+              "DEBUG",
+              "INFO",
+              "WARN",
+              "ERROR"
+            ]
+          },
+          "ua": {
+            "type": "string"
+          },
+          "dp": {
+            "type": "string"
+          },
+          "an": {
+            "type": "string"
+          },
+          "dr": {
+            "type": "string"
+          },
+          "ds": {
+            "type": "string"
+          },
+          "dt": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "sd": {
+            "type": "string"
+          },
+          "t": {
+            "type": "string"
+          },
+          "av": {
+            "type": "string"
+          },
+          "geoid": {
+            "type": "string"
+          },
+          "ul": {
+            "type": "string"
+          },
+          "vp": {
+            "type": "string"
+          },
+          "ni": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "sr": {
+            "type": "string"
+          }
+        }
+      },
+      "AliveDTO": {
+        "type": "object",
+        "properties": {
+          "alive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "HttpErrorResponseDTO": {
+        "type": "object",
+        "properties": {
+          "dateTime": {
+            "type": "string"
+          },
+          "trace": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "httpStatus": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "header2": {
+        "in": "header",
+        "name": "X-Header-2",
+        "type": "apiKey"
+      },
+      "header1": {
+        "in": "header",
+        "name": "X-Header-1",
+        "type": "apiKey"
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Hello",
+      "url": "http://localhost:8080"
+    }
+  ],
+  "openapi": "3.0.1",
+  "paths": {
+    "/alive": {
+      "get": {
+        "operationId": "isAlive",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AliveDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Not Implemented",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported Media Type",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "alive-controller"
+        ]
+      }
+    },
+    "/collect": {
+      "get": {
+        "summary": "collect a web analytics event",
+        "operationId": "collect",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Not Implemented",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported Media Type",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/AnalyticsRequestParams"
+            },
+            "in": "query",
+            "name": "analyticsRequestParams",
+            "required": true
+          }
+        ],
+        "tags": [
+          "collect-controller"
+        ]
+      }
+    }
+  },
+  "info": {
+    "description": "desc",
+    "title": "api-web-analytics",
+    "version": "21.6.0-SNAPSHOT",
+    "x-julb-oas3-info": {
+      "longDescription": "# Hello API\n",
+      "starred": false,
+      "displayName": "Ping API",
+      "tags": [
+        "abc",
+        "def",
+        "ghi"
+      ]
+    }
+  }
+}
