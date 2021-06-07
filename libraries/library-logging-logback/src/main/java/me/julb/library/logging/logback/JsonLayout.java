@@ -50,9 +50,9 @@ public class JsonLayout extends ch.qos.logback.contrib.json.classic.JsonLayout {
     private static final String MESSAGE_WITH_EXCEPTION_FORMAT = "{0}. Error is: {1}";
 
     /**
-     * The IADN attribute.
+     * The IRN attribute.
      */
-    private static final String LOG_ATTR_IADN = "iadn";
+    private static final String LOG_ATTR_IRN = "irn";
 
     /**
      * The time attribute.
@@ -66,16 +66,16 @@ public class JsonLayout extends ch.qos.logback.contrib.json.classic.JsonLayout {
 
     //@formatter:off
      /**
-     * The iadn attribute.
+     * The irn attribute.
      * -- GETTER --
-     * Getter for {@link #iadn} property.
+     * Getter for {@link #irn} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #iadn} property.
-     * @param iadn the value to set.
+     * Setter for {@link #irn} property.
+     * @param irn the value to set.
      */
      //@formatter:on
-    private String iadn;
+    private String irn;
 
     //@formatter:off
      /**
@@ -115,8 +115,8 @@ public class JsonLayout extends ch.qos.logback.contrib.json.classic.JsonLayout {
             map.remove(MDC_ATTR_NAME);
         }
 
-        // Add iadn
-        map.put(LOG_ATTR_IADN, iadn);
+        // Add irn
+        map.put(LOG_ATTR_IRN, irn);
 
         // Rename time field
         if (map.containsKey(TIMESTAMP_ATTR_NAME)) {
