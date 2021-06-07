@@ -15,7 +15,7 @@ initialization performed by Boot
                 <timestampFormat>${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd'T'HH:mm:ss.SSSXXX}</timestampFormat>
                 <timestampFormatTimezoneId>UTC</timestampFormatTimezoneId>
                 <appendLineSeparator>true</appendLineSeparator>
-                <irn>${J3_IRN}</irn>
+                <irn>${J3_IRN:-???env.J3_IRN???}</irn>
             </layout>
         </encoder>
     </appender>
