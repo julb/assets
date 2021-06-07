@@ -127,11 +127,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -179,11 +179,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -412,11 +412,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -464,11 +464,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -903,11 +903,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -955,11 +955,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1074,11 +1074,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1126,11 +1126,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1479,11 +1479,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1531,11 +1531,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1631,11 +1631,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1929,11 +1929,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1981,11 +1981,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2238,11 +2238,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2290,11 +2290,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2507,11 +2507,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -2559,11 +2559,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -2836,11 +2836,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2888,11 +2888,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3145,11 +3145,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3197,11 +3197,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3414,11 +3414,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3466,11 +3466,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3628,8 +3628,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3638,8 +3638,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3658,6 +3658,16 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
           "502": {
             "description": "Bad Gateway",
             "content": {
@@ -3668,8 +3678,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3698,8 +3708,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3710,16 +3720,6 @@
           },
           "405": {
             "description": "Method Not Allowed",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
-                }
-              }
-            }
-          },
-          "504": {
-            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3798,8 +3798,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3808,8 +3808,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3828,6 +3828,16 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
           "502": {
             "description": "Bad Gateway",
             "content": {
@@ -3838,8 +3848,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3868,8 +3878,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3880,16 +3890,6 @@
           },
           "405": {
             "description": "Method Not Allowed",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
-                }
-              }
-            }
-          },
-          "504": {
-            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3983,11 +3983,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4035,11 +4035,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4268,11 +4268,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -4320,11 +4320,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -4759,11 +4759,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4811,11 +4811,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4930,11 +4930,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4982,11 +4982,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -5335,11 +5335,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5387,11 +5387,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5487,11 +5487,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -5785,11 +5785,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5837,11 +5837,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6094,11 +6094,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6146,11 +6146,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6363,11 +6363,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -6415,11 +6415,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -6692,11 +6692,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6744,11 +6744,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7001,11 +7001,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7053,11 +7053,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7270,11 +7270,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7322,11 +7322,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7484,8 +7484,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -7494,8 +7494,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -7514,6 +7514,16 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
           "502": {
             "description": "Bad Gateway",
             "content": {
@@ -7524,8 +7534,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -7554,8 +7564,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7566,16 +7576,6 @@
           },
           "405": {
             "description": "Method Not Allowed",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
-                }
-              }
-            }
-          },
-          "504": {
-            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7699,11 +7699,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7751,11 +7751,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7984,11 +7984,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -8036,11 +8036,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -8475,11 +8475,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8527,11 +8527,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8646,11 +8646,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8698,11 +8698,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -9051,11 +9051,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9103,11 +9103,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9203,11 +9203,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -9501,11 +9501,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9553,11 +9553,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9810,11 +9810,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9862,11 +9862,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10079,11 +10079,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -10131,11 +10131,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -10408,11 +10408,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10460,11 +10460,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10717,11 +10717,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10769,11 +10769,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10986,11 +10986,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -11038,11 +11038,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -11200,8 +11200,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -11210,8 +11210,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -11230,6 +11230,16 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
           "502": {
             "description": "Bad Gateway",
             "content": {
@@ -11240,8 +11250,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -11270,8 +11280,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11282,16 +11292,6 @@
           },
           "405": {
             "description": "Method Not Allowed",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
-                }
-              }
-            }
-          },
-          "504": {
-            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {

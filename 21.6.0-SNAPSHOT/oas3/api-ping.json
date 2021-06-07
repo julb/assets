@@ -186,8 +186,8 @@
               }
             }
           },
-          "415": {
-            "description": "Unsupported Media Type",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -196,8 +196,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "415": {
+            "description": "Unsupported Media Type",
             "content": {
               "*/*": {
                 "schema": {
@@ -327,8 +327,8 @@
               }
             }
           },
-          "415": {
-            "description": "Unsupported Media Type",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -337,8 +337,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "415": {
+            "description": "Unsupported Media Type",
             "content": {
               "*/*": {
                 "schema": {
@@ -468,8 +468,8 @@
               }
             }
           },
-          "415": {
-            "description": "Unsupported Media Type",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -478,8 +478,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "415": {
+            "description": "Unsupported Media Type",
             "content": {
               "*/*": {
                 "schema": {

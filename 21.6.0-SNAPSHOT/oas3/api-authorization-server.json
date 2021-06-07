@@ -189,11 +189,11 @@
           "last": {
             "type": "boolean"
           },
-          "numberOfElements": {
+          "size": {
             "format": "int32",
             "type": "integer"
           },
-          "size": {
+          "numberOfElements": {
             "format": "int32",
             "type": "integer"
           },
@@ -333,16 +333,16 @@
               "country": {
                 "type": "string"
               },
-              "iso3Language": {
-                "type": "string"
-              },
               "displayName": {
                 "type": "string"
               },
-              "displayVariant": {
+              "iso3Language": {
                 "type": "string"
               },
               "language": {
+                "type": "string"
+              },
+              "displayVariant": {
                 "type": "string"
               },
               "iso3Country": {
@@ -391,11 +391,11 @@
           "last": {
             "type": "boolean"
           },
-          "numberOfElements": {
+          "size": {
             "format": "int32",
             "type": "integer"
           },
-          "size": {
+          "numberOfElements": {
             "format": "int32",
             "type": "integer"
           },
@@ -477,16 +477,16 @@
               "country": {
                 "type": "string"
               },
-              "iso3Language": {
-                "type": "string"
-              },
               "displayName": {
                 "type": "string"
               },
-              "displayVariant": {
+              "iso3Language": {
                 "type": "string"
               },
               "language": {
+                "type": "string"
+              },
+              "displayVariant": {
                 "type": "string"
               },
               "iso3Country": {
@@ -646,16 +646,16 @@
               "country": {
                 "type": "string"
               },
-              "iso3Language": {
-                "type": "string"
-              },
               "displayName": {
                 "type": "string"
               },
-              "displayVariant": {
+              "iso3Language": {
                 "type": "string"
               },
               "language": {
+                "type": "string"
+              },
+              "displayVariant": {
                 "type": "string"
               },
               "iso3Country": {
@@ -934,11 +934,11 @@
           "last": {
             "type": "boolean"
           },
-          "numberOfElements": {
+          "size": {
             "format": "int32",
             "type": "integer"
           },
-          "size": {
+          "numberOfElements": {
             "format": "int32",
             "type": "integer"
           },
@@ -1276,16 +1276,16 @@
               "country": {
                 "type": "string"
               },
-              "iso3Language": {
-                "type": "string"
-              },
               "displayName": {
                 "type": "string"
               },
-              "displayVariant": {
+              "iso3Language": {
                 "type": "string"
               },
               "language": {
+                "type": "string"
+              },
+              "displayVariant": {
                 "type": "string"
               },
               "iso3Country": {
@@ -1397,16 +1397,16 @@
               "country": {
                 "type": "string"
               },
-              "iso3Language": {
-                "type": "string"
-              },
               "displayName": {
                 "type": "string"
               },
-              "displayVariant": {
+              "iso3Language": {
                 "type": "string"
               },
               "language": {
+                "type": "string"
+              },
+              "displayVariant": {
                 "type": "string"
               },
               "iso3Country": {
@@ -1561,11 +1561,11 @@
           "last": {
             "type": "boolean"
           },
-          "numberOfElements": {
+          "size": {
             "format": "int32",
             "type": "integer"
           },
-          "size": {
+          "numberOfElements": {
             "format": "int32",
             "type": "integer"
           },
@@ -1732,11 +1732,11 @@
           "last": {
             "type": "boolean"
           },
-          "numberOfElements": {
+          "size": {
             "format": "int32",
             "type": "integer"
           },
-          "size": {
+          "numberOfElements": {
             "format": "int32",
             "type": "integer"
           },
@@ -1805,8 +1805,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -1815,8 +1815,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -1838,8 +1838,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -1848,8 +1848,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -1888,8 +1888,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -1898,8 +1898,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -1957,7 +1957,7 @@
     "/my/mails/{id}/trigger-verify": {
       "post": {
         "summary": "verifies the email of the user",
-        "operationId": "triggerVerify_6",
+        "operationId": "triggerVerify_7",
         "responses": {
           "201": {
             "description": "Created",
@@ -1979,8 +1979,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -1989,8 +1989,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -2009,8 +2009,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2019,8 +2019,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2059,8 +2059,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2069,8 +2069,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2106,7 +2106,7 @@
       },
       "get": {
         "summary": "verifies the email of the user",
-        "operationId": "triggerVerify_7",
+        "operationId": "triggerVerify_6",
         "responses": {
           "201": {
             "description": "Created",
@@ -2128,8 +2128,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -2138,8 +2138,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -2158,8 +2158,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2168,8 +2168,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2208,8 +2208,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2218,8 +2218,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2289,8 +2289,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -2299,8 +2299,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -2319,8 +2319,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2329,8 +2329,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2369,8 +2369,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2379,8 +2379,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2428,8 +2428,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -2438,8 +2438,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -2458,8 +2458,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2468,8 +2468,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2508,8 +2508,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2518,8 +2518,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2635,8 +2635,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -2645,8 +2645,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -2665,8 +2665,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2675,8 +2675,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2715,8 +2715,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2725,8 +2725,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2786,8 +2786,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -2796,8 +2796,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -2816,8 +2816,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2826,8 +2826,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2866,8 +2866,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2876,8 +2876,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2935,8 +2935,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -2945,8 +2945,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -2965,8 +2965,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2975,8 +2975,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -3015,8 +3015,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3025,8 +3025,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3074,8 +3074,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3084,8 +3084,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3107,8 +3107,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -3117,8 +3117,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -3157,8 +3157,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3167,8 +3167,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3236,8 +3236,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3246,8 +3246,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3266,8 +3266,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -3276,8 +3276,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -3316,8 +3316,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3326,8 +3326,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3397,8 +3397,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3407,8 +3407,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3427,8 +3427,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -3437,8 +3437,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -3477,8 +3477,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3487,8 +3487,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3546,8 +3546,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3556,8 +3556,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3576,8 +3576,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -3586,8 +3586,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -3626,8 +3626,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3636,8 +3636,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3685,8 +3685,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3695,8 +3695,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3715,8 +3715,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -3725,8 +3725,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -3765,8 +3765,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3775,8 +3775,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3814,8 +3814,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3824,8 +3824,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3847,8 +3847,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -3857,8 +3857,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -3897,8 +3897,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3907,8 +3907,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3966,8 +3966,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -3976,8 +3976,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -3996,8 +3996,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -4006,8 +4006,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -4046,8 +4046,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -4056,8 +4056,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -4097,8 +4097,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -4107,8 +4107,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -4130,8 +4130,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -4140,8 +4140,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -4180,8 +4180,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -4190,8 +4190,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -4270,8 +4270,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -4280,8 +4280,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -4300,8 +4300,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -4310,8 +4310,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -4350,8 +4350,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -4360,8 +4360,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -4431,8 +4431,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -4441,8 +4441,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -4461,8 +4461,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -4471,8 +4471,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -4511,8 +4511,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -4521,8 +4521,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -4570,8 +4570,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -4580,8 +4580,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -4600,8 +4600,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -4610,8 +4610,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -4650,8 +4650,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -4660,8 +4660,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -4756,7 +4756,7 @@
     "/users/{userId}/mobile-phones/{userMobilePhoneId}/verify": {
       "post": {
         "summary": "verifies the mobile phone of the user",
-        "operationId": "verify",
+        "operationId": "verify_1",
         "responses": {
           "201": {
             "description": "Created",
@@ -4778,8 +4778,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -4788,8 +4788,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -4808,8 +4808,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -4818,8 +4818,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -4858,8 +4858,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -4868,8 +4868,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -4923,7 +4923,7 @@
       },
       "get": {
         "summary": "verifies the mobile phone of the user",
-        "operationId": "verify_1",
+        "operationId": "verify",
         "responses": {
           "201": {
             "description": "Created",
@@ -4945,8 +4945,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -4955,8 +4955,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -4975,8 +4975,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -4985,8 +4985,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -5025,8 +5025,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -5035,8 +5035,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -5124,8 +5124,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -5134,8 +5134,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -5154,8 +5154,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -5164,8 +5164,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -5204,8 +5204,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -5214,8 +5214,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -5273,8 +5273,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -5283,8 +5283,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -5303,8 +5303,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -5313,8 +5313,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -5353,8 +5353,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -5363,8 +5363,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -5412,8 +5412,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -5422,8 +5422,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -5442,8 +5442,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -5452,8 +5452,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -5492,8 +5492,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -5502,8 +5502,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -5541,8 +5541,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -5551,8 +5551,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -5574,8 +5574,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -5584,8 +5584,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -5624,8 +5624,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -5634,8 +5634,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -5693,8 +5693,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -5703,8 +5703,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -5723,8 +5723,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -5733,8 +5733,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -5773,8 +5773,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -5783,8 +5783,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -5812,7 +5812,7 @@
     "/my/mobile-phones/{id}/trigger-verify": {
       "post": {
         "summary": "verifies the mobile phone of the user",
-        "operationId": "triggerVerify_4",
+        "operationId": "triggerVerify_5",
         "responses": {
           "201": {
             "description": "Created",
@@ -5834,8 +5834,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -5844,8 +5844,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -5864,8 +5864,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -5874,8 +5874,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -5914,8 +5914,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -5924,8 +5924,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -5961,7 +5961,7 @@
       },
       "get": {
         "summary": "verifies the mobile phone of the user",
-        "operationId": "triggerVerify_5",
+        "operationId": "triggerVerify_4",
         "responses": {
           "201": {
             "description": "Created",
@@ -5983,8 +5983,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -5993,8 +5993,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -6013,8 +6013,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -6023,8 +6023,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -6063,8 +6063,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -6073,8 +6073,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -6134,8 +6134,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -6144,8 +6144,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -6164,8 +6164,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -6174,8 +6174,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -6214,8 +6214,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -6224,8 +6224,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -6330,8 +6330,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -6340,8 +6340,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -6363,8 +6363,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -6373,8 +6373,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -6413,8 +6413,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -6423,8 +6423,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -6484,8 +6484,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -6494,8 +6494,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -6514,8 +6514,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -6524,8 +6524,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -6564,8 +6564,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -6574,8 +6574,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -6635,8 +6635,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -6645,8 +6645,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -6665,8 +6665,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -6675,8 +6675,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -6715,8 +6715,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -6725,8 +6725,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -6786,8 +6786,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -6796,8 +6796,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -6816,8 +6816,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -6826,8 +6826,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -6866,8 +6866,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -6876,8 +6876,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -6925,8 +6925,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -6935,8 +6935,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -6955,8 +6955,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -6965,8 +6965,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -7005,8 +7005,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7015,8 +7015,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -7111,7 +7111,7 @@
     "/users/{userId}/mails/{userMailId}/trigger-verify": {
       "post": {
         "summary": "trigger the verification of the email of the user",
-        "operationId": "triggerVerify_2",
+        "operationId": "triggerVerify_3",
         "responses": {
           "201": {
             "description": "Created",
@@ -7133,8 +7133,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -7143,8 +7143,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -7163,8 +7163,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -7173,8 +7173,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -7213,8 +7213,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7223,8 +7223,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -7268,7 +7268,7 @@
       },
       "get": {
         "summary": "trigger the verification of the email of the user",
-        "operationId": "triggerVerify_3",
+        "operationId": "triggerVerify_2",
         "responses": {
           "201": {
             "description": "Created",
@@ -7290,8 +7290,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -7300,8 +7300,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -7320,8 +7320,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -7330,8 +7330,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -7370,8 +7370,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7380,8 +7380,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -7459,8 +7459,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -7469,8 +7469,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -7489,8 +7489,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -7499,8 +7499,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -7539,8 +7539,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7549,8 +7549,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -7608,8 +7608,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -7618,8 +7618,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -7638,8 +7638,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -7648,8 +7648,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -7688,8 +7688,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7698,8 +7698,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -7747,8 +7747,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -7757,8 +7757,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -7777,8 +7777,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -7787,8 +7787,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -7827,8 +7827,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7837,8 +7837,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -7896,8 +7896,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -7906,8 +7906,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -7926,8 +7926,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -7936,8 +7936,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -7976,8 +7976,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7986,8 +7986,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -8015,7 +8015,7 @@
     "/my/mobile-phones/{id}/verify": {
       "post": {
         "summary": "verifies the mobile phone of the user",
-        "operationId": "verify_4",
+        "operationId": "verify_5",
         "responses": {
           "201": {
             "description": "Created",
@@ -8037,8 +8037,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -8047,8 +8047,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -8067,8 +8067,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -8077,8 +8077,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -8117,8 +8117,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -8127,8 +8127,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -8174,7 +8174,7 @@
       },
       "get": {
         "summary": "verifies the mobile phone of the user",
-        "operationId": "verify_5",
+        "operationId": "verify_4",
         "responses": {
           "201": {
             "description": "Created",
@@ -8196,8 +8196,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -8206,8 +8206,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -8226,8 +8226,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -8236,8 +8236,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -8276,8 +8276,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -8286,8 +8286,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -8367,8 +8367,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -8377,8 +8377,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -8397,8 +8397,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -8407,8 +8407,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -8447,8 +8447,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -8457,8 +8457,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -8516,8 +8516,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -8526,8 +8526,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -8546,8 +8546,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -8556,8 +8556,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -8596,8 +8596,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -8606,8 +8606,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -8655,8 +8655,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -8665,8 +8665,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -8688,8 +8688,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -8698,8 +8698,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -8738,8 +8738,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -8748,8 +8748,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -8817,8 +8817,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -8827,8 +8827,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -8847,8 +8847,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -8857,8 +8857,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -8897,8 +8897,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -8907,8 +8907,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -8968,8 +8968,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -8978,8 +8978,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -8998,8 +8998,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -9008,8 +9008,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -9048,8 +9048,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -9058,8 +9058,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -9097,8 +9097,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -9107,8 +9107,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -9130,8 +9130,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -9140,8 +9140,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -9180,8 +9180,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -9190,8 +9190,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -9251,8 +9251,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -9261,8 +9261,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -9281,8 +9281,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -9291,8 +9291,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -9331,8 +9331,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -9341,8 +9341,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -9400,8 +9400,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -9410,8 +9410,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -9430,8 +9430,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -9440,8 +9440,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -9480,8 +9480,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -9490,8 +9490,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -9539,8 +9539,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -9549,8 +9549,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -9572,8 +9572,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -9582,8 +9582,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -9622,8 +9622,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -9632,8 +9632,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -9701,8 +9701,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -9711,8 +9711,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -9731,8 +9731,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -9741,8 +9741,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -9781,8 +9781,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -9791,8 +9791,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -9862,8 +9862,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -9872,8 +9872,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -9892,8 +9892,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -9902,8 +9902,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -9942,8 +9942,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -9952,8 +9952,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -9981,7 +9981,7 @@
     "/users/{userId}/mobile-phones/{userMobilePhoneId}/trigger-verify": {
       "post": {
         "summary": "triggers the verification the mobile phone of the user",
-        "operationId": "triggerVerify",
+        "operationId": "triggerVerify_1",
         "responses": {
           "201": {
             "description": "Created",
@@ -10003,8 +10003,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -10013,8 +10013,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -10033,8 +10033,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -10043,8 +10043,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -10083,8 +10083,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -10093,8 +10093,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -10138,7 +10138,7 @@
       },
       "get": {
         "summary": "triggers the verification the mobile phone of the user",
-        "operationId": "triggerVerify_1",
+        "operationId": "triggerVerify",
         "responses": {
           "201": {
             "description": "Created",
@@ -10160,8 +10160,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -10170,8 +10170,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -10190,8 +10190,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -10200,8 +10200,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -10240,8 +10240,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -10250,8 +10250,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -10312,8 +10312,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -10322,8 +10322,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -10342,8 +10342,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -10352,8 +10352,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -10392,8 +10392,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -10402,8 +10402,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -10453,8 +10453,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -10463,8 +10463,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -10486,8 +10486,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -10496,8 +10496,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -10536,8 +10536,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -10546,8 +10546,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -10626,8 +10626,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -10636,8 +10636,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -10656,8 +10656,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -10666,8 +10666,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -10706,8 +10706,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -10716,8 +10716,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -10745,7 +10745,7 @@
     "/users/{userId}/mails/{userMailId}/verify": {
       "post": {
         "summary": "verifies the email of the user",
-        "operationId": "verify_2",
+        "operationId": "verify_3",
         "responses": {
           "201": {
             "description": "Created",
@@ -10767,8 +10767,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -10777,8 +10777,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -10797,8 +10797,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -10807,8 +10807,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -10847,8 +10847,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -10857,8 +10857,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -10912,7 +10912,7 @@
       },
       "get": {
         "summary": "verifies the email of the user",
-        "operationId": "verify_3",
+        "operationId": "verify_2",
         "responses": {
           "201": {
             "description": "Created",
@@ -10934,8 +10934,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -10944,8 +10944,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -10964,8 +10964,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -10974,8 +10974,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -11014,8 +11014,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11024,8 +11024,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -11113,8 +11113,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -11123,8 +11123,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -11143,8 +11143,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -11153,8 +11153,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -11193,8 +11193,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11203,8 +11203,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -11262,8 +11262,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -11272,8 +11272,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -11292,8 +11292,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -11302,8 +11302,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -11342,8 +11342,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11352,8 +11352,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -11401,8 +11401,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -11411,8 +11411,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -11434,8 +11434,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -11444,8 +11444,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -11484,8 +11484,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11494,8 +11494,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -11563,8 +11563,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -11573,8 +11573,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -11593,8 +11593,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -11603,8 +11603,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -11643,8 +11643,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11653,8 +11653,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -11704,8 +11704,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -11714,8 +11714,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -11737,8 +11737,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -11747,8 +11747,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -11787,8 +11787,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11797,8 +11797,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -11888,8 +11888,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -11898,8 +11898,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -11918,8 +11918,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -11928,8 +11928,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -11968,8 +11968,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11978,8 +11978,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -12027,8 +12027,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -12037,8 +12037,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -12057,8 +12057,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -12067,8 +12067,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -12107,8 +12107,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -12117,8 +12117,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -12245,8 +12245,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -12255,8 +12255,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -12275,8 +12275,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -12285,8 +12285,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -12325,8 +12325,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -12335,8 +12335,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -12394,8 +12394,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -12404,8 +12404,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -12424,8 +12424,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -12434,8 +12434,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -12474,8 +12474,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -12484,8 +12484,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -12533,8 +12533,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -12543,8 +12543,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -12563,8 +12563,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -12573,8 +12573,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -12613,8 +12613,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -12623,8 +12623,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -12682,8 +12682,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -12692,8 +12692,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -12712,8 +12712,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -12722,8 +12722,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -12762,8 +12762,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -12772,8 +12772,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -12823,8 +12823,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -12833,8 +12833,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -12853,8 +12853,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -12863,8 +12863,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -12903,8 +12903,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -12913,8 +12913,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -12962,8 +12962,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -12972,8 +12972,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -12995,8 +12995,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -13005,8 +13005,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -13045,8 +13045,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -13055,8 +13055,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -13126,8 +13126,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -13136,8 +13136,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -13156,8 +13156,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -13166,8 +13166,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -13206,8 +13206,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -13216,8 +13216,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -13245,7 +13245,7 @@
     "/my/mails/{id}/verify": {
       "post": {
         "summary": "verifies the email of the user",
-        "operationId": "verify_6",
+        "operationId": "verify_7",
         "responses": {
           "201": {
             "description": "Created",
@@ -13267,8 +13267,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -13277,8 +13277,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -13297,8 +13297,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -13307,8 +13307,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -13347,8 +13347,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -13357,8 +13357,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -13404,7 +13404,7 @@
       },
       "get": {
         "summary": "verifies the email of the user",
-        "operationId": "verify_7",
+        "operationId": "verify_6",
         "responses": {
           "201": {
             "description": "Created",
@@ -13426,8 +13426,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -13436,8 +13436,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -13456,8 +13456,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -13466,8 +13466,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -13506,8 +13506,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -13516,8 +13516,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {

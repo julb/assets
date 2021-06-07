@@ -82,8 +82,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -92,8 +92,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -112,6 +112,16 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
           "502": {
             "description": "Bad Gateway",
             "content": {
@@ -122,8 +132,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -144,16 +154,6 @@
           },
           "503": {
             "description": "Service Unavailable",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -226,8 +226,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": {
@@ -236,8 +236,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "*/*": {
                 "schema": {
@@ -256,6 +256,16 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
+                }
+              }
+            }
+          },
           "502": {
             "description": "Bad Gateway",
             "content": {
@@ -266,8 +276,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -288,16 +298,6 @@
           },
           "503": {
             "description": "Service Unavailable",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpErrorResponseDTO"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
