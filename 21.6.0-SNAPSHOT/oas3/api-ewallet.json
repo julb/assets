@@ -768,8 +768,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -788,8 +788,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -984,8 +984,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -1004,8 +1004,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -1199,8 +1199,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -1219,8 +1219,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -1350,8 +1350,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -1370,8 +1370,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -1499,8 +1499,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -1519,8 +1519,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -1641,8 +1641,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -1661,8 +1661,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -1800,8 +1800,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -1820,8 +1820,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -1961,8 +1961,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -1981,8 +1981,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -2110,8 +2110,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -2130,8 +2130,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -2269,8 +2269,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -2289,8 +2289,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -2430,8 +2430,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -2450,8 +2450,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -2587,8 +2587,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -2607,8 +2607,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -2737,8 +2737,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -2757,8 +2757,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -2904,8 +2904,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -2924,8 +2924,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -3056,8 +3056,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3076,8 +3076,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -3215,8 +3215,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3235,8 +3235,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -3433,8 +3433,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3453,8 +3453,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -3582,8 +3582,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3602,8 +3602,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -3724,8 +3724,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3744,8 +3744,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -3883,8 +3883,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -3903,8 +3903,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -4044,8 +4044,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -4064,8 +4064,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -4201,8 +4201,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -4221,8 +4221,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -4351,8 +4351,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -4371,8 +4371,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -4518,8 +4518,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -4538,8 +4538,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -4687,8 +4687,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -4707,8 +4707,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -4826,8 +4826,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -4846,8 +4846,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -4975,8 +4975,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -4995,8 +4995,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -5116,8 +5116,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -5136,8 +5136,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -5334,8 +5334,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -5354,8 +5354,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -5483,8 +5483,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -5503,8 +5503,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -5625,8 +5625,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -5645,8 +5645,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -5784,8 +5784,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -5804,8 +5804,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -5945,8 +5945,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -5965,8 +5965,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -6079,8 +6079,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -6099,8 +6099,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -6248,8 +6248,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -6268,8 +6268,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -6387,8 +6387,8 @@
               }
             }
           },
-          "503": {
-            "description": "Service Unavailable",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -6407,8 +6407,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "503": {
+            "description": "Service Unavailable",
             "content": {
               "*/*": {
                 "schema": {
@@ -6522,10 +6522,7 @@
     }
   },
   "info": {
-    "description": "desc",
-    "title": "api-ewallet",
-    "version": "21.6.0-SNAPSHOT",
-    "x-julb-oas3-info": {
+    "x-extra-info": {
       "longDescription": "# Hello API\n",
       "starred": false,
       "displayName": "Ping API",
@@ -6534,6 +6531,9 @@
         "def",
         "ghi"
       ]
-    }
+    },
+    "description": "desc",
+    "title": "api-ewallet",
+    "version": "21.6.0-SNAPSHOT"
   }
 }

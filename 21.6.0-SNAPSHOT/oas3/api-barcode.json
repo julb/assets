@@ -127,11 +127,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -143,11 +143,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -179,11 +179,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -195,11 +195,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -412,11 +412,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -428,11 +428,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -464,11 +464,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -480,11 +480,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -903,11 +903,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -919,11 +919,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -955,11 +955,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -971,11 +971,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1074,11 +1074,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1090,11 +1090,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1126,11 +1126,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1142,11 +1142,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1479,11 +1479,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1495,11 +1495,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1531,11 +1531,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1547,11 +1547,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1631,11 +1631,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1647,11 +1647,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -1929,11 +1929,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1945,11 +1945,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1981,11 +1981,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -1997,11 +1997,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2238,11 +2238,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2254,11 +2254,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2290,11 +2290,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2306,11 +2306,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2507,11 +2507,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -2523,11 +2523,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -2559,11 +2559,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -2575,11 +2575,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -2836,11 +2836,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2852,11 +2852,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2888,11 +2888,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -2904,11 +2904,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3145,11 +3145,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3161,11 +3161,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3197,11 +3197,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3213,11 +3213,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -3414,11 +3414,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3430,11 +3430,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3466,11 +3466,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3482,11 +3482,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3708,8 +3708,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3718,8 +3718,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3878,8 +3878,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3888,8 +3888,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3983,11 +3983,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -3999,11 +3999,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4035,11 +4035,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4051,11 +4051,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4268,11 +4268,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -4284,11 +4284,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -4320,11 +4320,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -4336,11 +4336,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -4759,11 +4759,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4775,11 +4775,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4811,11 +4811,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4827,11 +4827,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4930,11 +4930,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4946,11 +4946,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4982,11 +4982,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -4998,11 +4998,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -5335,11 +5335,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5351,11 +5351,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5387,11 +5387,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5403,11 +5403,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5487,11 +5487,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -5503,11 +5503,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -5785,11 +5785,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5801,11 +5801,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5837,11 +5837,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -5853,11 +5853,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6094,11 +6094,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6110,11 +6110,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6146,11 +6146,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6162,11 +6162,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6363,11 +6363,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -6379,11 +6379,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -6415,11 +6415,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -6431,11 +6431,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -6692,11 +6692,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6708,11 +6708,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6744,11 +6744,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -6760,11 +6760,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7001,11 +7001,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7017,11 +7017,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7053,11 +7053,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7069,11 +7069,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -7270,11 +7270,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7286,11 +7286,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7322,11 +7322,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7338,11 +7338,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7564,8 +7564,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -7574,8 +7574,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -7699,11 +7699,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7715,11 +7715,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7751,11 +7751,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7767,11 +7767,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -7984,11 +7984,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -8000,11 +8000,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -8036,11 +8036,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "centerX": {
+                                      "minX": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "minX": {
+                                      "centerX": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -8052,11 +8052,11 @@
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "width": {
+                                      "x": {
                                         "format": "double",
                                         "type": "number"
                                       },
-                                      "x": {
+                                      "width": {
                                         "format": "double",
                                         "type": "number"
                                       },
@@ -8475,11 +8475,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8491,11 +8491,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8527,11 +8527,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8543,11 +8543,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8646,11 +8646,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8662,11 +8662,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8698,11 +8698,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -8714,11 +8714,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -9051,11 +9051,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9067,11 +9067,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9103,11 +9103,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9119,11 +9119,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9203,11 +9203,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -9219,11 +9219,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -9501,11 +9501,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9517,11 +9517,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9553,11 +9553,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9569,11 +9569,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9810,11 +9810,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9826,11 +9826,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9862,11 +9862,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -9878,11 +9878,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10079,11 +10079,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -10095,11 +10095,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -10131,11 +10131,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -10147,11 +10147,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -10408,11 +10408,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10424,11 +10424,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10460,11 +10460,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10476,11 +10476,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10717,11 +10717,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10733,11 +10733,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10769,11 +10769,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "centerX": {
+                                    "minX": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "minX": {
+                                    "centerX": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10785,11 +10785,11 @@
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "width": {
+                                    "x": {
                                       "format": "double",
                                       "type": "number"
                                     },
-                                    "x": {
+                                    "width": {
                                       "format": "double",
                                       "type": "number"
                                     },
@@ -10986,11 +10986,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -11002,11 +11002,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -11038,11 +11038,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "centerX": {
+                                "minX": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "minX": {
+                                "centerX": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -11054,11 +11054,11 @@
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "width": {
+                                "x": {
                                   "format": "double",
                                   "type": "number"
                                 },
-                                "x": {
+                                "width": {
                                   "format": "double",
                                   "type": "number"
                                 },
@@ -11280,8 +11280,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -11290,8 +11290,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -11348,10 +11348,7 @@
     }
   },
   "info": {
-    "description": "desc",
-    "title": "api-barcode",
-    "version": "21.6.0-SNAPSHOT",
-    "x-julb-oas3-info": {
+    "x-extra-info": {
       "longDescription": "# Hello API\n",
       "starred": false,
       "displayName": "Ping API",
@@ -11360,6 +11357,9 @@
         "def",
         "ghi"
       ]
-    }
+    },
+    "description": "desc",
+    "title": "api-barcode",
+    "version": "21.6.0-SNAPSHOT"
   }
 }

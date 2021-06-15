@@ -17,11 +17,11 @@
           "last": {
             "type": "boolean"
           },
-          "numberOfElements": {
+          "size": {
             "format": "int32",
             "type": "integer"
           },
-          "size": {
+          "numberOfElements": {
             "format": "int32",
             "type": "integer"
           },
@@ -141,11 +141,11 @@
           "last": {
             "type": "boolean"
           },
-          "numberOfElements": {
+          "size": {
             "format": "int32",
             "type": "integer"
           },
-          "size": {
+          "numberOfElements": {
             "format": "int32",
             "type": "integer"
           },
@@ -419,16 +419,16 @@
               "country": {
                 "type": "string"
               },
-              "iso3Language": {
-                "type": "string"
-              },
               "displayName": {
                 "type": "string"
               },
-              "displayVariant": {
+              "iso3Language": {
                 "type": "string"
               },
               "language": {
+                "type": "string"
+              },
+              "displayVariant": {
                 "type": "string"
               },
               "iso3Country": {
@@ -554,8 +554,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -564,8 +564,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -604,8 +604,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -614,8 +614,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -703,8 +703,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -713,8 +713,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -753,8 +753,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -763,8 +763,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -845,8 +845,8 @@
           "204": {
             "description": "No Content"
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -855,8 +855,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -895,8 +895,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -905,8 +905,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -1004,8 +1004,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -1014,8 +1014,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -1054,8 +1054,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -1064,8 +1064,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -1154,8 +1154,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -1164,8 +1164,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -1204,8 +1204,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -1214,8 +1214,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -1295,8 +1295,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -1305,8 +1305,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -1345,8 +1345,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -1355,8 +1355,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -1454,8 +1454,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -1464,8 +1464,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -1504,8 +1504,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -1514,8 +1514,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -1603,8 +1603,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -1613,8 +1613,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -1653,8 +1653,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -1663,8 +1663,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -1754,8 +1754,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -1764,8 +1764,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -1804,8 +1804,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -1814,8 +1814,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -1913,8 +1913,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -1923,8 +1923,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -1963,8 +1963,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -1973,8 +1973,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2062,8 +2062,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2072,8 +2072,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2112,8 +2112,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2122,8 +2122,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2213,8 +2213,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2223,8 +2223,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2263,8 +2263,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2273,8 +2273,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2429,8 +2429,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2439,8 +2439,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2479,8 +2479,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2489,8 +2489,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2637,8 +2637,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2647,8 +2647,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2687,8 +2687,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2697,8 +2697,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -2863,8 +2863,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -2873,8 +2873,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -2913,8 +2913,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -2923,8 +2923,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3002,8 +3002,8 @@
               }
             }
           },
-          "502": {
-            "description": "Bad Gateway",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "*/*": {
                 "schema": {
@@ -3012,8 +3012,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden",
+          "502": {
+            "description": "Bad Gateway",
             "content": {
               "*/*": {
                 "schema": {
@@ -3052,8 +3052,8 @@
               }
             }
           },
-          "504": {
-            "description": "Gateway Timeout",
+          "405": {
+            "description": "Method Not Allowed",
             "content": {
               "*/*": {
                 "schema": {
@@ -3062,8 +3062,8 @@
               }
             }
           },
-          "405": {
-            "description": "Method Not Allowed",
+          "504": {
+            "description": "Gateway Timeout",
             "content": {
               "*/*": {
                 "schema": {
@@ -3157,10 +3157,7 @@
     }
   },
   "info": {
-    "description": "desc",
-    "title": "api-disclaimer",
-    "version": "21.6.0-SNAPSHOT",
-    "x-julb-oas3-info": {
+    "x-extra-info": {
       "longDescription": "# Hello API\n",
       "starred": false,
       "displayName": "Ping API",
@@ -3169,6 +3166,9 @@
         "def",
         "ghi"
       ]
-    }
+    },
+    "description": "desc",
+    "title": "api-disclaimer",
+    "version": "21.6.0-SNAPSHOT"
   }
 }
