@@ -64,6 +64,32 @@ public class OpenApiSpringDocConfigurationExtraInfoProperties {
 
     //@formatter:off
      /**
+     * The iconUrl attribute.
+     * -- GETTER --
+     * Getter for {@link #iconUrl} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #iconUrl} property.
+     * @param iconUrl the value to set.
+     */
+     //@formatter:on
+    private String iconUrl;
+
+    //@formatter:off
+     /**
+     * The thumbnailUrl attribute.
+     * -- GETTER --
+     * Getter for {@link #thumbnailUrl} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #thumbnailUrl} property.
+     * @param thumbnailUrl the value to set.
+     */
+     //@formatter:on
+    private String thumbnailUrl;
+
+    //@formatter:off
+     /**
      * The logoUrl attribute.
      * -- GETTER --
      * Getter for {@link #logoUrl} property.

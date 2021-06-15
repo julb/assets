@@ -125,7 +125,7 @@ public class OpenApiSpringDocConfiguration {
         }
 
         if (openApiConfigurationProperties.getExtraInfo() != null) {
-            info.extensions(Map.of("x-julb-oas3-info", openApiConfigurationProperties.getExtraInfo()));
+            info.extensions(Map.of("x-extra-info", openApiConfigurationProperties.getExtraInfo()));
         }
 
         return info;
