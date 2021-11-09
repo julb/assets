@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 
 import me.julb.library.dto.sms.SmsMessageDTO;
 import me.julb.springbootstarter.sms.services.SmsService;
@@ -38,7 +40,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**
  * The function to send sms.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class SendSmsFunctionTest extends AbstractBaseTest {
@@ -61,12 +63,12 @@ public class SendSmsFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenSendSms()
         throws Exception {
-        Consumer<SmsMessageDTO> function = functionCatalog.lookup("sendSmsFunction");
+        Consumer<Message<SmsMessageDTO>> function = functionCatalog.lookup("sendSmsFunction");
 
         SmsMessageDTO dto = new SmsMessageDTO();
         dto.setE164Number("+33123456789");
         dto.setText("Hello, John");
-        function.accept(dto);
+        function.accept(MessageBuilder.withPayload(dto).build());
 
         Mockito.verify(smsService).send(dto);
     }

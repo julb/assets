@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,8 @@ import me.julb.applications.platformhealth.entities.IncidentComponentEntity;
 import me.julb.applications.platformhealth.entities.IncidentEntity;
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceComponentEntity;
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceEntity;
+import me.julb.applications.platformhealth.entities.mappers.ComponentAvailabilityEntityMapper;
+import me.julb.applications.platformhealth.entities.mappers.ComponentCategoryAvailabilityEntityMapper;
 import me.julb.applications.platformhealth.repositories.ComponentCategoryRepository;
 import me.julb.applications.platformhealth.repositories.ComponentRepository;
 import me.julb.applications.platformhealth.repositories.IncidentComponentRepository;
@@ -54,13 +56,12 @@ import me.julb.applications.platformhealth.services.dto.availability.PlatformAva
 import me.julb.applications.platformhealth.services.dto.incident.IncidentStatus;
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceStatus;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.AttributeInIdentifiableSpecification;
 import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
 
 /**
  * The platform availability service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -105,10 +106,16 @@ public class PlatformAvailabilityServiceImpl implements PlatformAvailabilityServ
     private ComponentRepository componentRepository;
 
     /**
+     * The component category mapper.
+     */
+    @Autowired
+    private ComponentCategoryAvailabilityEntityMapper componentCategoryAvailabilityMapper;
+
+    /**
      * The component mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private ComponentAvailabilityEntityMapper componentAvailabilityMapper;
 
     /**
      * {@inheritDoc}
@@ -137,7 +144,7 @@ public class PlatformAvailabilityServiceImpl implements PlatformAvailabilityServ
 
         for (ComponentCategoryEntity componentCategory : componentCategories) {
             // Map category to DTO.
-            ComponentCategoryAvailabilityHierarchyDTO componentCategoryAvailability = mappingService.map(componentCategory, ComponentCategoryAvailabilityHierarchyDTO.class);
+            ComponentCategoryAvailabilityHierarchyDTO componentCategoryAvailability = componentCategoryAvailabilityMapper.map(componentCategory);
 
             // Availability of the category.
             AvailabilityStatus categoryAvailability = AvailabilityStatus.UP;
@@ -146,7 +153,7 @@ public class PlatformAvailabilityServiceImpl implements PlatformAvailabilityServ
             for (ComponentEntity component : components) {
                 if (component.getComponentCategory().equals(componentCategory)) {
                     // Map component to availability
-                    ComponentAvailabilityDTO componentAvailability = mappingService.map(component, ComponentAvailabilityDTO.class);
+                    ComponentAvailabilityDTO componentAvailability = componentAvailabilityMapper.map(component);
 
                     // Get numbers of incidents.
                     componentAvailability.setIncidentsInProgressCount(countIncidentsInProgressPerComponent(incidentComponentsInProgress, component));

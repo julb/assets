@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,21 +33,15 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import me.julb.applications.announcement.services.dto.AnnouncementCreationDTO;
-import me.julb.applications.announcement.services.dto.AnnouncementDTO;
 import me.julb.applications.announcement.services.dto.AnnouncementLevel;
-import me.julb.applications.announcement.services.dto.AnnouncementPatchDTO;
-import me.julb.applications.announcement.services.dto.AnnouncementUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.persistence.mongodb.entities.date.DateTimeIntervalEntity;
 import me.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
@@ -60,10 +54,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The announcement entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = AnnouncementCreationDTO.class, patch = AnnouncementPatchDTO.class, read = AnnouncementDTO.class, update = AnnouncementUpdateDTO.class)
 @Getter
 @Setter
 @ToString

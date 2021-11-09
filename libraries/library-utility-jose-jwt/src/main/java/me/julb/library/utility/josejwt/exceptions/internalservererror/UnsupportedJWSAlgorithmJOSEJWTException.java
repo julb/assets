@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ import me.julb.library.utility.josejwt.exceptions.JOSEJWTException;
 
 /**
  * This exception is thrown when the algorithm specified for signature is invalid.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class UnsupportedJWSAlgorithmJOSEJWTException extends JOSEJWTException {

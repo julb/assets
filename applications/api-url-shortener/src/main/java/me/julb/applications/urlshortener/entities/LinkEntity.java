@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,22 +32,16 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import me.julb.applications.urlshortener.annotations.ShortURLURI;
-import me.julb.applications.urlshortener.services.dto.LinkCreationDTO;
-import me.julb.applications.urlshortener.services.dto.LinkDTO;
-import me.julb.applications.urlshortener.services.dto.LinkPatchDTO;
-import me.julb.applications.urlshortener.services.dto.LinkUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.constants.Chars;
@@ -61,10 +55,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The link entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = LinkCreationDTO.class, patch = LinkPatchDTO.class, read = LinkDTO.class, update = LinkUpdateDTO.class)
 @Getter
 @Setter
 @ToString

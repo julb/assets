@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import me.julb.library.utility.josejwt.jwk.IJWKProvider;
 
 /**
  * A JWK provider based on a stringified JSON.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class JSONStringJWKProvider implements IJWKProvider {
@@ -67,7 +67,7 @@ public class JSONStringJWKProvider implements IJWKProvider {
 
     /**
      * The builder for JWK.
-     * <P>
+     * <br>
      * @author Julb.
      */
     public static class Builder {

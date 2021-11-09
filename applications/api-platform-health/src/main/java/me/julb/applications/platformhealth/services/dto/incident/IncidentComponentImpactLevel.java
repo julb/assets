@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ package me.julb.applications.platformhealth.services.dto.incident;
 
 /**
  * The impact level of the incident on the component.
- * <P>
+ * <br>
  * @author Julb.
  */
 public enum IncidentComponentImpactLevel {

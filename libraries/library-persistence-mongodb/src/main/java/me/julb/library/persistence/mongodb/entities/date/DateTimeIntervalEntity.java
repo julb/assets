@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,22 +28,15 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import me.julb.library.dto.simple.interval.date.DateTimeIntervalCreationDTO;
-import me.julb.library.dto.simple.interval.date.DateTimeIntervalDTO;
-import me.julb.library.dto.simple.interval.date.DateTimeIntervalPatchDTO;
-import me.julb.library.dto.simple.interval.date.DateTimeIntervalUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.utility.interfaces.Intervallable;
 import me.julb.library.utility.validator.constraints.DateTimeISO8601;
 import me.julb.library.utility.validator.constraints.Interval;
 
 /**
  * The user entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = DateTimeIntervalCreationDTO.class, patch = DateTimeIntervalPatchDTO.class, read = DateTimeIntervalDTO.class, update = DateTimeIntervalUpdateDTO.class)
 @Getter
 @Setter
 @Interval

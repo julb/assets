@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * The info meter binder.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Component
@@ -54,7 +54,7 @@ public class InfoMeterBinder implements MeterBinder {
     /**
      * The infoContributors attribute.
      */
-    @Autowired
+    @Autowired(required = false)
     private List<InfoContributor> infoContributors;
 
     // ------------------------------------------ Overridden methods.
@@ -65,8 +65,10 @@ public class InfoMeterBinder implements MeterBinder {
     @Override
     public void bindTo(MeterRegistry registry) {
         Info.Builder builder = new Info.Builder();
-        for (InfoContributor contributor : this.infoContributors) {
-            contributor.contribute(builder);
+        if(this.infoContributors != null) {
+            for (InfoContributor contributor : this.infoContributors) {
+                contributor.contribute(builder);
+            }
         }
         Info build = builder.build();
 

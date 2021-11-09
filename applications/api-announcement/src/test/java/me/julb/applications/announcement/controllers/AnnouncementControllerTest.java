@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,10 @@
 
 package me.julb.applications.announcement.controllers;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.temporal.ChronoUnit;
@@ -34,7 +37,6 @@ import java.util.TreeSet;
 
 import javax.validation.constraints.NotNull;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -63,7 +65,7 @@ import me.julb.springbootstarter.test.security.annotations.WithMockUser;
 
 /**
  * Unit test for the {@link CollectController} class.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Import(TestChannelBinderConfiguration.class)
@@ -76,7 +78,7 @@ public class AnnouncementControllerTest extends AbstractMongoDbBaseTest {
      * The MongoDB container.
      */
     @Container
-    private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.0.10"));
+    private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.4"));
 
     /**
      * The mock MVC.
@@ -132,15 +134,15 @@ public class AnnouncementControllerTest extends AbstractMongoDbBaseTest {
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
             )
             .andExpect(status().isOk())
-            .andDo((handler) -> {
-                Assertions.assertEquals(1, 1);
-            });
+            .andExpect(jsonPath("$.numberOfElements", is(1)))
+            .andExpect(jsonPath("$.content[0].id", notNullValue()))
+            .andExpect(jsonPath("$.content[0].level", is(AnnouncementLevel.INFO.name())));
         //@formatter:on
     }
 
     /**
      * Initializer class for the test.
-     * <P>
+     * <br>
      * @author Julb.
      */
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {

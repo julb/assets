@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,19 +30,15 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import me.julb.applications.authorizationserver.services.dto.signup.AbstractSignupCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.library.dto.security.UserRole;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.utility.interfaces.IIdentifiable;
 import me.julb.library.utility.validator.constraints.Identifier;
@@ -50,10 +46,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The user entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = AbstractSignupCreationDTO.class, read = UserDTO.class)
 @Getter
 @Setter
 @ToString

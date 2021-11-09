@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,20 +32,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import me.julb.applications.platformhealth.services.dto.component.ComponentCreationDTO;
-import me.julb.applications.platformhealth.services.dto.component.ComponentDTO;
-import me.julb.applications.platformhealth.services.dto.component.ComponentPatchDTO;
-import me.julb.applications.platformhealth.services.dto.component.ComponentUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
 import me.julb.library.persistence.mongodb.entities.message.ShortMessageEntity;
@@ -55,10 +49,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The component entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = ComponentCreationDTO.class, patch = ComponentPatchDTO.class, read = ComponentDTO.class, update = ComponentUpdateDTO.class)
 @Document("components")
 @Getter
 @Setter

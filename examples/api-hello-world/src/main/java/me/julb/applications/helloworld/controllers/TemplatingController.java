@@ -16,7 +16,7 @@ import me.julb.springbootstarter.templating.services.TemplatingService;
 
 /**
  * The captcha controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

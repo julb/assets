@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * The user entity.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Document(collection = "users")

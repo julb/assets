@@ -9,7 +9,7 @@ import org.springframework.batch.item.ItemProcessor;
 
 /**
  * The processor that converts a string to uppercase string.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j

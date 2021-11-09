@@ -8,7 +8,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
  * A request matcher for an header.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class RequestHeaderRequestMatcher implements RequestMatcher {

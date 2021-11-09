@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ import me.julb.library.utility.enums.ISO4217Currency;
 
 /**
  * The exception is triggered when an operation on an electronic purse cannot be done due to insufficient balance.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class ElectronicPurseOperationCannotBeExecutedInsufficientBalance extends AbstractElectronicPurseOperationCannotBeExecutedException {

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,7 @@ import me.julb.applications.bookmark.entities.ExternalLinkEntity;
 import me.julb.applications.bookmark.entities.FolderEntity;
 import me.julb.applications.bookmark.entities.ObjectLinkEntity;
 import me.julb.applications.bookmark.entities.comparators.ItemEntityByPositionComparator;
+import me.julb.applications.bookmark.entities.mappers.ItemEntityMapper;
 import me.julb.applications.bookmark.repositories.ExternalLinkRepository;
 import me.julb.applications.bookmark.repositories.FolderRepository;
 import me.julb.applications.bookmark.repositories.ItemRepository;
@@ -63,7 +64,6 @@ import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.simple.identifier.IdentifierDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.dto.simple.value.PositiveIntegerValueDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Strings;
 import me.julb.library.utility.data.search.Searchable;
@@ -72,7 +72,7 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -83,7 +83,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The item service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -119,7 +119,12 @@ public class ItemServiceImpl implements ItemService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private ItemEntityMapper mapper;
+
+    /**
+     * The user ref mapper.
+     */
+    private UserRefEntityMapper userRefMapper;
 
     /**
      * The security service.
@@ -144,7 +149,7 @@ public class ItemServiceImpl implements ItemService {
 
         ISpecification<AbstractItemEntity> spec = new SearchSpecification<AbstractItemEntity>(searchable).and(new TmSpecification<>(tm)).and(new ItemBelongsToUserIdSpecification<>(userId));
         Page<AbstractItemEntity> result = itemRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, AbstractItemDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -168,7 +173,7 @@ public class ItemServiceImpl implements ItemService {
         } else {
             items = itemRepository.findByTmAndUser_IdAndParentIsNullOrderByPositionAsc(tm, userId);
         }
-        return mappingService.mapAsList(items, AbstractItemDTO.class);
+        return items.stream().map(mapper::map).toList();
     }
 
     /**
@@ -198,7 +203,7 @@ public class ItemServiceImpl implements ItemService {
             default:
                 throw new UnsupportedOperationException();
         }
-        return mappingService.mapAsPage(result, AbstractItemDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -214,7 +219,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ResourceNotFoundException(AbstractItemEntity.class, id);
         }
 
-        return mappingService.map(result, AbstractItemDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -264,7 +269,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         // Update the entity
-        AbstractItemEntity entityToCreate = mappingService.map(creationDTO, AbstractItemEntity.class);
+        AbstractItemEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setParent(folderParent);
         entityToCreate.setPosition(position);
         this.onPersist(entityToCreate);
@@ -273,7 +278,7 @@ public class ItemServiceImpl implements ItemService {
         entityToCreate.setPath(StringUtils.join(pathPrefix, entityToCreate.getId()));
 
         AbstractItemEntity result = itemRepository.save(entityToCreate);
-        return mappingService.map(result, AbstractItemDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -291,11 +296,11 @@ public class ItemServiceImpl implements ItemService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         AbstractItemEntity result = itemRepository.save(existing);
-        return mappingService.map(result, AbstractItemDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -350,7 +355,7 @@ public class ItemServiceImpl implements ItemService {
 
         // Return updated element.
         AbstractItemEntity result = itemRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        return mappingService.map(result, AbstractItemDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -410,7 +415,7 @@ public class ItemServiceImpl implements ItemService {
 
         // If parent are the same, nothing to do.
         if (StringUtils.equals(oldPath, newPath)) {
-            return mappingService.map(existing, AbstractItemDTO.class);
+            return mapper.map(existing);
         }
 
         // If new path under old path, it means that we want to put a parent within a child of this parent.
@@ -458,7 +463,7 @@ public class ItemServiceImpl implements ItemService {
 
         // Return the result.
         AbstractItemEntity result = itemRepository.save(existing);
-        return mappingService.map(result, AbstractItemDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -476,11 +481,11 @@ public class ItemServiceImpl implements ItemService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         AbstractItemEntity result = itemRepository.save(existing);
-        return mappingService.map(result, AbstractItemDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -527,7 +532,7 @@ public class ItemServiceImpl implements ItemService {
 
         // Add author.
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
+        entity.setUser(userRefMapper.map(connnectedUser));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

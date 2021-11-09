@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,21 +33,15 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceComplexity;
-import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceCreationDTO;
-import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceDTO;
-import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenancePatchDTO;
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceStatus;
-import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.persistence.mongodb.entities.date.DateTimeIntervalEntity;
 import me.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
@@ -61,10 +55,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The planned maintenance entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = PlannedMaintenanceCreationDTO.class, patch = PlannedMaintenancePatchDTO.class, read = PlannedMaintenanceDTO.class, update = PlannedMaintenanceUpdateDTO.class)
 @Document("planned-maintenances")
 @Getter
 @Setter

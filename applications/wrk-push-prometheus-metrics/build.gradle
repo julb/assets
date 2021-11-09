@@ -1,7 +1,7 @@
 plugins {
     id 'java-library-distribution'
     id 'io.freefair.lombok'
-    id 'me.julb.gradleplugins.java11'
+    id 'me.julb.gradleplugins.java17'
     id 'me.julb.gradleplugins.additionaljars'
     id 'org.springframework.boot'
 }
@@ -15,13 +15,11 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3'
 	
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
-    testImplementation 'net.javacrumbs.json-unit:json-unit'
+    testImplementation 'org.hamcrest:hamcrest'
     testImplementation project(':spring-boot-starters:spring-boot-starter-messaging-test')
 }
 
-lombok {
-    config['lombok.log.fieldName'] = 'LOGGER'
-}
+
 
 jar {
     manifest {
@@ -33,7 +31,7 @@ jar {
 
 test {
     useJUnitPlatform()
-    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+    jvmArgs = ["-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
 }
 
 springBoot {
@@ -41,12 +39,11 @@ springBoot {
 }
 
 bootBuildImage {
-    environment = ["BP_JVM_VERSION" : "11.*"]
+    environment = ["BP_JVM_VERSION" : "17.*"]
     imageName = "${System.getProperty('docker.namespace')}/${project.name}:${project.version}"
 }
 
 bootJar {
     classifier = 'boot'
     mainClass = 'me.julb.Application'
-    layered()
 }

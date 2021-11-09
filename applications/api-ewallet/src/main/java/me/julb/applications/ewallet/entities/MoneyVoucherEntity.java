@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,20 +32,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherCreationDTO;
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherDTO;
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherPatchDTO;
-import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.persistence.mongodb.entities.moneyamount.MoneyAmountEntity;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
@@ -58,10 +52,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The money voucher entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = MoneyVoucherCreationDTO.class, patch = MoneyVoucherPatchDTO.class, read = MoneyVoucherDTO.class, update = MoneyVoucherUpdateDTO.class)
 @Getter
 @Setter
 @ToString

@@ -20,7 +20,7 @@
 		</logger>
 		
 		<logger name="me.julb" level="INFO">
-			<appender-ref ref="JSON_CONSOLE" />
+			<appender-ref ref="CONSOLE" />
 		</logger>
 		
 		<logger name="reactor.netty" level="INFO">

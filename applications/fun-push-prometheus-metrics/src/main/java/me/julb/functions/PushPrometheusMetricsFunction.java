@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,20 +26,20 @@ package me.julb.functions;
 
 import java.util.function.Consumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
 
+import lombok.extern.slf4j.Slf4j;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.PrometheusMetricsPushService;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationWrapperDTO;
 
 /**
  * The function to send mail.
- * <P>
- * @author Julb.
+ * <br>
+ * @author Julb. O
  */
 @Slf4j
-public class PushPrometheusMetricsFunction implements Consumer<MetricsCreationWrapperDTO> {
+public class PushPrometheusMetricsFunction implements Consumer<Message<MetricsCreationWrapperDTO>> {
 
     /**
      * The mail service.
@@ -51,10 +51,10 @@ public class PushPrometheusMetricsFunction implements Consumer<MetricsCreationWr
      * {@inheritDoc}
      */
     @Override
-    public void accept(MetricsCreationWrapperDTO metricsCreationWrapper) {
+    public void accept(Message<MetricsCreationWrapperDTO> metricsCreationWrapper) {
         try {
             LOGGER.debug("Received invokation to send metrics.");
-            prometheusMetricsPushService.pushAll(metricsCreationWrapper);
+            prometheusMetricsPushService.pushAll(metricsCreationWrapper.getPayload());
             LOGGER.debug("Method invoked successfully.");
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());

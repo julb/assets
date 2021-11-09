@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,25 +30,18 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordPatchDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.utility.validator.constraints.DateTimeISO8601;
 
 /**
  * The user authentication by password entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = UserAuthenticationByPasswordCreationDTO.class, patch = UserAuthenticationByPasswordPatchDTO.class, read = UserAuthenticationByPasswordDTO.class, update = UserAuthenticationByPasswordUpdateDTO.class)
 @Getter
 @Setter
 @ToString

@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library-distribution'
 	id 'io.freefair.lombok'
-    id 'me.julb.gradleplugins.java11'
+    id 'me.julb.gradleplugins.java17'
 	id 'me.julb.gradleplugins.additionaljars'
     id 'org.springframework.boot'
 }
@@ -13,9 +13,7 @@ dependencies {
 	implementation 'com.h2database:h2'
 }
 
-lombok {
-    config['lombok.log.fieldName'] = 'LOGGER'
-}
+
 
 jar {
     manifest {
@@ -27,7 +25,7 @@ jar {
 
 test {
     useJUnitPlatform()
-    jvmArgs = ["--add-opens", "java.base/java.lang=ALL-UNNAMED", "-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+    jvmArgs = ["-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
 }
 
 springBoot {
@@ -41,7 +39,6 @@ bootBuildImage {
 bootJar {
     classifier = 'boot'
     mainClass = 'me.julb.Application'
-    layered()
 }
 
 publishing {

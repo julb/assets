@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ import me.julb.springbootstarter.security.configurations.beans.userdetails.Enhan
 
 /**
  * The base DAO authentication provider supporting multiple passwords.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class AbstractDaoAuthenticationProvider extends DaoAuthenticationProvider {

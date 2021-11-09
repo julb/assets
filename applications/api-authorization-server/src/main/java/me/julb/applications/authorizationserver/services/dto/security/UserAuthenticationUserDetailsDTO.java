@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@ import me.julb.springbootstarter.security.utilities.RoleUtility;
 
 /**
  * The user details holding authentication.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class UserAuthenticationUserDetailsDTO implements EnhancedUserDetails {

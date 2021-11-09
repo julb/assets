@@ -6,7 +6,7 @@ import lombok.Setter;
 
 /**
  * The user label entity.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter

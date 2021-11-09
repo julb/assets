@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,8 @@ import org.springframework.validation.annotation.Validated;
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByApiKeyEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
+import me.julb.applications.authorizationserver.entities.authentication.mappers.UserAuthenticationEntityMapper;
+import me.julb.applications.authorizationserver.entities.mappers.UserEntityMapper;
 import me.julb.applications.authorizationserver.repositories.UserAuthenticationByApiKeyRepository;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
 import me.julb.applications.authorizationserver.repositories.specifications.ObjectBelongsToUserIdSpecification;
@@ -53,7 +55,6 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByApiKeyUpdateDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByApiKeyWithRawKeyDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.utility.constants.Integers;
@@ -66,7 +67,6 @@ import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecureApiKey;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -78,7 +78,7 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
 
 /**
  * The user authentication service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -102,7 +102,13 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserAuthenticationEntityMapper mapper;
+
+    /**
+     * The user mapper.
+     */
+    @Autowired
+    private UserEntityMapper userMapper;
 
     /**
      * The security service.
@@ -140,7 +146,7 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
         ISpecification<UserAuthenticationByApiKeyEntity> spec = new SearchSpecification<UserAuthenticationByApiKeyEntity>(searchable).and(new UserAuthenticationOfGivenTypeSpecification<>(UserAuthenticationType.API_KEY)).and(new TmSpecification<>(tm))
             .and(new ObjectBelongsToUserIdSpecification<>(userId));
         Page<UserAuthenticationByApiKeyEntity> result = userAuthenticationByApiKeyRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, UserAuthenticationByApiKeyDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -162,7 +168,7 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
             throw new ResourceNotFoundException(UserAuthenticationByApiKeyEntity.class, id);
         }
 
-        return mappingService.map(result, UserAuthenticationByApiKeyDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -194,8 +200,8 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
         UserAuthenticationCredentialsDTO credentials = new UserAuthenticationCredentialsDTO();
         credentials.setUniqueCredentials(result.getSecuredKey());
         credentials.setCredentialsNonExpired(true);
-        credentials.setUserAuthentication(mappingService.map(result, UserAuthenticationByApiKeyDTO.class));
-        credentials.setUser(mappingService.map(result.getUser(), UserDTO.class));
+        credentials.setUserAuthentication(mapper.map(result));
+        credentials.setUser(userMapper.map(result.getUser()));
 
         return credentials;
     }
@@ -222,7 +228,7 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
         }
 
         // Prepare a new user authentication entry.
-        UserAuthenticationByApiKeyEntity entityToCreate = mappingService.map(creationDTO, UserAuthenticationByApiKeyEntity.class);
+        UserAuthenticationByApiKeyEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setUser(user);
         this.onPersist(entityToCreate);
 
@@ -233,7 +239,7 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
         UserAuthenticationByApiKeyEntity result = userAuthenticationByApiKeyRepository.save(entityToCreate);
 
         // Add key to result
-        UserAuthenticationByApiKeyWithRawKeyDTO userAuthenticationByApiKeyWithRawKey = mappingService.map(result, UserAuthenticationByApiKeyWithRawKeyDTO.class);
+        UserAuthenticationByApiKeyWithRawKeyDTO userAuthenticationByApiKeyWithRawKey = mapper.mapWithRawKey(result);
         userAuthenticationByApiKeyWithRawKey.setRawKey(apiKey);
         return userAuthenticationByApiKeyWithRawKey;
     }
@@ -264,11 +270,11 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         UserAuthenticationByApiKeyEntity result = userAuthenticationByApiKeyRepository.save(existing);
-        return mappingService.map(result, UserAuthenticationByApiKeyDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -297,11 +303,11 @@ public class UserAuthenticationByApiKeyServiceImpl implements UserAuthentication
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         UserAuthenticationByApiKeyEntity result = userAuthenticationByApiKeyRepository.save(existing);
-        return mappingService.map(result, UserAuthenticationByApiKeyDTO.class);
+        return mapper.map(result);
     }
 
     /**

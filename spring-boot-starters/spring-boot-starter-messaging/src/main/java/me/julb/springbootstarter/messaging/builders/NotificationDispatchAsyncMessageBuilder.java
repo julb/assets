@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ import me.julb.library.utility.identifier.IdentifierUtility;
 
 /**
  * A builder for {@link NotificationDispatchAsyncMessageDTO} instances.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class NotificationDispatchAsyncMessageBuilder {
@@ -181,7 +181,7 @@ public class NotificationDispatchAsyncMessageBuilder {
 
     /**
      * The mail part builder.
-     * <P>
+     * <br>
      * @author Julb.
      */
     public class MailPartBuilder {
@@ -310,7 +310,7 @@ public class NotificationDispatchAsyncMessageBuilder {
 
     /**
      * The SMS part builder.
-     * <P>
+     * <br>
      * @author Julb.
      */
     public class SmsPartBuilder {
@@ -383,7 +383,7 @@ public class NotificationDispatchAsyncMessageBuilder {
 
     /**
      * The Web notification part builder.
-     * <P>
+     * <br>
      * @author Julb.
      */
     public class WebPartBuilder {
@@ -453,7 +453,7 @@ public class NotificationDispatchAsyncMessageBuilder {
 
     /**
      * The Google Chart notification part builder.
-     * <P>
+     * <br>
      * @author Julb.
      */
     public class GoogleChatPartBuilder {

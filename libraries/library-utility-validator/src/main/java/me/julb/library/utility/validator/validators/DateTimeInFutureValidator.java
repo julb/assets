@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import me.julb.library.utility.validator.constraints.DateTimeInFuture;
 
 /**
  * Validator to check that the given object is a valid interval.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class DateTimeInFutureValidator implements ConstraintValidator<DateTimeInFuture, Object> {

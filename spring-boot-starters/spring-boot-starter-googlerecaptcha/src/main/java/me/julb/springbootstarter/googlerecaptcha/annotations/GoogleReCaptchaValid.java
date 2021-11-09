@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * An annotation requiring a valid captcha value.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Target(ElementType.METHOD)

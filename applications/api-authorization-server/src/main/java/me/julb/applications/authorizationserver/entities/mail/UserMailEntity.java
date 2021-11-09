@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,22 +29,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import me.julb.applications.authorizationserver.entities.UserEntity;
-import me.julb.applications.authorizationserver.services.dto.mail.UserMailCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.mail.UserMailDTO;
-import me.julb.applications.authorizationserver.services.dto.mail.UserMailPatchDTO;
-import me.julb.applications.authorizationserver.services.dto.mail.UserMailUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.utility.interfaces.IIdentifiable;
 import me.julb.library.utility.validator.constraints.DateTimeISO8601;
@@ -53,10 +47,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The user mail entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = UserMailCreationDTO.class, patch = UserMailPatchDTO.class, read = UserMailDTO.class, update = UserMailUpdateDTO.class)
 @Getter
 @Setter
 @ToString

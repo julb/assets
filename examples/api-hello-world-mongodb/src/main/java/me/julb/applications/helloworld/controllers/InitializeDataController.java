@@ -22,7 +22,7 @@ import me.julb.library.utility.identifier.IdentifierUtility;
 
 /**
  * The initialize data controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

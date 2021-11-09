@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.webnotification.entities.WebNotificationEntity;
+import me.julb.applications.webnotification.entities.mappers.WebNotificationEntityMapper;
 import me.julb.applications.webnotification.repositories.WebNotificationRepository;
 import me.julb.applications.webnotification.services.MyWebNotificationService;
 import me.julb.applications.webnotification.services.dto.WebNotificationDTO;
@@ -47,7 +48,6 @@ import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -58,7 +58,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The web notification service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -76,7 +76,7 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private WebNotificationEntityMapper mapper;
 
     /**
      * The security service.
@@ -101,7 +101,7 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
 
         ISpecification<WebNotificationEntity> spec = new SearchSpecification<WebNotificationEntity>(searchable).and(new TmSpecification<>(tm));
         Page<WebNotificationEntity> result = webNotificationRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, WebNotificationDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -120,7 +120,7 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
             throw new ResourceNotFoundException(WebNotificationEntity.class, id);
         }
 
-        return mappingService.map(result, WebNotificationDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -171,7 +171,7 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
 
         // Return update
         WebNotificationEntity result = webNotificationRepository.save(existing);
-        return mappingService.map(result, WebNotificationDTO.class);
+        return mapper.map(result);
     }
 
     /**

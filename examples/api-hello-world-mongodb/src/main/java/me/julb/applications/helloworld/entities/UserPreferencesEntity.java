@@ -5,7 +5,7 @@ import lombok.Setter;
 
 /**
  * The user preferences entity.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter

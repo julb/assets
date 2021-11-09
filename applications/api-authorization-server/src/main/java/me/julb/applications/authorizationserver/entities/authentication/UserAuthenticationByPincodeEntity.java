@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,25 +30,18 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodePatchDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.utility.validator.constraints.DateTimeISO8601;
 
 /**
  * The user authentication by pincode entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = UserAuthenticationByPincodeCreationDTO.class, patch = UserAuthenticationByPincodePatchDTO.class, read = UserAuthenticationByPincodeDTO.class, update = UserAuthenticationByPincodeUpdateDTO.class)
 @Getter
 @Setter
 @ToString

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,21 +31,15 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import me.julb.applications.platformhealth.services.dto.incident.IncidentHistoryCreationDTO;
-import me.julb.applications.platformhealth.services.dto.incident.IncidentHistoryDTO;
-import me.julb.applications.platformhealth.services.dto.incident.IncidentHistoryPatchDTO;
-import me.julb.applications.platformhealth.services.dto.incident.IncidentHistoryUpdateDTO;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.julb.applications.platformhealth.services.dto.incident.IncidentStatus;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
 import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
@@ -55,10 +49,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The incident history entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = IncidentHistoryCreationDTO.class, patch = IncidentHistoryPatchDTO.class, read = IncidentHistoryDTO.class, update = IncidentHistoryUpdateDTO.class)
 @Document("incidents-history")
 @Getter
 @Setter

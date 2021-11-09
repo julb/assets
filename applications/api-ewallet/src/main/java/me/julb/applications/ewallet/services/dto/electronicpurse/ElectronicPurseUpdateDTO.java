@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ import me.julb.library.utility.validator.constraints.Tag;
 
 /**
  * The DTO used to update an electronic purse.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter

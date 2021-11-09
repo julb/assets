@@ -23,7 +23,7 @@ import me.julb.springbootstarter.mail.services.MailService;
 
 /**
  * The captcha controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

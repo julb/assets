@@ -18,7 +18,7 @@ import me.julb.applications.dataprocessing.configurations.beans.CustomJobExecuti
 
 /**
  * A String item reader example.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j

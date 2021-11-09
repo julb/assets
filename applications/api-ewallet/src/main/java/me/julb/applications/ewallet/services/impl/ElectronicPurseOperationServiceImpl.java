@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,14 @@
 
 package me.julb.applications.ewallet.services.impl;
 
-import com.google.common.base.Objects;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.google.common.base.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,6 +43,7 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.ewallet.entities.ElectronicPurseEntity;
 import me.julb.applications.ewallet.entities.ElectronicPurseOperationEntity;
+import me.julb.applications.ewallet.entities.mappers.ElectronicPurseOperationEntityMapper;
 import me.julb.applications.ewallet.repositories.ElectronicPurseOperationRepository;
 import me.julb.applications.ewallet.repositories.ElectronicPurseRepository;
 import me.julb.applications.ewallet.repositories.specifications.ElectronicPurseOperationByElectronicPurseSpecification;
@@ -55,9 +56,7 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedCurrencyMismatch;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.moneyamount.MoneyAmountDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
@@ -65,7 +64,8 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.mapping.entities.moneyamount.mappers.MoneyAmountEntityMapper;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -76,7 +76,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The electronic purse service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -100,7 +100,19 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private ElectronicPurseOperationEntityMapper mapper;
+
+    /**
+     * The user ref mapper.
+     */
+    @Autowired
+    private UserRefEntityMapper userRefMmapper;
+
+    /**
+     * The money amount mapper.
+     */
+    @Autowired
+    private MoneyAmountEntityMapper moneyAmountMapper;
 
     /**
      * The security service.
@@ -131,7 +143,7 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
 
         ISpecification<ElectronicPurseOperationEntity> spec = new SearchSpecification<ElectronicPurseOperationEntity>(searchable).and(new TmSpecification<>(tm)).and(new ElectronicPurseOperationByElectronicPurseSpecification(electronicPurse));
         Page<ElectronicPurseOperationEntity> result = electronicPurseOperationRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, ElectronicPurseOperationDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -148,7 +160,7 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
         }
 
         List<ElectronicPurseOperationEntity> result = electronicPurseOperationRepository.findByTmAndElectronicPurseId(tm, electronicPurseId);
-        return mappingService.mapAsList(result, ElectronicPurseOperationDTO.class);
+        return result.stream().map(mapper::map).toList();
     }
 
     /**
@@ -170,7 +182,7 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
             throw new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id);
         }
 
-        return mappingService.map(result, ElectronicPurseOperationDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -195,7 +207,7 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
         }
 
         // Update the entity
-        ElectronicPurseOperationEntity entityToCreate = mappingService.map(creationDTO, ElectronicPurseOperationEntity.class);
+        ElectronicPurseOperationEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setElectronicPurse(electronicPurse);
         entityToCreate.setExecutionDateTime(DateUtility.dateTimeNow());
         this.onPersist(entityToCreate);
@@ -203,7 +215,7 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
         // Get result back.
         ElectronicPurseOperationEntity result = electronicPurseOperationRepository.save(entityToCreate);
 
-        return mappingService.map(result, ElectronicPurseOperationDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -227,11 +239,11 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         ElectronicPurseOperationEntity result = electronicPurseOperationRepository.save(existing);
-        return mappingService.map(result, ElectronicPurseOperationDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -255,11 +267,11 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         ElectronicPurseOperationEntity result = electronicPurseOperationRepository.save(existing);
-        return mappingService.map(result, ElectronicPurseOperationDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -301,7 +313,7 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
 
         // Create cancel operation.
         ElectronicPurseOperationCreationDTO cancelOperation = new ElectronicPurseOperationCreationDTO();
-        cancelOperation.setAmount(mappingService.map(originalOperation.getAmount(), MoneyAmountDTO.class));
+        cancelOperation.setAmount(moneyAmountMapper.map(originalOperation.getAmount()));
         cancelOperation.setLocalizedMessage(new HashMap<>());
         cancelOperation.setSendNotification(true);
         cancelOperation.setType(cancellingOperationType);
@@ -376,7 +388,7 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
 
         // Add author.
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
+        entity.setUser(userRefMmapper.map(connnectedUser));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

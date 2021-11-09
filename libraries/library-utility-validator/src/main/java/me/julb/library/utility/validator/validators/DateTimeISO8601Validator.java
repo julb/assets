@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ import me.julb.library.utility.validator.constraints.DateTimeISO8601;
 
 /**
  * Validator to check that a String is a ISO-8601 datetime.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class DateTimeISO8601Validator implements ConstraintValidator<DateTimeISO8601, String> {

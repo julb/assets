@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ import me.julb.library.utility.date.DateUtility;
 
 /**
  * The RSS feed view based on the {@link RSSFeedDTO}.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class RSSFeedView extends AbstractRssFeedView {

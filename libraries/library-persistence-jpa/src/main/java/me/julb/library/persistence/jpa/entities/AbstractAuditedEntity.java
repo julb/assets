@@ -11,7 +11,7 @@ import me.julb.library.utility.validator.constraints.DateTimeISO8601;
 
 /**
  * Description of an base entity.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter

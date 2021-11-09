@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ import org.springframework.validation.annotation.Validated;
 import me.julb.applications.platformhealth.entities.ComponentEntity;
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceComponentEntity;
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceEntity;
+import me.julb.applications.platformhealth.entities.mappers.PlannedMaintenanceComponentEntityMapper;
 import me.julb.applications.platformhealth.repositories.ComponentRepository;
 import me.julb.applications.platformhealth.repositories.PlannedMaintenanceComponentRepository;
 import me.julb.applications.platformhealth.repositories.PlannedMaintenanceRepository;
@@ -54,7 +55,6 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -65,7 +65,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The planned maintenance service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -95,7 +95,7 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private PlannedMaintenanceComponentEntityMapper mapper;
 
     /**
      * The security service.
@@ -127,7 +127,7 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
         // Try to search within the link.
         ISpecification<PlannedMaintenanceComponentEntity> spec = new SearchSpecification<PlannedMaintenanceComponentEntity>(searchable).and(new TmSpecification<>(tm));
         Page<PlannedMaintenanceComponentEntity> result = plannedMaintenanceComponentRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, PlannedMaintenanceComponentDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -155,7 +155,7 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
             throw new ResourceNotFoundException(PlannedMaintenanceComponentEntity.class, Map.<String, String> of("plannedMaintenance", plannedMaintenanceId, "component", componentId));
         }
 
-        return mappingService.map(result, PlannedMaintenanceComponentDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -193,7 +193,7 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
         this.onPersist(plannedMaintenanceComponentToCreate);
 
         PlannedMaintenanceComponentEntity result = plannedMaintenanceComponentRepository.save(plannedMaintenanceComponentToCreate);
-        return mappingService.map(result, PlannedMaintenanceComponentDTO.class);
+        return mapper.map(result);
     }
 
     /**

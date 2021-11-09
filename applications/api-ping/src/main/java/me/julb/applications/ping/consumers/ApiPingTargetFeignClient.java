@@ -6,7 +6,7 @@ import me.julb.library.dto.simple.message.MessageDTO;
 
 /**
  * A Feign client to ping a remote ping application.
- * <P>
+ * <br>
  * @author Julb.
  */
 public interface ApiPingTargetFeignClient {

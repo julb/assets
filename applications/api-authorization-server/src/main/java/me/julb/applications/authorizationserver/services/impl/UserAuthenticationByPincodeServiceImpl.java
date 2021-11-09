@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,9 @@ import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByPincodeEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByTotpEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
+import me.julb.applications.authorizationserver.entities.authentication.mappers.UserAuthenticationEntityMapper;
 import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
+import me.julb.applications.authorizationserver.entities.mappers.UserEntityMapper;
 import me.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
 import me.julb.applications.authorizationserver.entities.preferences.UserPreferencesEntity;
 import me.julb.applications.authorizationserver.repositories.UserAuthenticationByPincodeRepository;
@@ -62,7 +64,6 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeUpdateDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelType;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.applications.authorizationserver.services.exceptions.InvalidPincodeException;
 import me.julb.applications.authorizationserver.services.exceptions.InvalidPincodeResetTokenException;
 import me.julb.applications.authorizationserver.services.exceptions.PincodeResetTokenExpiredException;
@@ -79,7 +80,6 @@ import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
@@ -89,7 +89,7 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
 
 /**
  * The user authentication by pincode service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -137,7 +137,13 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserAuthenticationEntityMapper mapper;
+
+    /**
+     * The user mapper.
+     */
+    @Autowired
+    private UserEntityMapper userMapper;
 
     /**
      * The security service.
@@ -184,7 +190,7 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
             throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
         }
 
-        return mappingService.map(result, UserAuthenticationByPincodeDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -214,8 +220,8 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
         } else {
             credentials.setCredentialsNonExpired(true);
         }
-        credentials.setUserAuthentication(mappingService.map(result, UserAuthenticationByPincodeDTO.class));
-        credentials.setUser(mappingService.map(result.getUser(), UserDTO.class));
+        credentials.setUserAuthentication(mapper.map(result));
+        credentials.setUser(userMapper.map(result.getUser()));
 
         return credentials;
     }
@@ -241,7 +247,7 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
             throw new ResourceAlreadyExistsException(UserAuthenticationByPincodeEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.PINCODE.toString()));
         }
 
-        UserAuthenticationByPincodeEntity entityToCreate = mappingService.map(creationDTO, UserAuthenticationByPincodeEntity.class);
+        UserAuthenticationByPincodeEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setUser(user);
         entityToCreate.setMfaEnabled(Boolean.FALSE);
         this.onPersist(entityToCreate);
@@ -278,11 +284,11 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(existing);
-        return mappingService.map(result, UserAuthenticationByPincodeDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -313,11 +319,11 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(existing);
-        return mappingService.map(result, UserAuthenticationByPincodeDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -421,7 +427,7 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
         }
 
         UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(existing);
-        return mappingService.map(result, UserAuthenticationByPincodeDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -540,7 +546,7 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
         this.onUpdate(userAuthentication);
 
         UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(userAuthentication);
-        return mappingService.map(result, UserAuthenticationByPincodeDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Private methods.

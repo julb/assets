@@ -6,5 +6,4 @@
 .data
 build
 bin
-lombok.config
 target

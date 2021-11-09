@@ -33,7 +33,7 @@ import me.julb.library.utility.data.search.Searchable;
 
 /**
  * OpenAPI annotation for Methods having {@link Searchable} parameter.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})

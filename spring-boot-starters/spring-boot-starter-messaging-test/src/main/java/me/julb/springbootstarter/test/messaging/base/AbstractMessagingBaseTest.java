@@ -9,7 +9,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**
  * Base unit test for messaging.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Import(TestChannelBinderConfiguration.class)

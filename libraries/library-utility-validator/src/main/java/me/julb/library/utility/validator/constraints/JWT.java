@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ import javax.validation.constraints.Pattern;
 
 /**
  * Validator to check that a String is a JWT.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Pattern(regexp = "^([a-zA-Z0-9\\-_]+)?(\\.([a-zA-Z0-9\\-_]+)?)+\\.([a-zA-Z0-9\\-_]+)?$")

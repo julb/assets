@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,8 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
+import me.julb.applications.authorizationserver.entities.mail.mappers.UserMailEntityMapper;
+import me.julb.applications.authorizationserver.entities.mappers.UserEntityMapper;
 import me.julb.applications.authorizationserver.entities.preferences.UserPreferencesEntity;
 import me.julb.applications.authorizationserver.repositories.UserMailRepository;
 import me.julb.applications.authorizationserver.repositories.UserPreferencesRepository;
@@ -68,7 +70,6 @@ import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
@@ -81,7 +82,7 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
 
 /**
  * The user mail service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -111,7 +112,13 @@ public class UserMailServiceImpl implements UserMailService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserMailEntityMapper mapper;
+
+    /**
+     * The mapper.
+     */
+    @Autowired
+    private UserEntityMapper userMapper;
 
     /**
      * The security service.
@@ -154,7 +161,7 @@ public class UserMailServiceImpl implements UserMailService {
 
         ISpecification<UserMailEntity> spec = new SearchSpecification<UserMailEntity>(searchable).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
         Page<UserMailEntity> result = userMailRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, UserMailDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -176,7 +183,7 @@ public class UserMailServiceImpl implements UserMailService {
             throw new ResourceNotFoundException(UserMailEntity.class, id);
         }
 
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -203,7 +210,7 @@ public class UserMailServiceImpl implements UserMailService {
             throw new ResourceNotFoundException(UserMailEntity.class, "mail", mail);
         }
 
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -219,7 +226,7 @@ public class UserMailServiceImpl implements UserMailService {
             throw new ResourceNotFoundException(UserMailEntity.class, "mail", mail);
         }
 
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -235,7 +242,7 @@ public class UserMailServiceImpl implements UserMailService {
             throw new ResourceNotFoundException(UserMailEntity.class, "mail", mail);
         }
 
-        return mappingService.map(result.getUser(), UserDTO.class);
+        return userMapper.map(result.getUser());
     }
 
     // ------------------------------------------ Write methods.
@@ -259,13 +266,13 @@ public class UserMailServiceImpl implements UserMailService {
             throw new ResourceAlreadyExistsException(UserMailEntity.class, "mail", creationDTO.getMail());
         }
 
-        UserMailEntity entityToCreate = mappingService.map(creationDTO, UserMailEntity.class);
+        UserMailEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setUser(user);
         entityToCreate.setVerified(false);
         this.onPersist(entityToCreate);
 
         UserMailEntity result = userMailRepository.save(entityToCreate);
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -289,11 +296,11 @@ public class UserMailServiceImpl implements UserMailService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         UserMailEntity result = userMailRepository.save(existing);
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -317,11 +324,11 @@ public class UserMailServiceImpl implements UserMailService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         UserMailEntity result = userMailRepository.save(existing);
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -383,7 +390,7 @@ public class UserMailServiceImpl implements UserMailService {
         }
 
         UserMailEntity result = userMailRepository.save(existing);
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -431,7 +438,7 @@ public class UserMailServiceImpl implements UserMailService {
         }
 
         UserMailEntity result = userMailRepository.save(existing);
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -469,7 +476,7 @@ public class UserMailServiceImpl implements UserMailService {
         }
 
         UserMailEntity result = userMailRepository.save(existing);
-        return mappingService.map(result, UserMailDTO.class);
+        return mapper.map(result);
     }
 
     /**

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
+import me.julb.applications.authorizationserver.entities.mappers.UserEntityMapper;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
 import me.julb.applications.authorizationserver.services.SignupService;
 import me.julb.applications.authorizationserver.services.UserAuthenticationByPasswordService;
@@ -61,7 +62,6 @@ import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
@@ -69,7 +69,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The sign-up service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -117,7 +117,7 @@ public class SignupServiceImpl implements SignupService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserEntityMapper mapper;
 
     /**
      * The security service.
@@ -144,7 +144,7 @@ public class SignupServiceImpl implements SignupService {
         UserEntity result = signupUser(signupWithInvite);
 
         // Return user
-        return mappingService.map(result, UserDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -161,7 +161,7 @@ public class SignupServiceImpl implements SignupService {
         userAuthenticationByPasswordService.create(result.getId(), dto);
 
         // Return user.
-        return mappingService.map(result, UserDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -178,7 +178,7 @@ public class SignupServiceImpl implements SignupService {
         userAuthenticationByPincodeService.create(result.getId(), dto);
 
         // Return user.
-        return mappingService.map(result, UserDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Utility methods.
@@ -195,7 +195,7 @@ public class SignupServiceImpl implements SignupService {
         }
 
         // Create the user entity
-        UserEntity entityToCreate = mappingService.map(signup, UserEntity.class);
+        UserEntity entityToCreate = mapper.map(signup);
         this.onPersist(entityToCreate);
         UserEntity result = userRepository.save(entityToCreate);
 

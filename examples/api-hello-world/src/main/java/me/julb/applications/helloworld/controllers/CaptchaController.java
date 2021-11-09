@@ -14,7 +14,7 @@ import me.julb.springbootstarter.googlerecaptcha.annotations.GoogleReCaptchaVali
 
 /**
  * The captcha controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

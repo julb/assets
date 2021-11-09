@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,16 +24,16 @@
 
 package me.julb.applications.authorizationserver.services.impl;
 
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +46,7 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
+import me.julb.applications.authorizationserver.entities.mobilephone.mappers.UserMobilePhoneEntityMapper;
 import me.julb.applications.authorizationserver.entities.preferences.UserPreferencesEntity;
 import me.julb.applications.authorizationserver.repositories.UserMobilePhoneRepository;
 import me.julb.applications.authorizationserver.repositories.UserPreferencesRepository;
@@ -72,7 +73,6 @@ import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
@@ -85,7 +85,7 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
 
 /**
  * The user mobile phone service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -115,7 +115,7 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserMobilePhoneEntityMapper mapper;
 
     /**
      * The security service.
@@ -158,7 +158,7 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
 
         ISpecification<UserMobilePhoneEntity> spec = new SearchSpecification<UserMobilePhoneEntity>(searchable).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
         Page<UserMobilePhoneEntity> result = userMobilePhoneRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, UserMobilePhoneDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -180,7 +180,7 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
             throw new ResourceNotFoundException(UserMobilePhoneEntity.class, id);
         }
 
-        return mappingService.map(result, UserMobilePhoneDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -208,7 +208,7 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
 
             // Check validity of the number.
 
-            UserMobilePhoneEntity entityToCreate = mappingService.map(creationDTO, UserMobilePhoneEntity.class);
+            UserMobilePhoneEntity entityToCreate = mapper.map(creationDTO);
             entityToCreate.setUser(user);
             entityToCreate.setVerified(false);
 
@@ -222,7 +222,7 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
             this.onPersist(entityToCreate);
 
             UserMobilePhoneEntity result = userMobilePhoneRepository.save(entityToCreate);
-            return mappingService.map(result, UserMobilePhoneDTO.class);
+            return mapper.map(result);
         } catch (NumberParseException e) {
             throw new InternalServerErrorException(e);
         }
@@ -249,11 +249,11 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
-        return mappingService.map(result, UserMobilePhoneDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -277,11 +277,11 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
-        return mappingService.map(result, UserMobilePhoneDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -342,7 +342,7 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
         }
 
         UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
-        return mappingService.map(result, UserMobilePhoneDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -389,7 +389,7 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
         }
 
         UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
-        return mappingService.map(result, UserMobilePhoneDTO.class);
+        return mapper.map(result);
     }
 
     /**

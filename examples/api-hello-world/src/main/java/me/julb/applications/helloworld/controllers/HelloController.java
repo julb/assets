@@ -37,7 +37,7 @@ import me.julb.springbootstarter.web.utility.PageUtility;
 
 /**
  * The hello controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
+import org.springframework.cloud.function.context.test.FunctionalSpringBootTest;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.PrometheusMetricsPushService;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricType;
@@ -41,9 +44,10 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**
  * The unit test class for the serverless function.
- * <P>
+ * <br>
  * @author Julb.
  */
+@FunctionalSpringBootTest
 public class PushPrometheusMetricsFunctionTest extends AbstractBaseTest {
 
     /**
@@ -64,7 +68,7 @@ public class PushPrometheusMetricsFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenSendMetrics()
         throws Exception {
-        Consumer<MetricsCreationWrapperDTO> function = functionCatalog.lookup("pushPrometheusMetricsFunction");
+        Consumer<Message<MetricsCreationWrapperDTO>> function = functionCatalog.lookup("pushPrometheusMetricsFunction");
 
         MetricsCreationWrapperDTO dto = new MetricsCreationWrapperDTO();
         dto.setJob("some-job");
@@ -79,7 +83,7 @@ public class PushPrometheusMetricsFunctionTest extends AbstractBaseTest {
         metrics.getAdditionalLabels().put("env", "prod");
         dto.setMetrics(new ArrayList<>());
         dto.getMetrics().add(metrics);
-        function.accept(dto);
+        function.accept(MessageBuilder.withPayload(dto).build());
 
         Mockito.verify(prometheusMetricsPushService).pushAll(dto);
 

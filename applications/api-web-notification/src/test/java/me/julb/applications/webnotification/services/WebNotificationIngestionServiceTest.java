@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ import me.julb.springbootstarter.test.security.annotations.WithMockUser;
 
 /**
  * Unit test for the {@link CollectController} class.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Import(TestChannelBinderConfiguration.class)
@@ -73,7 +73,7 @@ public class WebNotificationIngestionServiceTest extends AbstractMongoDbBaseTest
      * The MongoDB container.
      */
     @Container
-    private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.0.10"));
+    private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.4"));
 
     /**
      * The web notification ingestion service.
@@ -158,7 +158,7 @@ public class WebNotificationIngestionServiceTest extends AbstractMongoDbBaseTest
 
     /**
      * Initializer class for the test.
-     * <P>
+     * <br>
      * @author Julb.
      */
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {

@@ -19,7 +19,7 @@ import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
 
 /**
  * The hello controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

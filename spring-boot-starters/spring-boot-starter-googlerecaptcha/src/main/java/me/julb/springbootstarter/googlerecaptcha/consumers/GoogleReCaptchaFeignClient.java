@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ import me.julb.springbootstarter.googlerecaptcha.consumers.GoogleReCaptchaFeignC
 
 /**
  * The Google ReCaptcha Feign client.
- * <P>
+ * <br>
  * @author Julb.
  */
 @ConditionalOnGoogleReCaptchaEnabled
@@ -63,7 +63,7 @@ public interface GoogleReCaptchaFeignClient {
 
     /**
      * The local consumer properties.
-     * <P>
+     * <br>
      * @author Julb.
      */
     @Getter
@@ -87,7 +87,7 @@ public interface GoogleReCaptchaFeignClient {
 
     /**
      * The local consumer configuration.
-     * <P>
+     * <br>
      * @author Julb.
      */
     @EnableConfigurationProperties({LocalConsumerProperties.class})

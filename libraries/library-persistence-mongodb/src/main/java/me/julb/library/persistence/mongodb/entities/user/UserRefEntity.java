@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,18 +33,14 @@ import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.utility.validator.constraints.E164Number;
 import me.julb.library.utility.validator.constraints.Identifier;
 
 /**
  * The user entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = UserRefDTO.class, read = UserRefDTO.class)
 @Getter
 @Setter
 public class UserRefEntity {

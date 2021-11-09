@@ -9,7 +9,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 /**
  * Simple tasklet example.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j
