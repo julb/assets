@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceEntity;
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceHistoryEntity;
+import me.julb.applications.platformhealth.entities.mappers.PlannedMaintenanceHistoryEntityMapper;
 import me.julb.applications.platformhealth.repositories.PlannedMaintenanceHistoryRepository;
 import me.julb.applications.platformhealth.repositories.PlannedMaintenanceRepository;
 import me.julb.applications.platformhealth.repositories.specifications.PlannedMaintenanceHistoryByPlannedMaintenanceSpecification;
@@ -50,14 +51,13 @@ import me.julb.applications.platformhealth.services.dto.plannedmaintenance.Plann
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -68,7 +68,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The planned maintenance service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -92,7 +92,13 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private PlannedMaintenanceHistoryEntityMapper mapper;
+
+    /**
+     * The user ref mapper.
+     */
+    @Autowired
+    private UserRefEntityMapper userRefMapper;
 
     /**
      * The security service.
@@ -124,7 +130,7 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
         ISpecification<PlannedMaintenanceHistoryEntity> spec =
             new SearchSpecification<PlannedMaintenanceHistoryEntity>(searchable).and(new TmSpecification<>(tm)).and(new PlannedMaintenanceHistoryByPlannedMaintenanceSpecification(plannedMaintenance));
         Page<PlannedMaintenanceHistoryEntity> result = plannedMaintenanceHistoryRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, PlannedMaintenanceHistoryDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -146,7 +152,7 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
             throw new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id);
         }
 
-        return mappingService.map(result, PlannedMaintenanceHistoryDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -166,7 +172,7 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
         }
 
         // Update the entity
-        PlannedMaintenanceHistoryEntity entityToCreate = mappingService.map(creationDTO, PlannedMaintenanceHistoryEntity.class);
+        PlannedMaintenanceHistoryEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setPlannedMaintenance(plannedMaintenance);
         entityToCreate.setPreviousStatus(plannedMaintenance.getStatus());
         this.onPersist(entityToCreate);
@@ -180,7 +186,7 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
         plannedMaintenanceRepository.save(plannedMaintenance);
         postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED);
 
-        return mappingService.map(result, PlannedMaintenanceHistoryDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -204,14 +210,14 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         // Update the planned maintenance.
         postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED);
 
         PlannedMaintenanceHistoryEntity result = plannedMaintenanceHistoryRepository.save(existing);
-        return mappingService.map(result, PlannedMaintenanceHistoryDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -235,14 +241,14 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         // Update the planned maintenance.
         postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED);
 
         PlannedMaintenanceHistoryEntity result = plannedMaintenanceHistoryRepository.save(existing);
-        return mappingService.map(result, PlannedMaintenanceHistoryDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -322,7 +328,7 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
 
         // Add author.
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
+        entity.setUser(userRefMapper.map(connnectedUser));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

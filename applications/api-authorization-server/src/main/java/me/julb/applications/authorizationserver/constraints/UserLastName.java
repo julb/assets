@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ import javax.validation.constraints.Size;
 
 /**
  * Validator to check that the String is a valid user last name.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Size(max = 128)

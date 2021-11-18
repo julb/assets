@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.urlshortener.entities.LinkEntity;
+import me.julb.applications.urlshortener.entities.mappers.LinkEntityMapper;
 import me.julb.applications.urlshortener.repositories.LinkRepository;
 import me.julb.applications.urlshortener.services.HostService;
 import me.julb.applications.urlshortener.services.LinkService;
@@ -49,7 +50,6 @@ import me.julb.applications.urlshortener.services.dto.LinkUpdateDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
@@ -57,7 +57,7 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -68,7 +68,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The link service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -92,7 +92,13 @@ public class LinkServiceImpl implements LinkService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private LinkEntityMapper mapper;
+
+    /**
+     * The user ref mapper.
+     */
+    @Autowired
+    private UserRefEntityMapper userRefMapper;
 
     /**
      * The security service.
@@ -117,7 +123,7 @@ public class LinkServiceImpl implements LinkService {
 
         ISpecification<LinkEntity> spec = new SearchSpecification<LinkEntity>(searchable).and(new TmSpecification<>(tm));
         Page<LinkEntity> result = linkRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, LinkDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -133,7 +139,7 @@ public class LinkServiceImpl implements LinkService {
             throw new ResourceNotFoundException(LinkEntity.class, id);
         }
 
-        return mappingService.map(result, LinkDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -157,11 +163,11 @@ public class LinkServiceImpl implements LinkService {
         }
 
         // Update the entity
-        LinkEntity entityToCreate = mappingService.map(creationDTO, LinkEntity.class);
+        LinkEntity entityToCreate = mapper.map(creationDTO);
         this.onPersist(entityToCreate);
 
         LinkEntity result = linkRepository.save(entityToCreate);
-        return mappingService.map(result, LinkDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -182,7 +188,7 @@ public class LinkServiceImpl implements LinkService {
         this.onUpdate(existing);
 
         LinkEntity result = linkRepository.save(existing);
-        return mappingService.map(result, LinkDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -203,7 +209,7 @@ public class LinkServiceImpl implements LinkService {
         this.onUpdate(existing);
 
         LinkEntity result = linkRepository.save(existing);
-        return mappingService.map(result, LinkDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -231,11 +237,11 @@ public class LinkServiceImpl implements LinkService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         LinkEntity result = linkRepository.save(existing);
-        return mappingService.map(result, LinkDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -273,11 +279,11 @@ public class LinkServiceImpl implements LinkService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         LinkEntity result = linkRepository.save(existing);
-        return mappingService.map(result, LinkDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -317,7 +323,7 @@ public class LinkServiceImpl implements LinkService {
 
         // Add author.
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
+        entity.setUser(userRefMapper.map(connnectedUser));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

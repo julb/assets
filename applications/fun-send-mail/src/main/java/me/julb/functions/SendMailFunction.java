@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,20 +26,20 @@ package me.julb.functions;
 
 import java.util.function.Consumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
 
+import lombok.extern.slf4j.Slf4j;
 import me.julb.library.dto.mail.MailDTO;
 import me.julb.springbootstarter.mail.services.MailService;
 
 /**
  * The function to send mail.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j
-public class SendMailFunction implements Consumer<MailDTO> {
+public class SendMailFunction implements Consumer<Message<MailDTO>> {
 
     /**
      * The mail service.
@@ -51,10 +51,10 @@ public class SendMailFunction implements Consumer<MailDTO> {
      * {@inheritDoc}
      */
     @Override
-    public void accept(MailDTO mail) {
+    public void accept(Message<MailDTO> mail) {
         try {
             LOGGER.debug("Received invokation to send mail.");
-            mailService.send(mail);
+            mailService.send(mail.getPayload());
             LOGGER.debug("Method invoked successfully.");
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());

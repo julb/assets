@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ import me.julb.springbootstarter.test.messaging.base.AbstractMessagingBaseTest;
 
 /**
  * Unit test for class {@link AsyncPosterMessageService}.
- * <P>
+ * <br>
  * @author Julb.
  */
 @SpringBootApplication

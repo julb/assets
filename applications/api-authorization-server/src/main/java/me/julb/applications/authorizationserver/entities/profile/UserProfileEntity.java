@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,24 +31,18 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import me.julb.applications.authorizationserver.constraints.UserFirstName;
 import me.julb.applications.authorizationserver.constraints.UserLastName;
 import me.julb.applications.authorizationserver.entities.UserEntity;
-import me.julb.applications.authorizationserver.services.dto.profile.UserProfileCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.profile.UserProfileDTO;
-import me.julb.applications.authorizationserver.services.dto.profile.UserProfilePatchDTO;
-import me.julb.applications.authorizationserver.services.dto.profile.UserProfileUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.interfaces.IIdentifiable;
@@ -58,10 +52,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The user profile entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = UserProfileCreationDTO.class, patch = UserProfilePatchDTO.class, read = UserProfileDTO.class, update = UserProfileUpdateDTO.class)
 @Getter
 @Setter
 @ToString

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,21 +27,15 @@ package me.julb.applications.platformhealth.entities;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.julb.applications.platformhealth.services.dto.incident.IncidentComponentImpactLevel;
-import me.julb.applications.platformhealth.services.dto.incidentcomponent.IncidentComponentCreationDTO;
-import me.julb.applications.platformhealth.services.dto.incidentcomponent.IncidentComponentDTO;
-import me.julb.applications.platformhealth.services.dto.incidentcomponent.IncidentComponentPatchDTO;
-import me.julb.applications.platformhealth.services.dto.incidentcomponent.IncidentComponentUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.utility.interfaces.IIdentifiable;
 import me.julb.library.utility.validator.constraints.Identifier;
@@ -49,10 +43,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The incident component entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = IncidentComponentCreationDTO.class, patch = IncidentComponentPatchDTO.class, read = IncidentComponentDTO.class, update = IncidentComponentUpdateDTO.class)
 @Document("incidents-components")
 @Getter
 @Setter

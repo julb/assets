@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,34 +24,25 @@
 
 package me.julb.applications.bookmark.entities;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import me.julb.applications.bookmark.services.dto.ItemType;
-import me.julb.applications.bookmark.services.dto.folder.FolderCreationDTO;
-import me.julb.applications.bookmark.services.dto.folder.FolderDTO;
-import me.julb.applications.bookmark.services.dto.folder.FolderPatchDTO;
-import me.julb.applications.bookmark.services.dto.folder.FolderUpdateDTO;
-import me.julb.library.dto.simple.identifier.IdentifierDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
-import me.julb.library.utility.interfaces.IIdentifiable;
 
 /**
  * The folder entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = FolderCreationDTO.class, patch = FolderPatchDTO.class, read = {FolderDTO.class, IdentifierDTO.class}, update = FolderUpdateDTO.class)
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Document("bookmarks")
-public class FolderEntity extends AbstractItemEntity implements IIdentifiable {
+public class FolderEntity extends AbstractItemEntity {
 
     /**
      * Default constructor.

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 /**
  * The pre-authenticated authentication provider. This is a copy of the Spring class
- * <P>
+ * <br>
  * @author Julb.
  */
 public abstract class AbstractPreAuthenticatedAuthenticationProvider implements AuthenticationProvider, InitializingBean, Ordered {

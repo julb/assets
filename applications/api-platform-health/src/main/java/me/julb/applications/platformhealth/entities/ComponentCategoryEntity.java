@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,19 +32,13 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import me.julb.applications.platformhealth.services.dto.componentcategory.ComponentCategoryCreationDTO;
-import me.julb.applications.platformhealth.services.dto.componentcategory.ComponentCategoryDTO;
-import me.julb.applications.platformhealth.services.dto.componentcategory.ComponentCategoryPatchDTO;
-import me.julb.applications.platformhealth.services.dto.componentcategory.ComponentCategoryUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.persistence.mongodb.entities.message.LargeMessageEntity;
 import me.julb.library.persistence.mongodb.entities.message.ShortMessageEntity;
@@ -54,10 +48,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The component category entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = ComponentCategoryCreationDTO.class, patch = ComponentCategoryPatchDTO.class, read = ComponentCategoryDTO.class, update = ComponentCategoryUpdateDTO.class)
 @Document("component-categories")
 @Getter
 @Setter

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 /**
  * The job execution metrics.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter

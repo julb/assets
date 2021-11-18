@@ -13,7 +13,7 @@ import org.springframework.batch.item.ItemWriter;
 
 /**
  * The string item writer.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j

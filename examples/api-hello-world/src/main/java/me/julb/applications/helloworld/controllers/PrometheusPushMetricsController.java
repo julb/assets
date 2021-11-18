@@ -17,7 +17,7 @@ import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.
 
 /**
  * The captcha controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

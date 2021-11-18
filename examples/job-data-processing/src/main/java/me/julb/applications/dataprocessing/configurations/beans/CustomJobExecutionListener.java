@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 /**
  * A listener for the current job execution.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j

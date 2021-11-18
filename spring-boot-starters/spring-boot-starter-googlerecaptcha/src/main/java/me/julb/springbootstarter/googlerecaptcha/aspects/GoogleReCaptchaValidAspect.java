@@ -17,7 +17,7 @@ import me.julb.springbootstarter.googlerecaptcha.services.GoogleReCaptchaService
 
 /**
  * The Google Re-Captcha aspect.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Aspect

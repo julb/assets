@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
+import me.julb.applications.authorizationserver.entities.mappers.UserEntityMapper;
 import me.julb.applications.authorizationserver.entities.session.UserSessionEntity;
+import me.julb.applications.authorizationserver.entities.session.mappers.UserSessionEntityMapper;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
 import me.julb.applications.authorizationserver.repositories.UserSessionRepository;
 import me.julb.applications.authorizationserver.repositories.specifications.ObjectBelongsToUserIdSpecification;
@@ -57,7 +59,6 @@ import me.julb.applications.authorizationserver.services.dto.session.UserSession
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionUpdateDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionWithRawIdTokenDTO;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.utility.constants.Integers;
@@ -70,7 +71,6 @@ import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecureIdToken;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -82,7 +82,7 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
 
 /**
  * The user session service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -106,7 +106,13 @@ public class UserSessionServiceImpl implements UserSessionService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserSessionEntityMapper mapper;
+
+    /**
+     * The user mapper.
+     */
+    @Autowired
+    private UserEntityMapper userMapper;
 
     /**
      * The security service.
@@ -149,7 +155,7 @@ public class UserSessionServiceImpl implements UserSessionService {
 
         ISpecification<UserSessionEntity> spec = new SearchSpecification<UserSessionEntity>(searchable).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
         Page<UserSessionEntity> result = userSessionRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, UserSessionDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -170,8 +176,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         if (result == null) {
             throw new ResourceNotFoundException(UserSessionEntity.class, id);
         }
-
-        return mappingService.map(result, UserSessionDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -203,8 +208,8 @@ public class UserSessionServiceImpl implements UserSessionService {
         UserSessionCredentialsDTO credentials = new UserSessionCredentialsDTO();
         credentials.setCredentials(result.getSecuredIdToken());
         credentials.setCredentialsNonExpired(true);
-        credentials.setUserSession(mappingService.map(result, UserSessionDTO.class));
-        credentials.setUser(mappingService.map(result.getUser(), UserDTO.class));
+        credentials.setUserSession(mapper.map(result));
+        credentials.setUser(userMapper.map(result.getUser()));
 
         return credentials;
     }
@@ -225,7 +230,7 @@ public class UserSessionServiceImpl implements UserSessionService {
             throw new ResourceNotFoundException(UserEntity.class, userId);
         }
 
-        UserSessionEntity entityToCreate = mappingService.map(creationDTO, UserSessionEntity.class);
+        UserSessionEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setUser(user);
         entityToCreate.setExpiryDateTime(DateUtility.dateTimePlus(creationDTO.getDurationInSeconds(), ChronoUnit.SECONDS));
         this.onPersist(entityToCreate);
@@ -236,7 +241,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         UserSessionEntity result = userSessionRepository.save(entityToCreate);
 
         // Add raw id token to the session.
-        UserSessionWithRawIdTokenDTO map = mappingService.map(result, UserSessionWithRawIdTokenDTO.class);
+        UserSessionWithRawIdTokenDTO map = mapper.mapWithRawIdToken(result);
         map.setRawIdToken(rawIdToken);
 
         // Return the result.
@@ -278,7 +283,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         }
 
         // Update
-        mappingService.map(accessTokenCreation, existing);
+        mapper.map(accessTokenCreation, existing);
         this.onUpdate(existing);
         UserSessionEntity result = userSessionRepository.save(existing);
 
@@ -321,7 +326,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         }
 
         // Update
-        mappingService.map(accessTokenCreation, existing);
+        mapper.map(accessTokenCreation, existing);
         this.onUpdate(existing);
         UserSessionEntity result = userSessionRepository.save(existing);
 
@@ -350,11 +355,11 @@ public class UserSessionServiceImpl implements UserSessionService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         UserSessionEntity result = userSessionRepository.save(existing);
-        return mappingService.map(result, UserSessionDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -378,11 +383,11 @@ public class UserSessionServiceImpl implements UserSessionService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         UserSessionEntity result = userSessionRepository.save(existing);
-        return mappingService.map(result, UserSessionDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -410,7 +415,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         this.onUpdate(existing);
 
         UserSessionEntity result = userSessionRepository.save(existing);
-        return mappingService.map(result, UserSessionDTO.class);
+        return mapper.map(result);
     }
 
     /**

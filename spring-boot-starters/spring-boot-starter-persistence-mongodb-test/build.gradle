@@ -1,7 +1,7 @@
 plugins {
 	id 'java-library'
 	id 'io.freefair.lombok'
-    id 'me.julb.gradleplugins.java11'
+    id 'me.julb.gradleplugins.java17'
 	id 'me.julb.gradleplugins.additionaljars'
 }
 
@@ -16,6 +16,4 @@ dependencies {
     api 'org.testcontainers:junit-jupiter'
 }
 
-lombok {
-    config['lombok.log.fieldName'] = 'LOGGER'
-}
+

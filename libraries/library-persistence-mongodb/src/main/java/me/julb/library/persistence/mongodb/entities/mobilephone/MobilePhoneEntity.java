@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,19 +34,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import me.julb.library.dto.simple.mobilephone.MobilePhoneCreationDTO;
-import me.julb.library.dto.simple.mobilephone.MobilePhoneDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.utility.interfaces.IPhoneNumber;
 import me.julb.library.utility.validator.constraints.PhoneNumber;
 
 /**
  * The mobile phone entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = MobilePhoneCreationDTO.class, read = MobilePhoneDTO.class)
 @Getter
 @Setter
 @ToString

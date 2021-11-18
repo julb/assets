@@ -17,7 +17,7 @@ import brave.Tracer;
 
 /**
  * This filter returns as a response header the Brave Trace ID.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Setter

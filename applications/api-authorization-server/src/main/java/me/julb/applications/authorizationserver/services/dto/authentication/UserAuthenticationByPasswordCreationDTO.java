@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ import me.julb.library.utility.validator.constraints.SecurePassword;
 
 /**
  * The DTO used to create a user authentication.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter

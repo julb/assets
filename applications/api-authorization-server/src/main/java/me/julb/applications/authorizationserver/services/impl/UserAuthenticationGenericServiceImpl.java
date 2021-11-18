@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.authentication.AbstractUserAuthenticationEntity;
+import me.julb.applications.authorizationserver.entities.authentication.mappers.UserAuthenticationEntityMapper;
 import me.julb.applications.authorizationserver.repositories.UserAuthenticationRepository;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
 import me.julb.applications.authorizationserver.services.UserAuthenticationGenericService;
@@ -44,7 +45,6 @@ import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
@@ -52,7 +52,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The user authentication generic service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -76,7 +76,7 @@ public class UserAuthenticationGenericServiceImpl implements UserAuthenticationG
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserAuthenticationEntityMapper mapper;
 
     /**
      * The security service.
@@ -120,7 +120,7 @@ public class UserAuthenticationGenericServiceImpl implements UserAuthenticationG
         this.onUpdate(existing);
 
         AbstractUserAuthenticationEntity result = userAuthenticationRepository.save(existing);
-        return mappingService.map(result, AbstractUserAuthenticationDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Utility methods.

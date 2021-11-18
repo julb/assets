@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,11 @@
 
 package me.julb.applications.ewallet.services.impl;
 
-import com.google.common.base.Splitter;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import com.google.common.base.Splitter;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.ewallet.entities.MoneyVoucherEntity;
+import me.julb.applications.ewallet.entities.mappers.MoneyVoucherEntityMapper;
 import me.julb.applications.ewallet.repositories.MoneyVoucherRepository;
 import me.julb.applications.ewallet.services.MoneyVoucherService;
 import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherCreationDTO;
@@ -55,7 +56,6 @@ import me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRede
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.data.search.Searchable;
@@ -69,7 +69,7 @@ import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.MoneyVoucherCode;
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -81,7 +81,7 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
 
 /**
  * The money voucher service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -99,7 +99,13 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private MoneyVoucherEntityMapper mapper;
+
+    /**
+     * The user ref mapper.
+     */
+    @Autowired
+    private UserRefEntityMapper userRefMapper;
 
     /**
      * The security service.
@@ -136,7 +142,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
 
         ISpecification<MoneyVoucherEntity> spec = new SearchSpecification<MoneyVoucherEntity>(searchable).and(new TmSpecification<>(tm));
         Page<MoneyVoucherEntity> result = moneyVoucherRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, MoneyVoucherDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -155,7 +161,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
             throw new ResourceNotFoundException(MoneyVoucherEntity.class, "code", code);
         }
 
-        return mappingService.map(result, MoneyVoucherDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -171,7 +177,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
             throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
         }
 
-        return mappingService.map(result, MoneyVoucherDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -197,7 +203,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
         }
 
         // Create the voucher code
-        MoneyVoucherEntity entityToCreate = mappingService.map(creationDTO, MoneyVoucherEntity.class);
+        MoneyVoucherEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.getAmount().setCurrency(currency);
         entityToCreate.setEnabled(false);
         entityToCreate.setHash(voucherCodeHash);
@@ -206,7 +212,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
         this.onPersist(entityToCreate);
 
         MoneyVoucherEntity result = moneyVoucherRepository.save(entityToCreate);
-        MoneyVoucherWithRawCodeDTO moneyVoucherWithRawCode = mappingService.map(result, MoneyVoucherWithRawCodeDTO.class);
+        MoneyVoucherWithRawCodeDTO moneyVoucherWithRawCode = mapper.mapWithRawCode(result);
 
         // Add code to the return value.
         moneyVoucherWithRawCode.setRawCode(rawVoucherCode);
@@ -248,13 +254,13 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
         existing.setRedeemed(true);
         existing.setRedemptionDateTime(DateUtility.dateTimeNow());
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        existing.setRedeemedBy(mappingService.map(connnectedUser, UserRefEntity.class));
+        existing.setRedeemedBy(userRefMapper.map(connnectedUser));
 
         // Update
         this.onUpdate(existing);
 
         MoneyVoucherEntity result = moneyVoucherRepository.save(existing);
-        return mappingService.map(result, MoneyVoucherDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -272,11 +278,11 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         MoneyVoucherEntity result = moneyVoucherRepository.save(existing);
-        return mappingService.map(result, MoneyVoucherDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -294,11 +300,11 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         MoneyVoucherEntity result = moneyVoucherRepository.save(existing);
-        return mappingService.map(result, MoneyVoucherDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -357,7 +363,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
 
         // Add author.
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
+        entity.setUser(userRefMapper.map(connnectedUser));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

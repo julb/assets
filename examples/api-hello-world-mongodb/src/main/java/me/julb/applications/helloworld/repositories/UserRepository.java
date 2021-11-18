@@ -9,7 +9,7 @@ import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecifica
 
 /**
  * The paging and sorting repository.
- * <P>
+ * <br>
  * @author Julb.
  */
 public interface UserRepository extends MongoRepository<UserEntity, String>, MongoSpecificationExecutor<UserEntity> {

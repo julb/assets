@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,28 +29,21 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpPatchDTO;
-import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
-
 /**
  * The user authentication by TOTP entity.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter
 @Setter
 @ToString
 @Document("users-authentications")
-@ObjectMappingFactory(creation = UserAuthenticationByTotpCreationDTO.class, patch = UserAuthenticationByTotpPatchDTO.class, read = UserAuthenticationByTotpDTO.class, update = UserAuthenticationByTotpUpdateDTO.class)
 public class UserAuthenticationByTotpEntity extends AbstractUserAuthenticationEntity {
 
     //@formatter:off

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ import me.julb.springbootstarter.persistence.core.specifications.AbstractSearchS
 
 /**
  * The search specification that generates a JPA specification from a searchable object.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class SearchSpecification<T> extends AbstractSearchSpecification<T> implements Specification<T> {

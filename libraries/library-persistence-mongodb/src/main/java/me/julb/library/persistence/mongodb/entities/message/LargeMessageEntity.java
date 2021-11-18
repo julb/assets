@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,22 +29,15 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import me.julb.library.dto.simple.content.LargeContentCreationDTO;
-import me.julb.library.dto.simple.content.LargeContentDTO;
-import me.julb.library.dto.simple.content.LargeContentPatchDTO;
-import me.julb.library.dto.simple.content.LargeContentUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.utility.interfaces.Contentable;
 import me.julb.library.utility.validator.constraints.LargeContent;
 import me.julb.library.utility.validator.constraints.MimeType;
 
 /**
  * The message entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = LargeContentCreationDTO.class, patch = LargeContentPatchDTO.class, read = LargeContentDTO.class, update = LargeContentUpdateDTO.class)
 @Getter
 @Setter
 public class LargeMessageEntity implements Contentable {

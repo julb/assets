@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,6 +41,7 @@ import me.julb.applications.platformhealth.entities.ComponentCategoryEntity;
 import me.julb.applications.platformhealth.entities.ComponentEntity;
 import me.julb.applications.platformhealth.entities.IncidentEntity;
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceEntity;
+import me.julb.applications.platformhealth.entities.mappers.ComponentEntityMapper;
 import me.julb.applications.platformhealth.repositories.ComponentCategoryRepository;
 import me.julb.applications.platformhealth.repositories.ComponentRepository;
 import me.julb.applications.platformhealth.repositories.IncidentComponentRepository;
@@ -60,7 +61,6 @@ import me.julb.library.utility.exceptions.ResourceStillReferencedException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -71,7 +71,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The component service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -107,7 +107,7 @@ public class ComponentServiceImpl implements ComponentService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private ComponentEntityMapper mapper;
 
     /**
      * The security service.
@@ -138,7 +138,7 @@ public class ComponentServiceImpl implements ComponentService {
 
         ISpecification<ComponentEntity> spec = new SearchSpecification<ComponentEntity>(searchable).and(new TmSpecification<>(tm)).and(new ComponentByComponentCategorySpecification(componentCategory));
         Page<ComponentEntity> result = componentRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, ComponentDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -160,7 +160,7 @@ public class ComponentServiceImpl implements ComponentService {
             throw new ResourceNotFoundException(ComponentEntity.class, id);
         }
 
-        return mappingService.map(result, ComponentDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -180,13 +180,13 @@ public class ComponentServiceImpl implements ComponentService {
         }
 
         // Update the entity
-        ComponentEntity entityToCreate = mappingService.map(creationDTO, ComponentEntity.class);
+        ComponentEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setComponentCategory(componentCategory);
         this.onPersist(entityToCreate);
 
         // Get result back.
         ComponentEntity result = componentRepository.save(entityToCreate);
-        return mappingService.map(result, ComponentDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -210,11 +210,11 @@ public class ComponentServiceImpl implements ComponentService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         ComponentEntity result = componentRepository.save(existing);
-        return mappingService.map(result, ComponentDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -238,11 +238,11 @@ public class ComponentServiceImpl implements ComponentService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         ComponentEntity result = componentRepository.save(existing);
-        return mappingService.map(result, ComponentDTO.class);
+        return mapper.map(result);
     }
 
     /**

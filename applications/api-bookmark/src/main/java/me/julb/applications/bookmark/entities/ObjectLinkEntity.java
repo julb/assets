@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package me.julb.applications.bookmark.entities;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import me.julb.applications.bookmark.services.dto.ItemType;
-import me.julb.applications.bookmark.services.dto.object.ObjectLinkCreationDTO;
-import me.julb.applications.bookmark.services.dto.object.ObjectLinkDTO;
-import me.julb.applications.bookmark.services.dto.object.ObjectLinkPatchDTO;
-import me.julb.applications.bookmark.services.dto.object.ObjectLinkUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
-import me.julb.library.utility.interfaces.IIdentifiable;
 import me.julb.library.utility.validator.constraints.HTTPLink;
 import me.julb.library.utility.validator.constraints.Identifier;
 
 /**
  * The link entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = ObjectLinkCreationDTO.class, patch = ObjectLinkPatchDTO.class, read = ObjectLinkDTO.class, update = ObjectLinkUpdateDTO.class)
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Document("bookmarks")
-public class ObjectLinkEntity extends AbstractItemEntity implements IIdentifiable {
+public class ObjectLinkEntity extends AbstractItemEntity {
 
     //@formatter:off
      /**

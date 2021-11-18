@@ -35,7 +35,7 @@ import me.julb.library.utility.constants.PageRequestAttributes;
 
 /**
  * OpenAPI annotation for Methods having {@link Pageable} parameter.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})

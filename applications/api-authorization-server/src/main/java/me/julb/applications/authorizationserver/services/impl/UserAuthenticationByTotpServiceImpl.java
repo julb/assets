@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,8 @@ import me.julb.applications.authorizationserver.entities.authentication.UserAuth
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByPincodeEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByTotpEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
+import me.julb.applications.authorizationserver.entities.authentication.mappers.UserAuthenticationEntityMapper;
+import me.julb.applications.authorizationserver.entities.mappers.UserEntityMapper;
 import me.julb.applications.authorizationserver.repositories.UserAuthenticationByPasswordRepository;
 import me.julb.applications.authorizationserver.repositories.UserAuthenticationByPincodeRepository;
 import me.julb.applications.authorizationserver.repositories.UserAuthenticationByTotpRepository;
@@ -58,7 +60,6 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpUpdateDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpWithRawSecretDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.utility.constants.Integers;
@@ -71,7 +72,6 @@ import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.otp.TotpUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -83,7 +83,7 @@ import me.julb.springbootstarter.security.services.PasswordEncoderService;
 
 /**
  * The user authentication service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -119,7 +119,13 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserAuthenticationEntityMapper mapper;
+
+    /**
+     * The user mapper.
+     */
+    @Autowired
+    private UserEntityMapper userMapper;
 
     /**
      * The security service.
@@ -157,7 +163,7 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
         ISpecification<UserAuthenticationByTotpEntity> spec =
             new SearchSpecification<UserAuthenticationByTotpEntity>(searchable).and(new UserAuthenticationOfGivenTypeSpecification<>(UserAuthenticationType.TOTP)).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
         Page<UserAuthenticationByTotpEntity> result = userAuthenticationByTotpRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, UserAuthenticationByTotpDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -179,7 +185,7 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
             throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id);
         }
 
-        return mappingService.map(result, UserAuthenticationByTotpDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -212,8 +218,8 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
         UserAuthenticationCredentialsDTO credentials = new UserAuthenticationCredentialsDTO();
         credentials.setCredentials(encodedValidTotps.toArray(new String[0]));
         credentials.setCredentialsNonExpired(true);
-        credentials.setUserAuthentication(mappingService.map(result, UserAuthenticationByTotpDTO.class));
-        credentials.setUser(mappingService.map(result.getUser(), UserDTO.class));
+        credentials.setUserAuthentication(mapper.map(result));
+        credentials.setUser(userMapper.map(result.getUser()));
 
         return credentials;
     }
@@ -242,7 +248,7 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
         // Generate random reset.
         String secret = TotpUtility.generateRandomTotpSecret();
 
-        UserAuthenticationByTotpEntity entityToCreate = mappingService.map(creationDTO, UserAuthenticationByTotpEntity.class);
+        UserAuthenticationByTotpEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setUser(user);
         entityToCreate.setSecret(secret);
 
@@ -251,7 +257,7 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
         UserAuthenticationByTotpEntity result = userAuthenticationByTotpRepository.save(entityToCreate);
 
         // Return result
-        UserAuthenticationByTotpWithRawSecretDTO userAuthenticationByTotpWithRawSecret = mappingService.map(result, UserAuthenticationByTotpWithRawSecretDTO.class);
+        UserAuthenticationByTotpWithRawSecretDTO userAuthenticationByTotpWithRawSecret = mapper.mapWithRawSecret(result);
         userAuthenticationByTotpWithRawSecret.setRawSecret(secret);
         userAuthenticationByTotpWithRawSecret.setQrCodeUri(TotpUtility.generateQrcodeUri(user.getMail(), tm, secret));
         return userAuthenticationByTotpWithRawSecret;
@@ -283,11 +289,11 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         UserAuthenticationByTotpEntity result = userAuthenticationByTotpRepository.save(existing);
-        return mappingService.map(result, UserAuthenticationByTotpDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -316,11 +322,11 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         UserAuthenticationByTotpEntity result = userAuthenticationByTotpRepository.save(existing);
-        return mappingService.map(result, UserAuthenticationByTotpDTO.class);
+        return mapper.map(result);
     }
 
     /**

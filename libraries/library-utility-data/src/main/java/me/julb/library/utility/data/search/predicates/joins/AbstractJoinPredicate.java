@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ import me.julb.library.utility.data.search.predicates.SearchPredicate;
 
 /**
  * The join predicate.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter

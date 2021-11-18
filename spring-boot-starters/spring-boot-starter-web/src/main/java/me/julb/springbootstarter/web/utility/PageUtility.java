@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * The page utility to build paged responses from standard list.
- * <P>
+ * <br>
  * @author Julb.
  */
 public final class PageUtility {

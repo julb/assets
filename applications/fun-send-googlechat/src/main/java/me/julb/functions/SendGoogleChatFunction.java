@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,20 +26,20 @@ package me.julb.functions;
 
 import java.util.function.Consumer;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
 
+import lombok.extern.slf4j.Slf4j;
 import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
 
 /**
  * The function to send a google chat notification.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j
-public class SendGoogleChatFunction implements Consumer<GoogleChatMessageDTO> {
+public class SendGoogleChatFunction implements Consumer<Message<GoogleChatMessageDTO>> {
 
     /**
      * The Google chat service.
@@ -51,10 +51,10 @@ public class SendGoogleChatFunction implements Consumer<GoogleChatMessageDTO> {
      * {@inheritDoc}
      */
     @Override
-    public void accept(GoogleChatMessageDTO message) {
+    public void accept(Message<GoogleChatMessageDTO> message) {
         try {
             LOGGER.debug("Received invokation to send GoogleChat notification {}.", message.toString());
-            googleChatService.send(message);
+            googleChatService.send(message.getPayload());
             LOGGER.debug("Method invoked successfully.");
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());

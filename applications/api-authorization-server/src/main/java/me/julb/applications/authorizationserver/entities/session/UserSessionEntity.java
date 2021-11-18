@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,24 +29,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import me.julb.applications.authorizationserver.entities.UserEntity;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFirstCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionPatchDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionUpdateDTO;
-import me.julb.library.mapping.annotations.ObjectMappingFactory;
 import me.julb.library.persistence.mongodb.entities.AbstractAuditedEntity;
 import me.julb.library.utility.interfaces.IIdentifiable;
 import me.julb.library.utility.validator.constraints.DateTimeISO8601;
@@ -56,11 +48,9 @@ import me.julb.library.utility.validator.constraints.Trademark;
 
 /**
  * The user session entity.
- * <P>
+ * <br>
  * @author Julb.
  */
-@ObjectMappingFactory(creation = {UserSessionCreationDTO.class}, patch = UserSessionPatchDTO.class, read = UserSessionDTO.class, update = {UserSessionUpdateDTO.class, UserSessionAccessTokenFirstCreationDTO.class,
-    UserSessionAccessTokenFromIdTokenCreationDTO.class})
 @Getter
 @Setter
 @ToString

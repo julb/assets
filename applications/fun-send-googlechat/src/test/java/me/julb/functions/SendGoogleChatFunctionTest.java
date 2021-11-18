@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 
 import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
@@ -38,7 +40,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**
  * The function to send Google chat.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class SendGoogleChatFunctionTest extends AbstractBaseTest {
@@ -61,12 +63,12 @@ public class SendGoogleChatFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenSendGoogleChat()
         throws Exception {
-        Consumer<GoogleChatMessageDTO> function = functionCatalog.lookup("sendGoogleChatFunction");
+        Consumer<Message<GoogleChatMessageDTO>> function = functionCatalog.lookup("sendGoogleChatFunction");
 
         GoogleChatMessageDTO dto = new GoogleChatMessageDTO();
         dto.setRoom("Room");
         dto.setText("Hello!");
-        function.accept(dto);
+        function.accept(MessageBuilder.withPayload(dto).build());
 
         Mockito.verify(googleChatService).send(dto);
 

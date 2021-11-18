@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,6 +41,7 @@ import org.springframework.validation.annotation.Validated;
 import me.julb.applications.platformhealth.entities.ComponentEntity;
 import me.julb.applications.platformhealth.entities.IncidentComponentEntity;
 import me.julb.applications.platformhealth.entities.IncidentEntity;
+import me.julb.applications.platformhealth.entities.mappers.IncidentComponentEntityMapper;
 import me.julb.applications.platformhealth.repositories.ComponentRepository;
 import me.julb.applications.platformhealth.repositories.IncidentComponentRepository;
 import me.julb.applications.platformhealth.repositories.IncidentRepository;
@@ -58,7 +59,6 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -69,7 +69,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The incident service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -99,7 +99,7 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private IncidentComponentEntityMapper mapper;
 
     /**
      * The security service.
@@ -131,7 +131,7 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
         // Try to search within the link.
         ISpecification<IncidentComponentEntity> spec = new SearchSpecification<IncidentComponentEntity>(searchable).and(new TmSpecification<>(tm));
         Page<IncidentComponentEntity> result = incidentComponentRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, IncidentComponentDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -159,7 +159,7 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
             throw new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId));
         }
 
-        return mappingService.map(result, IncidentComponentDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -191,13 +191,13 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
         }
 
         // Add component item.
-        IncidentComponentEntity incidentComponentToCreate = mappingService.map(creationDTO, IncidentComponentEntity.class);
+        IncidentComponentEntity incidentComponentToCreate = mapper.map(creationDTO);
         incidentComponentToCreate.setIncident(incident);
         incidentComponentToCreate.setComponent(component);
         this.onPersist(incidentComponentToCreate);
 
         IncidentComponentEntity result = incidentComponentRepository.save(incidentComponentToCreate);
-        return mappingService.map(result, IncidentComponentDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -227,11 +227,11 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
         }
 
         // Add component item.
-        mappingService.map(updateDTO, exising);
+        mapper.map(updateDTO, exising);
         this.onUpdate(exising);
 
         IncidentComponentEntity result = incidentComponentRepository.save(exising);
-        return mappingService.map(result, IncidentComponentDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -261,11 +261,11 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
         }
 
         // Add component item.
-        mappingService.map(patchDTO, exising);
+        mapper.map(patchDTO, exising);
         this.onUpdate(exising);
 
         IncidentComponentEntity result = incidentComponentRepository.save(exising);
-        return mappingService.map(result, IncidentComponentDTO.class);
+        return mapper.map(result);
     }
 
     /**

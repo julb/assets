@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * The hello controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

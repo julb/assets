@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.platformhealth.entities.ComponentCategoryEntity;
+import me.julb.applications.platformhealth.entities.mappers.ComponentCategoryEntityMapper;
 import me.julb.applications.platformhealth.repositories.ComponentCategoryRepository;
 import me.julb.applications.platformhealth.services.ComponentCategoryService;
 import me.julb.applications.platformhealth.services.ComponentService;
@@ -51,7 +52,6 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -62,7 +62,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The component category service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -86,7 +86,7 @@ public class ComponentCategoryServiceImpl implements ComponentCategoryService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private ComponentCategoryEntityMapper mapper;
 
     /**
      * The security service.
@@ -111,7 +111,7 @@ public class ComponentCategoryServiceImpl implements ComponentCategoryService {
 
         ISpecification<ComponentCategoryEntity> spec = new SearchSpecification<ComponentCategoryEntity>(searchable).and(new TmSpecification<>(tm));
         Page<ComponentCategoryEntity> result = componentCategoryRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, ComponentCategoryDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -127,7 +127,7 @@ public class ComponentCategoryServiceImpl implements ComponentCategoryService {
             throw new ResourceNotFoundException(ComponentCategoryEntity.class, id);
         }
 
-        return mappingService.map(result, ComponentCategoryDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -139,13 +139,13 @@ public class ComponentCategoryServiceImpl implements ComponentCategoryService {
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public ComponentCategoryDTO create(@NotNull @Valid ComponentCategoryCreationDTO creationDTO) {
         // Update the entity
-        ComponentCategoryEntity entityToCreate = mappingService.map(creationDTO, ComponentCategoryEntity.class);
+        ComponentCategoryEntity entityToCreate = mapper.map(creationDTO);
 
         this.onPersist(entityToCreate);
 
         // Get result back.
         ComponentCategoryEntity result = componentCategoryRepository.save(entityToCreate);
-        return mappingService.map(result, ComponentCategoryDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -163,11 +163,11 @@ public class ComponentCategoryServiceImpl implements ComponentCategoryService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         ComponentCategoryEntity result = componentCategoryRepository.save(existing);
-        return mappingService.map(result, ComponentCategoryDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -185,11 +185,11 @@ public class ComponentCategoryServiceImpl implements ComponentCategoryService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         ComponentCategoryEntity result = componentCategoryRepository.save(existing);
-        return mappingService.map(result, ComponentCategoryDTO.class);
+        return mapper.map(result);
     }
 
     /**

@@ -11,7 +11,7 @@ import me.julb.library.utility.http.HttpHeaderUtility;
 
 /**
  * A bearer token request matcher for an header.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class RequestHeaderBearerTokenRequestMatcher implements RequestMatcher {

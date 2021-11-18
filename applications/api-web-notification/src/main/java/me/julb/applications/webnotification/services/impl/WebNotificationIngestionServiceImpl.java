@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,11 +40,10 @@ import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.dto.webnotification.WebNotificationMessageDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.MappingService;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
@@ -52,7 +51,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The web notification service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -70,7 +69,7 @@ public class WebNotificationIngestionServiceImpl implements WebNotificationInges
      * The mapping service.
      */
     @Autowired
-    private MappingService mappingService;
+    private UserRefEntityMapper userRefMapper;
 
     /**
      * The security service.
@@ -105,7 +104,7 @@ public class WebNotificationIngestionServiceImpl implements WebNotificationInges
             webNotificationEntity.setParameters(webNotificationMessage.getParameters());
             webNotificationEntity.setPriority(webNotificationMessage.getPriority());
             webNotificationEntity.setRead(Boolean.FALSE);
-            webNotificationEntity.setUser(mappingService.map(user, UserRefEntity.class));
+            webNotificationEntity.setUser(userRefMapper.map(user));
             this.onPersist(webNotificationEntity);
             webNotifications.add(webNotificationEntity);
         }

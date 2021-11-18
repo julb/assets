@@ -20,3 +20,7 @@ services:
     image: "prom/pushgateway:latest"
     ports:
       - "9091:9091"
+  consul:
+    image: "consul:latest"
+    ports:
+      - "8500:8500"

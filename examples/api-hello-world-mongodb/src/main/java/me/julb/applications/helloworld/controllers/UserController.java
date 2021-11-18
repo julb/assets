@@ -22,7 +22,7 @@ import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecif
 
 /**
  * The hello controller.
- * <P>
+ * <br>
  * @author Julb.
  */
 @RestController

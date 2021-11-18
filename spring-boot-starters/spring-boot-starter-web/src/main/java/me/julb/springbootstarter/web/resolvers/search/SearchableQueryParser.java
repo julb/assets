@@ -49,7 +49,7 @@ import me.julb.springbootstarter.web.resolvers.search.exceptions.UnknownQueryNod
 
 /**
  * A search query parser.
- * <P>
+ * <br>
  * @author Julb.
  */
 abstract class SearchableQueryParser {

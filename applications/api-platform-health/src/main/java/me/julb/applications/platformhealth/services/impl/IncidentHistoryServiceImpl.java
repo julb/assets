@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.platformhealth.entities.IncidentEntity;
 import me.julb.applications.platformhealth.entities.IncidentHistoryEntity;
+import me.julb.applications.platformhealth.entities.mappers.IncidentHistoryEntityMapper;
 import me.julb.applications.platformhealth.repositories.IncidentHistoryRepository;
 import me.julb.applications.platformhealth.repositories.IncidentRepository;
 import me.julb.applications.platformhealth.repositories.specifications.IncidentHistoryByIncidentSpecification;
@@ -50,14 +51,13 @@ import me.julb.applications.platformhealth.services.dto.incident.IncidentHistory
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -68,7 +68,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The incident service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -92,7 +92,13 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private IncidentHistoryEntityMapper mapper;
+
+    /**
+     * The user ref mapper.
+     */
+    @Autowired
+    private UserRefEntityMapper userRefMapper;
 
     /**
      * The security service.
@@ -123,7 +129,7 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
 
         ISpecification<IncidentHistoryEntity> spec = new SearchSpecification<IncidentHistoryEntity>(searchable).and(new TmSpecification<>(tm)).and(new IncidentHistoryByIncidentSpecification(incident));
         Page<IncidentHistoryEntity> result = incidentHistoryRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, IncidentHistoryDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -145,7 +151,7 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
             throw new ResourceNotFoundException(IncidentHistoryEntity.class, id);
         }
 
-        return mappingService.map(result, IncidentHistoryDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -165,7 +171,7 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
         }
 
         // Update the entity
-        IncidentHistoryEntity entityToCreate = mappingService.map(creationDTO, IncidentHistoryEntity.class);
+        IncidentHistoryEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setIncident(incident);
         entityToCreate.setPreviousStatus(incident.getStatus());
         this.onPersist(entityToCreate);
@@ -179,7 +185,7 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
         incidentRepository.save(incident);
         postResourceEvent(incident, ResourceEventType.UPDATED);
 
-        return mappingService.map(result, IncidentHistoryDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -203,14 +209,14 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         // Incident updated
         postResourceEvent(incident, ResourceEventType.UPDATED);
 
         IncidentHistoryEntity result = incidentHistoryRepository.save(existing);
-        return mappingService.map(result, IncidentHistoryDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -234,14 +240,14 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         // Incident updated
         postResourceEvent(incident, ResourceEventType.UPDATED);
 
         IncidentHistoryEntity result = incidentHistoryRepository.save(existing);
-        return mappingService.map(result, IncidentHistoryDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -321,7 +327,7 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
 
         // Add author.
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
+        entity.setUser(userRefMapper.map(connnectedUser));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

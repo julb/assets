@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -75,7 +75,7 @@ import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBa
 
 /**
  * Unit test for the authentication by pincode class.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Import(TestChannelBinderConfiguration.class)
@@ -88,7 +88,7 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
      * The MongoDB container.
      */
     @Container
-    private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.0.10"));
+    private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.4"));
 
     /**
      * The mock MVC.
@@ -308,7 +308,7 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
 
     /**
      * Initializer class for the test.
-     * <P>
+     * <br>
      * @author Julb.
      */
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {

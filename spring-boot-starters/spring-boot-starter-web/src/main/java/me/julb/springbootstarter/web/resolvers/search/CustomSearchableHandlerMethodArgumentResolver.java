@@ -40,7 +40,7 @@ import me.julb.library.utility.data.search.Searchable;
 
 /**
  * Extract query information from web requests.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class CustomSearchableHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {

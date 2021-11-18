@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,18 +27,16 @@ package me.julb.library.dto.simple.interval.date;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import me.julb.library.utility.interfaces.Intervallable;
 import me.julb.library.utility.validator.constraints.Interval;
 
 /**
  * The DTO to update a date time interval.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Getter
 @Setter
 @ToString
 @Interval
-public class DateTimeIntervalUpdateDTO extends DateTimeIntervalCreationDTO implements Intervallable<String> {
+public class DateTimeIntervalUpdateDTO extends DateTimeIntervalCreationDTO {
 }

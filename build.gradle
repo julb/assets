@@ -30,71 +30,17 @@ allprojects {
 			mavenLocal()
 		}
 	}
+
+	// patch vs code
+	afterEvaluate {
+		if(project.plugins.hasPlugin(JavaPlugin)) {
+			sourceSets.main.java.srcDirs += "build/generated/sources/annotationProcessor/java/main"
+			sourceSets.test.java.srcDirs += "build/generated/sources/annotationProcessor/java/test"
+		}	
+	}
 }
 
 afterEvaluate {
-    // This task is used to create multiple tags given a set of projects.
-    // This method is useful until Spring boot is able to push multiple tags.
-    task generateDockerTagMappings {
-        description = "Generate mappings file with source image name and docker image targets."
-        
-        doLast {
-            def dockerMappings = [:]
-            
-            // Get docker tags.
-            def additionalTagsValues = System.getProperty('docker.tags')
-            if (additionalTagsValues != null) {
-                def additionalTags = additionalTagsValues.split(',')
-            
-                subprojects.forEach { subproject ->
-                    if(subproject.tasks.getNames().contains('bootBuildImage')) {
-                        if(subproject.bootBuildImage.enabled) {
-                            def tagSourceName = subproject.bootBuildImage.imageName
-                            if(tagSourceName == null) {
-                                tagSourceName = subproject.name + ':' + subproject.version
-                            }
-                            logger.info "[include] ${subproject.name} -> '${tagSourceName}'."
-                            
-                            // Get left part.
-                            def tagSourceParts = tagSourceName.split(":")
-                            
-                            // Append additional tags to left part.
-                            def tagTargetNames = []
-                            additionalTags.each { additionalTag -> 
-                                tagTargetNames.push(tagSourceParts[0] + ':' + additionalTag)
-                            }
-                            
-                            dockerMappings[tagSourceName] = tagTargetNames
-                        } else {
-                            logger.info "[skip] ${subproject.name} - task is disabled."
-                        }
-                    }
-                }
-            }
-            
-            // Create directory
-            def outputDir = new File("${project.buildDir}/copy-docker-tags")
-            outputDir.delete()
-            outputDir.mkdirs()
-            
-            // Write content to output JSON.
-            def outputJsonFile = new File(outputDir, "output.json")
-            outputJsonFile.write groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(dockerMappings))
-            logger.info "> docker mappings written to ${outputJsonFile.path}."
-            
-            // Write content to properties
-            def outputPropertiesFile = new File(outputDir, "output.properties")
-            ant.propertyfile(file: outputPropertiesFile) {
-                dockerMappings.each { dockerMapping ->
-                    entry(key: dockerMapping.key, value: dockerMapping.value.join(','))
-                }
-            }
-            logger.info "> docker mappings written to ${outputPropertiesFile.path}."
-        }
-    }
-    
-    
-    
     def isNonStable = { String version ->
         def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { keyword -> version.toUpperCase().contains(keyword) }
         def regex = /^[0-9,.v-]+(-r)?$/

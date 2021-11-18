@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,17 +29,18 @@ import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
 
 import me.julb.library.dto.sms.SmsMessageDTO;
 import me.julb.springbootstarter.sms.services.SmsService;
 
 /**
  * The function to send SMS.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j
-public class SendSmsFunction implements Consumer<SmsMessageDTO> {
+public class SendSmsFunction implements Consumer<Message<SmsMessageDTO>> {
 
     /**
      * The SMS service.
@@ -51,10 +52,10 @@ public class SendSmsFunction implements Consumer<SmsMessageDTO> {
      * {@inheritDoc}
      */
     @Override
-    public void accept(SmsMessageDTO smsMessage) {
+    public void accept(Message<SmsMessageDTO> smsMessage) {
         try {
             LOGGER.debug("Received invokation to send SMS.");
-            smsService.send(smsMessage);
+            smsService.send(smsMessage.getPayload());
             LOGGER.debug("Method invoked successfully.");
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.announcement.entities.AnnouncementEntity;
+import me.julb.applications.announcement.entities.mappers.AnnouncementEntityMapper;
 import me.julb.applications.announcement.repositories.AnnouncementRepository;
 import me.julb.applications.announcement.services.AnnouncementService;
 import me.julb.applications.announcement.services.dto.AnnouncementCreationDTO;
@@ -46,14 +47,13 @@ import me.julb.applications.announcement.services.exceptions.AnnouncementAlready
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -64,7 +64,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The announcement service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -82,7 +82,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private AnnouncementEntityMapper mapper;
+
+    /**
+     * The user ref mapper.
+     */
+    @Autowired
+    private UserRefEntityMapper userRefMapper;
 
     /**
      * The security service.
@@ -107,7 +113,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         ISpecification<AnnouncementEntity> spec = new SearchSpecification<AnnouncementEntity>(searchable).and(new TmSpecification<>(tm));
         Page<AnnouncementEntity> result = announcementRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, AnnouncementDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -123,7 +129,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throw new ResourceNotFoundException(AnnouncementEntity.class, id);
         }
 
-        return mappingService.map(result, AnnouncementDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -142,11 +148,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
 
         // Update the entity
-        AnnouncementEntity entityToCreate = mappingService.map(creationDTO, AnnouncementEntity.class);
+        AnnouncementEntity entityToCreate = mapper.map(creationDTO);
         this.onPersist(entityToCreate);
 
         AnnouncementEntity result = announcementRepository.save(entityToCreate);
-        return mappingService.map(result, AnnouncementDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -169,11 +175,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         AnnouncementEntity result = announcementRepository.save(existing);
-        return mappingService.map(result, AnnouncementDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -205,11 +211,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         AnnouncementEntity result = announcementRepository.save(existing);
-        return mappingService.map(result, AnnouncementDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -247,7 +253,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         // Add author.
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
+        entity.setUser(userRefMapper.map(connnectedUser));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

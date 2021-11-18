@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@ import me.julb.springbootstarter.security.services.dto.CustomUserDetails;
 
 /**
  * A service used to pre-authenticate users according to the given header.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j

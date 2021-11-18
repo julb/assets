@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.disclaimer.entities.AgreementEntity;
 import me.julb.applications.disclaimer.entities.DisclaimerEntity;
+import me.julb.applications.disclaimer.entities.mappers.AgreementEntityMapper;
 import me.julb.applications.disclaimer.repositories.AgreementRepository;
 import me.julb.applications.disclaimer.repositories.DisclaimerRepository;
 import me.julb.applications.disclaimer.repositories.specifications.AgreementByDisclaimerIdSpecification;
@@ -46,14 +47,13 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
 import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
 import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
 
 /**
  * The disclaimer agreement service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -83,7 +83,7 @@ public class DisclaimerAgreementServiceImpl implements DisclaimerAgreementServic
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private AgreementEntityMapper mapper;
 
     // ------------------------------------------ Read methods.
 
@@ -102,7 +102,7 @@ public class DisclaimerAgreementServiceImpl implements DisclaimerAgreementServic
 
         ISpecification<AgreementEntity> spec = new SearchSpecification<AgreementEntity>(searchable).and(new TmSpecification<>(tm)).and(new AgreementByDisclaimerIdSpecification(disclaimerId));
         Page<AgreementEntity> result = agreementRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, AgreementDTO.class);
+        return result.map(mapper::map);
     }
 
     /**

@@ -30,7 +30,7 @@ import me.julb.library.utility.data.search.Searchable;
 
 /**
  * The searchable annotation utils.
- * <P>
+ * <br>
  * @author Julb.
  */
 abstract class SearchableAnnotationUtils {

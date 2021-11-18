@@ -29,7 +29,7 @@ import me.julb.springbootstarter.core.configurations.properties.SecurityInternal
 
 /**
  * A Feign client for VPN healthcheck.
- * <P>
+ * <br>
  * @author Julb.
  */
 @FeignClient(name = "api-hello-world", url = "${application.hello-world.endpoint.url}", configuration = LocalConsumerConfiguration.class)
@@ -53,7 +53,7 @@ public interface ApiHelloWorldFeignClient {
 
     /**
      * The local consumer properties.
-     * <P>
+     * <br>
      * @author Julb.
      */
     @Getter
@@ -77,7 +77,7 @@ public interface ApiHelloWorldFeignClient {
 
     /**
      * The local consumer configuration.
-     * <P>
+     * <br>
      * @author Julb.
      */
     @EnableConfigurationProperties({LocalConsumerProperties.class, SecurityInternalApiKeyProperties.class})

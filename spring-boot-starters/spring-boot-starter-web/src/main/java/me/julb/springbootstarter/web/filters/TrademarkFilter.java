@@ -21,7 +21,7 @@ import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 
 /**
  * An interceptor to log the inbound request.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Slf4j

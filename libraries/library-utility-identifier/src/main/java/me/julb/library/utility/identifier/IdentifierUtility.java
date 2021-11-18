@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,14 +34,14 @@ import me.julb.library.utility.constants.Integers;
 
 /**
  * An utility to manipulate identifiers.
- * <P>
+ * <br>
  * @author Julb.
  */
 public final class IdentifierUtility {
 
     /**
      * A random provider secure to generate the string.
-     * <P>
+     * <br>
      * @author Julb.
      */
     private static final class SecureTextRandomProvider implements TextRandomProvider {

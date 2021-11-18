@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.disclaimer.entities.AgreementEntity;
 import me.julb.applications.disclaimer.entities.DisclaimerEntity;
+import me.julb.applications.disclaimer.entities.mappers.AgreementEntityMapper;
 import me.julb.applications.disclaimer.repositories.AgreementRepository;
 import me.julb.applications.disclaimer.repositories.DisclaimerRepository;
 import me.julb.applications.disclaimer.services.MyAgreementService;
@@ -48,9 +49,7 @@ import me.julb.applications.disclaimer.services.dto.agreement.AgreementDTO;
 import me.julb.applications.disclaimer.services.exceptions.DisclaimerIsNotActiveException;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.security.AuthenticatedUserDTO;
 import me.julb.library.dto.simple.user.UserRefDTO;
-import me.julb.library.persistence.mongodb.entities.user.UserRefEntity;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
@@ -58,7 +57,7 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
+import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
@@ -66,7 +65,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The connected user agreement service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -96,7 +95,13 @@ public class MyAgreementServiceImpl implements MyAgreementService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private AgreementEntityMapper mapper;
+
+    /**
+     * The user ref mapper.
+     */
+    @Autowired
+    private UserRefEntityMapper userRefMapper;
 
     /**
      * The security service.
@@ -158,12 +163,12 @@ public class MyAgreementServiceImpl implements MyAgreementService {
         }
 
         // Update the entity
-        AgreementEntity entityToCreate = mappingService.map(creationDTO, AgreementEntity.class);
+        AgreementEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setDisclaimer(disclaimer);
         this.onPersist(entityToCreate);
 
         AgreementEntity result = agreementRepository.save(entityToCreate);
-        return mappingService.map(result, AgreementDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Private methods.
@@ -181,7 +186,7 @@ public class MyAgreementServiceImpl implements MyAgreementService {
 
         // Add author.
         UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(mappingService.map(connnectedUser, UserRefEntity.class));
+        entity.setUser(userRefMapper.map(connnectedUser));
 
         postResourceEvent(entity, ResourceEventType.CREATED);
     }

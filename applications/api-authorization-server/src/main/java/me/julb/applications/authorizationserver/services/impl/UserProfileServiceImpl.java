@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
 import me.julb.applications.authorizationserver.entities.profile.UserProfileEntity;
+import me.julb.applications.authorizationserver.entities.profile.mappers.UserProfileEntityMapper;
 import me.julb.applications.authorizationserver.repositories.UserProfileRepository;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
 import me.julb.applications.authorizationserver.services.UserProfileService;
@@ -51,7 +52,6 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
@@ -59,7 +59,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The user profile service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -83,7 +83,7 @@ public class UserProfileServiceImpl implements UserProfileService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private UserProfileEntityMapper mapper;
 
     /**
      * The security service.
@@ -118,7 +118,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new ResourceNotFoundException(UserProfileEntity.class, userId);
         }
 
-        return mappingService.map(result, UserProfileDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -142,12 +142,12 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new ResourceAlreadyExistsException(UserProfileEntity.class, "user", userId);
         }
 
-        UserProfileEntity entityToCreate = mappingService.map(creationDTO, UserProfileEntity.class);
+        UserProfileEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setUser(user);
         this.onPersist(entityToCreate);
 
         UserProfileEntity result = userProfileRepository.save(entityToCreate);
-        return mappingService.map(result, UserProfileDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -171,11 +171,11 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         UserProfileEntity result = userProfileRepository.save(existing);
-        return mappingService.map(result, UserProfileDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -199,11 +199,11 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         UserProfileEntity result = userProfileRepository.save(existing);
-        return mappingService.map(result, UserProfileDTO.class);
+        return mapper.map(result);
     }
 
     /**

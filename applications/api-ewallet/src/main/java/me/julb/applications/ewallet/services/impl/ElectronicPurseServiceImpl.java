@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2019 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.ewallet.entities.ElectronicPurseEntity;
+import me.julb.applications.ewallet.entities.mappers.ElectronicPurseEntityMapper;
 import me.julb.applications.ewallet.repositories.ElectronicPurseRepository;
 import me.julb.applications.ewallet.services.ElectronicPurseOperationService;
 import me.julb.applications.ewallet.services.ElectronicPurseService;
@@ -62,7 +63,6 @@ import me.julb.library.utility.moneyamount.MoneyAmountBuilder;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.mapping.services.IMappingService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -73,7 +73,7 @@ import me.julb.springbootstarter.security.services.ISecurityService;
 
 /**
  * The electronic purse service implementation.
- * <P>
+ * <br>
  * @author Julb.
  */
 @Service
@@ -97,7 +97,7 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
      * The mapper.
      */
     @Autowired
-    private IMappingService mappingService;
+    private ElectronicPurseEntityMapper mapper;
 
     /**
      * The security service.
@@ -128,7 +128,7 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
 
         ISpecification<ElectronicPurseEntity> spec = new SearchSpecification<ElectronicPurseEntity>(searchable).and(new TmSpecification<>(tm));
         Page<ElectronicPurseEntity> result = electronicPurseRepository.findAll(spec, pageable);
-        return mappingService.mapAsPage(result, ElectronicPurseDTO.class);
+        return result.map(mapper::map);
     }
 
     /**
@@ -144,7 +144,7 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
             throw new ResourceNotFoundException(ElectronicPurseEntity.class, "id", id);
         }
 
-        return mappingService.map(result, ElectronicPurseDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -160,7 +160,7 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
             throw new ResourceNotFoundException(ElectronicPurseEntity.class, "userId", userId);
         }
 
-        return mappingService.map(result, ElectronicPurseDTO.class);
+        return mapper.map(result);
     }
 
     // ------------------------------------------ Write methods.
@@ -182,12 +182,12 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
         }
 
         // Create the electronic purse
-        ElectronicPurseEntity entityToCreate = mappingService.map(creationDTO, ElectronicPurseEntity.class);
+        ElectronicPurseEntity entityToCreate = mapper.map(creationDTO);
         entityToCreate.setAmount(new MoneyAmountEntity(Long.valueOf(Integers.ZERO), currency));
         this.onPersist(entityToCreate);
 
         ElectronicPurseEntity result = electronicPurseRepository.save(entityToCreate);
-        return mappingService.map(result, ElectronicPurseDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -222,7 +222,7 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
         this.onUpdate(existing);
 
         ElectronicPurseEntity result = electronicPurseRepository.save(existing);
-        return mappingService.map(result, ElectronicPurseDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -240,11 +240,11 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
         }
 
         // Update the entity
-        mappingService.map(updateDTO, existing);
+        mapper.map(updateDTO, existing);
         this.onUpdate(existing);
 
         ElectronicPurseEntity result = electronicPurseRepository.save(existing);
-        return mappingService.map(result, ElectronicPurseDTO.class);
+        return mapper.map(result);
     }
 
     /**
@@ -262,11 +262,11 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
         }
 
         // Update the entity
-        mappingService.map(patchDTO, existing);
+        mapper.map(patchDTO, existing);
         this.onUpdate(existing);
 
         ElectronicPurseEntity result = electronicPurseRepository.save(existing);
-        return mappingService.map(result, ElectronicPurseDTO.class);
+        return mapper.map(result);
     }
 
     /**

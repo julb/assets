@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2017-2020 Julb
+ * Copyright (c) 2017-2021 Julb
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ import me.julb.library.utility.constants.Strings;
 
 /**
  * Interceptor to remove an header from the request.
- * <P>
+ * <br>
  * @author Julb.
  */
 public class RemoveRequestHeaderRequestInterceptor implements RequestInterceptor {
