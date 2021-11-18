@@ -3,6 +3,7 @@ me.julb.applications.announcement.configurations
 me.julb.applications.announcement.configurations.properties
 me.julb.applications.announcement.controllers
 me.julb.applications.announcement.entities
+me.julb.applications.announcement.entities.mappers
 me.julb.applications.announcement.repositories
 me.julb.applications.announcement.services
 me.julb.applications.announcement.services.dto
@@ -14,11 +15,18 @@ me.julb.applications.authorizationserver.constraints
 me.julb.applications.authorizationserver.controllers
 me.julb.applications.authorizationserver.entities
 me.julb.applications.authorizationserver.entities.authentication
+me.julb.applications.authorizationserver.entities.authentication.mappers
 me.julb.applications.authorizationserver.entities.mail
+me.julb.applications.authorizationserver.entities.mail.mappers
+me.julb.applications.authorizationserver.entities.mappers
 me.julb.applications.authorizationserver.entities.mobilephone
+me.julb.applications.authorizationserver.entities.mobilephone.mappers
 me.julb.applications.authorizationserver.entities.preferences
+me.julb.applications.authorizationserver.entities.preferences.mappers
 me.julb.applications.authorizationserver.entities.profile
+me.julb.applications.authorizationserver.entities.profile.mappers
 me.julb.applications.authorizationserver.entities.session
+me.julb.applications.authorizationserver.entities.session.mappers
 me.julb.applications.authorizationserver.repositories
 me.julb.applications.authorizationserver.repositories.specifications
 me.julb.applications.authorizationserver.services
@@ -43,6 +51,7 @@ me.julb.applications.bookmark.configurations.properties
 me.julb.applications.bookmark.controllers
 me.julb.applications.bookmark.entities
 me.julb.applications.bookmark.entities.comparators
+me.julb.applications.bookmark.entities.mappers
 me.julb.applications.bookmark.repositories
 me.julb.applications.bookmark.repositories.specifications
 me.julb.applications.bookmark.services
@@ -63,6 +72,7 @@ me.julb.applications.disclaimer.configurations
 me.julb.applications.disclaimer.configurations.properties
 me.julb.applications.disclaimer.controllers
 me.julb.applications.disclaimer.entities
+me.julb.applications.disclaimer.entities.mappers
 me.julb.applications.disclaimer.repositories
 me.julb.applications.disclaimer.repositories.specifications
 me.julb.applications.disclaimer.services
@@ -74,6 +84,7 @@ me.julb.applications.ewallet.configurations
 me.julb.applications.ewallet.configurations.properties
 me.julb.applications.ewallet.controllers
 me.julb.applications.ewallet.entities
+me.julb.applications.ewallet.entities.mappers
 me.julb.applications.ewallet.repositories
 me.julb.applications.ewallet.repositories.specifications
 me.julb.applications.ewallet.services
@@ -112,6 +123,7 @@ me.julb.applications.platformhealth.configurations
 me.julb.applications.platformhealth.configurations.properties
 me.julb.applications.platformhealth.controllers
 me.julb.applications.platformhealth.entities
+me.julb.applications.platformhealth.entities.mappers
 me.julb.applications.platformhealth.repositories
 me.julb.applications.platformhealth.repositories.specifications
 me.julb.applications.platformhealth.services
@@ -134,6 +146,7 @@ me.julb.applications.urlshortener.configurations
 me.julb.applications.urlshortener.configurations.properties
 me.julb.applications.urlshortener.controllers
 me.julb.applications.urlshortener.entities
+me.julb.applications.urlshortener.entities.mappers
 me.julb.applications.urlshortener.repositories
 me.julb.applications.urlshortener.services
 me.julb.applications.urlshortener.services.dto
@@ -147,6 +160,7 @@ me.julb.applications.webnotification.configurations
 me.julb.applications.webnotification.configurations.properties
 me.julb.applications.webnotification.controllers
 me.julb.applications.webnotification.entities
+me.julb.applications.webnotification.entities.mappers
 me.julb.applications.webnotification.repositories
 me.julb.applications.webnotification.services
 me.julb.applications.webnotification.services.dto
@@ -178,7 +192,6 @@ me.julb.library.dto.sms
 me.julb.library.dto.webnotification
 me.julb.library.json.serializers
 me.julb.library.logging.logback
-me.julb.library.mapping.annotations
 me.julb.library.persistence.jpa.entities
 me.julb.library.persistence.mongodb.entities
 me.julb.library.persistence.mongodb.entities.date
@@ -251,8 +264,11 @@ me.julb.springbootstarter.ics.service.impl
 me.julb.springbootstarter.job.configurations
 me.julb.springbootstarter.mail.services
 me.julb.springbootstarter.mail.services.impl
-me.julb.springbootstarter.mapping.configurations
-me.julb.springbootstarter.mapping.services
+me.julb.springbootstarter.mapping.entities.date.mappers
+me.julb.springbootstarter.mapping.entities.message.mappers
+me.julb.springbootstarter.mapping.entities.mobilephone.mappers
+me.julb.springbootstarter.mapping.entities.moneyamount.mappers
+me.julb.springbootstarter.mapping.entities.user.mappers
 me.julb.springbootstarter.messaging.builders
 me.julb.springbootstarter.messaging.configurations
 me.julb.springbootstarter.messaging.services
