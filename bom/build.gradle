@@ -9,8 +9,8 @@ javaPlatform {
 
 dependencies {
 	// Spring Boot as BOM
-    api platform('org.springframework.boot:spring-boot-dependencies:2.6.0-RC1')
-    api platform('org.springframework.cloud:spring-cloud-dependencies:2021.0.0-RC1')
+    api platform('org.springframework.boot:spring-boot-dependencies:2.6.1')
+    api platform('org.springframework.cloud:spring-cloud-dependencies:2021.0.0')
     api platform("org.testcontainers:testcontainers-bom:1.16.2")
     
     // Additional libraries.
@@ -20,6 +20,7 @@ dependencies {
         api 'commons-io:commons-io:2.9.0'
         api 'commons-beanutils:commons-beanutils:1.9.4'
         api 'com.google.guava:guava:31.0.1-jre'
+        api 'io.prometheus:simpleclient_pushgateway:0.12.0'
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.2'
         api 'com.nimbusds:nimbus-jose-jwt:9.15.2'
         api 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
@@ -46,6 +47,10 @@ dependencies {
         api 'com.googlecode.libphonenumber:libphonenumber:8.12.36'
         api 'com.github.ua-parser:uap-java:1.5.2'
         api 'com.icegreen:greenmail-junit5:1.6.5'
+
+        api 'org.projectlombok:lombok:1.18.22'
+        api 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+        api 'org.mapstruct:mapstruct-processor:1.5.0.Beta1'
     }
 }
 

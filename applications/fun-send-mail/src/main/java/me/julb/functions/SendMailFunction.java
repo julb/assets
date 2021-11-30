@@ -26,10 +26,10 @@ package me.julb.functions;
 
 import java.util.function.Consumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.Message;
-
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import me.julb.library.dto.mail.MailDTO;
 import me.julb.springbootstarter.mail.services.MailService;
 
@@ -39,7 +39,7 @@ import me.julb.springbootstarter.mail.services.MailService;
  * @author Julb.
  */
 @Slf4j
-public class SendMailFunction implements Consumer<Message<MailDTO>> {
+public class SendMailFunction implements Consumer<MailDTO> {
 
     /**
      * The mail service.
@@ -51,10 +51,10 @@ public class SendMailFunction implements Consumer<Message<MailDTO>> {
      * {@inheritDoc}
      */
     @Override
-    public void accept(Message<MailDTO> mail) {
+    public void accept(MailDTO mail) {
         try {
             LOGGER.debug("Received invokation to send mail.");
-            mailService.send(mail.getPayload());
+            mailService.send(mail);
             LOGGER.debug("Method invoked successfully.");
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());

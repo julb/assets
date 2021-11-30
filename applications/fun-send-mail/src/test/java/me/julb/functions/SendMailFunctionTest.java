@@ -32,8 +32,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.test.context.TestPropertySource;
 
 import me.julb.library.dto.mail.MailDTO;
 import me.julb.springbootstarter.mail.services.MailService;
@@ -44,6 +43,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
  * <br>
  * @author Julb.
  */
+@TestPropertySource(properties = { "spring.sleuth.function.enabled=false" })
 public class SendMailFunctionTest extends AbstractBaseTest {
 
     /**
@@ -64,7 +64,7 @@ public class SendMailFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenSendMail()
         throws Exception {
-        Consumer<Message<MailDTO>> function = functionCatalog.lookup("sendMailFunction");
+        Consumer<MailDTO> function = functionCatalog.lookup("sendMailFunction");
 
         MailDTO dto = new MailDTO();
         dto.setFrom("no-reply@julb.me");
@@ -73,7 +73,7 @@ public class SendMailFunctionTest extends AbstractBaseTest {
         dto.setBccs(Lists.newArrayList("bcc@julb.me"));
         dto.setSubject("Some Subject");
         dto.setHtml("<html><body>Some HTML content</body></html>");
-        function.accept(MessageBuilder.withPayload(dto).build());
+        function.accept(dto);
 
         Mockito.verify(mailService).send(dto);
 

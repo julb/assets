@@ -10,7 +10,7 @@ plugins {
 
 dependencies {
     api platform(project(':bom'))
-
+    annotationProcessor platform(project(':bom'))
 
     implementation project(':libraries:library-dto-notification')
     implementation project(':libraries:library-dto-webnotification')

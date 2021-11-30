@@ -25,12 +25,20 @@ package me.julb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.nativex.hint.NativeHint;
+import org.springframework.nativex.hint.SerializationHint;
+
+import me.julb.library.dto.simple.value.ValueDTO;
 
 /**
  * Main class to launch the application.
  * <br>
  * @author Julb.
  */
+@NativeHint(
+    //options = "--initialize-at-build-time=org.hibernate.validator.constraints.CodePointLength$NormalizationStrategy",
+    serializables = @SerializationHint(types = {ValueDTO.class})
+)
 @SpringBootApplication
 public class Application {
 

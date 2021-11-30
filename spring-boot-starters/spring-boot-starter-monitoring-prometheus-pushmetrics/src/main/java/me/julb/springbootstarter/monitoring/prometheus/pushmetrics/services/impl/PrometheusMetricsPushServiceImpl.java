@@ -24,8 +24,12 @@
 
 package me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -34,19 +38,26 @@ import javax.validation.constraints.NotNull;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
+import me.julb.library.utility.exceptions.InternalServerErrorException;
 import me.julb.library.utility.validator.constraints.PrometheusMetricsInstanceName;
 import me.julb.library.utility.validator.constraints.PrometheusMetricsJobName;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.annotations.ConditionalOnPrometheusPushMetricsEnabled;
-import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.consumers.PrometheusPushGatewayFeignClient;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.PrometheusMetricsPushService;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationDTO;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationWrapperDTO;
+import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsLabelCreationDTO;
+
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.Counter;
+import io.prometheus.client.Gauge;
+import io.prometheus.client.Histogram;
+import io.prometheus.client.Summary;
+import io.prometheus.client.exporter.PushGateway;
 
 /**
  * The push metrics service implementation.
@@ -60,26 +71,15 @@ import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.
 public class PrometheusMetricsPushServiceImpl implements PrometheusMetricsPushService {
 
     /**
-     * The PROMETHEUS_PUSHMETRICS_PAYLOAD_TEMPLATE_NAME attribute.
+     * The INSTANCE_GROUPING_KEY_NAME attribute.
      */
-    private static final String PROMETHEUS_PUSHMETRICS_PAYLOAD_TEMPLATE_NAME = "prometheus-pushmetrics-payload";
-
-    /**
-     * The METRICS_VARIABLE_NAME attribute.
-     */
-    private static final String METRICS_VARIABLE_NAME = "metrics";
+    private static final String INSTANCE_GROUPING_KEY_NAME = "instance";
 
     /**
      * The feign client to send data to Prometheus Push gateway.
      */
     @Autowired
-    private PrometheusPushGatewayFeignClient prometheusPushGatewayFeignClient;
-
-    /**
-     * The template engine.
-     */
-    @Autowired
-    private TemplateEngine prometheusPushmetricTemplateEngine;
+    private PushGateway prometheusPushGatewayClientBean;
 
     // ------------------------------------------ Write methods.
 
@@ -107,11 +107,61 @@ public class PrometheusMetricsPushServiceImpl implements PrometheusMetricsPushSe
         // Trace input.
         LOGGER.debug("Adding metrics to job <{}> and instance <{}>.", job, instance);
 
-        // Render template.
-        Context ctx = new Context();
-        ctx.setVariable(METRICS_VARIABLE_NAME, metrics);
-        String prometheusMetricsPayload = this.prometheusPushmetricTemplateEngine.process(PROMETHEUS_PUSHMETRICS_PAYLOAD_TEMPLATE_NAME, ctx);
-        prometheusPushGatewayFeignClient.create(job, instance, prometheusMetricsPayload);
+        try {
+            // Create a registry to collect all metric.            
+            var collectorRegistry = new CollectorRegistry();
+
+            for(MetricsCreationDTO metric : metrics) {
+                // Get label names and values.
+                List<String> labelNames = new ArrayList<>();
+                List<String> labelValues  = new ArrayList<>();
+                
+                if(CollectionUtils.isNotEmpty(metric.getAdditionalLabels())) {
+                    for(MetricsLabelCreationDTO additionalLabel : metric.getAdditionalLabels()) {
+                        labelNames.add(additionalLabel.getKey());
+                        labelValues.add(additionalLabel.getValue());
+                    }
+                }
+                
+                // Register the custom metric in the registry.
+                switch (metric.getType()) {
+                    case GAUGE:
+                        Gauge.build(metric.getName(), metric.getHelp())
+                            .labelNames(labelNames.toArray(new String[0]))
+                            .register(collectorRegistry)
+                            .labels(labelValues.toArray(new String[0]))
+                            .set(metric.getValue());
+                        break;
+                    case COUNTER:
+                        Counter.build(metric.getName(), metric.getHelp())
+                            .labelNames(labelNames.toArray(new String[0]))
+                            .register(collectorRegistry)
+                            .labels(labelValues.toArray(new String[0]))
+                            .inc(metric.getValue());
+                        break;
+                    case SUMMARY:
+                        Summary.build(metric.getName(), metric.getHelp())
+                            .labelNames(labelNames.toArray(new String[0]))
+                            .register(collectorRegistry)
+                            .labels(labelValues.toArray(new String[0]))
+                            .observe(metric.getValue());
+                        break;
+                    case HISTOGRAM:
+                        Histogram.build(metric.getName(), metric.getHelp())
+                            .labelNames(labelNames.toArray(new String[0]))
+                            .register(collectorRegistry)
+                            .labels(labelValues.toArray(new String[0]))
+                            .observe(metric.getValue());
+                        break;
+                }
+            }
+            
+            // Push the metrics.
+            prometheusPushGatewayClientBean.pushAdd(collectorRegistry, job, Map.of(INSTANCE_GROUPING_KEY_NAME, instance));
+        } catch(IOException e) {
+            LOGGER.error("Unable to push metric for job <{}> and instance <{}>.", job, instance, e);
+            throw new InternalServerErrorException(e);
+        }
 
         // Trace successful.
         LOGGER.info("Metrics for job <{}> and instance <{}> created successfully.", job, instance);
@@ -125,10 +175,15 @@ public class PrometheusMetricsPushServiceImpl implements PrometheusMetricsPushSe
         // Trace input.
         LOGGER.debug("Removing all metrics from job <{}> and instance <{}>.", job, instance);
 
-        // Delete metrics
-        prometheusPushGatewayFeignClient.delete(job, instance);
+        try {
+            // Delete metrics
+            prometheusPushGatewayClientBean.delete(job, Map.of(INSTANCE_GROUPING_KEY_NAME, instance));
 
-        // Trace successful.
-        LOGGER.info("Metrics for job <{}> and instance <{}> removed successfully.", job, instance);
+            // Trace successful.
+            LOGGER.info("Metrics for job <{}> and instance <{}> removed successfully.", job, instance);
+        } catch(IOException e) {
+            LOGGER.error("Unable to delete metric for job <{}> and instance <{}>.", job, instance, e);
+            throw new InternalServerErrorException(e);
+        }
     }
 }

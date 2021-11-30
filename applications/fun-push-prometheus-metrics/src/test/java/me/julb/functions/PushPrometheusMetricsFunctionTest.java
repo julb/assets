@@ -25,6 +25,7 @@
 package me.julb.functions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
-import org.springframework.cloud.function.context.test.FunctionalSpringBootTest;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.test.context.TestPropertySource;
 
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.PrometheusMetricsPushService;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricType;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationDTO;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationWrapperDTO;
+import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsLabelCreationDTO;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**
@@ -47,7 +47,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
  * <br>
  * @author Julb.
  */
-@FunctionalSpringBootTest
+@TestPropertySource(properties = { "spring.sleuth.function.enabled=false" })
 public class PushPrometheusMetricsFunctionTest extends AbstractBaseTest {
 
     /**
@@ -68,7 +68,7 @@ public class PushPrometheusMetricsFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenSendMetrics()
         throws Exception {
-        Consumer<Message<MetricsCreationWrapperDTO>> function = functionCatalog.lookup("pushPrometheusMetricsFunction");
+        Consumer<MetricsCreationWrapperDTO> function = functionCatalog.lookup("pushPrometheusMetricsFunction");
 
         MetricsCreationWrapperDTO dto = new MetricsCreationWrapperDTO();
         dto.setJob("some-job");
@@ -79,11 +79,12 @@ public class PushPrometheusMetricsFunctionTest extends AbstractBaseTest {
         metrics.setHelp("A custom gauge with labels");
         metrics.setType(MetricType.GAUGE);
         metrics.setValue(1f);
-        metrics.getAdditionalLabels().put("billing", "123");
-        metrics.getAdditionalLabels().put("env", "prod");
+        metrics.setAdditionalLabels(new HashSet<>());
+        metrics.getAdditionalLabels().add(new MetricsLabelCreationDTO("billing", "123"));
+        metrics.getAdditionalLabels().add(new MetricsLabelCreationDTO("env", "prod"));
         dto.setMetrics(new ArrayList<>());
         dto.getMetrics().add(metrics);
-        function.accept(MessageBuilder.withPayload(dto).build());
+        function.accept(dto);
 
         Mockito.verify(prometheusMetricsPushService).pushAll(dto);
 

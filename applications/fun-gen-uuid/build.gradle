@@ -1,17 +1,21 @@
 plugins {
-    id 'java-library-distribution'
+    id 'application'
     id 'io.freefair.lombok'
     id 'me.julb.gradleplugins.java17'
     id 'me.julb.gradleplugins.additionaljars'
     id 'org.springframework.boot'
     id 'com.github.johnrengelman.shadow'
+    id 'org.springframework.experimental.aot'
+    id 'me.julb.gradleplugins.spring-native-aws-lambda'
 }
 
 dependencies {
-    api platform(project(':bom'))
+    implementation platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
     
     implementation 'org.springframework.cloud:spring-cloud-starter-function-web'
     implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation project(':libraries:library-utility-identifier')
     implementation project(':libraries:library-dto-simple')
     
@@ -19,7 +23,9 @@ dependencies {
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }
 
-
+application {
+    mainClass = 'me.julb.Application'
+}
 
 jar {
     manifest {

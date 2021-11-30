@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
 
     implementation project(':libraries:library-dto-googlechat')
     implementation project(':libraries:library-dto-mail')

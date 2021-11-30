@@ -7,11 +7,11 @@ plugins {
 
 dependencies {
 	api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
 	
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.apache.commons:commons-collections4'
-    implementation 'org.apache.commons:commons-text'
-    implementation 'org.thymeleaf:thymeleaf'
+    implementation 'io.prometheus:simpleclient_pushgateway'
     
     implementation project(':libraries:library-utility-constants')
     implementation project(':libraries:library-utility-exception')

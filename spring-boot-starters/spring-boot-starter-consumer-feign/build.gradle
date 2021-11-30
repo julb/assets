@@ -1,0 +1,43 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+    id 'me.julb.gradleplugins.java17'
+	id 'me.julb.gradleplugins.additionaljars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
+	
+	
+	api 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	api project(':spring-boot-starters:spring-boot-starter-core')
+	api project(':spring-boot-starters:spring-boot-starter-consumer')
+	
+	implementation project(':libraries:library-utility-constants')
+	implementation project(':libraries:library-utility-exception')
+	implementation project(':libraries:library-utility-data')
+	
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'io.github.openfeign:feign-httpclient'
+	implementation 'org.springframework.data:spring-data-commons'
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.apache.commons:commons-lang3'
+	
+	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

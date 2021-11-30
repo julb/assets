@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
 
     implementation project(':spring-boot-starters:spring-boot-starter-worker')
     implementation project(':spring-boot-starters:spring-boot-starter-mail')

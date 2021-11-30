@@ -1,8 +1,9 @@
 pluginManagement {
     plugins {
-        id 'io.freefair.lombok' version '6.2.0'
-        id 'io.freefair.aggregate-javadoc' version '6.2.0'
-        id 'org.springframework.boot' version '2.6.0-RC1'
+        id 'io.freefair.lombok' version '6.3.0'
+        id 'io.freefair.aggregate-javadoc' version '6.3.0'
+        id 'org.springframework.boot' version '2.6.1'
+        id 'org.springframework.experimental.aot' version '0.11.0-SNAPSHOT'
         id 'com.github.johnrengelman.shadow' version '7.1.0'
         id 'org.springframework.boot.experimental.thin-launcher' version '1.0.27.RELEASE'
         id 'com.github.johnrengelman.processes' version '0.5.0'
@@ -11,15 +12,19 @@ pluginManagement {
         id 'me.julb.gradleplugins.additionaljars' version '1.0.7'
         id 'me.julb.gradleplugins.aggregatejavadoc' version '1.0.7'
         id 'me.julb.gradleplugins.aggregatespringdocopenapidocs' version '1.0.7'
-        id 'me.julb.gradleplugins.asciidoctor' version '1.0.7'
-        id 'me.julb.gradleplugins.java17' version '1.0.7'
-        id 'me.julb.gradleplugins.semanticversioning' version '1.0.7'
+        id 'me.julb.gradleplugins.asciidoctor' version '1.0.8-SNAPSHOT'
+        id 'me.julb.gradleplugins.java17' version '1.0.8-SNAPSHOT'
+        id 'me.julb.gradleplugins.semanticversioning' version '1.0.8-SNAPSHOT'
+        id 'me.julb.gradleplugins.spring-native-aws-lambda' version '1.0.8-SNAPSHOT'
     }
 
     repositories {
         mavenLocal()
         gradlePluginPortal()
         mavenCentral()
+        maven {
+            url 'https://repo.spring.io/release'
+        }
         maven {
             url 'https://repo.spring.io/milestone'
         }
@@ -91,6 +96,7 @@ include 'libraries:library-utility-size'
 include 'libraries:library-utility-validator'
 
 include 'spring-boot-starters:spring-boot-starter-consumer'
+include 'spring-boot-starters:spring-boot-starter-consumer-feign'
 include 'spring-boot-starters:spring-boot-starter-core'
 include 'spring-boot-starters:spring-boot-starter-gateway'
 include 'spring-boot-starters:spring-boot-starter-googlechat'

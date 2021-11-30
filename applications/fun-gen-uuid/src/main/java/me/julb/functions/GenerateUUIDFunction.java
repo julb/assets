@@ -24,7 +24,6 @@
 
 package me.julb.functions;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,14 +37,14 @@ import me.julb.library.utility.identifier.IdentifierUtility;
  * @author Julb.
  */
 @Slf4j
-public class GenerateUUIDFunction implements Supplier<Optional<ValueDTO>> {
+public class GenerateUUIDFunction implements Supplier<ValueDTO> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<ValueDTO> get() {
+    public ValueDTO get() {
         LOGGER.debug("Received invokation to generate UUID.");
-        return Optional.of(new ValueDTO(IdentifierUtility.generateId()));
+        return new ValueDTO(IdentifierUtility.generateId());
     }
 }

@@ -23,42 +23,53 @@
  */
 package me.julb.springbootstarter.monitoring.prometheus.pushmetrics.configurations;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
+import me.julb.library.utility.exceptions.InternalServerErrorException;
+import me.julb.springbootstarter.consumer.utility.HttpUrlConnectionUtility;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.annotations.ConditionalOnPrometheusPushMetricsEnabled;
+import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.configurations.beans.PrometheusPushMetricsProperties;
+
+import io.prometheus.client.exporter.HttpConnectionFactory;
+import io.prometheus.client.exporter.PushGateway;
 
 /**
- * A configuration class transforming health status to a metrics.
+ * A configuration class to push metrics to Prometheus gateway.
  * <br>
  * @author Julb.
  */
 @Configuration
+@EnableConfigurationProperties(PrometheusPushMetricsProperties.class)
 @ConditionalOnPrometheusPushMetricsEnabled
-@PropertySource("classpath:/me/julb/springbootstarter/monitoring/prometheus/pushmetrics/default.properties")
+@PropertySource(value = "classpath:/me/julb/springbootstarter/monitoring/prometheus/pushmetrics/default.properties")
 public class PrometheusPushMetricsConfiguration {
 
     /**
-     * The Prometheus metric template engine.
-     * @return the template engine.
+     * The Prometheus push gateway client bean.
+     * @return the Prometheus push gateway client bean.
      */
     @Bean
-    public TemplateEngine prometheusPushmetricTemplateEngine() {
-        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("/me/julb/springbootstarter/monitoring/prometheus/pushmetrics/templates/");
-        templateResolver.setSuffix(".txt");
-        templateResolver.setTemplateMode(TemplateMode.TEXT);
-        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.toString());
-        templateResolver.setCacheable(true);
-
-        final TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
-        return templateEngine;
+    public PushGateway prometheusPushGatewayClientBean(PrometheusPushMetricsProperties prometheusPushMetricsProperties) {
+        try {
+            PushGateway pushGateway = new PushGateway(new URL(prometheusPushMetricsProperties.getEndpoint().getUrl()));
+            pushGateway.setConnectionFactory(new HttpConnectionFactory() {
+                @Override
+                public HttpURLConnection create(String url)
+                    throws IOException {
+                    return HttpUrlConnectionUtility.buildForUrl(url, prometheusPushMetricsProperties.getEndpoint());
+                }
+            });
+            return pushGateway;
+        } catch(MalformedURLException e) {
+            throw new InternalServerErrorException(e);
+        }
     }
 }

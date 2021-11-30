@@ -10,8 +10,9 @@ plugins {
 
 dependencies {
     api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
 
-    implementation project(':spring-boot-starters:spring-boot-starter-consumer')
+    implementation project(':spring-boot-starters:spring-boot-starter-consumer-feign')
     implementation project(':spring-boot-starters:spring-boot-starter-web')
     implementation project(':libraries:library-utility-identifier')
     implementation 'org.apache.commons:commons-lang3'

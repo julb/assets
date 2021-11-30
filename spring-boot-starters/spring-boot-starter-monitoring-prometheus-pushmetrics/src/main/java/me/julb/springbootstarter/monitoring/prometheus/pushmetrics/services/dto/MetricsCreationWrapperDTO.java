@@ -24,6 +24,7 @@
 
 package me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,7 +49,8 @@ import me.julb.library.utility.validator.constraints.PrometheusMetricsJobName;
  */
 @Getter
 @Setter
-public class MetricsCreationWrapperDTO {
+@NoArgsConstructor
+public class MetricsCreationWrapperDTO implements Serializable {
     //@formatter:off
      /**
      * The job attribute.

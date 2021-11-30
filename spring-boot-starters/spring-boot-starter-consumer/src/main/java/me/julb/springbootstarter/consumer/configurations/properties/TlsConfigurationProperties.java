@@ -72,7 +72,7 @@ public class TlsConfigurationProperties {
      * @param supportedProtocols the value to set.
      */
      //@formatter:on
-    private String[] supportedProtocols = new String[] {"TLSv1.1", "TLSv1.2"};
+    private String[] supportedProtocols = new String[] {"TLSv1.1", "TLSv1.2", "TLSv1.3"};
 
     //@formatter:off
      /**

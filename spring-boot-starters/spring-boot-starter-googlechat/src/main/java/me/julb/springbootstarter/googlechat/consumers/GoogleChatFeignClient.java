@@ -38,11 +38,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import feign.Client;
 import me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties;
-import me.julb.springbootstarter.consumer.utility.FeignClientUtility;
+import me.julb.springbootstarter.consumer.feign.utility.FeignClientUtility;
 import me.julb.springbootstarter.googlechat.annotations.ConditionalOnGoogleChatEnabled;
 import me.julb.springbootstarter.googlechat.consumers.GoogleChatFeignClient.LocalConsumerConfiguration;
+
+import feign.Client;
 
 /**
  * The Google Chat Feign client.

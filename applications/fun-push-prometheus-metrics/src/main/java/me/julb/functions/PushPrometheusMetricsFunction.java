@@ -26,20 +26,20 @@ package me.julb.functions;
 
 import java.util.function.Consumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.Message;
-
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.PrometheusMetricsPushService;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationWrapperDTO;
 
 /**
  * The function to send mail.
  * <br>
- * @author Julb. O
+ * @author Julb.
  */
 @Slf4j
-public class PushPrometheusMetricsFunction implements Consumer<Message<MetricsCreationWrapperDTO>> {
+public class PushPrometheusMetricsFunction implements Consumer<MetricsCreationWrapperDTO> {
 
     /**
      * The mail service.
@@ -51,10 +51,10 @@ public class PushPrometheusMetricsFunction implements Consumer<Message<MetricsCr
      * {@inheritDoc}
      */
     @Override
-    public void accept(Message<MetricsCreationWrapperDTO> metricsCreationWrapper) {
+    public void accept(MetricsCreationWrapperDTO metricsCreationWrapper) {
         try {
             LOGGER.debug("Received invokation to send metrics.");
-            prometheusMetricsPushService.pushAll(metricsCreationWrapper.getPayload());
+            prometheusMetricsPushService.pushAll(metricsCreationWrapper);
             LOGGER.debug("Method invoked successfully.");
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());

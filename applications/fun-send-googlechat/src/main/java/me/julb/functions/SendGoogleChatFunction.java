@@ -26,10 +26,10 @@ package me.julb.functions;
 
 import java.util.function.Consumer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.Message;
-
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
 
@@ -39,7 +39,7 @@ import me.julb.springbootstarter.googlechat.services.GoogleChatService;
  * @author Julb.
  */
 @Slf4j
-public class SendGoogleChatFunction implements Consumer<Message<GoogleChatMessageDTO>> {
+public class SendGoogleChatFunction implements Consumer<GoogleChatMessageDTO> {
 
     /**
      * The Google chat service.
@@ -51,10 +51,10 @@ public class SendGoogleChatFunction implements Consumer<Message<GoogleChatMessag
      * {@inheritDoc}
      */
     @Override
-    public void accept(Message<GoogleChatMessageDTO> message) {
+    public void accept(GoogleChatMessageDTO message) {
         try {
             LOGGER.debug("Received invokation to send GoogleChat notification {}.", message.toString());
-            googleChatService.send(message.getPayload());
+            googleChatService.send(message);
             LOGGER.debug("Method invoked successfully.");
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());

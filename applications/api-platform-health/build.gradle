@@ -10,6 +10,7 @@ plugins {
 
 dependencies {
     api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
 
     implementation project(':libraries:library-dto-simple')
     implementation project(':libraries:library-dto-security')
@@ -21,9 +22,9 @@ dependencies {
     implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.mnode.ical4j:ical4j'
-    implementation 'org.mapstruct:mapstruct'
-    
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.0.Beta1'
+
+    compileOnly 'org.mapstruct:mapstruct'
+	annotationProcessor 'org.projectlombok:lombok', 'org.projectlombok:lombok-mapstruct-binding', 'org.mapstruct:mapstruct-processor'
 
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
     testImplementation project(':spring-boot-starters:spring-boot-starter-messaging-test')

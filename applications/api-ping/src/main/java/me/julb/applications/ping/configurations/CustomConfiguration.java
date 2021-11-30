@@ -36,16 +36,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import me.julb.applications.ping.configurations.properties.ApplicationProperties;
+import me.julb.applications.ping.configurations.properties.TargetProperties;
+import me.julb.applications.ping.consumers.ApiPingTargetFeignClient;
+import me.julb.springbootstarter.consumer.feign.utility.FeignClientUtility;
+
 import feign.Client;
 import feign.Contract;
 import feign.Retryer;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
 import feign.codec.ErrorDecoder;
-import me.julb.applications.ping.configurations.properties.ApplicationProperties;
-import me.julb.applications.ping.configurations.properties.TargetProperties;
-import me.julb.applications.ping.consumers.ApiPingTargetFeignClient;
-import me.julb.springbootstarter.consumer.utility.FeignClientUtility;
 
 /**
  * The local configuration.

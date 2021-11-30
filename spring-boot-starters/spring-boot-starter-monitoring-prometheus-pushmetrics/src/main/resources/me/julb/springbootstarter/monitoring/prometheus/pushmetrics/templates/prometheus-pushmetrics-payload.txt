@@ -1,5 +1,0 @@
-[# th:each="metric : ${metrics}"]
-# TYPE [(${metric.name})] [(${metric.type})]
-# HELP [(${metric.name})] [(${metric.help})]
-[(${metric.name})]{[# th:each="label : ${metric.additionalLabels}"][(${label.key})]="[(${label.value})]",[/]} [(${metric.value})]
-[/]

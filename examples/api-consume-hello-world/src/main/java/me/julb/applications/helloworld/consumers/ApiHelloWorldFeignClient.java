@@ -15,17 +15,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import feign.Client;
-import feign.RequestInterceptor;
 import me.julb.applications.helloworld.consumers.ApiHelloWorldFeignClient.LocalConsumerConfiguration;
 import me.julb.library.dto.simple.message.MessageDTO;
 import me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties;
-import me.julb.springbootstarter.consumer.interceptors.AddLocaleRequestInterceptor;
-import me.julb.springbootstarter.consumer.interceptors.AddRequestHeaderRequestInterceptor;
-import me.julb.springbootstarter.consumer.interceptors.ApplyMultipleRequestInterceptors;
-import me.julb.springbootstarter.consumer.utility.FeignClientUtility;
+import me.julb.springbootstarter.consumer.feign.interceptors.AddLocaleRequestInterceptor;
+import me.julb.springbootstarter.consumer.feign.interceptors.AddRequestHeaderRequestInterceptor;
+import me.julb.springbootstarter.consumer.feign.interceptors.ApplyMultipleRequestInterceptors;
+import me.julb.springbootstarter.consumer.feign.utility.FeignClientUtility;
 import me.julb.springbootstarter.consumer.utility.SearchableAndPageable;
 import me.julb.springbootstarter.core.configurations.properties.SecurityInternalApiKeyProperties;
+
+import feign.Client;
+import feign.RequestInterceptor;
 
 /**
  * A Feign client for VPN healthcheck.

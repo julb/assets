@@ -24,7 +24,6 @@
 
 package me.julb.functions;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -32,6 +31,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.function.context.FunctionCatalog;
+import org.springframework.test.context.TestPropertySource;
 
 import me.julb.library.dto.simple.value.ValueDTO;
 import me.julb.library.utility.constants.Integers;
@@ -42,6 +42,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
  * <br>
  * @author Julb.
  */
+@TestPropertySource(properties = { "spring.sleuth.function.enabled=false" })
 public class GenerateUUIDFunctionTest extends AbstractBaseTest {
     /**
      * The function catalog.
@@ -55,8 +56,8 @@ public class GenerateUUIDFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenReturnUUID()
         throws Exception {
-        Supplier<Optional<ValueDTO>> function = functionCatalog.lookup("generateUUIDFunction");
-        ValueDTO uuid = function.get().get();
+        Supplier<ValueDTO> function = functionCatalog.lookup("generateUUIDFunction");
+        ValueDTO uuid = function.get();
         Assertions.assertNotNull(uuid);
         Assertions.assertNotNull(uuid.getValue());
         Assertions.assertEquals(Integers.THIRTY_TWO, uuid.getValue().length());

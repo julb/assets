@@ -24,19 +24,20 @@
 
 package me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricHelp;
-import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricLabelKey;
-import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricLabelValue;
 import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricName;
 
 /**
@@ -46,8 +47,10 @@ import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricName
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@ToString
 @EqualsAndHashCode(of = {"name"})
-public class MetricsCreationDTO {
+public class MetricsCreationDTO implements Serializable {
 
     //@formatter:off
      /**
@@ -118,6 +121,7 @@ public class MetricsCreationDTO {
      * @param additionalLabels the value to set.
      */
      //@formatter:on
-    private Map<@PrometheusMetricsMetricLabelKey String, @PrometheusMetricsMetricLabelValue String> additionalLabels = new HashMap<>();
+    @Valid
+    private Set<MetricsLabelCreationDTO> additionalLabels;
 
 }

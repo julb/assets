@@ -11,7 +11,7 @@ dependencies {
 
 	implementation project(':libraries:library-dto-simple')
 	implementation project(':spring-boot-starters:spring-boot-starter-web')
-	implementation project(':spring-boot-starters:spring-boot-starter-consumer')
+	implementation project(':spring-boot-starters:spring-boot-starter-consumer-feign')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }

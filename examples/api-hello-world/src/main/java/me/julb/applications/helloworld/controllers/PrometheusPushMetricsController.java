@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.PrometheusMetricsPushService;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricType;
 import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationDTO;
+import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsLabelCreationDTO;
 
 /**
  * The captcha controller.
@@ -44,8 +45,8 @@ public class PrometheusPushMetricsController {
         metrics.setHelp("A custom gauge with labels");
         metrics.setType(MetricType.GAUGE);
         metrics.setValue(1f);
-        metrics.getAdditionalLabels().put("billing", "123");
-        metrics.getAdditionalLabels().put("env", "prod");
+        metrics.getAdditionalLabels().add(new MetricsLabelCreationDTO("billing", "123"));
+        metrics.getAdditionalLabels().add(new MetricsLabelCreationDTO("env", "prod"));
 
         MetricsCreationDTO metrics2 = new MetricsCreationDTO();
         metrics2.setName("custom_metric_without_labels");

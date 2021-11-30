@@ -9,6 +9,7 @@ plugins {
 
 dependencies {
     api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
     
     implementation 'org.springframework.cloud:spring-cloud-starter-function-web'
     implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'

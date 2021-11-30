@@ -7,13 +7,14 @@ plugins {
 
 dependencies {
 	api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
 
     implementation project(':libraries:library-dto-simple')
     implementation project(':libraries:library-persistence-mongodb')
     implementation 'org.springframework:spring-context'
-    implementation 'org.mapstruct:mapstruct'
-    
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.0.Beta1'
+
+    compileOnly 'org.mapstruct:mapstruct'   
+	annotationProcessor 'org.projectlombok:lombok', 'org.projectlombok:lombok-mapstruct-binding', 'org.mapstruct:mapstruct-processor'
 }
 
 test {

@@ -39,7 +39,7 @@ import javax.validation.constraints.Size;
  * <br>
  * @author Julb.
  */
-@Pattern(regexp = "^[a-z0-9][a-z0-9_]+[a-z0-9]$")
+@Pattern(regexp = "^[a-z0-9][a-z0-9_]*[a-z0-9]$")
 @Size(max = 64)
 @Documented
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.PARAMETER})

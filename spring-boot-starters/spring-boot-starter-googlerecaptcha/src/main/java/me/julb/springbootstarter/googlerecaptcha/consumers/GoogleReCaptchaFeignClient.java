@@ -36,11 +36,12 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import feign.Client;
 import me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties;
-import me.julb.springbootstarter.consumer.utility.FeignClientUtility;
+import me.julb.springbootstarter.consumer.feign.utility.FeignClientUtility;
 import me.julb.springbootstarter.googlerecaptcha.annotations.ConditionalOnGoogleReCaptchaEnabled;
 import me.julb.springbootstarter.googlerecaptcha.consumers.GoogleReCaptchaFeignClient.LocalConsumerConfiguration;
+
+import feign.Client;
 
 /**
  * The Google ReCaptcha Feign client.

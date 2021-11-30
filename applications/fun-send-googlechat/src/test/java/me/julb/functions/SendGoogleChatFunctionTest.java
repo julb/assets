@@ -31,8 +31,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.test.context.TestPropertySource;
 
 import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
@@ -43,6 +42,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
  * <br>
  * @author Julb.
  */
+@TestPropertySource(properties = { "spring.sleuth.function.enabled=false" })
 public class SendGoogleChatFunctionTest extends AbstractBaseTest {
 
     /**
@@ -63,12 +63,12 @@ public class SendGoogleChatFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenSendGoogleChat()
         throws Exception {
-        Consumer<Message<GoogleChatMessageDTO>> function = functionCatalog.lookup("sendGoogleChatFunction");
+        Consumer<GoogleChatMessageDTO> function = functionCatalog.lookup("sendGoogleChatFunction");
 
         GoogleChatMessageDTO dto = new GoogleChatMessageDTO();
         dto.setRoom("Room");
         dto.setText("Hello!");
-        function.accept(MessageBuilder.withPayload(dto).build());
+        function.accept(dto);
 
         Mockito.verify(googleChatService).send(dto);
 

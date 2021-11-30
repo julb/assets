@@ -1,2 +1,4 @@
 spring:
   cloud.function.scan.packages: me.julb.functions
+
+#prometheus.pushmetrics.pushgateway.endpoint.url: http://localhost:9091

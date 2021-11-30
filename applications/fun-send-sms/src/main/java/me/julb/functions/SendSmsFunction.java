@@ -29,7 +29,6 @@ import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.Message;
 
 import me.julb.library.dto.sms.SmsMessageDTO;
 import me.julb.springbootstarter.sms.services.SmsService;
@@ -40,7 +39,7 @@ import me.julb.springbootstarter.sms.services.SmsService;
  * @author Julb.
  */
 @Slf4j
-public class SendSmsFunction implements Consumer<Message<SmsMessageDTO>> {
+public class SendSmsFunction implements Consumer<SmsMessageDTO> {
 
     /**
      * The SMS service.
@@ -52,10 +51,10 @@ public class SendSmsFunction implements Consumer<Message<SmsMessageDTO>> {
      * {@inheritDoc}
      */
     @Override
-    public void accept(Message<SmsMessageDTO> smsMessage) {
+    public void accept(SmsMessageDTO smsMessage) {
         try {
             LOGGER.debug("Received invokation to send SMS.");
-            smsService.send(smsMessage.getPayload());
+            smsService.send(smsMessage);
             LOGGER.debug("Method invoked successfully.");
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());

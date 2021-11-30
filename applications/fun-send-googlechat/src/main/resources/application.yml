@@ -1,2 +1,3 @@
 spring:
-  cloud.function.scan.packages: me.julb.functions
+  cloud:
+    function.scan.packages: me.julb.functions

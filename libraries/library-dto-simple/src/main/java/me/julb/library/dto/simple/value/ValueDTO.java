@@ -24,6 +24,8 @@
 
 package me.julb.library.dto.simple.value;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -45,7 +47,7 @@ import me.julb.library.utility.validator.constraints.GenericName;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ValueDTO {
+public class ValueDTO implements Serializable {
 
     //@formatter:off
      /**

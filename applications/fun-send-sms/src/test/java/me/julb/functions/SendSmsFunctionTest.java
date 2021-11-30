@@ -31,8 +31,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.context.FunctionCatalog;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.test.context.TestPropertySource;
 
 import me.julb.library.dto.sms.SmsMessageDTO;
 import me.julb.springbootstarter.sms.services.SmsService;
@@ -43,6 +42,7 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
  * <br>
  * @author Julb.
  */
+@TestPropertySource(properties = { "spring.sleuth.function.enabled=false" })
 public class SendSmsFunctionTest extends AbstractBaseTest {
 
     /**
@@ -63,12 +63,12 @@ public class SendSmsFunctionTest extends AbstractBaseTest {
     @Test
     public void whenInvokingFunction_thenSendSms()
         throws Exception {
-        Consumer<Message<SmsMessageDTO>> function = functionCatalog.lookup("sendSmsFunction");
+        Consumer<SmsMessageDTO> function = functionCatalog.lookup("sendSmsFunction");
 
         SmsMessageDTO dto = new SmsMessageDTO();
         dto.setE164Number("+33123456789");
         dto.setText("Hello, John");
-        function.accept(MessageBuilder.withPayload(dto).build());
+        function.accept(dto);
 
         Mockito.verify(smsService).send(dto);
     }

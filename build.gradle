@@ -31,12 +31,21 @@ allprojects {
 		}
 	}
 
-	// patch vs code
 	afterEvaluate {
+		// patch vs code
 		if(project.plugins.hasPlugin(JavaPlugin)) {
 			sourceSets.main.java.srcDirs += "build/generated/sources/annotationProcessor/java/main"
 			sourceSets.test.java.srcDirs += "build/generated/sources/annotationProcessor/java/test"
-		}	
+		}
+
+		// patch to disable spring native from unit tests
+		// https://github.com/spring-projects-experimental/spring-native/blob/main/spring-aot-gradle-plugin/src/main/java/org/springframework/aot/gradle/SpringAotGradlePlugin.java#L155-L166
+		if (project.plugins.hasPlugin('org.springframework.experimental.aot')) {
+			generateTestAot.onlyIf { false }
+			test.configure { t ->
+				t.systemProperties.remove('spring.test.context.default.CacheAwareContextLoaderDelegate')
+			}
+		}
 	}
 }
 

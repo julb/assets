@@ -23,14 +23,50 @@
  */
 package me.julb;
 
+import java.util.HashSet;
+
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.nativex.hint.JdkProxyHint;
+import org.springframework.nativex.hint.NativeHint;
+import org.springframework.nativex.hint.ResourceHint;
+import org.springframework.nativex.hint.SerializationHint;
+import org.springframework.nativex.hint.TypeHint;
+
+import me.julb.library.utility.validator.constraints.PrometheusMetricsInstanceName;
+import me.julb.library.utility.validator.constraints.PrometheusMetricsJobName;
+import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricHelp;
+import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricLabelKey;
+import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricLabelValue;
+import me.julb.library.utility.validator.constraints.PrometheusMetricsMetricName;
+import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationDTO;
+import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsCreationWrapperDTO;
+import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.MetricsLabelCreationDTO;
 
 /**
  * Main class to launch the application.
  * <br>
  * @author Julb.
  */
+@NativeHint(
+    jdkProxies = {
+        @JdkProxyHint(types = {Pattern.class}),
+        @JdkProxyHint(types = {Size.class})
+    },
+    types = @TypeHint(types = {
+        PrometheusMetricsJobName.class,
+        PrometheusMetricsInstanceName.class,
+        PrometheusMetricsMetricName.class,
+        PrometheusMetricsMetricHelp.class,
+        PrometheusMetricsMetricLabelKey.class,
+        PrometheusMetricsMetricLabelValue.class
+    }),
+    resources = @ResourceHint(patterns = "me/julb/springbootstarter/monitoring/prometheus/pushmetrics/default.properties"),
+    serializables = @SerializationHint(types = {MetricsCreationWrapperDTO.class, MetricsCreationDTO.class, MetricsLabelCreationDTO.class, HashSet.class})
+)
 @SpringBootApplication
 public class Application {
 
