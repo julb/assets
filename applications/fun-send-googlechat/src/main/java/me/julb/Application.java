@@ -23,15 +23,41 @@
  */
 package me.julb;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration;
+import org.springframework.nativex.hint.JdkProxyHint;
+import org.springframework.nativex.hint.NativeHint;
+import org.springframework.nativex.hint.SerializationHint;
+import org.springframework.nativex.hint.TypeHint;
+
+import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
+import me.julb.library.utility.validator.constraints.GoogleChatRoom;
+import me.julb.library.utility.validator.constraints.GoogleChatText;
+import me.julb.library.utility.validator.constraints.GoogleChatThreadKey;
+import me.julb.springbootstarter.googlechat.repositories.impl.GoogleChatTextBodyDTO;
 
 /**
  * Main class to launch the application.
  * <br>
  * @author Julb.
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {ReactiveUserDetailsServiceAutoConfiguration.class})
+@NativeHint(
+    jdkProxies = {
+        @JdkProxyHint(types = {Pattern.class}),
+        @JdkProxyHint(types = {Size.class})
+    },
+    types = @TypeHint(types = {
+        GoogleChatRoom.class,
+        GoogleChatText.class,
+        GoogleChatThreadKey.class
+    }),
+    serializables = @SerializationHint(types = {GoogleChatMessageDTO.class, GoogleChatTextBodyDTO.class})
+)
 public class Application {
 
     /**

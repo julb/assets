@@ -25,9 +25,13 @@
 package me.julb.springbootstarter.googlechat.configurations;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import me.julb.springbootstarter.consumer.reactive.utility.NettyClientUtility;
 import me.julb.springbootstarter.googlechat.annotations.ConditionalOnGoogleChatEnabled;
 import me.julb.springbootstarter.googlechat.configurations.beans.GoogleChatProperties;
 
@@ -42,4 +46,15 @@ import me.julb.springbootstarter.googlechat.configurations.beans.GoogleChatPrope
 @PropertySource("classpath:/me/julb/springbootstarter/googlechat/default.properties")
 public class GoogleChatConfiguration {
 
+    /**
+     * Builds a rest template for Google chat.
+     * @return the rest template.
+     */
+    @Bean
+    public WebClient googleChatWebClient(GoogleChatProperties googleChatProperties) {
+        return WebClient.builder()
+            .clientConnector(new ReactorClientHttpConnector(NettyClientUtility.build(googleChatProperties.getEndpoint())))
+            .baseUrl(googleChatProperties.getEndpoint().getUrl())
+            .build();
+    }
 }

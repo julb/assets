@@ -15,7 +15,7 @@ dependencies {
     
     implementation project(':libraries:library-utility-constants')
     implementation project(':libraries:library-utility-exception')
-    implementation project(':spring-boot-starters:spring-boot-starter-consumer-feign')
+    implementation project(':spring-boot-starters:spring-boot-starter-consumer-reactive')
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
     implementation project(':spring-boot-starters:spring-boot-starter-validation')
     

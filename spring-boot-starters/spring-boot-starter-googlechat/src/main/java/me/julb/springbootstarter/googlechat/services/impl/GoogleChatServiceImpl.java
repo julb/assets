@@ -38,8 +38,7 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.springbootstarter.googlechat.annotations.ConditionalOnGoogleChatEnabled;
 import me.julb.springbootstarter.googlechat.configurations.beans.GoogleChatProperties;
 import me.julb.springbootstarter.googlechat.configurations.beans.GoogleChatRoomProperties;
-import me.julb.springbootstarter.googlechat.consumers.GoogleChatFeignClient;
-import me.julb.springbootstarter.googlechat.consumers.GoogleChatTextBodyDTO;
+import me.julb.springbootstarter.googlechat.repositories.GoogleChatRepository;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
 
 /**
@@ -60,10 +59,10 @@ public class GoogleChatServiceImpl implements GoogleChatService {
     private GoogleChatProperties googleChatProperties;
 
     /**
-     * The rest template to invoke Google Chat service.
+     * The Google chat repository.
      */
     @Autowired
-    protected GoogleChatFeignClient googleChatFeignClient;
+    private GoogleChatRepository googleChatRepository;
 
     /**
      * {@inheritDoc}
@@ -91,12 +90,12 @@ public class GoogleChatServiceImpl implements GoogleChatService {
 
         // Send message.
         //@formatter:off
-        googleChatFeignClient.createTextMessage(
+        googleChatRepository.createTextMessage(
             roomProperties.getSpaceId(), 
             roomProperties.getKey(), 
             roomProperties.getToken(), 
             threadKey, 
-            new GoogleChatTextBodyDTO(messageDto.getText())
+            messageDto.getText()
         );
         //@formatter:off
 
@@ -113,9 +112,7 @@ public class GoogleChatServiceImpl implements GoogleChatService {
         return googleChatProperties
             .getRooms()
             .stream()
-            .filter((roomProperties) -> {
-                return StringUtils.equalsIgnoreCase(roomProperties.getName(), room);
-            })
+            .filter(roomProperties -> StringUtils.equalsIgnoreCase(roomProperties.getName(), room))
             .findFirst()
             .orElse(null);
         //@formatter:off

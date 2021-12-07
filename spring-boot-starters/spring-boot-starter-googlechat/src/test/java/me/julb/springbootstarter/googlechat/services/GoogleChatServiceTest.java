@@ -33,8 +33,7 @@ import org.springframework.test.context.ContextConfiguration;
 import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.springbootstarter.googlechat.configurations.GoogleChatConfiguration;
-import me.julb.springbootstarter.googlechat.consumers.GoogleChatFeignClient;
-import me.julb.springbootstarter.googlechat.consumers.GoogleChatTextBodyDTO;
+import me.julb.springbootstarter.googlechat.repositories.GoogleChatRepository;
 import me.julb.springbootstarter.googlechat.services.impl.GoogleChatServiceImpl;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
@@ -53,10 +52,10 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
     private GoogleChatService googleChatService;
 
     /**
-     * The Google chat feign client.
+     * The Google chat repository.
      */
     @MockBean
-    private GoogleChatFeignClient googleChatFeignClient;
+    private GoogleChatRepository googleChatRepository;
 
     /**
      * Test method.
@@ -69,7 +68,7 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
         dto.setText("hello");
         googleChatService.send(dto);
 
-        Mockito.verify(googleChatFeignClient).createTextMessage(Mockito.eq("__SPACE_ID_A__"), Mockito.eq("__KEY_A__"), Mockito.eq("__TOKEN_A__"), Mockito.eq("__DEFAULT_THREAD_KEY_A__"), Mockito.eq(new GoogleChatTextBodyDTO(dto.getText())));
+        Mockito.verify(googleChatRepository).createTextMessage(Mockito.eq("__SPACE_ID_A__"), Mockito.eq("__KEY_A__"), Mockito.eq("__TOKEN_A__"), Mockito.eq("__DEFAULT_THREAD_KEY_A__"), Mockito.eq(dto.getText()));
     }
 
     /**
@@ -85,7 +84,7 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
 
         googleChatService.send(dto);
 
-        Mockito.verify(googleChatFeignClient).createTextMessage(Mockito.eq("__SPACE_ID_A__"), Mockito.eq("__KEY_A__"), Mockito.eq("__TOKEN_A__"), Mockito.eq(dto.getThreadKey()), Mockito.eq(new GoogleChatTextBodyDTO(dto.getText())));
+        Mockito.verify(googleChatRepository).createTextMessage(Mockito.eq("__SPACE_ID_A__"), Mockito.eq("__KEY_A__"), Mockito.eq("__TOKEN_A__"), Mockito.eq(dto.getThreadKey()), Mockito.eq(dto.getText()));
     }
 
     /**
@@ -99,7 +98,7 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
         dto.setText("hello");
         googleChatService.send(dto);
 
-        Mockito.verify(googleChatFeignClient).createTextMessage(Mockito.eq("__SPACE_ID_B__"), Mockito.eq("__KEY_B__"), Mockito.eq("__TOKEN_B__"), Mockito.isNull(), Mockito.eq(new GoogleChatTextBodyDTO(dto.getText())));
+        Mockito.verify(googleChatRepository).createTextMessage(Mockito.eq("__SPACE_ID_B__"), Mockito.eq("__KEY_B__"), Mockito.eq("__TOKEN_B__"), Mockito.isNull(), Mockito.eq(dto.getText()));
     }
 
     /**
@@ -115,6 +114,6 @@ public class GoogleChatServiceTest extends AbstractBaseTest {
             googleChatService.send(dto);
         });
 
-        Mockito.verify(googleChatFeignClient, Mockito.never()).createTextMessage(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(googleChatRepository, Mockito.never()).createTextMessage(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 }

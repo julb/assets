@@ -23,6 +23,8 @@
  */
 package me.julb.library.dto.googlechat;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -44,7 +46,7 @@ import me.julb.library.utility.validator.constraints.GoogleChatThreadKey;
 @Setter
 @NoArgsConstructor
 @ToString
-public class GoogleChatMessageDTO {
+public class GoogleChatMessageDTO implements Serializable {
 
     //@formatter:off
      /**

@@ -25,6 +25,7 @@ package me.julb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration;
 import org.springframework.nativex.hint.NativeHint;
 import org.springframework.nativex.hint.SerializationHint;
 
@@ -36,10 +37,9 @@ import me.julb.library.dto.simple.value.ValueDTO;
  * @author Julb.
  */
 @NativeHint(
-    //options = "--initialize-at-build-time=org.hibernate.validator.constraints.CodePointLength$NormalizationStrategy",
     serializables = @SerializationHint(types = {ValueDTO.class})
 )
-@SpringBootApplication
+@SpringBootApplication(exclude = {ReactiveUserDetailsServiceAutoConfiguration.class})
 public class Application {
 
     /**

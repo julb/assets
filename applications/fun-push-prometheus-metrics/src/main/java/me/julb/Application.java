@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration;
 import org.springframework.nativex.hint.JdkProxyHint;
 import org.springframework.nativex.hint.NativeHint;
 import org.springframework.nativex.hint.ResourceHint;
@@ -67,7 +68,7 @@ import me.julb.springbootstarter.monitoring.prometheus.pushmetrics.services.dto.
     resources = @ResourceHint(patterns = "me/julb/springbootstarter/monitoring/prometheus/pushmetrics/default.properties"),
     serializables = @SerializationHint(types = {MetricsCreationWrapperDTO.class, MetricsCreationDTO.class, MetricsLabelCreationDTO.class, HashSet.class})
 )
-@SpringBootApplication
+@SpringBootApplication(exclude = {ReactiveUserDetailsServiceAutoConfiguration.class})
 public class Application {
 
     /**

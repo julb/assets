@@ -21,31 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.julb.springbootstarter.consumer.feign.utility;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+package me.julb.springbootstarter.googlechat.repositories.impl;
 
-import me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties;
-import me.julb.springbootstarter.consumer.utility.ApacheHttpClientUtility;
+import java.io.Serializable;
 
-import feign.Client;
-import feign.httpclient.ApacheHttpClient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
- * A generic configuration class for a SSL client.
+ * The DTO to send a text message.
  * <br>
  * @author Julb.
  */
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class FeignClientUtility {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode(of = "text")
+public class GoogleChatTextBodyDTO implements Serializable {
 
-    /**
-     * Builds a feign client instance.
-     * @param endpointProperties the TLS configuration.
-     * @return the feign client instance.
+    //@formatter:off
+     /**
+     * The text attribute.
+     * -- GETTER --
+     * Getter for {@link #text} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #text} property.
+     * @param text the value to set.
      */
-    public static Client feignClientUtil(ConsumerEndpointProperties endpointProperties) {
-        return new ApacheHttpClient(ApacheHttpClientUtility.build(endpointProperties));
-    }
+     //@formatter:on
+    @NotNull
+    @NotBlank
+    private String text;
+
 }

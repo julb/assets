@@ -97,6 +97,7 @@ include 'libraries:library-utility-validator'
 
 include 'spring-boot-starters:spring-boot-starter-consumer'
 include 'spring-boot-starters:spring-boot-starter-consumer-feign'
+include 'spring-boot-starters:spring-boot-starter-consumer-reactive'
 include 'spring-boot-starters:spring-boot-starter-core'
 include 'spring-boot-starters:spring-boot-starter-gateway'
 include 'spring-boot-starters:spring-boot-starter-googlechat'

@@ -1,3 +1,18 @@
 spring:
   cloud:
     function.scan.packages: me.julb.functions
+
+logging:
+  level:
+    me:
+      julb: DEBUG
+
+google:
+  chat:
+    rooms:
+      - name: "Julb"
+        spaceId: "xxxx"
+        key: "yyyy"
+        token: "efeffefef"
+    endpoint:
+      url: https://en2tcjn7vla5y.x.pipedream.net

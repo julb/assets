@@ -31,19 +31,29 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.security.KeyStore;
+import java.security.Principal;
+import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509KeyManager;
+import javax.net.ssl.X509TrustManager;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -160,6 +170,137 @@ public class ConsumerEndpointUtility {
         }
     }
 
+    /**
+     * Builds a insecure trust manager.
+     * @return a trust manager that accepts all certificates.
+     */
+    public static TrustManager buildInsecureTrustManager() {
+        return new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String s) {
+                // NOOP
+            }
+    
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String s) {
+                // NOOP
+            }
+    
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[]{};
+            }
+        };
+    }
+
+    /**
+     * Builds a key manager factory.
+     * @param consumerEndpointProperties the endpoint properties.
+     * @return a key manager factory.
+     * @throws Exception if an error occurs.
+     */
+    public static KeyManagerFactory buildKeyManagerFactory(ConsumerEndpointProperties consumerEndpointProperties) throws Exception {
+        TlsKeystoreConfigurationProperties keystoreProperties = consumerEndpointProperties.getTls().getKeystore();
+        
+        KeyStore keyStore = KeyStore.getInstance(keystoreProperties.getType());
+        keyStore.load(keystoreProperties.getPath().getInputStream(), keystoreProperties.getPassword().toCharArray());
+
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, keystoreProperties.getPassword().toCharArray());
+        KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+
+        for(int i = 0; i < keyManagers.length; i++) {
+            if (keyManagers[i] instanceof X509KeyManager x509KeyManager) {
+                keyManagers[i] = new X509KeyManager() {
+                    @Override
+                    public String chooseClientAlias(String[] keyTypes, Principal[] issuers, Socket socket) {
+                        // check if aliases exists.
+                        for(String keyType : keyTypes) {
+                            String[] clientAliases = x509KeyManager.getClientAliases(keyType, issuers);
+                            if(ArrayUtils.contains(clientAliases, keystoreProperties.getAlias())) {
+                                return keystoreProperties.getAlias();
+                            }
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public String chooseServerAlias(String arg0, Principal[] arg1, Socket arg2) {
+                        return x509KeyManager.chooseServerAlias(arg0, arg1, arg2);
+                    }
+
+                    @Override
+                    public X509Certificate[] getCertificateChain(String arg0) {
+                        return x509KeyManager.getCertificateChain(arg0);
+                    }
+
+                    @Override
+                    public String[] getClientAliases(String arg0, Principal[] arg1) {
+                        return x509KeyManager.getClientAliases(arg0, arg1);
+                    }
+
+                    @Override
+                    public PrivateKey getPrivateKey(String arg0) {
+                        return x509KeyManager.getPrivateKey(arg0);
+                    }
+
+                    @Override
+                    public String[] getServerAliases(String arg0, Principal[] arg1) {
+                        return x509KeyManager.getServerAliases(arg0, arg1);
+                    }
+                };
+            }
+        }
+
+        return keyManagerFactory;
+    }
+
+    /**
+     * Builds a trust manager factory.
+     * @param consumerEndpointProperties the endpoint properties.
+     * @return a trust manager factory.
+     * @throws Exception if an error occurs.
+     */
+    public static TrustManagerFactory buildTrustManagerFactory(ConsumerEndpointProperties consumerEndpointProperties) throws Exception {
+        TlsTruststoreConfigurationProperties truststore = consumerEndpointProperties.getTls().getTruststore();
+
+        String keystoreType = null;
+        InputStream truststoreInputStream = null;
+        String truststorePassword = null;
+
+        if (truststore.getUseSystem()) {
+            keystoreType = System.getProperty(SSLSystemProperties.JAVAX_NET_SSL_TRUSTSTORE_TYPE_PROPERTY, SSLSystemProperties.JAVAX_NET_SSL_TRUSTSTORE_TYPE_DEFAULT_VALUE);
+            String truststorePath = System.getProperty(SSLSystemProperties.JAVAX_NET_SSL_TRUSTSTORE_PATH_PROPERTY, null);
+            if (truststorePath != null) {
+                truststoreInputStream = new FileInputStream(new File(truststorePath));
+            }
+            truststorePassword = System.getProperty(SSLSystemProperties.JAVAX_NET_SSL_TRUSTSTORE_PASSWORD_PROPERTY, null);
+        } else {
+            keystoreType = truststore.getType();
+            truststoreInputStream = truststore.getPath().getInputStream();
+            truststorePassword = truststore.getPassword();
+        }
+        KeyStore truststoreKeystore = null;
+        if (SSLSystemProperties.JAVAX_NET_SSL_TRUSTSTORE_TYPE_X509_VALUE.equals(keystoreType)) {
+            truststoreKeystore = KeyStore.getInstance(SSLSystemProperties.JAVAX_NET_SSL_TRUSTSTORE_TYPE_DEFAULT_VALUE);
+            truststoreKeystore.load(null);
+            Collection<? extends Certificate> certificates = CertificateFactory.getInstance("X.509").generateCertificates(truststoreInputStream);
+            for (Certificate certificate : certificates) {
+                truststoreKeystore.setCertificateEntry(UUID.randomUUID().toString(), certificate);
+            }
+        } else {
+            truststoreKeystore = KeyStore.getInstance(keystoreType);
+            if (truststorePassword != null) {
+                truststoreKeystore.load(truststoreInputStream, truststorePassword.toCharArray());
+            } else {
+                truststoreKeystore.load(truststoreInputStream, null);
+            }
+        }
+
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(truststoreKeystore);
+        return trustManagerFactory;
+    }
 
     /**
      * Gets the HTTP protocol of this URL.

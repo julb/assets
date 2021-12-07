@@ -35,6 +35,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
+import me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties;
+
 /**
  * The Google Chat properties configuration.
  * <br>
@@ -46,6 +48,19 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "google.chat")
 public class GoogleChatProperties {
+
+    //@formatter:off
+     /**
+     * The endpoint attribute.
+     * -- GETTER --
+     * Getter for {@link #endpoint} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #endpoint} property.
+     * @param endpoint the value to set.
+     */
+     //@formatter:on
+    private ConsumerEndpointProperties endpoint;
 
     //@formatter:off
      /**

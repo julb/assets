@@ -13,7 +13,7 @@ dependencies {
     implementation platform(project(':bom'))
     annotationProcessor platform(project(':bom'))
     
-    implementation 'org.springframework.cloud:spring-cloud-starter-function-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-function-webflux'
     implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
 	implementation project(':spring-boot-starters:spring-boot-starter-validation')
     implementation project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-pushmetrics')
@@ -50,7 +50,7 @@ shadowJar {
     classifier = 'aws'
     dependencies {
         exclude(
-            dependency("org.springframework.cloud:spring-cloud-function-web")
+            dependency("org.springframework.cloud:spring-cloud-function-webflux")
         )
     }
     // Required for Spring

@@ -22,44 +22,26 @@
  * SOFTWARE.
  */
 
-package me.julb.springbootstarter.googlechat.consumers;
+package me.julb.springbootstarter.googlechat.repositories;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
 /**
- * The DTO to send a text message.
+ * description goes here.
  * <br>
+ *
  * @author Julb.
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@EqualsAndHashCode(of = "text")
-public class GoogleChatTextBodyDTO {
-
-    //@formatter:off
-     /**
-     * The text attribute.
-     * -- GETTER --
-     * Getter for {@link #text} property.
-     * @return the value.
-     * -- SETTER --
-     * Setter for {@link #text} property.
-     * @param text the value to set.
+public interface GoogleChatRepository {
+    
+    /**
+     * Posts a text message to the Google chat channel.
+     * @param spaceId the space ID.
+     * @param key the key.
+     * @param token the token.
+     * @param threadKey the thread key, if needed.
+     * @param textMessage the text message.
      */
-     //@formatter:on
-    @NotNull
-    @NotBlank
-    private String text;
-
+    void createTextMessage(@NotNull @NotBlank String spaceId, @NotNull @NotBlank String key, @NotNull @NotBlank String token, String threadKey, @NotNull @NotBlank String textMessage);
 }
