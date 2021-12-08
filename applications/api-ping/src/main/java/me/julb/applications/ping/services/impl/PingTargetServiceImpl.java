@@ -43,6 +43,8 @@ import me.julb.applications.ping.services.dto.PingTargetDTO;
 import me.julb.library.utility.enums.HealthStatus;
 import me.julb.library.utility.exceptions.AbstractRemoteSystemException;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The service to ping all targets.
  * <br>
@@ -68,7 +70,7 @@ public class PingTargetServiceImpl implements PingTargetService {
      * {@inheritDoc}
      */
     @Override
-    public PingTargetAllDTO pingAll() {
+    public Mono<PingTargetAllDTO> pingAll() {
         LOGGER.debug("Pinging all targets.");
 
         PingTargetAllDTO pingAll = new PingTargetAllDTO();
@@ -117,6 +119,6 @@ public class PingTargetServiceImpl implements PingTargetService {
         // All target pinged.
         LOGGER.debug("All targets have been pinged.");
 
-        return pingAll;
+        return Mono.just(pingAll);
     }
 }

@@ -14,8 +14,6 @@ dependencies {
     implementation project(':libraries:library-utility-validator')
 }
 
-
-
 test {
     useJUnitPlatform()
     jvmArgs = ["-Dlogging.level.root=OFF"]

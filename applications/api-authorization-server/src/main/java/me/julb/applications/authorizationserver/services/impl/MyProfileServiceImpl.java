@@ -39,7 +39,7 @@ import me.julb.applications.authorizationserver.services.dto.profile.UserProfile
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfilePatchDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileUpdateDTO;
-import me.julb.springbootstarter.security.services.ISecurityService;
+import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 
 /**
  * The profile service implementation.

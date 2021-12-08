@@ -11,7 +11,7 @@ dependencies {
 
 	implementation project(':libraries:library-dto-simple')
 	implementation project(':libraries:library-utility-identifier')
-	implementation project(':spring-boot-starters:spring-boot-starter-web')
+	implementation project(':spring-boot-starters:spring-boot-starter-web-mvc')
 	implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')

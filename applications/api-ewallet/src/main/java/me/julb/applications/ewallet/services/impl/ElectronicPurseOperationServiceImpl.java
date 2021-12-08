@@ -24,14 +24,14 @@
 
 package me.julb.applications.ewallet.services.impl;
 
+import com.google.common.base.Objects;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import com.google.common.base.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -72,7 +72,7 @@ import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecificati
 import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
 import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.services.ISecurityService;
+import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 
 /**
  * The electronic purse service implementation.

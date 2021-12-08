@@ -48,7 +48,7 @@ import me.julb.library.dto.simple.identifier.IdentifierDTO;
 import me.julb.library.dto.simple.value.PositiveIntegerValueDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.services.ISecurityService;
+import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 
 /**
  * The my item service implementation.

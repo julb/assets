@@ -35,7 +35,7 @@ import org.springframework.validation.annotation.Validated;
 import me.julb.applications.authorizationserver.services.MyAccountRecoveryService;
 import me.julb.applications.authorizationserver.services.UserAccountRecoveryService;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
-import me.julb.springbootstarter.security.services.ISecurityService;
+import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 
 /**
  * The account recovery service implementation for the connected user.

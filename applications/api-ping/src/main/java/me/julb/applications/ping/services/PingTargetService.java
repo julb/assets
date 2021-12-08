@@ -26,6 +26,8 @@ package me.julb.applications.ping.services;
 
 import me.julb.applications.ping.services.dto.PingTargetAllDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The service to ping remote services.
  * <br>
@@ -37,6 +39,6 @@ public interface PingTargetService {
      * Ping all remotes.
      * @return the result of the ping.
      */
-    PingTargetAllDTO pingAll();
+    Mono<PingTargetAllDTO> pingAll();
 
 }

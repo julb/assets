@@ -54,7 +54,7 @@ import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.services.ISecurityService;
+import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 
 /**
  * The user preferences service implementation.

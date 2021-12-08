@@ -39,7 +39,7 @@ import me.julb.applications.authorizationserver.services.dto.preferences.UserPre
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesDTO;
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesUpdateDTO;
-import me.julb.springbootstarter.security.services.ISecurityService;
+import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 
 /**
  * The preferences service implementation.

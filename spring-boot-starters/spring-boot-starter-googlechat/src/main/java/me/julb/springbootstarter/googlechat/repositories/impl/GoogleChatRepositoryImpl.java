@@ -24,7 +24,6 @@
 
 package me.julb.springbootstarter.googlechat.repositories.impl;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,16 +36,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.springbootstarter.consumer.reactive.decoders.WebClientExceptionConverter;
 import me.julb.springbootstarter.googlechat.annotations.ConditionalOnGoogleChatEnabled;
 import me.julb.springbootstarter.googlechat.repositories.GoogleChatRepository;
-
-import reactor.core.publisher.Mono;
 
 /**
  * The Google chat repository.

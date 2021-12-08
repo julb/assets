@@ -44,7 +44,7 @@ import me.julb.applications.authorizationserver.services.dto.mail.UserMailUpdate
 import me.julb.applications.authorizationserver.services.dto.mail.UserMailVerifyDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.services.ISecurityService;
+import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 
 /**
  * The mail service implementation.

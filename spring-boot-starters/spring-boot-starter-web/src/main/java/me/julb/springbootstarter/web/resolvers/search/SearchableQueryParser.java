@@ -52,7 +52,7 @@ import me.julb.springbootstarter.web.resolvers.search.exceptions.UnknownQueryNod
  * <br>
  * @author Julb.
  */
-abstract class SearchableQueryParser {
+public class SearchableQueryParser {
 
     /**
      * The pattern to search for element in search terms.

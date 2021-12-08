@@ -10,7 +10,7 @@ dependencies {
 	api platform(project(':bom'))
 
 	implementation project(':libraries:library-dto-simple')
-	implementation project(':spring-boot-starters:spring-boot-starter-web')
+	implementation project(':spring-boot-starters:spring-boot-starter-web-mvc')
 	implementation project(':spring-boot-starters:spring-boot-starter-consumer-feign')
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')

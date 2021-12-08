@@ -1,0 +1,50 @@
+plugins {
+    id 'java-library'
+    id 'io.freefair.lombok'
+    id 'me.julb.gradleplugins.java17'
+    id 'me.julb.gradleplugins.additionaljars'
+}
+
+dependencies {
+    api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
+
+    api project(':libraries:library-utility-interface')
+
+    api 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation project(':libraries:library-dto-http')
+    implementation project(':libraries:library-dto-security')
+    implementation project(':libraries:library-dto-simple')
+    implementation project(':libraries:library-utility-constants')
+    implementation project(':libraries:library-utility-exception')
+    implementation project(':libraries:library-utility-identifier')
+    implementation project(':libraries:library-utility-jose-jwt')
+    implementation project(':libraries:library-utility-http')
+    implementation project(':libraries:library-utility-validator')
+    implementation project(':spring-boot-starters:spring-boot-starter-core')
+    implementation project(':spring-boot-starters:spring-boot-starter-resource-types')
+    implementation project(':spring-boot-starters:spring-boot-starter-security')
+    
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.apache.commons:commons-collections4'
+    implementation 'commons-codec:commons-codec'
+    implementation 'org.json:json'
+}
+
+
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+publishing {
+    publications {
+        JavaPublication(MavenPublication) {
+            from components.java
+        }
+    }
+}

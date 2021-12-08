@@ -24,8 +24,6 @@
 
 package me.julb.applications.announcement.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,7 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.View;
 
 import me.julb.applications.announcement.services.RSSFeedService;
-import me.julb.springbootstarter.web.views.rssfeed.RSSFeedView;
+import me.julb.springbootstarter.web.mvc.views.rssfeed.RSSFeedView;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * The REST controller to serve RSS feeds.

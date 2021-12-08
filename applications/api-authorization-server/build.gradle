@@ -20,7 +20,7 @@ dependencies {
     implementation project(':libraries:library-utility-otp')
     implementation project(':libraries:library-utility-random')
     implementation project(':spring-boot-starters:spring-boot-starter-messaging')
-    implementation project(':spring-boot-starters:spring-boot-starter-web')
+    implementation project(':spring-boot-starters:spring-boot-starter-web-mvc')
     implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'com.googlecode.libphonenumber:libphonenumber'

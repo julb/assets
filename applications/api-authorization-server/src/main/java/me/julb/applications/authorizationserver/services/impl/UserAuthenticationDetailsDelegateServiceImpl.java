@@ -47,10 +47,10 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecureApiKey;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.security.configurations.beans.userdetails.delegates.IAuthenticationByApiKeyUserDetailsDelegateService;
-import me.julb.springbootstarter.security.configurations.beans.userdetails.delegates.IAuthenticationByPasswordUserDetailsDelegateService;
-import me.julb.springbootstarter.security.configurations.beans.userdetails.delegates.IAuthenticationByPincodeUserDetailsDelegateService;
-import me.julb.springbootstarter.security.configurations.beans.userdetails.delegates.IAuthenticationByTotpUserDetailsDelegateService;
+import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationByApiKeyUserDetailsDelegateService;
+import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationByPasswordUserDetailsDelegateService;
+import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationByPincodeUserDetailsDelegateService;
+import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationByTotpUserDetailsDelegateService;
 
 /**
  * The delegate service implementation for user authentication details.

@@ -33,7 +33,7 @@ import me.julb.library.utility.data.search.Searchable;
  * <br>
  * @author Julb.
  */
-abstract class SearchableAnnotationUtils {
+public class SearchableAnnotationUtils {
 
     private SearchableAnnotationUtils() {
     }

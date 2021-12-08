@@ -24,16 +24,12 @@
 
 package me.julb.applications.ping.controllers;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 import me.julb.springbootstarter.test.security.annotations.WithMockUser;
@@ -43,14 +39,13 @@ import me.julb.springbootstarter.test.security.annotations.WithMockUser;
  * <br>
  * @author Julb.
  */
-@AutoConfigureMockMvc
 public class PingControllerTest extends AbstractBaseTest {
 
     /**
-     * The mock MVC.
+     * The client used to test the API.
      */
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     /**
      * Unit test method.
@@ -61,12 +56,15 @@ public class PingControllerTest extends AbstractBaseTest {
         throws Exception {
 
         //@formatter:off
-        mockMvc
-            .perform(
-                get("/ping").contentType(MediaType.APPLICATION_JSON_VALUE)
-            )
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.message", is("pong")));
+        webTestClient
+            .get()
+            .uri("/ping")
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .exchange()
+            .expectStatus()
+                .is2xxSuccessful()
+            .expectBody()
+                .jsonPath("$.message").isEqualTo("pong");
         //@formatter:on
     }
 }

@@ -25,6 +25,7 @@
 package me.julb.applications.ping.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,9 +54,9 @@ public class PingController {
      */
     @Operation(summary = "responds to a ping request")
     @GetMapping()
-    public MessageDTO respondToPing() {
+    public Mono<MessageDTO> respondToPing() {
         LOGGER.debug("Responding to a ping request.");
-        return new MessageDTO("pong");
+        return Mono.just(new MessageDTO("pong"));
     }
 
 }

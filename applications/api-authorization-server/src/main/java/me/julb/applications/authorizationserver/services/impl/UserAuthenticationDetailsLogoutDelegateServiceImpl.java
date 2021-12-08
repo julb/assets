@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import me.julb.springbootstarter.security.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsLogoutHandlerDelegate;
+import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsLogoutHandlerDelegate;
 
 /**
  * The logout delegate service to trigger a session termination.

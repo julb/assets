@@ -61,7 +61,7 @@ import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecificati
 import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
 import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.services.ISecurityService;
+import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 
 /**
  * The planned maintenance service implementation.

@@ -1,0 +1,60 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+    id 'me.julb.gradleplugins.java17'
+	id 'me.julb.gradleplugins.additionaljars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
+
+	api 'org.springframework.boot:spring-boot-starter-webflux'
+	api 'org.springframework.data:spring-data-commons'
+	api 'io.swagger.core.v3:swagger-annotations'
+
+	api project(':libraries:library-dto-http')
+    api project(':libraries:library-dto-icsfeed')
+    api project(':libraries:library-dto-rssfeed')
+	api project(':libraries:library-dto-simple')
+	api project(':libraries:library-utility-constants')
+	api project(':libraries:library-utility-data')
+    api project(':libraries:library-utility-date')
+	api project(':libraries:library-utility-exception')
+	api project(':libraries:library-utility-http')
+    api project(':spring-boot-starters:spring-boot-starter-core')
+	api project(':spring-boot-starters:spring-boot-starter-security-reactive')
+	api project(':spring-boot-starters:spring-boot-starter-mapping')
+    api project(':spring-boot-starters:spring-boot-starter-opentracing')
+    api project(':spring-boot-starters:spring-boot-starter-resource-types')
+    api project(':spring-boot-starters:spring-boot-starter-validation')
+	api project(':spring-boot-starters:spring-boot-starter-monitoring-prometheus-metrics')
+	api project(':spring-boot-starters:spring-boot-starter-web')
+	
+	implementation 'org.apache.commons:commons-lang3'
+	implementation 'org.apache.commons:commons-collections4'
+	implementation 'org.apache.lucene:lucene-queryparser'
+	implementation 'org.springdoc:springdoc-openapi-webflux-core'
+	implementation 'org.springdoc:springdoc-openapi-data-rest'
+	implementation 'com.google.code.findbugs:jsr305'
+    implementation 'com.rometools:rome'
+	
+	implementation project(':spring-boot-starters:spring-boot-starter-logging')
+	
+	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
+}
+
+
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

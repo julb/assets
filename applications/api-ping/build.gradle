@@ -13,7 +13,7 @@ dependencies {
     annotationProcessor platform(project(':bom'))
 
     implementation project(':spring-boot-starters:spring-boot-starter-consumer-feign')
-    implementation project(':spring-boot-starters:spring-boot-starter-web')
+    implementation project(':spring-boot-starters:spring-boot-starter-web-reactive')
     implementation project(':libraries:library-utility-identifier')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.apache.commons:commons-collections4'

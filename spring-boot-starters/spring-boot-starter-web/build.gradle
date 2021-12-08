@@ -9,10 +9,19 @@ dependencies {
 	api platform(project(':bom'))
     annotationProcessor platform(project(':bom'))
 
-	api 'org.springframework.boot:spring-boot-starter-web'
+	api project(':libraries:library-utility-constants')
+	api project(':libraries:library-utility-data')
+	api project(':libraries:library-utility-exception')
+    api project(':spring-boot-starters:spring-boot-starter-core')
 	api 'org.springframework.data:spring-data-commons'
 	api 'io.swagger.core.v3:swagger-annotations'
+	
+	implementation 'org.apache.lucene:lucene-queryparser'
+	implementation 'org.apache.commons:commons-lang3'
+	implementation 'org.apache.commons:commons-collections4'
+	implementation 'org.springdoc:springdoc-openapi-common'
 
+	/*
 	api project(':libraries:library-dto-http')
     api project(':libraries:library-dto-icsfeed')
     api project(':libraries:library-dto-rssfeed')
@@ -39,6 +48,7 @@ dependencies {
     implementation 'com.rometools:rome'
 	
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
+	*/
 	
 	testImplementation project(':spring-boot-starters:spring-boot-starter-test')
 }

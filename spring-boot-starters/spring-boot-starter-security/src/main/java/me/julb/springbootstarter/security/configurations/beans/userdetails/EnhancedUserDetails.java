@@ -25,6 +25,7 @@
 package me.julb.springbootstarter.security.configurations.beans.userdetails;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -58,7 +59,11 @@ public interface EnhancedUserDetails extends UserDetails {
     @Override
     default String getPassword() {
         if (ArrayUtils.isNotEmpty(this.getPasswords())) {
-            return this.getPasswords()[0];
+            if (this.getPasswords().length == 1) {
+                return this.getPasswords()[0];
+            } else {
+                return String.format("{multi}%s", StringUtils.join(this.getPasswords()));
+            }
         } else {
             return null;
         }
