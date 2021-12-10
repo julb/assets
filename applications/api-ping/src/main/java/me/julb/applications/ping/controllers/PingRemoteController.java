@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.julb.applications.ping.services.PingTargetService;
 import me.julb.applications.ping.services.dto.PingTargetAllDTO;
-import me.julb.library.utility.exceptions.BadRequestException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import reactor.core.publisher.Mono;
@@ -63,8 +62,6 @@ public class PingRemoteController {
     @GetMapping()
     @PreAuthorize("permitAll()")
     public Mono<PingTargetAllDTO> pingAllRemotes() {
-        String s = null;
-        s.length();
         return pingRemoteService.pingAll();
     }
 

@@ -4,13 +4,18 @@ spring:
       enabled: false
 
 logging.level.me.julb: DEBUG
-  
+server.shutdown: graceful
 application:
   local:
     metadata:
       name: localhost
     endpoint:
       url: http://localhost:8080
+  remotes:
+    - metadata:
+        name: not-responding
+      endpoint:
+        url: http://localhost:8081
 
 spring.sleuth.baggage:
   remote-fields:

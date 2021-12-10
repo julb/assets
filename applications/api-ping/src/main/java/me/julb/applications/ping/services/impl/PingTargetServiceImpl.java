@@ -98,10 +98,21 @@ public class PingTargetServiceImpl implements PingTargetService {
                                         pingTarget.setStatus(HealthStatus.UP);
                                     } else {
                                         LOGGER.error("> Ping failed to <{}>.", target.getEndpoint().getUrl());
-                                        LOGGER.error("> Stacktrace is below.", clientResponse.createException().subscribe());
+                                        LOGGER.error("> Stacktrace is below.", clientResponse.createException().block());
                                         pingTarget.setStatus(HealthStatus.DOWN);
                                     }
         
+                                    return Mono.just(pingTarget);
+                                })
+                                .onErrorResume(exception -> {
+                                    LOGGER.error("> Ping failed to <{}>.", target.getEndpoint().getUrl());
+                                    LOGGER.error("> Stacktrace is below.", exception);
+                                    
+                                    PingTargetDTO pingTarget = new PingTargetDTO();
+                                    pingTarget.getMetadata().putAll(target.getMetadata());
+                                    pingTarget.setStatus(HealthStatus.DOWN);
+                                    pingTarget.setResponseStatusCode(0);
+                                    pingTarget.setResponseTimeMilliseconds(0L);
                                     return Mono.just(pingTarget);
                                 });
                         }).contextWrite(Context.of("stopWatch", StopWatch.createStarted()));

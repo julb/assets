@@ -92,5 +92,4 @@ public class PingTargetDTO {
      */
      //@formatter:on
     private Long responseTimeMilliseconds;
-
 }

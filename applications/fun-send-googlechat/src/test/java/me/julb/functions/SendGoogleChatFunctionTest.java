@@ -37,6 +37,8 @@ import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The function to send Google chat.
  * <br>
@@ -68,6 +70,9 @@ public class SendGoogleChatFunctionTest extends AbstractBaseTest {
         GoogleChatMessageDTO dto = new GoogleChatMessageDTO();
         dto.setRoom("Room");
         dto.setText("Hello!");
+
+        Mockito.when(googleChatService.send(dto)).thenReturn(Mono.empty());
+
         function.accept(dto);
 
         Mockito.verify(googleChatService).send(dto);

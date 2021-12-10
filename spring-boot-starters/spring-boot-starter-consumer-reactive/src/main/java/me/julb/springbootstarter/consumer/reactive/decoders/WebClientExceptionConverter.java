@@ -28,7 +28,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -52,7 +51,7 @@ public class WebClientExceptionConverter {
     /**
      * {@inheritDoc}
      */
-    public static BaseException convert(WebClientException e) {
+    public static BaseException convert(Throwable e) {
         if (e instanceof WebClientRequestException webClientRequestExcetion) {
             LOGGER.warn("Call to remote system has failed: <{}> doesn't return a response.", webClientRequestExcetion.getUri());
             return new InternalServerErrorException(e);

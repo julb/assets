@@ -27,6 +27,8 @@ package me.julb.springbootstarter.googlechat.repositories;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import reactor.core.publisher.Mono;
+
 /**
  * description goes here.
  * <br>
@@ -43,5 +45,5 @@ public interface GoogleChatRepository {
      * @param threadKey the thread key, if needed.
      * @param textMessage the text message.
      */
-    void createTextMessage(@NotNull @NotBlank String spaceId, @NotNull @NotBlank String key, @NotNull @NotBlank String token, String threadKey, @NotNull @NotBlank String textMessage);
+    Mono<Void> createTextMessage(@NotNull @NotBlank String spaceId, @NotNull @NotBlank String key, @NotNull @NotBlank String token, String threadKey, @NotNull @NotBlank String textMessage);
 }

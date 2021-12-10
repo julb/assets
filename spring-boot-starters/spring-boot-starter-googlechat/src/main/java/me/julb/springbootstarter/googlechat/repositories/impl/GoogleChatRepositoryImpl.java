@@ -35,11 +35,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
 
 import me.julb.springbootstarter.consumer.reactive.decoders.WebClientExceptionConverter;
 import me.julb.springbootstarter.googlechat.annotations.ConditionalOnGoogleChatEnabled;
 import me.julb.springbootstarter.googlechat.repositories.GoogleChatRepository;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The Google chat repository.
@@ -62,28 +63,24 @@ public class GoogleChatRepositoryImpl implements GoogleChatRepository {
      * {@inheritDoc}
      */
     @Override
-    public void createTextMessage(@NotNull @NotBlank String spaceId, @NotNull @NotBlank String key, @NotNull @NotBlank String token, String threadKey, @NotNull @NotBlank String textMessage) {
+    public Mono<Void> createTextMessage(@NotNull @NotBlank String spaceId, @NotNull @NotBlank String key, @NotNull @NotBlank String token, String threadKey, @NotNull @NotBlank String textMessage) {
         GoogleChatTextBodyDTO body = new GoogleChatTextBodyDTO(textMessage);
 
         // Execute call.
-        try {
-            //@formatter:off
-            googleChatWebClient.post()
-                .uri(uriBuilder -> uriBuilder
-                    .path("/v1/spaces/{spaceId}/messages")
-                    .queryParam("key", key)
-                    .queryParam("token", token)
-                    .queryParamIfPresent("threadKey", Optional.ofNullable(threadKey))
-                    .build(Map.of("spaceId", spaceId))
-                )
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(Void.class)
-                .subscribe();
-            //@formatter:on
-        } catch (WebClientException e) {
-            throw WebClientExceptionConverter.convert(e);
-        }
+        //@formatter:off
+        return googleChatWebClient.post()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/spaces/{spaceId}/messages")
+                .queryParam("key", key)
+                .queryParam("token", token)
+                .queryParamIfPresent("threadKey", Optional.ofNullable(threadKey))
+                .build(Map.of("spaceId", spaceId))
+            )
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(body)
+            .retrieve()
+            .bodyToMono(Void.class)
+            .doOnError(WebClientExceptionConverter::convert);
+        //@formatter:on
     }
 }

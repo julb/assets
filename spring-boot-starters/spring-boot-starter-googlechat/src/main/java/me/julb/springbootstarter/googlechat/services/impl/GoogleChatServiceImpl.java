@@ -41,6 +41,8 @@ import me.julb.springbootstarter.googlechat.configurations.beans.GoogleChatRoomP
 import me.julb.springbootstarter.googlechat.repositories.GoogleChatRepository;
 import me.julb.springbootstarter.googlechat.services.GoogleChatService;
 
+import reactor.core.publisher.Mono;
+
 /**
  * GChat service implementation.
  * <br>
@@ -68,7 +70,7 @@ public class GoogleChatServiceImpl implements GoogleChatService {
      * {@inheritDoc}
      */
     @Override
-    public void send(@NotNull @Valid GoogleChatMessageDTO messageDto) {
+    public Mono<Void> send(@NotNull @Valid GoogleChatMessageDTO messageDto) {
         LOGGER.debug("Sending GChat message : {}.", messageDto);
 
         // Find room.
@@ -85,21 +87,17 @@ public class GoogleChatServiceImpl implements GoogleChatService {
             LOGGER.debug("Using default thread key defined for room {}: {}.", room, roomProperties.getDefaultThreadKey());
             threadKey = roomProperties.getDefaultThreadKey();
         }
-
-        // Build body.
-
+        
         // Send message.
         //@formatter:off
-        googleChatRepository.createTextMessage(
+        return googleChatRepository.createTextMessage(
             roomProperties.getSpaceId(), 
             roomProperties.getKey(), 
             roomProperties.getToken(), 
             threadKey, 
             messageDto.getText()
-        );
+        ).doOnSuccess(result -> LOGGER.debug("Message sent successfully."));
         //@formatter:off
-
-        LOGGER.debug("Message sent successfully.");
     }
 
     /**

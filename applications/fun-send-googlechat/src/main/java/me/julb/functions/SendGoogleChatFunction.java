@@ -54,8 +54,12 @@ public class SendGoogleChatFunction implements Consumer<GoogleChatMessageDTO> {
     public void accept(GoogleChatMessageDTO message) {
         try {
             LOGGER.debug("Received invokation to send GoogleChat notification {}.", message.toString());
-            googleChatService.send(message);
-            LOGGER.debug("Method invoked successfully.");
+            googleChatService.send(message).subscribe(s -> {
+                LOGGER.debug("Method invoked successfully.");
+            }, e -> {
+                LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());
+                LOGGER.debug("Stracktrace output:", e);
+            });
         } catch (Exception e) {
             LOGGER.error("Fail to invoke function due to the following exception: {}.", e.getMessage());
             LOGGER.debug("Stracktrace output:", e);

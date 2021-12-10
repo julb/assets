@@ -28,6 +28,8 @@ import javax.validation.constraints.NotNull;
 
 import me.julb.library.dto.googlechat.GoogleChatMessageDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * GChat service.
  * <br>
@@ -39,6 +41,6 @@ public interface GoogleChatService {
      * Sends the message.
      * @param message the GChat message to send.
      */
-    void send(@NotNull @Valid GoogleChatMessageDTO message);
+    Mono<Void> send(@NotNull @Valid GoogleChatMessageDTO message);
 
 }
