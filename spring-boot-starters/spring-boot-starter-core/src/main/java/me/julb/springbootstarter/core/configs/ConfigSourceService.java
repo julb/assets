@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
@@ -44,14 +45,13 @@ import org.springframework.lang.Nullable;
 
 import me.julb.library.utility.constants.Strings;
 import me.julb.library.utility.exceptions.InternalServerErrorException;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 
 /**
  * The config source service.
  * <br>
  * @author Julb.
  */
-public class ConfigSourceService implements ApplicationListener<ContextRefreshedEvent> {
+public class ConfigSourceService implements ApplicationListener<ContextRefreshedEvent>, InitializingBean {
 
     /**
      * The SENSITIVE_KEY_PREFIX attribute.
@@ -70,10 +70,10 @@ public class ConfigSourceService implements ApplicationListener<ContextRefreshed
     private Resource configSourcePropertiesResource;
 
     /**
-     * The conversion service.
+     * The webflux conversion service.
      */
     @Autowired
-    private ConversionService mvcConversionService;
+    private ConversionService webFluxConversionService;
 
     /**
      * The config source properties.
@@ -94,25 +94,39 @@ public class ConfigSourceService implements ApplicationListener<ContextRefreshed
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try {
+            this.configSourceProperties = PropertiesLoaderUtils.loadProperties(configSourcePropertiesResource);
+        } catch (IOException e) {
+            throw new InternalServerErrorException(e);
+        }
+    }
+
     // ------------------------------------------ Read methods.
 
     /**
      * Try to resolve the config value.
+     * @param tm the trademark.
      * @param code the message code to lookup.
      * @return the config value if found.
      */
-    public String getProperty(String code) {
-        return getTypedProperty(code, String.class);
+    public String getProperty(String tm, String code) {
+        return getTypedProperty(tm, code, String.class);
     }
 
     /**
      * Try to resolve the configuration value.
+     * @param tm the trademark.
      * @param code the message code to lookup.
      * @param args the arguments to format the output.
      * @return the configuration value if found.
      */
-    public String getProperty(String code, Object[] args) {
-        String property = getProperty(code);
+    public String getProperty(String tm, String code, Object[] args) {
+        String property = getProperty(tm, code);
         if (property != null) {
             return MessageFormat.format(property, args);
         } else {
@@ -122,14 +136,13 @@ public class ConfigSourceService implements ApplicationListener<ContextRefreshed
 
     /**
      * Try to resolve the configuration value.
+     * @param tm the trademark.
      * @param code the message code to lookup.
      * @param targetType the target type.
      * @param <T> the type of the target type.
      * @return the configuration value if found.
      */
-    public <T> T getTypedProperty(String code, Class<T> targetType) {
-        String tm = TrademarkContextHolder.getTrademark();
-
+    public <T> T getTypedProperty(String tm, String code, Class<T> targetType) {
         // Get property value.
         String tmPropertyValue = configSourceProperties.getProperty(StringUtils.join(Strings.LEFT_BRACKET, tm, Strings.RIGHT_BRACKET, code));
         if (tmPropertyValue == null) {
@@ -143,7 +156,7 @@ public class ConfigSourceService implements ApplicationListener<ContextRefreshed
 
         // If property value provided, convert it.
         if (tmPropertyValue != null) {
-            return mvcConversionService.convert(tmPropertyValue, targetType);
+            return webFluxConversionService.convert(tmPropertyValue, targetType);
         } else {
             return null;
         }
@@ -155,10 +168,7 @@ public class ConfigSourceService implements ApplicationListener<ContextRefreshed
      * @param redactSensitive <code>true</code> to redact sensitive value, <code>false</code> otherwise.
      * @return the properties.
      */
-    public Map<String, String> findAll(@Nullable String prefix, Boolean redactSensitive) {
-        // Get trademark.
-        String tm = TrademarkContextHolder.getTrademark();
-
+    public Map<String, String> findAll(String tm, @Nullable String prefix, Boolean redactSensitive) {
         //@formatter:off
         Map<String, String> defaultProperties = configSourceProperties.entrySet().stream()
             .filter((e) -> {

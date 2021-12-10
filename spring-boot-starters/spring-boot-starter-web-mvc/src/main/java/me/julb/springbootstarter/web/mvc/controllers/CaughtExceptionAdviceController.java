@@ -70,7 +70,7 @@ import me.julb.library.utility.exceptions.ResourceStillReferencedException;
 import me.julb.library.utility.exceptions.ServiceUnavailableException;
 import me.julb.library.utility.exceptions.UnauthorizedException;
 import me.julb.library.utility.http.HttpErrorResponseBuilder;
-import me.julb.springbootstarter.core.messages.MessageSourceService;
+import me.julb.springbootstarter.core.context.messages.ContextMessageSourceService;
 import me.julb.springbootstarter.web.resolvers.search.exceptions.SearchTermSearchQueryParseException;
 
 /**
@@ -87,7 +87,7 @@ public class CaughtExceptionAdviceController {
      * The message resource.
      */
     @Autowired
-    private MessageSourceService messageSourceService;
+    private ContextMessageSourceService messageSourceService;
 
     /**
      * Method that handles thrown {@link ConstraintViolationException}.

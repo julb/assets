@@ -29,10 +29,8 @@ import org.springframework.boot.actuate.cache.CachesEndpoint;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -54,6 +52,7 @@ import me.julb.springbootstarter.security.reactive.configurations.beans.userdeta
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 //@formatter:off
+/*
 @Import({
     SecurityAuthenticationByApiKeyConfiguration.class, 
     SecurityAuthenticationByInternalApiKeyConfiguration.class, 
@@ -70,6 +69,7 @@ import me.julb.springbootstarter.security.reactive.configurations.beans.userdeta
     SecurityAuthenticationByPincodeConfiguration.class, 
     SecurityAuthenticationByTotpConfiguration.class
 })
+*/
 //@formatter:on
 public class SecurityReactiveConfiguration {
 
@@ -105,14 +105,10 @@ public class SecurityReactiveConfiguration {
      * {@inheritDoc}
      */
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http)
-        throws Exception {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         //@formatter:off
         return http
-            .authorizeExchange()
-                .pathMatchers("/v3/api-docs").permitAll()
-                .matchers(EndpointRequest.to(HealthEndpoint.class, InfoEndpoint.class, PrometheusScrapeEndpoint.class)).permitAll()
-                .matchers(EndpointRequest.to(CachesEndpoint.class)).hasRole("ACTUATOR")
+            .authorizeExchange().anyExchange().permitAll()
             .and()
             .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedAuthenticationEntrypoint())

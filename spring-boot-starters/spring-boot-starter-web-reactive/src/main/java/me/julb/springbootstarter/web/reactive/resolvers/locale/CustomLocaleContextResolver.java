@@ -30,12 +30,14 @@ import java.util.TimeZone;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
+import me.julb.library.utility.constants.CustomHttpHeaders;
 import me.julb.library.utility.constants.LocalizationRequestAttributes;
 import me.julb.springbootstarter.core.localization.CustomLocaleContext;
 import me.julb.springbootstarter.core.localization.LocaleService;
@@ -54,17 +56,32 @@ public class CustomLocaleContextResolver implements LocaleContextResolver {
     private LocaleService localeService;
 
     /**
+     * The trademark override if any.
+     */
+    @Value("${trademark.override:}")
+    private String trademarkOverride;
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public LocaleContext resolveLocaleContext(ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
+
+        // Get trademark
+        String trademark = exchange.getRequest().getHeaders().getFirst(CustomHttpHeaders.X_JULB_TM);
+
+        // Trademark from system.
+        if (StringUtils.isBlank(trademark)) {
+            trademark = this.trademarkOverride;
+        }
+
         // Locale.
         String languageParameter = request.getQueryParams().getFirst(LocalizationRequestAttributes.LANGUAGE_PARAMETER_NAME);
         if (StringUtils.isBlank(languageParameter)) {
             languageParameter = request.getHeaders().getFirst(HttpHeaders.ACCEPT_LANGUAGE);
         }
-        Locale locale = localeService.resolveLocale(languageParameter);
+        Locale locale = localeService.resolveLocale(trademark, languageParameter);
 
         // Timezone.
         String timezoneId = request.getQueryParams().getFirst(LocalizationRequestAttributes.TIMEZONE_PARAMETER_NAME);
@@ -72,14 +89,14 @@ public class CustomLocaleContextResolver implements LocaleContextResolver {
         if (StringUtils.isNotBlank(timezoneId) && ArrayUtils.contains(TimeZone.getAvailableIDs(), timezoneId)) {
             timeZone = TimeZone.getTimeZone(timezoneId);
         } else {
-            timeZone = localeService.getDefaultTimeZone();
+            timeZone = localeService.getDefaultTimeZone(trademark);
         }
 
         // Return custom locale context.
         CustomLocaleContext customLocaleContext = new CustomLocaleContext(locale, timeZone);
         customLocaleContext.setRequestLanguageRange(languageParameter);
-        customLocaleContext.setAvailableLocales(localeService.getSupportedLocales());
-        customLocaleContext.setDefaultLocale(localeService.getDefaultLocale());
+        customLocaleContext.setAvailableLocales(localeService.getSupportedLocales(trademark));
+        customLocaleContext.setDefaultLocale(localeService.getDefaultLocale(trademark));
         return customLocaleContext;
     }
 

@@ -61,8 +61,8 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.moneyamount.MoneyAmountBuilder;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
@@ -115,7 +115,7 @@ public class ElectronicPurseServiceImpl implements ElectronicPurseService {
      * The config source service.
      */
     @Autowired
-    private ConfigSourceService configSourceService;
+    private ContextConfigSourceService configSourceService;
 
     // ------------------------------------------ Read methods.
 

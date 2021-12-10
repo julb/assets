@@ -35,9 +35,9 @@ dependencies {
 	implementation 'org.apache.commons:commons-collections4'
 	implementation 'org.apache.lucene:lucene-queryparser'
 	implementation 'org.springdoc:springdoc-openapi-webflux-core'
-	implementation 'org.springdoc:springdoc-openapi-data-rest'
 	implementation 'com.google.code.findbugs:jsr305'
     implementation 'com.rometools:rome'
+	implementation 'javax.servlet:javax.servlet-api'
 	
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
 	

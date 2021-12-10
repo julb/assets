@@ -23,56 +23,29 @@
  */
 package me.julb.springbootstarter.web.reactive.filters;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 
-import me.julb.library.utility.constants.CustomHttpHeaders;
 import me.julb.springbootstarter.core.context.ContextConstants;
 
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
 /**
- * An interceptor to log the inbound request.
+ * An interceptor to set the locale.
  * <br>
  * @author Julb.
  */
-public class TrademarkWebFilter implements WebFilter, Ordered {
-
-    /**
-     * The trademark override if any.
-     */
-    @Value("${trademark.override:}")
-    private String trademarkOverride;
-
+public class LocaleContextWebFilter implements WebFilter, Ordered {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        // Trademark from header.
-        String trademark = exchange.getRequest().getHeaders().getFirst(CustomHttpHeaders.X_JULB_TM);
-
-        // Override trademark from system.
-        if (StringUtils.isBlank(trademark)) {
-            trademark = this.trademarkOverride;
-        }
-
-        exchange.getResponse().beforeCommit(() -> {
-            return Mono.deferContextual(ctx -> {
-                String tm = ctx.getOrDefault(ContextConstants.TRADEMARK, null);
-                if (tm != null) {
-                    exchange.getResponse().getHeaders().add(CustomHttpHeaders.X_JULB_TM, tm);
-                }
-                return Mono.empty();
-            });
-        });
-        return chain.filter(exchange).contextWrite(Context.of(ContextConstants.TRADEMARK, trademark));
+        return chain.filter(exchange).contextWrite(Context.of(ContextConstants.LOCALE, exchange.getLocaleContext()));
     }
 
     /**
@@ -80,6 +53,6 @@ public class TrademarkWebFilter implements WebFilter, Ordered {
      */
     @Override
     public int getOrder() {
-        return 0;
+        return 1;
     }
 }

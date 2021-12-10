@@ -38,8 +38,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.i18n.AbstractLocaleContextResolver;
 
 import me.julb.library.utility.constants.LocalizationRequestAttributes;
+import me.julb.springbootstarter.core.context.localization.ContextLocaleService;
 import me.julb.springbootstarter.core.localization.CustomLocaleContext;
-import me.julb.springbootstarter.core.localization.LocaleService;
 
 /**
  * The locale resolver based on a HTTP header.
@@ -52,7 +52,7 @@ public class CustomLocaleContextResolver extends AbstractLocaleContextResolver {
      * The locale service.
      */
     @Autowired
-    private LocaleService localeService;
+    private ContextLocaleService localeService;
 
     /**
      * {@inheritDoc}

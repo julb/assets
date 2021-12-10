@@ -26,19 +26,20 @@ package me.julb.applications.ping.controllers;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
-import me.julb.springbootstarter.test.security.annotations.WithMockUser;
 
 /**
  * Unit test for the {@link PingController} class.
  * <br>
  * @author Julb.
  */
+@AutoConfigureWebTestClient
 public class PingControllerTest extends AbstractBaseTest {
 
     /**
@@ -51,7 +52,7 @@ public class PingControllerTest extends AbstractBaseTest {
      * Unit test method.
      */
     @Test
-    @WithMockUser
+    @WithMockUser(roles = {"USER", "FULLY_AUTHENTICATED"})
     public void whenPing_thenReturn200()
         throws Exception {
 

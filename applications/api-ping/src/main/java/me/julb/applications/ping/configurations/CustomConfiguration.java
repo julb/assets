@@ -27,26 +27,18 @@ package me.julb.applications.ping.configurations;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.openfeign.FeignClientsConfiguration;
-import org.springframework.cloud.sleuth.instrument.web.client.feign.SleuthFeignBuilder;
+import org.springframework.cloud.sleuth.instrument.web.client.TraceExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import me.julb.applications.ping.configurations.properties.ApplicationProperties;
 import me.julb.applications.ping.configurations.properties.TargetProperties;
-import me.julb.applications.ping.consumers.ApiPingTargetFeignClient;
-import me.julb.springbootstarter.consumer.feign.utility.FeignClientUtility;
-
-import feign.Client;
-import feign.Contract;
-import feign.Retryer;
-import feign.codec.Decoder;
-import feign.codec.Encoder;
-import feign.codec.ErrorDecoder;
+import me.julb.springbootstarter.consumer.reactive.utility.NettyClientUtility;
 
 /**
  * The local configuration.
@@ -55,7 +47,6 @@ import feign.codec.ErrorDecoder;
  */
 @Configuration
 @EnableConfigurationProperties(ApplicationProperties.class)
-@Import(FeignClientsConfiguration.class)
 public class CustomConfiguration {
 
     /**
@@ -75,23 +66,17 @@ public class CustomConfiguration {
      * @return the list of remote ping feign clients.
      */
     @Bean
-    public Map<String, ApiPingTargetFeignClient> apiPingTargetFeignClients(BeanFactory beanFactory, Decoder decoder, Encoder encoder, Contract contract, Retryer retryer, ErrorDecoder errorDecoder) {
-        Map<String, ApiPingTargetFeignClient> clients = new HashMap<>();
+    public Map<String, WebClient> apiPingWebClients(GenericApplicationContext applicationContext) {
+        Map<String, WebClient> clients = new HashMap<>();
 
         // Targets to ping.
         for (TargetProperties targetProperties : applicationProperties.getTargets()) {
-            // Remote properties.
-            Client customClient = FeignClientUtility.feignClientUtil(targetProperties.getEndpoint());
-
             //@formatter:off
-            ApiPingTargetFeignClient client = SleuthFeignBuilder
-                .builder(beanFactory, customClient)
-                .encoder(encoder)
-                .decoder(decoder)
-                .contract(contract)
-                .retryer(retryer)
-                .errorDecoder(errorDecoder)
-                .target(ApiPingTargetFeignClient.class, targetProperties.getEndpoint().getUrl());
+            WebClient client = WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(NettyClientUtility.build(targetProperties.getEndpoint())))
+                .baseUrl(targetProperties.getEndpoint().getUrl())
+                .filter(TraceExchangeFilterFunction.create(applicationContext))
+                .build();
             //@formatter:on
 
             clients.put(targetProperties.getId(), client);

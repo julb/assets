@@ -24,8 +24,6 @@
 
 package me.julb.applications.configuration.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +36,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * The REST controller to return properties.
@@ -55,7 +55,7 @@ public class PropertiesController {
      * The config source service.
      */
     @Autowired
-    private ConfigSourceService configSourceService;
+    private ContextConfigSourceService configSourceService;
 
     /**
      * This method returns all properties for current trademark.

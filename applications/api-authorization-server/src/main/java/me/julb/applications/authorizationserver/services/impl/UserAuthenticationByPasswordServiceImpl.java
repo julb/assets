@@ -78,8 +78,8 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
 import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
@@ -161,7 +161,7 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      * The config source service.
      */
     @Autowired
-    private ConfigSourceService configSourceService;
+    private ContextConfigSourceService configSourceService;
 
     /**
      * The password encoder.

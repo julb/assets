@@ -3,6 +3,26 @@ spring:
     kubernetes:
       enabled: false
 
+logging.level.me.julb: DEBUG
+  
+application:
+  local:
+    metadata:
+      name: localhost
+    endpoint:
+      url: http://localhost:8080
+
+spring.sleuth.baggage:
+  remote-fields:
+    - x-request-id
+    - x-julb-tm
+  correlation-fields:
+    - x-request-id
+    - x-julb-tm
+  tag-fields:
+    - x-request-id
+    - x-julb-tm
+
 ---
 spring:
   config:

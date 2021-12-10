@@ -30,20 +30,20 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import me.julb.applications.ping.configurations.properties.ApplicationProperties;
-import me.julb.applications.ping.configurations.properties.TargetProperties;
-import me.julb.applications.ping.consumers.ApiPingTargetFeignClient;
 import me.julb.applications.ping.services.PingTargetService;
 import me.julb.applications.ping.services.dto.PingTargetAllDTO;
 import me.julb.applications.ping.services.dto.PingTargetDTO;
 import me.julb.library.utility.enums.HealthStatus;
-import me.julb.library.utility.exceptions.AbstractRemoteSystemException;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 /**
  * The service to ping all targets.
@@ -61,64 +61,59 @@ public class PingTargetServiceImpl implements PingTargetService {
     private ApplicationProperties applicationProperties;
 
     /**
-     * The targetFeignClients attribute.
+     * The API web client attribute.
      */
     @Autowired
-    private Map<String, ApiPingTargetFeignClient> apiPingTargetFeignClients;
+    private Map<String, WebClient> apiPingWebClients;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Mono<PingTargetAllDTO> pingAll() {
-        LOGGER.debug("Pinging all targets.");
+        return Flux.fromIterable(applicationProperties.getTargets())
+                    .doFirst(() -> LOGGER.debug("Pinging all targets."))
+                    .flatMap(target -> {
+                        return Mono.deferContextual(ctx -> {
+                            LOGGER.debug("> Pinging URL <{}>.", target.getEndpoint().getUrl());
+                            
+                            // Find target feign client.
+                            WebClient apiPingTargetWebClient = apiPingWebClients.get(target.getId());
 
-        PingTargetAllDTO pingAll = new PingTargetAllDTO();
-
-        // Local metadata
-        pingAll.getMetadata().putAll(applicationProperties.getLocal().getMetadata());
-
-        // Ping targets.
-        for (TargetProperties target : applicationProperties.getTargets()) {
-            LOGGER.debug("> Pinging URL <{}>.", target.getEndpoint().getUrl());
-
-            // Find target feign client.
-            ApiPingTargetFeignClient apiPingTargetFeignClient = apiPingTargetFeignClients.get(target.getId());
-
-            PingTargetDTO pingTarget = new PingTargetDTO();
-            pingTarget.getMetadata().putAll(target.getMetadata());
-
-            // Stop watch.
-            StopWatch createStarted = StopWatch.createStarted();
-            try {
-                // Perform ping.
-                apiPingTargetFeignClient.ping();
-
-                // Perform the call.
-                pingTarget.setResponseStatusCode(HttpStatus.OK.value());
-                pingTarget.setStatus(HealthStatus.UP);
-
-                LOGGER.debug("> Ping successful.");
-            } catch (AbstractRemoteSystemException e) {
-                // Call has failed.
-                pingTarget.setResponseStatusCode(e.getHttpResponseStatusCode());
-                pingTarget.setStatus(HealthStatus.DOWN);
-
-                LOGGER.error("> Ping failed to <{}>.", target.getEndpoint().getUrl());
-                LOGGER.error("> Stacktrace is below.", e);
-            } finally {
-                // Stop the watch and get time.
-                createStarted.stop();
-                pingTarget.setResponseTimeMilliseconds(createStarted.getTime());
-            }
-
-            // Add to result.
-            pingAll.getRemotes().add(pingTarget);
-        }
-
-        // All target pinged.
-        LOGGER.debug("All targets have been pinged.");
-
-        return Mono.just(pingAll);
+                            // Perform ping.
+                            return apiPingTargetWebClient.get()
+                                .uri(uriBuilder -> uriBuilder.path("/ping").build())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .exchangeToMono((clientResponse) -> {
+                                    StopWatch stopWatch = ctx.get("stopWatch");
+                                    stopWatch.stop();
+        
+                                    PingTargetDTO pingTarget = new PingTargetDTO();
+                                    pingTarget.getMetadata().putAll(target.getMetadata());
+                                    pingTarget.setResponseStatusCode(clientResponse.rawStatusCode());
+                                    pingTarget.setResponseTimeMilliseconds(stopWatch.getTime());
+        
+                                    if(clientResponse.statusCode().is2xxSuccessful()) {
+                                        LOGGER.debug("> Ping successful.");
+                                        pingTarget.setStatus(HealthStatus.UP);
+                                    } else {
+                                        LOGGER.error("> Ping failed to <{}>.", target.getEndpoint().getUrl());
+                                        LOGGER.error("> Stacktrace is below.", clientResponse.createException().subscribe());
+                                        pingTarget.setStatus(HealthStatus.DOWN);
+                                    }
+        
+                                    return Mono.just(pingTarget);
+                                });
+                        }).contextWrite(Context.of("stopWatch", StopWatch.createStarted()));
+                    })
+                    .reduceWith(() -> {
+                        PingTargetAllDTO pingAll = new PingTargetAllDTO();
+                        pingAll.getMetadata().putAll(applicationProperties.getLocal().getMetadata());
+                        return pingAll;
+                    }, (all, target) -> {
+                        all.getRemotes().add(target);
+                        return all;
+                    })
+                    .doOnTerminate(() -> LOGGER.debug("All targets have been pinged."));
     }
 }

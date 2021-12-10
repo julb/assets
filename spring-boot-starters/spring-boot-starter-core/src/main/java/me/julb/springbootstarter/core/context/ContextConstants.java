@@ -22,42 +22,22 @@
  * SOFTWARE.
  */
 
-package me.julb.applications.ping.controllers;
-
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import me.julb.library.dto.simple.message.MessageDTO;
-
-import io.swagger.v3.oas.annotations.Operation;
-import reactor.core.publisher.Mono;
+package me.julb.springbootstarter.core.context;
 
 /**
- * The REST controller to handle ping requests.
+ * The constants used to hold the context.
  * <br>
+ *
  * @author Julb.
  */
-@RestController
-@Validated
-@Slf4j
-@RequestMapping(path = "/ping", produces = MediaType.APPLICATION_JSON_VALUE)
-public class PingController {
+public class ContextConstants {
+    /**
+     * The trademark context key.
+     */
+    public static final String TRADEMARK = "tm";
 
     /**
-     * This method answers to a simple ping request.
-     * @return "pong".
+     * The locale context key.
      */
-    @Operation(summary = "responds to a ping request")
-    @GetMapping()
-    @PreAuthorize("permitAll()")
-    public Mono<MessageDTO> respondToPing() {
-        LOGGER.debug("Responding to a ping request.");
-        return Mono.just(new MessageDTO("pong"));
-    }
+    public static final String LOCALE = "locale";
 }

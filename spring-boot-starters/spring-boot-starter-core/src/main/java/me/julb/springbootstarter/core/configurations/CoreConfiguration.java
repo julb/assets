@@ -28,6 +28,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
+import me.julb.springbootstarter.core.context.localization.ContextLocaleService;
+import me.julb.springbootstarter.core.context.messages.ContextMessageSourceService;
+import me.julb.springbootstarter.core.context.rendering.ContextContentRenderService;
 import me.julb.springbootstarter.core.localization.LocaleService;
 import me.julb.springbootstarter.core.messages.MessageSourceService;
 import me.julb.springbootstarter.core.rendering.ContentRenderService;
@@ -74,5 +78,41 @@ public class CoreConfiguration {
     @Bean
     public LocaleService localeService() {
         return new LocaleService();
+    }
+
+    /**
+     * The context message source service.
+     * @return the context message source service.
+     */
+    @Bean
+    public ContextConfigSourceService contextConfigSourceService() {
+        return new ContextConfigSourceService();
+    }
+
+    /**
+     * The context message source service.
+     * @return the context message source service.
+     */
+    @Bean
+    public ContextMessageSourceService contextMessageSourceService() {
+        return new ContextMessageSourceService();
+    }
+
+    /**
+     * The context content render service.
+     * @return the context content render service.
+     */
+    @Bean
+    public ContextContentRenderService contextContentRenderService() {
+        return new ContextContentRenderService();
+    }
+
+    /**
+     * The context locale service.
+     * @return the context locale service.
+     */
+    @Bean
+    public ContextLocaleService contextLocaleService() {
+        return new ContextLocaleService();
     }
 }

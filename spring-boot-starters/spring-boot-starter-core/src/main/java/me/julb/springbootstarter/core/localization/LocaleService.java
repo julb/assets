@@ -51,18 +51,20 @@ public class LocaleService {
 
     /**
      * Gets the default locale.
+     * @param tm the trademark.
      * @return the default locale.
      */
-    public Locale getDefaultLocale() {
-        return Objects.requireNonNullElse(configSourceService.getTypedProperty(ConfigSourceConstants.LOCALES_DEFAULT, Locale.class), Locale.getDefault());
+    public Locale getDefaultLocale(String tm) {
+        return Objects.requireNonNullElse(configSourceService.getTypedProperty(tm, ConfigSourceConstants.LOCALES_DEFAULT, Locale.class), Locale.getDefault());
     }
 
     /**
      * Gets the supported locales.
+     * @param tm the trademark.
      * @return th supported locales.
      */
-    public List<Locale> getSupportedLocales() {
-        Locale[] locales = configSourceService.getTypedProperty(ConfigSourceConstants.LOCALES, Locale[].class);
+    public List<Locale> getSupportedLocales(String tm) {
+        Locale[] locales = configSourceService.getTypedProperty(tm, ConfigSourceConstants.LOCALES, Locale[].class);
         if (locales != null) {
             return Arrays.asList(locales);
         } else {
@@ -72,46 +74,50 @@ public class LocaleService {
 
     /**
      * Gets the default timezone.
+     * @param tm the trademark.
      * @return the default timezone.
      */
-    public TimeZone getDefaultTimeZone() {
-        return Objects.requireNonNullElse(configSourceService.getTypedProperty(ConfigSourceConstants.TIMEZONES_DEFAULT, TimeZone.class), TimeZone.getDefault());
+    public TimeZone getDefaultTimeZone(String tm) {
+        return Objects.requireNonNullElse(configSourceService.getTypedProperty(tm, ConfigSourceConstants.TIMEZONES_DEFAULT, TimeZone.class), TimeZone.getDefault());
     }
 
     /**
      * Resolves the best locale for the given language range.
+     * @param tm the trademark.
      * @param requestLanguageRange the request language range.
      * @return the best locale.
      */
-    public Locale resolveLocale(String requestLanguageRange) {
-        return resolveLocale(requestLanguageRange, getSupportedLocales());
+    public Locale resolveLocale(String tm, String requestLanguageRange) {
+        return resolveLocale(tm, requestLanguageRange, getSupportedLocales(tm));
     }
 
     /**
      * Resolves the best locale for the given language range.
+     * @param tm the trademark.
      * @param requestLanguageRange the request language range.
      * @param supportedLocaleLanguageTags the supported locale languages tags..
      * @return the best locale.
      */
-    public Locale resolveLocaleWithLanguageTags(String requestLanguageRange, Collection<String> supportedLocaleLanguageTags) {
+    public Locale resolveLocaleWithLanguageTags(String tm, String requestLanguageRange, Collection<String> supportedLocaleLanguageTags) {
         // The locales available in the messages.
         Collection<Locale> locales = new ArrayList<>();
         for (String language : supportedLocaleLanguageTags) {
             locales.add(Locale.forLanguageTag(language));
         }
 
-        return resolveLocale(requestLanguageRange, locales);
+        return resolveLocale(tm, requestLanguageRange, locales);
     }
 
     /**
      * Resolves the best locale for the given language range.
+     * @param tm the trademark.
      * @param requestLanguageRange the request language range.
      * @param supportedLocales the supported locales.
      * @return the best locale.
      */
-    public Locale resolveLocale(String requestLanguageRange, Collection<Locale> supportedLocales) {
+    public Locale resolveLocale(String tm, String requestLanguageRange, Collection<Locale> supportedLocales) {
         // No language range, return default.
-        Locale defaultLocale = getDefaultLocale();
+        Locale defaultLocale = getDefaultLocale(tm);
         if (defaultLocale != null && requestLanguageRange == null) {
             return defaultLocale;
         }

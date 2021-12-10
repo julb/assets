@@ -21,43 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package me.julb.springbootstarter.opentracing.utility;
 
-package me.julb.applications.ping.controllers;
+import java.util.HashMap;
+import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import me.julb.library.dto.simple.message.MessageDTO;
-
-import io.swagger.v3.oas.annotations.Operation;
-import reactor.core.publisher.Mono;
+import brave.baggage.BaggageField;
+import brave.propagation.TraceContext;
 
 /**
- * The REST controller to handle ping requests.
+ * A utility to extract information about the context.
  * <br>
+ *
  * @author Julb.
  */
-@RestController
-@Validated
-@Slf4j
-@RequestMapping(path = "/ping", produces = MediaType.APPLICATION_JSON_VALUE)
-public class PingController {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class TracingContextUtility {
 
     /**
-     * This method answers to a simple ping request.
-     * @return "pong".
+     * Gets the trace context as a map.
+     * @param traceContext the trace context.
+     * @return a map of actual tracing context.
      */
-    @Operation(summary = "responds to a ping request")
-    @GetMapping()
-    @PreAuthorize("permitAll()")
-    public Mono<MessageDTO> respondToPing() {
-        LOGGER.debug("Responding to a ping request.");
-        return Mono.just(new MessageDTO("pong"));
+    public static Map<String, String> asMap(TraceContext traceContext) {
+        String traceId = traceContext.traceIdString();
+        String spanId = traceContext.spanIdString();
+        Map<String, String> baggageValues = BaggageField.getAllValues(traceContext);
+        Map<String, String> tracingContext = new HashMap<>();
+        tracingContext.putAll(Map.of("traceId", traceId, "spanId", spanId));
+        tracingContext.putAll(baggageValues);
+        return tracingContext;
     }
+    
 }

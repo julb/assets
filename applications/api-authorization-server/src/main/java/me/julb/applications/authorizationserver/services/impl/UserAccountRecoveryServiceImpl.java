@@ -51,8 +51,8 @@ import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
 
 /**
  * The user account recovery service.
@@ -86,7 +86,7 @@ public class UserAccountRecoveryServiceImpl implements UserAccountRecoveryServic
      * The config source service.
      */
     @Autowired
-    private ConfigSourceService configSourceService;
+    private ContextConfigSourceService configSourceService;
 
     // ------------------------------------------ Read methods.
 

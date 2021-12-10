@@ -33,7 +33,6 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.text.TextContentRenderer;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import me.julb.library.utility.constants.HTMLTags;
 import me.julb.library.utility.constants.MediaType;
@@ -57,11 +56,13 @@ public class ContentRenderService {
 
     /**
      * Renders the localized content to HTML.
+     * @param tm the trademark.
+     * @param locale the current locale.
      * @param localizedContent the localized content.
      * @return the HTML content.
      */
-    public String renderToHtml(Map<String, ? extends Contentable> localizedContent) {
-        Contentable contentable = getLocalizedValue(localizedContent);
+    public String renderToHtml(String tm, CustomLocaleContext locale, Map<String, ? extends Contentable> localizedContent) {
+        Contentable contentable = getLocalizedValue(tm, locale, localizedContent);
         if (contentable == null || StringUtils.isBlank(contentable.getContent())) {
             return Strings.EMPTY;
         }
@@ -79,11 +80,13 @@ public class ContentRenderService {
 
     /**
      * Renders the localized content to text.
+     * @param tm the trademark.
+     * @param locale the current locale.
      * @param localizedContent the localized content.
      * @return the content rendered as simple text.
      */
-    public String renderToText(Map<String, ? extends Contentable> localizedContent) {
-        Contentable contentable = getLocalizedValue(localizedContent);
+    public String renderToText(String tm, CustomLocaleContext locale, Map<String, ? extends Contentable> localizedContent) {
+        Contentable contentable = getLocalizedValue(tm, locale, localizedContent);
         if (contentable == null || StringUtils.isBlank(contentable.getContent())) {
             return Strings.EMPTY;
         }
@@ -102,17 +105,13 @@ public class ContentRenderService {
     /**
      * Gets the localized value matching the best the given locale.
      * @param <T> the value.
-     * @param localizedMessage the localized message.
      * @param locale the locale.
-     * @param defaultLocale the default locale.
+     * @param localizedMessage the localized message.
      * @return the localized value.
      */
-    private <T extends Contentable> T getLocalizedValue(Map<String, T> localizedMessage) {
-        // The default locale.
-        CustomLocaleContext locale = (CustomLocaleContext) LocaleContextHolder.getLocaleContext();
-
+    private <T extends Contentable> T getLocalizedValue(String tm, CustomLocaleContext locale, Map<String, T> localizedMessage) {
         // Find the appropriate locale.
-        Locale resolvedLocale = localeService.resolveLocaleWithLanguageTags(locale.getRequestLanguageRange(), localizedMessage.keySet());
+        Locale resolvedLocale = localeService.resolveLocaleWithLanguageTags(tm, locale.getRequestLanguageRange(), localizedMessage.keySet());
 
         // Returns the localized message.
         return localizedMessage.get(resolvedLocale.toLanguageTag());

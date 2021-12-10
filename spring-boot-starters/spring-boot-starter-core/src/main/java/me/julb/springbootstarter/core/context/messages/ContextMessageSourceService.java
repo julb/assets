@@ -22,62 +22,54 @@
  * SOFTWARE.
  */
 
-package me.julb.springbootstarter.core.messages;
+package me.julb.springbootstarter.core.context.messages;
 
 import java.util.Locale;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 
-import me.julb.library.utility.constants.Strings;
+import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.messages.MessageSourceService;
 
 /**
- * The message source service.
+ * The context message source service.
  * <br>
+ * This class uses ThreadLocal to extract context and delegates to {@link MessageSourceService}.
  * @author Julb.
  */
-public class MessageSourceService {
+public class ContextMessageSourceService {
 
     /**
-     * The message source delegate.
+     * The message source service.
      */
     @Autowired
-    private MessageSource messageSourceDelegate;
+    private MessageSourceService messageSourceService;
 
     /**
      * Try to resolve the message.
-     * @param tm the trademark.
      * @param code the message code to lookup.
      * @param args the arguments.
      * @param defaultMessage the default message if not found.
      * @param locale the locale.
      * @return the messsage if found.
      */
-    public String getMessage(String tm, String code, Object[] args, String defaultMessage, Locale locale) {
-        try {
-            return messageSourceDelegate.getMessage(StringUtils.join(tm, Strings.DOT, code), args, locale);
-        } catch (NoSuchMessageException e) {
-            return messageSourceDelegate.getMessage(code, args, defaultMessage, locale);
-        }
+    public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+        String tm = TrademarkContextHolder.getTrademark();
+        return messageSourceService.getMessage(tm, code, args, defaultMessage, locale);
     }
 
     /**
      * Try to resolve the message.
-     * @param tm the trademark.
      * @param code the message code to lookup.
      * @param args the arguments.
      * @param locale the locale.
      * @return the messsage if found.
      * @throws NoSuchMessageException if the message is not found.
      */
-    public String getMessage(String tm, String code, Object[] args, Locale locale)
+    public String getMessage(String code, Object[] args, Locale locale)
         throws NoSuchMessageException {
-        try {
-            return messageSourceDelegate.getMessage(StringUtils.join(tm, Strings.DOT, code), args, locale);
-        } catch (NoSuchMessageException e) {
-            return messageSourceDelegate.getMessage(code, args, locale);
-        }
+        String tm = TrademarkContextHolder.getTrademark();
+        return messageSourceService.getMessage(tm, code, args, locale);
     }
 }

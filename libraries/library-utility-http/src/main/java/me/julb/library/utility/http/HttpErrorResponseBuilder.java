@@ -23,6 +23,8 @@
  */
 package me.julb.library.utility.http;
 
+import java.util.Map;
+
 import me.julb.library.dto.http.error.HttpErrorResponseDTO;
 import me.julb.library.utility.date.DateUtility;
 
@@ -44,6 +46,21 @@ public final class HttpErrorResponseBuilder {
         errorResponse.setDateTime(DateUtility.dateTimeNow());
         errorResponse.setHttpStatus(code);
         errorResponse.setMessage(reason);
+        return errorResponse;
+    }
+
+    /**
+     * The default error request.
+     * @param code the HTTP code.
+     * @param reason the reason.
+     * @param path the path.
+     * @param tracingContext the tracing context.
+     * @return a default error response.
+     */
+    public static HttpErrorResponseDTO defaultErrorResponse(Integer code, String reason, String path, Map<String, String> tracingContext) {
+        HttpErrorResponseDTO errorResponse = defaultErrorResponse(code, reason);
+        errorResponse.setPath(path);
+        errorResponse.setTracingContext(tracingContext);
         return errorResponse;
     }
 }

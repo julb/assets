@@ -42,7 +42,7 @@ import org.springframework.validation.annotation.Validated;
 import me.julb.applications.urlshortener.services.HostService;
 import me.julb.library.dto.simple.value.ValueDTO;
 import me.julb.library.utility.validator.constraints.DNS;
-import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
 
 /**
  * The host service implementation.
@@ -58,7 +58,7 @@ public class HostServiceImpl implements HostService {
      * The config source service.
      */
     @Autowired
-    private ConfigSourceService configSourceService;
+    private ContextConfigSourceService configSourceService;
 
     // ------------------------------------------ Read methods.
 

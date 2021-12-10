@@ -26,6 +26,7 @@ package me.julb.applications.ping.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.julb.applications.ping.services.PingTargetService;
 import me.julb.applications.ping.services.dto.PingTargetAllDTO;
+import me.julb.library.utility.exceptions.BadRequestException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import reactor.core.publisher.Mono;
@@ -59,7 +61,10 @@ public class PingRemoteController {
      */
     @Operation(summary = "responds to a ping request")
     @GetMapping()
+    @PreAuthorize("permitAll()")
     public Mono<PingTargetAllDTO> pingAllRemotes() {
+        String s = null;
+        s.length();
         return pingRemoteService.pingAll();
     }
 

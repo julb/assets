@@ -25,7 +25,9 @@
 package me.julb.library.dto.http.error;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -79,6 +81,32 @@ public class HttpErrorResponseDTO {
      */
      //@formatter:on
     private String dateTime;
+
+    //@formatter:off
+     /**
+     * The path attribute.
+     * -- GETTER --
+     * Getter for {@link #path} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #path} property.
+     * @param path the value to set.
+     */
+     //@formatter:on
+    private String path;
+
+    //@formatter:off
+     /**
+     * The tracingContext attribute.
+     * -- GETTER --
+     * Getter for {@link #tracingContext} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #tracingContext} property.
+     * @param tracingContext the value to set.
+     */
+     //@formatter:on
+    private Map<String, String> tracingContext = new HashMap<>();
 
     //@formatter:off
      /**

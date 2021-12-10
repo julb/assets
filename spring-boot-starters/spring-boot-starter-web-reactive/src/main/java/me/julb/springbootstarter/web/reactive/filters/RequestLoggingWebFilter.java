@@ -26,10 +26,7 @@ package me.julb.springbootstarter.web.reactive.filters;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.ServerWebExchangeDecorator;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 
@@ -50,56 +47,27 @@ public class RequestLoggingWebFilter implements WebFilter {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        return chain.filter(new RequestLoggingServerWebExchangeDecorator(exchange));
-    }
+        // Trademark from header.
+        final boolean traceEnabled = BooleanUtils.toBoolean(exchange.getRequest().getHeaders().getFirst(CustomHttpHeaders.X_JULB_HTTP_TRACE_ENABLED));
 
-    /**
-     * A reactive decorator to log the inbound request.
-     * <br>
-     * @author Julb.
-     */
-    private static final class RequestLoggingServerWebExchangeDecorator extends ServerWebExchangeDecorator {
-
-        /**
-         * A flag indicating of the trace is enabled.
-         */
-        private boolean traceEnabled;
-
-        /**
-         * Default constructor.
-         * @param delegate the delegate.
-         */
-        public RequestLoggingServerWebExchangeDecorator(ServerWebExchange delegate) {
-            super(delegate);
-
-            // Flag indicating if trace is enabled.
-            this.traceEnabled = BooleanUtils.toBoolean(getDelegate().getRequest().getHeaders().getFirst(CustomHttpHeaders.X_JULB_HTTP_TRACE_ENABLED));
+        // Trademark from system.
+        if (traceEnabled) {
+            LOGGER.info(">> IN - {} {}.", exchange.getRequest().getMethod(), exchange.getRequest().getURI());
+        } else {
+            LOGGER.trace(">> IN - {} {}.", exchange.getRequest().getMethod(), exchange.getRequest().getURI());
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ServerHttpRequest getRequest() {
-            if (this.traceEnabled) {
-                LOGGER.info(">> IN - {} {}.", getDelegate().getRequest().getMethod(), getDelegate().getRequest().getURI());
-            } else {
-                LOGGER.debug(">> IN - {} {}.", getDelegate().getRequest().getMethod(), getDelegate().getRequest().getURI());
-            }
-            return getDelegate().getRequest();
-        }
+        exchange.getResponse().beforeCommit(() -> {
+            return Mono.deferContextual(ctx -> {
+                if (traceEnabled) {
+                    LOGGER.info("<< OUT - {} {}.", exchange.getRequest().getMethod(), exchange.getRequest().getURI());
+                } else {
+                    LOGGER.trace("<< OUT - {} {}.", exchange.getRequest().getMethod(), exchange.getRequest().getURI());
+                }
+                return Mono.empty();
+            });
+        });
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ServerHttpResponse getResponse() {
-            if (this.traceEnabled) {
-                LOGGER.info("<< OUT - {} {}.", getDelegate().getRequest().getMethod(), getDelegate().getRequest().getURI());
-            } else {
-                LOGGER.debug("<< OUT - {} {}.", getDelegate().getRequest().getMethod(), getDelegate().getRequest().getURI());
-            }
-            return getDelegate().getResponse();
-        }
+        return chain.filter(exchange);
     }
 }

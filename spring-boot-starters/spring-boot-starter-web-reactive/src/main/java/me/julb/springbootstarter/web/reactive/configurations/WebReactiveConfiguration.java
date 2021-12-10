@@ -42,6 +42,7 @@ import org.springframework.web.server.i18n.LocaleContextResolver;
 
 import me.julb.springbootstarter.security.reactive.configurations.SecurityReactiveConfiguration;
 import me.julb.springbootstarter.web.configurations.beans.CorsProperties;
+import me.julb.springbootstarter.web.reactive.filters.LocaleContextWebFilter;
 import me.julb.springbootstarter.web.reactive.filters.RequestLoggingWebFilter;
 import me.julb.springbootstarter.web.reactive.filters.TrademarkWebFilter;
 import me.julb.springbootstarter.web.reactive.resolvers.locale.CustomLocaleContextResolver;
@@ -71,9 +72,19 @@ public class WebReactiveConfiguration  extends DelegatingWebFluxConfiguration {
      * @return the generic filter bean.
      */
     @Bean
-    @Order(1)
+    @Order(0)
     public WebFilter trademarkWebFilter() {
         return new TrademarkWebFilter();
+    }
+
+    /**
+     * Builds a filter to set locale in context.
+     * @return the generic filter bean.
+     */
+    @Bean
+    @Order(1)
+    public WebFilter localeContextWebFilter() {
+        return new LocaleContextWebFilter();
     }
 
     /**

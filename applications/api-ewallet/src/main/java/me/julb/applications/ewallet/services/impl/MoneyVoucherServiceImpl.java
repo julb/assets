@@ -69,6 +69,7 @@ import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.MoneyVoucherCode;
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
 import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
 import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
@@ -129,7 +130,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      * The config source service.
      */
     @Autowired
-    private ConfigSourceService configSourceService;
+    private ContextConfigSourceService configSourceService;
 
     // ------------------------------------------ Read methods.
 

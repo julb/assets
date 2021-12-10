@@ -46,6 +46,11 @@ public class CustomHttpHeaders {
     public static final String X_REAL_IP = "x-real-ip";
 
     /**
+     * The header for request ID.
+     */
+    public static final String X_REQUEST_ID = "x-request-id";
+
+    /**
      * The header for X-Forwarded-For value.
      */
     public static final String X_FORWARDED_FOR = "x-forwarded-for";

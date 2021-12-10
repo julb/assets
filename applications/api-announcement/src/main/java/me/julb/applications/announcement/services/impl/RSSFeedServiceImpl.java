@@ -40,10 +40,10 @@ import me.julb.applications.announcement.services.RSSFeedService;
 import me.julb.library.dto.rssfeed.RSSFeedDTO;
 import me.julb.library.dto.rssfeed.RSSFeedItemDTO;
 import me.julb.library.utility.date.DateUtility;
-import me.julb.springbootstarter.core.configs.ConfigSourceService;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.messages.MessageSourceService;
-import me.julb.springbootstarter.core.rendering.ContentRenderService;
+import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
+import me.julb.springbootstarter.core.context.messages.ContextMessageSourceService;
+import me.julb.springbootstarter.core.context.rendering.ContextContentRenderService;
 
 /**
  * The RSS feed service.
@@ -59,19 +59,19 @@ public class RSSFeedServiceImpl implements RSSFeedService {
      * The config source service.
      */
     @Autowired
-    private ConfigSourceService configSourceService;
+    private ContextConfigSourceService configSourceService;
 
     /**
      * The message resource.
      */
     @Autowired
-    private MessageSourceService messageSourceService;
+    private ContextMessageSourceService messageSourceService;
 
     /**
      * The content render service.
      */
     @Autowired
-    private ContentRenderService contentRenderService;
+    private ContextContentRenderService contentRenderService;
 
     /**
      * The incident repository.

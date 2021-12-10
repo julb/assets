@@ -46,8 +46,8 @@ import me.julb.library.dto.simple.interval.date.DateTimeIntervalDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.messages.MessageSourceService;
-import me.julb.springbootstarter.core.rendering.ContentRenderService;
+import me.julb.springbootstarter.core.context.messages.ContextMessageSourceService;
+import me.julb.springbootstarter.core.context.rendering.ContextContentRenderService;
 
 /**
  * The ICS feed service.
@@ -63,13 +63,13 @@ public class ICSFeedServiceImpl implements ICSFeedService {
      * The message resource.
      */
     @Autowired
-    private MessageSourceService messageSourceService;
+    private ContextMessageSourceService messageSourceService;
 
     /**
      * The content render service.
      */
     @Autowired
-    private ContentRenderService contentRenderService;
+    private ContextContentRenderService contentRenderService;
 
     /**
      * The planned maintenance repository.
