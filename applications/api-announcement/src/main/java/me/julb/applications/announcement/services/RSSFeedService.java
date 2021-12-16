@@ -26,6 +26,8 @@ package me.julb.applications.announcement.services;
 
 import me.julb.library.dto.rssfeed.RSSFeedDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The RSS feed service.
  * <br>
@@ -37,5 +39,5 @@ public interface RSSFeedService {
      * Builds a RSS feed for announcements.
      * @return an RSS feed for announcements.
      */
-    RSSFeedDTO buildAnnouncementsFeed();
+    Mono<RSSFeedDTO> buildAnnouncementsFeed();
 }

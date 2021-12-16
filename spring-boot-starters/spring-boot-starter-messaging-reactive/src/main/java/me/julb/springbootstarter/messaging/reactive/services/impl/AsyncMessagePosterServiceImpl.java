@@ -1,0 +1,213 @@
+/**
+ * MIT License
+ *
+ * Copyright (c) 2017-2021 Julb
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package me.julb.springbootstarter.messaging.reactive.services.impl;
+
+import java.util.Locale;
+import java.util.Map;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import me.julb.library.dto.messaging.events.AuditAsyncMessageDTO;
+import me.julb.library.dto.messaging.events.EventCollectorAsyncMessageDTO;
+import me.julb.library.dto.messaging.events.EventCollectorAsyncMessageLevel;
+import me.julb.library.dto.messaging.events.JobResultAsyncMessageDTO;
+import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
+import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageDTO;
+import me.julb.library.dto.messaging.message.AsyncMessageDTO;
+import me.julb.library.dto.notification.events.NotificationDispatchAsyncMessageDTO;
+import me.julb.library.utility.constants.CustomMessagingHeaders;
+import me.julb.library.utility.validator.constraints.Trademark;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.AuditAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+
+import reactor.core.publisher.Mono;
+
+/**
+ * The message poster service.
+ * <br>
+ * @author Julb.
+ */
+@Service
+@Slf4j
+@Validated
+public class AsyncMessagePosterServiceImpl implements AsyncMessagePosterService {
+
+    /**
+     * The routing key header name.
+     */
+    private static final String ROUTING_KEY_DEFAULT_HEADER_NAME = "routingKey";
+
+    /**
+     * The main producer default channel name.
+     */
+    private static final String MAIN_PRODUCER_DEFAULT_CHANNEL_NAME = "main";
+
+    /**
+     * The main producer channel name.
+     */
+    private String mainProducerChannelName = MAIN_PRODUCER_DEFAULT_CHANNEL_NAME;
+
+    /**
+     * The routing key header name.
+     */
+    private String routingKeyHeaderName = ROUTING_KEY_DEFAULT_HEADER_NAME;
+
+    /**
+     * The trademark header name.
+     */
+    private String trademarkHeaderName = CustomMessagingHeaders.X_JULB_TM;
+
+    /**
+     * The locale header name.
+     */
+    private String localeHeaderName = CustomMessagingHeaders.X_JULB_LOCALE;
+
+    /**
+     * The bridge to post messages.
+     */
+    @Autowired
+    private StreamBridge streamBridge;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Mono<Void> postMessage(@NotNull @NotBlank String routingKeyValue, @NotNull @Valid AsyncMessageDTO<T> asyncMessage) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            return this.postMessage(tm, LocaleContextHolder.getLocale(), routingKeyValue, asyncMessage);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Mono<Void> postMessage(@NotNull @NotBlank @Trademark String trademark, @NotNull Locale locale, @NotNull @NotBlank String routingKeyValue, @NotNull @Valid AsyncMessageDTO<T> asyncMessage) {
+        return Mono.fromRunnable(() -> {
+            // Logs a message.
+            LOGGER.debug("Posting message with id <{}> using the routing key <{}>.", asyncMessage.getId(), routingKeyValue);
+    
+            MessageBuilder<AsyncMessageDTO<T>> amqpMessageBuilder = MessageBuilder.withPayload(asyncMessage);
+            if (MapUtils.isNotEmpty(asyncMessage.getAttributes())) {
+                for (Map.Entry<String, String> mapEntry : asyncMessage.getAttributes().entrySet()) {
+                    amqpMessageBuilder.setHeader(mapEntry.getKey(), mapEntry.getValue());
+                }
+            }
+            amqpMessageBuilder.setHeader(routingKeyHeaderName, routingKeyValue.toLowerCase());
+            amqpMessageBuilder.setHeader(trademarkHeaderName, trademark.toLowerCase());
+            amqpMessageBuilder.setHeader(localeHeaderName, locale.toLanguageTag());
+            Message<AsyncMessageDTO<T>> amqpMessage = amqpMessageBuilder.build();
+            streamBridge.send(String.format("%s-out-0", this.mainProducerChannelName), amqpMessage);
+    
+            // Logs successful
+            LOGGER.info("Message with id <{}> posted successfully.", asyncMessage.getId());
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Mono<Void> postResourceEventMessage(@NotNull @Valid ResourceEventAsyncMessageDTO messagingPost) {
+        String routingKey = String.format("resource.%s.%s", messagingPost.getResourceType(), messagingPost.getEventType().toString()).toLowerCase();
+        Mono<Void> postMessage = this.postMessage(routingKey, messagingPost);
+        
+        //@formatter:off
+        AuditAsyncMessageDTO<Void> auditMessage = new AuditAsyncMessageBuilder<Void>()
+            .level(EventCollectorAsyncMessageLevel.INFO)
+            .objectType(messagingPost.getResourceType())
+            .objectReference(messagingPost.getResourceId())
+            .objectName(messagingPost.getResourceName())
+            .product("Resource")
+            .action(messagingPost.getEventType().toString())
+            .user(messagingPost.getUser())
+            .build();
+        //@formatter:on
+
+        Mono<Void> postAuditMessage = this.postAuditMessage(auditMessage);
+
+        return postMessage.then(postAuditMessage);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Mono<Void> postEventCollectorMessage(@NotNull @NotBlank String type, @NotNull @Valid EventCollectorAsyncMessageDTO<T> messagingPost) {
+        String routingKey = String.format("%s.%s.created", type, messagingPost.getLevel().toString()).toLowerCase();
+        return this.postMessage(routingKey, messagingPost);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Mono<Void> postJobExecutionResultMessage(@NotNull @Valid JobResultAsyncMessageDTO<T> messagingPost) {
+        String routingKey = String.format("job-execution-result.%s.created", messagingPost.getLevel().toString()).toLowerCase();
+        return this.postMessage(routingKey, messagingPost);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Mono<Void> postWebAnalyticsMessage(@NotNull @Valid WebAnalyticsAsyncMessageDTO<T> messagingPost) {
+        String routingKey = String.format("analytics.%s.created", messagingPost.getLevel().toString()).toLowerCase();
+        return this.postMessage(routingKey, messagingPost);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> Mono<Void> postAuditMessage(@NotNull @Valid AuditAsyncMessageDTO<T> messagingPost) {
+        String routingKey = String.format("audit.%s.created", messagingPost.getLevel().toString()).toLowerCase();
+        return this.postMessage(routingKey, messagingPost);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Mono<Void> postNotificationMessage(@NotNull @Valid NotificationDispatchAsyncMessageDTO messagingPost) {
+        return this.postMessage("notification.info.posted", messagingPost);
+    }
+
+}

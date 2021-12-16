@@ -24,26 +24,26 @@
 
 package me.julb.applications.announcement.services.impl;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import me.julb.applications.announcement.entities.AnnouncementEntity;
 import me.julb.applications.announcement.repositories.AnnouncementRepository;
 import me.julb.applications.announcement.services.RSSFeedService;
 import me.julb.library.dto.rssfeed.RSSFeedDTO;
 import me.julb.library.dto.rssfeed.RSSFeedItemDTO;
 import me.julb.library.utility.date.DateUtility;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
-import me.julb.springbootstarter.core.context.messages.ContextMessageSourceService;
-import me.julb.springbootstarter.core.context.rendering.ContextContentRenderService;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.core.localization.CustomLocaleContext;
+import me.julb.springbootstarter.core.messages.MessageSourceService;
+import me.julb.springbootstarter.core.rendering.ContentRenderService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The RSS feed service.
@@ -59,19 +59,19 @@ public class RSSFeedServiceImpl implements RSSFeedService {
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     /**
      * The message resource.
      */
     @Autowired
-    private ContextMessageSourceService messageSourceService;
+    private MessageSourceService messageSourceService;
 
     /**
      * The content render service.
      */
     @Autowired
-    private ContextContentRenderService contentRenderService;
+    private ContentRenderService contentRenderService;
 
     /**
      * The incident repository.
@@ -83,38 +83,40 @@ public class RSSFeedServiceImpl implements RSSFeedService {
      * {@inheritDoc}
      */
     @Override
-    public RSSFeedDTO buildAnnouncementsFeed() {
-        // Get current context.
-        String tm = TrademarkContextHolder.getTrademark();
-        Locale locale = LocaleContextHolder.getLocale();
+    public Mono<RSSFeedDTO> buildAnnouncementsFeed() {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
+            Locale locale = localeContext.getLocale();
 
-        // Build RSS feed.
-        RSSFeedDTO rssFeed = new RSSFeedDTO();
-        rssFeed.setTitle(messageSourceService.getMessage("announcement.rss.feed.announcements.title", new Object[] {tm}, locale));
-        rssFeed.setDescription(messageSourceService.getMessage("announcement.rss.feed.announcements.description", new Object[] {}, locale));
-        rssFeed.setLanguage(locale.toLanguageTag());
-        rssFeed.setLink(configSourceService.getProperty("announcement.rss.feed.announcements.link"));
+            // Get announcements created in the last 30 days.
+            return announcementRepository.findByTmAndVisibilityDateTime_FromLessThanEqualOrderByLastUpdatedAtDesc(tm, DateUtility.dateTimeNow()).map(announcement -> {
+                // Get level
+                String level = messageSourceService.getMessage(tm, "announcement.rss.feed.announcements.announcement.level." + announcement.getLevel(), new Object[] {}, locale);
+                // Get message.
+                String localizedMessageContentHtml = contentRenderService.renderToHtml(tm, localeContext, announcement.getLocalizedMessage());
 
-        // Get announcements created in the last 30 days.
-        List<AnnouncementEntity> announcements = announcementRepository.findByTmAndVisibilityDateTime_FromLessThanEqualOrderByLastUpdatedAtDesc(tm, DateUtility.dateTimeNow());
-        for (AnnouncementEntity announcement : announcements) {
-            // Get level
-            String level = messageSourceService.getMessage("announcement.rss.feed.announcements.announcement.level." + announcement.getLevel(), new Object[] {}, locale);
-            // Get message.
-            String localizedMessageContentHtml = contentRenderService.renderToHtml(announcement.getLocalizedMessage());
-
-            RSSFeedItemDTO item = new RSSFeedItemDTO();
-            item.setId(announcement.getId());
-            item.setTitle(messageSourceService.getMessage("announcement.rss.feed.announcements.announcement.title", new Object[] {level}, locale));
-            item.getAuthor().setMail(announcement.getUser().getMail());
-            item.getAuthor().setDisplayName(announcement.getUser().getDisplayName());
-            item.setPublishedDateTime(announcement.getLastUpdatedAt());
-            item.getCategories().add(messageSourceService.getMessage("announcement.rss.feed.announcements.announcement.category", new Object[] {}, locale));
-            item.setHtmlDescription(localizedMessageContentHtml);
-
-            rssFeed.getItems().add(item);
-        }
-
-        return rssFeed;
+                RSSFeedItemDTO item = new RSSFeedItemDTO();
+                item.setId(announcement.getId());
+                item.setTitle(messageSourceService.getMessage(tm, "announcement.rss.feed.announcements.announcement.title", new Object[] {level}, locale));
+                item.getAuthor().setMail(announcement.getUser().getMail());
+                item.getAuthor().setDisplayName(announcement.getUser().getDisplayName());
+                item.setPublishedDateTime(announcement.getLastUpdatedAt());
+                item.getCategories().add(messageSourceService.getMessage(tm, "announcement.rss.feed.announcements.announcement.category", new Object[] {}, locale));
+                item.setHtmlDescription(localizedMessageContentHtml);
+                return item;
+            }).reduceWith(() -> {
+                // Build RSS feed.
+                RSSFeedDTO rssFeed = new RSSFeedDTO();
+                rssFeed.setTitle(messageSourceService.getMessage(tm, "announcement.rss.feed.announcements.title", new Object[] {tm}, locale));
+                rssFeed.setDescription(messageSourceService.getMessage(tm, "announcement.rss.feed.announcements.description", new Object[] {}, locale));
+                rssFeed.setLanguage(locale.toLanguageTag());
+                rssFeed.setLink(configSourceService.getProperty(tm, "announcement.rss.feed.announcements.link"));
+                return rssFeed;
+            },  (initial, itemToAdd) -> {
+                initial.getItems().add(itemToAdd);
+                return initial;
+            });
+        });
     }
 }

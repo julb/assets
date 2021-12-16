@@ -24,19 +24,20 @@
 
 package me.julb.applications.announcement.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.announcement.entities.AnnouncementEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The announcement repository.
  * <br>
  * @author Julb.
  */
-public interface AnnouncementRepository extends MongoRepository<AnnouncementEntity, String>, MongoSpecificationExecutor<AnnouncementEntity> {
+public interface AnnouncementRepository extends ReactiveMongoRepository<AnnouncementEntity, String>, MongoSpecificationExecutor<AnnouncementEntity> {
 
     /**
      * Finds an announcement by trademark and id.
@@ -44,7 +45,7 @@ public interface AnnouncementRepository extends MongoRepository<AnnouncementEnti
      * @param id the id.
      * @return the announcement, or <code>null</code> if not exists.
      */
-    AnnouncementEntity findByTmAndId(String tm, String id);
+    Mono<AnnouncementEntity> findByTmAndId(String tm, String id);
 
     /**
      * Checks if an announcement is already visible in the given interval.
@@ -53,7 +54,7 @@ public interface AnnouncementRepository extends MongoRepository<AnnouncementEnti
      * @param to the to date time.
      * @return <code>true</code> if an announcement exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(String tm, String from, String to);
+    Mono<Boolean> existsByTmAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(String tm, String from, String to);
 
     /**
      * Checks if an announcement not having given id is already visible in the given interval.
@@ -63,14 +64,14 @@ public interface AnnouncementRepository extends MongoRepository<AnnouncementEnti
      * @param to the to date time.
      * @return <code>true</code> if an announcement exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(String tm, String id, String from, String to);
+    Mono<Boolean> existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(String tm, String id, String from, String to);
 
     /**
      * Finds the announcements which to date is less or equal than the given date.
      * @param dateTime the given date time.
      * @return the announcements.
      */
-    List<AnnouncementEntity> findByVisibilityDateTime_ToLessThanEqualOrderByTmAsc(String dateTime);
+    Flux<AnnouncementEntity> findByVisibilityDateTime_ToLessThanEqualOrderByTmAsc(String dateTime);
 
     /**
      * Finds the announcements expired or visible at the given date.
@@ -78,6 +79,6 @@ public interface AnnouncementRepository extends MongoRepository<AnnouncementEnti
      * @param dateTimeNow the current date time.
      * @return the announcements.
      */
-    List<AnnouncementEntity> findByTmAndVisibilityDateTime_FromLessThanEqualOrderByLastUpdatedAtDesc(String tm, String dateTimeNow);
+    Flux<AnnouncementEntity> findByTmAndVisibilityDateTime_FromLessThanEqualOrderByLastUpdatedAtDesc(String tm, String dateTimeNow);
 
 }

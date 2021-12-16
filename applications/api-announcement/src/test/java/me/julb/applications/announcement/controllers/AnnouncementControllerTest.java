@@ -39,14 +39,18 @@ import javax.validation.constraints.NotNull;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -54,14 +58,19 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import me.julb.applications.announcement.entities.AnnouncementEntity;
+import me.julb.applications.announcement.repositories.AnnouncementRepository;
 import me.julb.applications.announcement.services.AnnouncementService;
 import me.julb.applications.announcement.services.dto.AnnouncementCreationDTO;
 import me.julb.applications.announcement.services.dto.AnnouncementLevel;
 import me.julb.library.dto.simple.content.LargeContentCreationDTO;
 import me.julb.library.dto.simple.interval.date.DateTimeIntervalCreationDTO;
+import me.julb.library.utility.constants.CustomHttpHeaders;
 import me.julb.library.utility.date.DateUtility;
-import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBaseTest;
+import me.julb.springbootstarter.persistence.mongodb.reactive.test.base.AbstractMongoDbReactiveBaseTest;
 import me.julb.springbootstarter.test.security.annotations.WithMockUser;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Unit test for the {@link CollectController} class.
@@ -69,10 +78,10 @@ import me.julb.springbootstarter.test.security.annotations.WithMockUser;
  * @author Julb.
  */
 @Import(TestChannelBinderConfiguration.class)
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @ContextConfiguration(initializers = AnnouncementControllerTest.Initializer.class)
 @Testcontainers
-public class AnnouncementControllerTest extends AbstractMongoDbBaseTest {
+public class AnnouncementControllerTest extends AbstractMongoDbReactiveBaseTest {
 
     /**
      * The MongoDB container.
@@ -81,10 +90,10 @@ public class AnnouncementControllerTest extends AbstractMongoDbBaseTest {
     private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.4"));
 
     /**
-     * The mock MVC.
+     * The web test client.
      */
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     /**
      * The announcement service.
@@ -96,7 +105,7 @@ public class AnnouncementControllerTest extends AbstractMongoDbBaseTest {
      * {@inheritDoc}
      */
     @Override
-    public void setupData() {
+    public Mono<Void> setupData() {
         // Create announcement.
         AnnouncementCreationDTO creationDTO = new AnnouncementCreationDTO();
         creationDTO.setLevel(AnnouncementLevel.INFO);
@@ -109,16 +118,22 @@ public class AnnouncementControllerTest extends AbstractMongoDbBaseTest {
         creationDTO.setVisibilityDateTime(new DateTimeIntervalCreationDTO());
         creationDTO.getVisibilityDateTime().setFrom(DateUtility.dateTimeNow());
         creationDTO.getVisibilityDateTime().setTo(DateUtility.dateTimePlus(1, ChronoUnit.DAYS));
-        announcementService.create(creationDTO);
+        return announcementService.create(creationDTO).then();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<?>[] getEntityClasses() {
-        return new Class<?>[] {AnnouncementEntity.class};
+    public Flux<Class<?>> getEntityClasses() {
+        return Flux.fromArray(new Class<?>[] {AnnouncementEntity.class});
     }
+
+    /**
+     * The announcement service.
+     */
+    @Autowired
+    private AnnouncementRepository repository;
 
     /**
      * Unit test method.
@@ -128,15 +143,17 @@ public class AnnouncementControllerTest extends AbstractMongoDbBaseTest {
     public void whenFindAll_thenReturn200()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(
-                get("/announcements")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-            )
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.numberOfElements", is(1)))
-            .andExpect(jsonPath("$.content[0].id", notNullValue()))
-            .andExpect(jsonPath("$.content[0].level", is(AnnouncementLevel.INFO.name())));
+        webTestClient
+            .get()
+            .uri("/announcements")
+            .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$[0].id").isNotEmpty()
+                .jsonPath("$[0].level").isEqualTo(AnnouncementLevel.INFO.name());
         //@formatter:on
     }
 

@@ -25,7 +25,6 @@
 package me.julb.applications.announcement.services.impl;
 
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,11 +33,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import me.julb.applications.announcement.configurations.properties.ApplicationProperties;
-import me.julb.applications.announcement.entities.AnnouncementEntity;
 import me.julb.applications.announcement.repositories.AnnouncementRepository;
 import me.julb.applications.announcement.services.AnnouncementService;
 import me.julb.library.utility.date.DateUtility;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
+
+import reactor.util.context.Context;
 
 /**
  * The auto-cleaning service implementation.
@@ -81,25 +81,14 @@ public class AutoCleaningServiceImpl {
             // Get the date time threshold.
             String dateTimeThresold = DateUtility.dateTimeMinus(thresholdInDays.intValue(), ChronoUnit.DAYS);
 
+            //FIXME => find the way to log "nothing to do"
+
             // Find announcements.
-            List<AnnouncementEntity> expiredAnnouncements = announcementRepository.findByVisibilityDateTime_ToLessThanEqualOrderByTmAsc(dateTimeThresold);
-
-            if (expiredAnnouncements.isEmpty()) {
-                LOGGER.info("No announcements to delete.");
-
-            } else {
-                LOGGER.info("There are <{}> announcements to delete.", expiredAnnouncements.size());
-
-                // Cleaning
-                for (AnnouncementEntity announcement : expiredAnnouncements) {
-                    TrademarkContextHolder.setTrademark(announcement.getTm());
-                    announcementService.delete(announcement.getId());
-                }
-                TrademarkContextHolder.unsetTrademark();
-
-                LOGGER.info("The announcements have been successfully deleted.");
-            }
-
+            announcementRepository.findByVisibilityDateTime_ToLessThanEqualOrderByTmAsc(dateTimeThresold).flatMap(expiredAnnouncement -> {
+                return announcementService.delete(expiredAnnouncement.getId()).contextWrite(Context.of(ContextConstants.TRADEMARK, expiredAnnouncement.getTm()));
+            })
+            .doOnComplete(() -> LOGGER.info("The announcements have been successfully deleted."))
+            .subscribe();
         } else {
             LOGGER.info("The cleaning threshold is set to <{}> so skipping the autoclean.", thresholdInDays);
         }

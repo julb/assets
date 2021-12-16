@@ -24,13 +24,10 @@
 package me.julb.springbootstarter.security.reactive.configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
-import org.springframework.boot.actuate.cache.CachesEndpoint;
-import org.springframework.boot.actuate.health.HealthEndpoint;
-import org.springframework.boot.actuate.info.InfoEndpoint;
-import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -39,6 +36,7 @@ import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutHandler;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 
+import me.julb.springbootstarter.security.reactive.configurations.beans.access.CustomPermissionEvaluator;
 import me.julb.springbootstarter.security.reactive.configurations.beans.handlers.CustomAuthenticationFailureHandler;
 import me.julb.springbootstarter.security.reactive.configurations.beans.handlers.CustomAuthenticationLogoutHandler;
 import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsLogoutHandlerDelegate;
@@ -105,7 +103,10 @@ public class SecurityReactiveConfiguration {
      * {@inheritDoc}
      */
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, DefaultMethodSecurityExpressionHandler methodSecurityExpressionHandler) {
+        // Set the custom evaluator.
+        methodSecurityExpressionHandler.setPermissionEvaluator(new CustomPermissionEvaluator());
+
         //@formatter:off
         return http
             .authorizeExchange().anyExchange().permitAll()

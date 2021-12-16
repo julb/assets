@@ -1,0 +1,40 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+    id 'me.julb.gradleplugins.java17'
+	id 'me.julb.gradleplugins.additionaljars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
+	
+	api project(':libraries:library-utility-identifier')
+	api project(':libraries:library-utility-validator')
+	api project(':libraries:library-persistence-mongodb')
+	api project(':spring-boot-starters:spring-boot-starter-persistence-core')
+	api 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
+	implementation project(':libraries:library-utility-constants')
+	implementation project(':libraries:library-utility-data')
+	implementation project(':libraries:library-utility-exception')
+    implementation project(':libraries:library-utility-interface')
+	
+	implementation 'org.apache.commons:commons-lang3'
+    implementation 'com.google.code.findbugs:jsr305'
+}
+
+
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

@@ -1,0 +1,41 @@
+plugins {
+	id 'java-library'
+	id 'io.freefair.lombok'
+    id 'me.julb.gradleplugins.java17'
+	id 'me.julb.gradleplugins.additionaljars'
+}
+
+dependencies {
+	api platform(project(':bom'))
+    annotationProcessor platform(project(':bom'))
+	
+	api 'org.springframework.cloud:spring-cloud-stream'
+	api project(':libraries:library-dto-messaging')
+    api project(':libraries:library-dto-notification')
+	implementation project(':libraries:library-utility-constants')
+	implementation project(':libraries:library-utility-date')
+	implementation project(':libraries:library-utility-identifier')
+    implementation project(':libraries:library-utility-validator')
+    implementation project(':spring-boot-starters:spring-boot-starter-core')
+	implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.apache.commons:commons-collections4'
+	
+	implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
+	
+    testImplementation project(':spring-boot-starters:spring-boot-starter-messaging-test')
+}
+
+
+
+test {
+    useJUnitPlatform()
+    jvmArgs = ["-Dlogging.level.root=OFF", "-Dlogging.level.org.springframework=OFF"]
+}
+
+publishing {
+	publications {
+	    JavaPublication(MavenPublication) {
+	        from components.java
+	    }
+	}
+}

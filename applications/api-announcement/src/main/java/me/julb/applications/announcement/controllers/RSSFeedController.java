@@ -31,10 +31,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.View;
+import org.springframework.web.reactive.result.view.View;
 
 import me.julb.applications.announcement.services.RSSFeedService;
-import me.julb.springbootstarter.web.mvc.views.rssfeed.RSSFeedView;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -62,7 +61,7 @@ public class RSSFeedController {
     @GetMapping("/announcements")
     @PreAuthorize("permitAll()")
     public View getAnnouncementsFeed() {
-        return new RSSFeedView(rssFeedService.buildAnnouncementsFeed());
+        return null; // FIXME new RSSFeedView(rssFeedService.buildAnnouncementsFeed());
     }
 
 }

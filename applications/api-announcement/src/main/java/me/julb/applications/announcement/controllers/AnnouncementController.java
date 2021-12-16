@@ -24,13 +24,10 @@
 
 package me.julb.applications.announcement.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage announcements.
@@ -86,7 +87,7 @@ public class AnnouncementController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('announcement', 'read')")
-    public Page<AnnouncementDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<AnnouncementDTO> findAll(Searchable searchable, Pageable pageable) {
         return announcementService.findAll(searchable, pageable);
     }
 
@@ -98,7 +99,7 @@ public class AnnouncementController {
     @Operation(summary = "gets a announcement")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'announcement', 'read')")
-    public AnnouncementDTO get(@PathVariable @Identifier String id) {
+    public Mono<AnnouncementDTO> get(@PathVariable @Identifier String id) {
         return announcementService.findOne(id);
     }
 
@@ -113,7 +114,7 @@ public class AnnouncementController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('announcement', 'create')")
-    public AnnouncementDTO create(@RequestBody @NotNull @Valid AnnouncementCreationDTO creationDTO) {
+    public Mono<AnnouncementDTO> create(@RequestBody @NotNull @Valid AnnouncementCreationDTO creationDTO) {
         return announcementService.create(creationDTO);
     }
 
@@ -126,7 +127,7 @@ public class AnnouncementController {
     @Operation(summary = "updates a announcement")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'announcement', 'update')")
-    public AnnouncementDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid AnnouncementUpdateDTO updateDTO) {
+    public Mono<AnnouncementDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid AnnouncementUpdateDTO updateDTO) {
         return announcementService.update(id, updateDTO);
     }
 
@@ -139,7 +140,7 @@ public class AnnouncementController {
     @Operation(summary = "patches a announcement")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'announcement', 'update')")
-    public AnnouncementDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid AnnouncementPatchDTO patchDTO) {
+    public Mono<AnnouncementDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid AnnouncementPatchDTO patchDTO) {
         return announcementService.patch(id, patchDTO);
     }
 
@@ -151,8 +152,8 @@ public class AnnouncementController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'announcement', 'delete')")
-    public void delete(@PathVariable String id) {
-        announcementService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return announcementService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

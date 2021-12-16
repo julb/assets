@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -46,21 +45,23 @@ import me.julb.applications.announcement.services.dto.AnnouncementUpdateDTO;
 import me.julb.applications.announcement.services.exceptions.AnnouncementAlreadyExistsInIntervalException;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The announcement service implementation.
@@ -108,28 +109,27 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      * {@inheritDoc}
      */
     @Override
-    public Page<AnnouncementDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<AnnouncementDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        ISpecification<AnnouncementEntity> spec = new SearchSpecification<AnnouncementEntity>(searchable).and(new TmSpecification<>(tm));
-        Page<AnnouncementEntity> result = announcementRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            ISpecification<AnnouncementEntity> spec = new SearchSpecification<AnnouncementEntity>(searchable).and(new TmSpecification<>(tm));
+            return announcementRepository.findAll(spec, pageable).map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AnnouncementDTO findOne(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AnnouncementDTO> findOne(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the announcement exists
-        AnnouncementEntity result = announcementRepository.findByTmAndId(tm, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(AnnouncementEntity.class, id);
-        }
-
-        return mapper.map(result);
+            // Check that the announcement exists
+            return announcementRepository.findByTmAndId(tm, id).map(mapper::map)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(AnnouncementEntity.class, id)));
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -139,20 +139,24 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AnnouncementDTO create(@NotNull @Valid AnnouncementCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AnnouncementDTO> create(@NotNull @Valid AnnouncementCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check if not overlapping another one.
-        if (announcementRepository.existsByTmAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, creationDTO.getVisibilityDateTime().getFrom(), creationDTO.getVisibilityDateTime().getTo())) {
-            throw new AnnouncementAlreadyExistsInIntervalException(creationDTO.getVisibilityDateTime().getFrom(), creationDTO.getVisibilityDateTime().getTo());
-        }
+            // Check if not overlapping another one.
+            return announcementRepository.existsByTmAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, creationDTO.getVisibilityDateTime().getFrom(), creationDTO.getVisibilityDateTime().getTo())
+                .flatMap(otherAnnouncementOverlapExists -> {
+                    if (otherAnnouncementOverlapExists.booleanValue()) {
+                        return Mono.error(new AnnouncementAlreadyExistsInIntervalException(creationDTO.getVisibilityDateTime().getFrom(), creationDTO.getVisibilityDateTime().getTo()));
+                    }
 
-        // Update the entity
-        AnnouncementEntity entityToCreate = mapper.map(creationDTO);
-        this.onPersist(entityToCreate);
-
-        AnnouncementEntity result = announcementRepository.save(entityToCreate);
-        return mapper.map(result);
+                    // Update the entity
+                    AnnouncementEntity entityToCreate = mapper.map(creationDTO);
+                    return this.onPersist(tm, entityToCreate).then(
+                        announcementRepository.save(entityToCreate).map(mapper::map)
+                    );
+                });
+        });
     }
 
     /**
@@ -160,26 +164,30 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AnnouncementDTO update(@NotNull @Identifier String id, @NotNull @Valid AnnouncementUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AnnouncementDTO> update(@NotNull @Identifier String id, @NotNull @Valid AnnouncementUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the announcement exists
-        AnnouncementEntity existing = announcementRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AnnouncementEntity.class, id);
-        }
+            // Check that the announcement exists
+            return announcementRepository.findByTmAndId(tm, id).flatMap(existing -> {
 
-        // Check if not overlapping another one.
-        if (announcementRepository.existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, id, updateDTO.getVisibilityDateTime().getFrom(), updateDTO.getVisibilityDateTime().getTo())) {
-            throw new AnnouncementAlreadyExistsInIntervalException(updateDTO.getVisibilityDateTime().getFrom(), updateDTO.getVisibilityDateTime().getTo());
-        }
+                // Check if not overlapping another one.
+                return announcementRepository.existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, id, updateDTO.getVisibilityDateTime().getFrom(), updateDTO.getVisibilityDateTime().getTo())
+                    .flatMap(otherAnnouncementOverlapExists -> {
+                        if (otherAnnouncementOverlapExists.booleanValue()) {
+                            return Mono.error(new AnnouncementAlreadyExistsInIntervalException(updateDTO.getVisibilityDateTime().getFrom(), updateDTO.getVisibilityDateTime().getTo()));
+                        }
 
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        AnnouncementEntity result = announcementRepository.save(existing);
-        return mapper.map(result);
+                        // Update the entity
+                        mapper.map(updateDTO, existing);
+            
+                        // Proceed to the update
+                        return this.onUpdate(existing).then(
+                            announcementRepository.save(existing).map(mapper::map)
+                        );
+                });
+            });
+        }).switchIfEmpty(Mono.error(new ResourceNotFoundException(AnnouncementEntity.class, id)));
     }
 
     /**
@@ -187,35 +195,43 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AnnouncementDTO patch(@NotNull @Identifier String id, @NotNull @Valid AnnouncementPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AnnouncementDTO> patch(@NotNull @Identifier String id, @NotNull @Valid AnnouncementPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the announcement exists
-        AnnouncementEntity existing = announcementRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AnnouncementEntity.class, id);
-        }
+            // Check that the announcement exists
+            return announcementRepository.findByTmAndId(tm, id).flatMap(existing -> {
+                // Check if not overlapping another one.
+                final String from;
+                if (patchDTO.getVisibilityDateTime() != null && patchDTO.getVisibilityDateTime().getFrom() != null) {
+                    from = patchDTO.getVisibilityDateTime().getFrom();
+                } else {
+                    from = existing.getVisibilityDateTime().getFrom();
+                }
+                final String to;
+                if (patchDTO.getVisibilityDateTime() != null && patchDTO.getVisibilityDateTime().getTo() != null) {
+                    to = patchDTO.getVisibilityDateTime().getTo();
+                } else {
+                    to = existing.getVisibilityDateTime().getTo();
+                }
 
-        // Check if not overlapping another one.
-        String from = existing.getVisibilityDateTime().getFrom();
-        if (patchDTO.getVisibilityDateTime() != null && patchDTO.getVisibilityDateTime().getFrom() != null) {
-            from = patchDTO.getVisibilityDateTime().getFrom();
-        }
-        String to = existing.getVisibilityDateTime().getTo();
-        if (patchDTO.getVisibilityDateTime() != null && patchDTO.getVisibilityDateTime().getTo() != null) {
-            to = patchDTO.getVisibilityDateTime().getTo();
-        }
+                // Check if not overlapping another one.
+                return announcementRepository.existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, id, from, to)
+                    .flatMap(otherAnnouncementOverlapExists -> {
+                        if (otherAnnouncementOverlapExists.booleanValue()) {
+                            return Mono.error(new AnnouncementAlreadyExistsInIntervalException(from, to));
+                        }
 
-        if (announcementRepository.existsByTmAndIdNotAndVisibilityDateTime_ToGreaterThanEqualAndVisibilityDateTime_FromLessThanEqual(tm, id, from, to)) {
-            throw new AnnouncementAlreadyExistsInIntervalException(from, to);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        AnnouncementEntity result = announcementRepository.save(existing);
-        return mapper.map(result);
+                        // Update the entity
+                        mapper.map(patchDTO, existing);
+            
+                        // Proceed to the update
+                        return this.onUpdate(existing).then(
+                            announcementRepository.save(existing).map(mapper::map)
+                        );
+                });
+            });
+        }).switchIfEmpty(Mono.error(new ResourceNotFoundException(AnnouncementEntity.class, id)));
     }
 
     /**
@@ -223,20 +239,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the announcement exists
-        AnnouncementEntity existing = announcementRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AnnouncementEntity.class, id);
-        }
-
-        // Delete entity.
-        announcementRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            // Check that the announcement exists
+            return announcementRepository.findByTmAndId(tm, id).flatMap(existing -> {
+                // Delete entity.
+                return announcementRepository.delete(existing).then(
+                    this.onDelete(existing)
+                );
+            }).switchIfEmpty(Mono.error(new ResourceNotFoundException(AnnouncementEntity.class, id)));
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -245,34 +259,35 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      * Method called when persisting an announcement.
      * @param entity the entity.
      */
-    private void onPersist(AnnouncementEntity entity) {
-        entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
-        entity.setCreatedAt(DateUtility.dateTimeNow());
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-
-        // Add author.
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(userRefMapper.map(connnectedUser));
-
-        postResourceEvent(entity, ResourceEventType.CREATED);
+    private Mono<Void> onPersist(String tm, AnnouncementEntity entity) {
+        return securityService.getConnectedUserRefIdentity().flatMap(connnectedUser -> {
+            entity.setId(IdentifierUtility.generateId());
+            entity.setTm(tm);
+            entity.setCreatedAt(DateUtility.dateTimeNow());
+            entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+    
+            // Add author.
+            entity.setUser(userRefMapper.map(connnectedUser));
+    
+            return postResourceEvent(entity, ResourceEventType.CREATED);
+        });
     }
 
     /**
      * Method called when updating a announcement.
      * @param entity the entity.
      */
-    private void onUpdate(AnnouncementEntity entity) {
+    private Mono<Void> onUpdate(AnnouncementEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a announcement.
      * @param entity the entity.
      */
-    private void onDelete(AnnouncementEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<Void> onDelete(AnnouncementEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -280,15 +295,17 @@ public class AnnouncementServiceImpl implements AnnouncementService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(AnnouncementEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.ANNOUNCEMENT)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<Void> postResourceEvent(AnnouncementEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.ANNOUNCEMENT)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+        });
     }
 }

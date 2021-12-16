@@ -27,7 +27,6 @@ package me.julb.applications.announcement.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.announcement.services.dto.AnnouncementCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.announcement.services.dto.AnnouncementPatchDTO;
 import me.julb.applications.announcement.services.dto.AnnouncementUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The announcement service.
@@ -52,14 +54,14 @@ public interface AnnouncementService {
      * @param pageable the pageable information.
      * @return a paged list of announcements.
      */
-    Page<AnnouncementDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<AnnouncementDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a announcement through its ID.
      * @param id the announcement identifier.
      * @return the announcement.
      */
-    AnnouncementDTO findOne(@NotNull @Identifier String id);
+    Mono<AnnouncementDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -68,7 +70,7 @@ public interface AnnouncementService {
      * @param announcementCreationDTO the DTO to create a announcement.
      * @return the created announcement.
      */
-    AnnouncementDTO create(@NotNull @Valid AnnouncementCreationDTO announcementCreationDTO);
+    Mono<AnnouncementDTO> create(@NotNull @Valid AnnouncementCreationDTO announcementCreationDTO);
 
     /**
      * Updates a announcement.
@@ -76,7 +78,7 @@ public interface AnnouncementService {
      * @param announcementUpdateDTO the DTO to update a announcement.
      * @return the updated announcement.
      */
-    AnnouncementDTO update(@NotNull @Identifier String id, @NotNull @Valid AnnouncementUpdateDTO announcementUpdateDTO);
+    Mono<AnnouncementDTO> update(@NotNull @Identifier String id, @NotNull @Valid AnnouncementUpdateDTO announcementUpdateDTO);
 
     /**
      * Patches a announcement.
@@ -84,12 +86,12 @@ public interface AnnouncementService {
      * @param announcementPatchDTO the DTO to update a announcement.
      * @return the updated announcement.
      */
-    AnnouncementDTO patch(@NotNull @Identifier String id, @NotNull @Valid AnnouncementPatchDTO announcementPatchDTO);
+    Mono<AnnouncementDTO> patch(@NotNull @Identifier String id, @NotNull @Valid AnnouncementPatchDTO announcementPatchDTO);
 
     /**
      * Deletes a announcement.
      * @param id the id of the announcement to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

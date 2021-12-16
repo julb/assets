@@ -23,6 +23,9 @@ allprojects {
 	 	maven {
             url 'https://repo.spring.io/milestone'
         }
+        maven {
+            url 'https://repo.spring.io/release'
+        }
 	}
 	
 	publishing {
@@ -45,6 +48,11 @@ allprojects {
 			test.configure { t ->
 				t.systemProperties.remove('spring.test.context.default.CacheAwareContextLoaderDelegate')
 			}
+		}
+
+		// patch gradle dependency issue
+		if(project.plugins.hasPlugin('io.freefair.lombok')) {
+			tasks.getByName('delombok').dependsOn('compileJava')
 		}
 	}
 }
