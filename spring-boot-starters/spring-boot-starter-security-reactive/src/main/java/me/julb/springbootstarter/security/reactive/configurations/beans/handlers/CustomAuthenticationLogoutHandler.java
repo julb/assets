@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutHandler;
+import org.springframework.web.server.ServerWebExchange;
 
 import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsLogoutHandlerDelegate;
 
@@ -50,11 +51,15 @@ public class CustomAuthenticationLogoutHandler implements ServerLogoutHandler {
     private Optional<IAuthenticationUserDetailsLogoutHandlerDelegate> authenticationUserDetailsLogoutHandlerDelegate = Optional.empty();
 
     @Override
-    public Mono<Void> logout(WebFilterExchange exchange, Authentication authentication) {
+    public Mono<Void> logout(WebFilterExchange webFilterExchange, Authentication authentication) {
         LOGGER.info("User has triggerred a logout.");
+        ServerWebExchange exchange = webFilterExchange.getExchange();
         return authenticationUserDetailsLogoutHandlerDelegate
-            .map(delegate -> delegate.onAuthenticationLogout(exchange, authentication))
-            .orElse(Mono.empty());
+            .map(delegate -> {
+                return delegate.onAuthenticationLogout(webFilterExchange, authentication)
+                    .then(webFilterExchange.getChain().filter(exchange));
+            })
+            .orElse(webFilterExchange.getChain().filter(exchange));
     }
 
     /**

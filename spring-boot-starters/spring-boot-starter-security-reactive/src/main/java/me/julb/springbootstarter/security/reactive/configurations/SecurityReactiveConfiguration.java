@@ -23,8 +23,6 @@
  */
 package me.julb.springbootstarter.security.reactive.configurations;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +34,6 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
-import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutHandler;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 
@@ -55,20 +52,20 @@ import me.julb.springbootstarter.security.reactive.configurations.beans.userdeta
 @EnableReactiveMethodSecurity
 //@formatter:off
 @Import({
-    /*SecurityAuthenticationByApiKeyConfiguration.class, */
-    SecurityAuthenticationByInternalApiKeyConfiguration.class/*, 
+    SecurityAuthenticationByApiKeyConfiguration.class, 
+    SecurityAuthenticationByInternalApiKeyConfiguration.class, 
     SecurityAuthenticationByJwtConfiguration.class, 
     SecurityAuthenticationByPasswordConfiguration.class, 
     SecurityAuthenticationByPincodeConfiguration.class, 
-    SecurityAuthenticationByTotpConfiguration.class*/
+    SecurityAuthenticationByTotpConfiguration.class
 })
 @AutoConfigureAfter({
-    /*SecurityAuthenticationByApiKeyConfiguration.class, */
-    SecurityAuthenticationByInternalApiKeyConfiguration.class/*, 
+    SecurityAuthenticationByApiKeyConfiguration.class, 
+    SecurityAuthenticationByInternalApiKeyConfiguration.class, 
     SecurityAuthenticationByJwtConfiguration.class, 
     SecurityAuthenticationByPasswordConfiguration.class, 
     SecurityAuthenticationByPincodeConfiguration.class, 
-    SecurityAuthenticationByTotpConfiguration.class*/
+    SecurityAuthenticationByTotpConfiguration.class
 })
 //@formatter:on
 public class SecurityReactiveConfiguration {
@@ -105,7 +102,7 @@ public class SecurityReactiveConfiguration {
      * {@inheritDoc}
      */
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, DefaultMethodSecurityExpressionHandler methodSecurityExpressionHandler, List<AuthenticationWebFilter> authenticationWebFilters) {
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, DefaultMethodSecurityExpressionHandler methodSecurityExpressionHandler) {
         // Set the custom evaluator.
         methodSecurityExpressionHandler.setPermissionEvaluator(new CustomPermissionEvaluator());
 

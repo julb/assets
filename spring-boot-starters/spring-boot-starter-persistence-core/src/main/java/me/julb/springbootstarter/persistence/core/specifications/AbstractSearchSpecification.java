@@ -26,6 +26,8 @@ package me.julb.springbootstarter.persistence.core.specifications;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.lang3.StringUtils;
+
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.data.search.predicates.attributes.AbstractAttributePredicate;
 import me.julb.library.utility.data.search.predicates.attributes.MultipleValuesAttributePredicate;
@@ -124,7 +126,7 @@ public abstract class AbstractSearchSpecification<T> {
         // Enum
         if (value instanceof String && Enum.class.isAssignableFrom(targetClass)) {
             final Class<? extends Enum> enumType = (Class<? extends Enum>) targetClass;
-            return Enum.valueOf(enumType, value);
+            return Enum.valueOf(enumType, StringUtils.upperCase(value));
         }
 
         // Other

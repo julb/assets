@@ -31,11 +31,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.result.view.View;
 
 import me.julb.applications.announcement.services.RSSFeedService;
+import me.julb.springbootstarter.web.reactive.writers.rssfeed.RSSFeedWriter;
 
 import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The REST controller to serve RSS feeds.
@@ -58,10 +59,9 @@ public class RSSFeedController {
      * @return the view for the RSS feed.
      */
     @Operation(summary = "get the RSS feed for announcements")
-    @GetMapping("/announcements")
+    @GetMapping(value = "/announcements", produces = MediaType.APPLICATION_RSS_XML_VALUE)
     @PreAuthorize("permitAll()")
-    public View getAnnouncementsFeed() {
-        return null; // FIXME new RSSFeedView(rssFeedService.buildAnnouncementsFeed());
+    public Mono<String> getAnnouncementsFeed() {
+        return rssFeedService.buildAnnouncementsFeed().as(new RSSFeedWriter());
     }
-
 }

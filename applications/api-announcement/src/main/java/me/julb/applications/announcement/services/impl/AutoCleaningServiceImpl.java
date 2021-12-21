@@ -25,6 +25,7 @@
 package me.julb.applications.announcement.services.impl;
 
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -81,18 +82,27 @@ public class AutoCleaningServiceImpl {
             // Get the date time threshold.
             String dateTimeThresold = DateUtility.dateTimeMinus(thresholdInDays.intValue(), ChronoUnit.DAYS);
 
-            //FIXME => find the way to log "nothing to do"
+            AtomicLong count = new AtomicLong();
 
             // Find announcements.
             announcementRepository.findByVisibilityDateTime_ToLessThanEqualOrderByTmAsc(dateTimeThresold).flatMap(expiredAnnouncement -> {
-                return announcementService.delete(expiredAnnouncement.getId()).contextWrite(Context.of(ContextConstants.TRADEMARK, expiredAnnouncement.getTm()));
+                return announcementService.delete(expiredAnnouncement.getId())
+                    .doOnTerminate(count::incrementAndGet)
+                    .contextWrite(Context.of(ContextConstants.TRADEMARK, expiredAnnouncement.getTm()));
             })
-            .doOnComplete(() -> LOGGER.info("The announcements have been successfully deleted."))
+            .doOnComplete(() -> {
+                long numberOfElements = count.get();
+                if (numberOfElements > 0) {
+                    LOGGER.info("{} expired announcements have been successfully deleted.", count.get());
+                } else {
+                    LOGGER.info("No expired announcements to delete.");
+                }
+                LOGGER.info("END - Operation completed.");
+            })
             .subscribe();
         } else {
             LOGGER.info("The cleaning threshold is set to <{}> so skipping the autoclean.", thresholdInDays);
+            LOGGER.info("END - Operation completed.");
         }
-
-        LOGGER.info("END - Operation completed.");
     }
 }
