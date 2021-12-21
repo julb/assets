@@ -26,10 +26,10 @@ package me.julb.springbootstarter.security.reactive.configurations.beans.access;
 import java.io.Serializable;
 
 import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
 import me.julb.library.utility.interfaces.ISecurable;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 
 /**
  * A custom permission evaluator.
@@ -96,7 +96,9 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
      * @return <code>true</code> if the user is allowed to enter, <code>false</code> otherwise.
      */
     private boolean isAllowed(Authentication authentication, ISecurable securableObject, String permission) {
-        String tm = TrademarkContextHolder.getTrademark();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            return false;
+        }
 
         // FIXME Implement that method.
         return true;

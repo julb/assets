@@ -49,12 +49,18 @@ public class CustomPageableHandlerMethodArgumentResolver extends ReactivePageabl
     private static final ReactiveSortHandlerMethodArgumentResolver DEFAULT_SORT_RESOLVER = new CustomSortHandlerMethodArgumentResolver();
 
     /**
+     * The default pageable.
+     */
+    public static final Pageable DEFAULT_PAGEABLE = PageRequest.of(Integers.ZERO, Integer.MAX_VALUE);
+
+    /**
      * Constructor.
      */
     public CustomPageableHandlerMethodArgumentResolver() {
         super(DEFAULT_SORT_RESOLVER);
         this.setPageParameterName(PageRequestAttributes.PAGE_PARAMETER_NAME);
         this.setSizeParameterName(PageRequestAttributes.SIZE_PARAMETER_NAME);
+        this.setFallbackPageable(DEFAULT_PAGEABLE);
     }
 
 

@@ -28,6 +28,7 @@ import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
+import org.springframework.web.server.ServerWebExchange;
 
 import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsHandlerDelegate;
 
@@ -47,9 +48,13 @@ public class CustomAuthenticationSuccessHandler implements ServerAuthenticationS
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
+        ServerWebExchange exchange = webFilterExchange.getExchange();
         return authenticationUserDetailsDelegateService
-            .map(service -> service.onAuthenticationSuccess(webFilterExchange, authentication))
-            .orElse(Mono.empty());
+            .map(service -> {
+                return service.onAuthenticationSuccess(webFilterExchange, authentication)
+                    .then(webFilterExchange.getChain().filter(exchange));
+            })
+            .orElse(webFilterExchange.getChain().filter(exchange));
     }
 
     /**

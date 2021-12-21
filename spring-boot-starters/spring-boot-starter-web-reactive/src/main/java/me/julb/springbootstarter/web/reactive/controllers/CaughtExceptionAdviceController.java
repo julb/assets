@@ -49,6 +49,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -145,6 +146,43 @@ public class CaughtExceptionAdviceController {
     @ExceptionHandler({BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleMethodArgumentNotValidException(BindException exception, ServerWebExchange exchange) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+
+            // For this exception, raise this HTTP Status.
+            HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+
+            // Create the request
+            HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(
+                httpStatus.value(), 
+                httpStatus.getReasonPhrase(), 
+                exchange.getRequest().getPath().toString(),
+                TracingContextUtility.asMap(tracer.currentSpan().context()));
+            FieldError fieldError = exception.getBindingResult().getFieldError();
+            String errorMessage = String.format("%s: %s", fieldError.getField(), fieldError.getDefaultMessage());
+            errorResponse.setMessage(errorMessage);
+
+            // Set errors in stack
+            List<FieldError> list = exception.getBindingResult().getFieldErrors();
+            for (FieldError error : list) {
+                String message = getErrorMessage(tm, error.getDefaultMessage());
+                errorResponse.getTrace().add(String.format("%s: %s", error.getField(), message));
+            }
+
+            return Mono.just(new ResponseEntity<>(errorResponse, httpStatus));
+        });
+    }
+
+    /**
+     * Method that handles thrown {@link WebExchangeBindException}.
+     * @param exception the exception that occurred.
+     * @param exchange the exchange.
+     * @return the error response.
+     */
+    @ExceptionHandler({WebExchangeBindException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleWebExchangeBindException(WebExchangeBindException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
 

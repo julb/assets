@@ -27,6 +27,8 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.AndServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilterChain;
 
 import me.julb.springbootstarter.security.configurations.beans.authenticationtokens.CustomInternalApiKeyPreAuthenticatedAuthenticationToken;
 import me.julb.springbootstarter.security.reactive.configurations.beans.matchers.RequestHeaderServerWebExchangeMatcher;
@@ -52,5 +54,11 @@ public class AuthenticationByInternalApiKeyAuthenticationWebFilter extends Authe
             String internalApiKey = exchange.getRequest().getHeaders().getFirst(apiKeyHeader);
             return Mono.just(new CustomInternalApiKeyPreAuthenticatedAuthenticationToken(internalApiKey, "N/A"));
         });
+    }
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        // TODO Auto-generated method stub
+        return super.filter(exchange, chain);
     }
 }

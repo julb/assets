@@ -48,20 +48,26 @@ spring:
 
 #mongodb
 spring.data.mongodb:
-   host: localhost
-   port: 27017
-   database: app1
-   autoIndexCreation: true
+  host: localhost
+  port: 27017
+  database: test
+  autoIndexCreation: true
+  replica-set-name: rs0
 
-#
-security.jwt:
-  enabled: true
-  issuer: julb.io
-  audience: julb.io
-  signature-key:
-    algorithm: RS512
-    key-id: sign.test
-    key-path: classpath:/jwt.sign.key.pub
+# internal api key
+security:
+  internal-api-key:
+    enabled: true
+    headerName: x-julb-internal-api-key
+    headerValue: hello
+  jwt:
+    enabled: false
+    issuer: julb.an
+    audience: julb.an
+    signature-key:
+      algorithm: RS512
+      key-id: sign.test
+      key-path: classpath:/jwt.sign.key.pub
 
 # Application
 application:

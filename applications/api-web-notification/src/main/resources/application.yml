@@ -56,8 +56,8 @@ spring.data.mongodb:
 #
 security.jwt:
   enabled: true
-  issuer: julb.io
-  audience: julb.io
+  issuer: julb.wn
+  audience: julb.wn
   signature-key:
     algorithm: RS512
     key-id: sign.test
