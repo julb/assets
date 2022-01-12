@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -51,6 +49,9 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodePincodeChangeDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeUpdateDTO;
 
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
+
 /**
  * The rest controller to manage my authentication by pincodes.
  * <br>
@@ -75,7 +76,7 @@ public class MyAuthenticationByPincodeController {
     @Operation(summary = "gets my authentication by pincode")
     @GetMapping()
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByPincodeDTO get() {
+    public Mono<UserAuthenticationByPincodeDTO> get() {
         return myAuthenticationByPincodeService.findOne();
     }
 
@@ -90,7 +91,7 @@ public class MyAuthenticationByPincodeController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByPincodeDTO create(@RequestBody @NotNull @Valid UserAuthenticationByPincodeCreationDTO creationDTO) {
+    public Mono<UserAuthenticationByPincodeDTO> create(@RequestBody @NotNull @Valid UserAuthenticationByPincodeCreationDTO creationDTO) {
         return myAuthenticationByPincodeService.create(creationDTO);
     }
 
@@ -102,7 +103,7 @@ public class MyAuthenticationByPincodeController {
     @Operation(summary = "updates my authentication by pincodes")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByPincodeDTO update(@RequestBody @NotNull @Valid UserAuthenticationByPincodeUpdateDTO updateDTO) {
+    public Mono<UserAuthenticationByPincodeDTO> update(@RequestBody @NotNull @Valid UserAuthenticationByPincodeUpdateDTO updateDTO) {
         return myAuthenticationByPincodeService.update(updateDTO);
     }
 
@@ -114,7 +115,7 @@ public class MyAuthenticationByPincodeController {
     @Operation(summary = "patches my authentication by pincode")
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByPincodeDTO patch(@RequestBody @NotNull @Valid UserAuthenticationByPincodePatchDTO patchDTO) {
+    public Mono<UserAuthenticationByPincodeDTO> patch(@RequestBody @NotNull @Valid UserAuthenticationByPincodePatchDTO patchDTO) {
         return myAuthenticationByPincodeService.patch(patchDTO);
     }
 
@@ -127,7 +128,7 @@ public class MyAuthenticationByPincodeController {
     @PostMapping(path = "/update-pincode", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserAuthenticationByPincodeDTO updatePincode(@RequestBody @NotNull @Valid UserAuthenticationByPincodePincodeChangeDTO pincodeChangeDTO) {
+    public Mono<UserAuthenticationByPincodeDTO> updatePincode(@RequestBody @NotNull @Valid UserAuthenticationByPincodePincodeChangeDTO pincodeChangeDTO) {
         return myAuthenticationByPincodeService.updatePincode(pincodeChangeDTO);
     }
 
@@ -138,8 +139,8 @@ public class MyAuthenticationByPincodeController {
     @DeleteMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete() {
-        myAuthenticationByPincodeService.delete();
+    public Mono<Void> delete() {
+        return myAuthenticationByPincodeService.delete();
     }
     // ------------------------------------------ Utility methods.
 

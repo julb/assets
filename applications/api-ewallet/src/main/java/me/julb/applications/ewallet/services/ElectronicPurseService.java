@@ -27,7 +27,6 @@ package me.julb.applications.ewallet.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseCreationWithUserDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The electronic purse service.
@@ -52,21 +54,21 @@ public interface ElectronicPurseService {
      * @param pageable the pageable information.
      * @return the electronic purses paged list.
      */
-    Page<ElectronicPurseDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<ElectronicPurseDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a electronic purse through its ID.
      * @param id the electronic purse ID.
      * @return the electronic purse.
      */
-    ElectronicPurseDTO findOne(@NotNull @Identifier String id);
+    Mono<ElectronicPurseDTO> findOne(@NotNull @Identifier String id);
 
     /**
      * Gets a electronic purse through its user ID.
      * @param userId the user ID.
      * @return the electronic purse.
      */
-    ElectronicPurseDTO findByUserId(@NotNull @Identifier String userId);
+    Mono<ElectronicPurseDTO> findByUserId(@NotNull @Identifier String userId);
 
     // ------------------------------------------ Write methods.
 
@@ -75,14 +77,14 @@ public interface ElectronicPurseService {
      * @param electronicPurseCreationDTO the DTO to create a electronic purse.
      * @return the created electronic purse.
      */
-    ElectronicPurseDTO create(@NotNull @Valid ElectronicPurseCreationWithUserDTO electronicPurseCreationDTO);
+    Mono<ElectronicPurseDTO> create(@NotNull @Valid ElectronicPurseCreationWithUserDTO electronicPurseCreationDTO);
 
     /**
      * Refresh the balance of the electronic purse.
      * @param id the electronic purse ID.
      * @return the electronic purse updated.
      */
-    ElectronicPurseDTO refreshBalance(@NotNull @Identifier String id);
+    Mono<ElectronicPurseDTO> refreshBalance(@NotNull @Identifier String id);
 
     /**
      * Updates a electronic purse.
@@ -90,7 +92,7 @@ public interface ElectronicPurseService {
      * @param electronicPurseUpdateDTO the DTO to update a electronic purse.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO update(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseUpdateDTO electronicPurseUpdateDTO);
+    Mono<ElectronicPurseDTO> update(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseUpdateDTO electronicPurseUpdateDTO);
 
     /**
      * Patches a electronic purse.
@@ -98,11 +100,11 @@ public interface ElectronicPurseService {
      * @param electronicPursePatchDTO the DTO to update a electronic purse.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO patch(@NotNull @Identifier String id, @NotNull @Valid ElectronicPursePatchDTO electronicPursePatchDTO);
+    Mono<ElectronicPurseDTO> patch(@NotNull @Identifier String id, @NotNull @Valid ElectronicPursePatchDTO electronicPursePatchDTO);
 
     /**
      * Deletes all electronic purses of a user.
      * @param id the electronic purse ID.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 }

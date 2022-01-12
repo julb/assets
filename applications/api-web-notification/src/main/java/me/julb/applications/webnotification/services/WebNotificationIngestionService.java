@@ -26,6 +26,8 @@ package me.julb.applications.webnotification.services;
 
 import me.julb.library.dto.webnotification.WebNotificationMessageDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The web notification service.
  * <br>
@@ -41,5 +43,5 @@ public interface WebNotificationIngestionService {
      * Ingests a web notification.
      * @param webNotificationMessage the message containing the web notification to ingest.
      */
-    void ingest(WebNotificationMessageDTO webNotificationMessage);
+    Mono<Void> ingest(WebNotificationMessageDTO webNotificationMessage);
 }

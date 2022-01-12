@@ -27,7 +27,6 @@ package me.julb.applications.platformhealth.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.platformhealth.services.dto.component.ComponentCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.platformhealth.services.dto.component.ComponentPatch
 import me.julb.applications.platformhealth.services.dto.component.ComponentUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The component service.
@@ -53,7 +55,7 @@ public interface ComponentService {
      * @param pageable the pageable information.
      * @return a paged list of incidents.
      */
-    Page<ComponentDTO> findAll(@NotNull @Identifier String componentCategoryId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<ComponentDTO> findAll(@NotNull @Identifier String componentCategoryId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a incident through its ID.
@@ -61,7 +63,7 @@ public interface ComponentService {
      * @param id the component identifier.
      * @return the incident.
      */
-    ComponentDTO findOne(@NotNull @Identifier String componentCategoryId, @NotNull @Identifier String id);
+    Mono<ComponentDTO> findOne(@NotNull @Identifier String componentCategoryId, @NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -71,7 +73,7 @@ public interface ComponentService {
      * @param creationDTO the DTO to create a component.
      * @return the created component.
      */
-    ComponentDTO create(@NotNull @Identifier String componentCategoryId, @NotNull @Valid ComponentCreationDTO creationDTO);
+    Mono<ComponentDTO> create(@NotNull @Identifier String componentCategoryId, @NotNull @Valid ComponentCreationDTO creationDTO);
 
     /**
      * Updates a component.
@@ -80,7 +82,7 @@ public interface ComponentService {
      * @param updateDTO the DTO to update a component.
      * @return the updated component.
      */
-    ComponentDTO update(@NotNull @Identifier String componentCategoryId, @NotNull @Identifier String id, @NotNull @Valid ComponentUpdateDTO updateDTO);
+    Mono<ComponentDTO> update(@NotNull @Identifier String componentCategoryId, @NotNull @Identifier String id, @NotNull @Valid ComponentUpdateDTO updateDTO);
 
     /**
      * Patches a component.
@@ -89,19 +91,19 @@ public interface ComponentService {
      * @param patchDTO the DTO to update a component.
      * @return the updated component.
      */
-    ComponentDTO patch(@NotNull @Identifier String componentCategoryId, @NotNull @Identifier String id, @NotNull @Valid ComponentPatchDTO patchDTO);
+    Mono<ComponentDTO> patch(@NotNull @Identifier String componentCategoryId, @NotNull @Identifier String id, @NotNull @Valid ComponentPatchDTO patchDTO);
 
     /**
      * Deletes all component of a component category.
      * @param componentCategoryId the component category ID.
      */
-    void delete(@NotNull @Identifier String componentCategoryId);
+    Mono<Void> delete(@NotNull @Identifier String componentCategoryId);
 
     /**
      * Deletes a component.
      * @param componentCategoryId the component category ID.
      * @param id the id of the component to delete.
      */
-    void delete(@NotNull @Identifier String componentCategoryId, @NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String componentCategoryId, @NotNull @Identifier String id);
 
 }

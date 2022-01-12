@@ -62,7 +62,9 @@ import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.josejwt.TokenEmitter;
 import me.julb.library.utility.josejwt.jwk.impl.ManualAsymmetricJWKProvider;
 import me.julb.library.utility.josejwt.keyloader.PEMKeyLoader;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The mapper from a session to an access token.
@@ -141,66 +143,75 @@ public class UserSessionToAccessTokenMapperImpl implements UserSessionToAccessTo
      * {@inheritDoc}
      */
     @Override
-    public UserSessionAccessTokenDTO map(@NotNull UserSessionEntity userSession) {
+    public Mono<UserSessionAccessTokenDTO> map(@NotNull UserSessionEntity userSession) {
         if (this.tokenEmitter == null) {
-            throw new UnsupportedOperationException();
+            return Mono.error(new UnsupportedOperationException());
         }
 
-        // Trademark.
-        String tm = TrademarkContextHolder.getTrademark();
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // JWT foregry properties.
-        AccessTokenJwtForgeryProperties accessTokenJwtForgery = applicationProperties.getAccessTokenJwtForgery();
+            // JWT foregry properties.
+            AccessTokenJwtForgeryProperties accessTokenJwtForgery = applicationProperties.getAccessTokenJwtForgery();
 
-        UserEntity user = userSession.getUser();
-        UserProfileEntity userProfile = userProfileRepository.findByTmAndUser_Id(tm, user.getId());
-        UserMailEntity userMail = userMailRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId());
-        UserMobilePhoneEntity userMobilePhone = userMobilePhoneRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId());
-        UserPreferencesEntity userPreferences = userPreferencesRepository.findByTmAndUser_Id(tm, user.getId());
+            UserEntity user = userSession.getUser();
 
-        String expirationDateTime = DateUtility.dateTimePlus(accessTokenJwtForgery.getValidityInSeconds().intValue(), ChronoUnit.SECONDS);
+            return Mono.zip(
+                userProfileRepository.findByTmAndUser_Id(tm, user.getId()), 
+                userMailRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId()), 
+                userMobilePhoneRepository.findByTmAndUser_IdAndPrimaryIsTrue(tm, user.getId()), 
+                userPreferencesRepository.findByTmAndUser_Id(tm, user.getId())
+            ).map(quadruple -> {
+                UserProfileEntity userProfile = quadruple.getT1();
+                UserMailEntity userMail = quadruple.getT2();
+                UserMobilePhoneEntity userMobilePhone = quadruple.getT3();
+                UserPreferencesEntity userPreferences = quadruple.getT4();
 
-        // Issue date/expiration
-        Date issueDate = DateUtility.parseDateTime(DateUtility.dateTimeNow());
-        Date expirationDate = DateUtility.parseDateTime(expirationDateTime);
+                String expirationDateTime = DateUtility.dateTimePlus(accessTokenJwtForgery.getValidityInSeconds().intValue(), ChronoUnit.SECONDS);
 
-        // @formatter:off
-        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-            .issuer(accessTokenJwtForgery.getIssuer())
-            .audience(Arrays.asList(tm, accessTokenJwtForgery.getCoreAudience()))
-            .jwtID(IdentifierUtility.generateId())
-            .subject(user.getId())
-            .issueTime(issueDate)
-            .expirationTime(expirationDate)
-            .claim(JWTClaims.SID, userSession.getId())
-            .claim(JWTClaims.NAME, userProfile.getDisplayName())
-            .claim(JWTClaims.PREFERRED_USERNAME, userProfile.getDisplayName())
-            .claim(JWTClaims.GIVEN_NAME, userProfile.getFirstName())
-            .claim(JWTClaims.FAMILY_NAME, userProfile.getLastName())
-            .claim(JWTClaims.LOCALE, userPreferences.getLanguage().toLanguageTag())
-            .claim(JWTClaims.PICTURE_URL, "https://www.avatar.com") //FIXME
-            .claim(JWTClaims.WEBSITE_URL, userProfile.getWebsiteUrl())
-            .claim(JWTClaims.MAIL, userMail.getMail())
-            .claim(JWTClaims.MAIL_VERIFIED, userMail.getVerified())
-            .claim(JWTClaims.PHONE_NUMBER, userMobilePhone != null ? userMobilePhone.getMobilePhone().getE164Number() : Strings.EMPTY)
-            .claim(JWTClaims.PHONE_NUMBER_VERIFIED, userMobilePhone != null ? userMobilePhone.getVerified() : Boolean.FALSE.toString())
-            .claim(JWTClaims.ORGANIZATION, userProfile.getOrganization())
-            .claim(JWTClaims.ORGANIZATION_UNIT, userProfile.getOrganizationUnit())
-            .claim(JWTClaims.ROLES, user.getRoles())
-            .claim(JWTClaims.MFA_VERIFIED, userSession.getMfaVerified())
-            .build();
-        // @formatter:on
+                // Issue date/expiration
+                Date issueDate = DateUtility.parseDateTime(DateUtility.dateTimeNow());
+                Date expirationDate = DateUtility.parseDateTime(expirationDateTime);
 
-        // Builds the JWT.
-        String jwt = this.tokenEmitter.emit(jwtClaimsSet.toString());
+                // @formatter:off
+                JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
+                    .issuer(accessTokenJwtForgery.getIssuer())
+                    .audience(Arrays.asList(tm, accessTokenJwtForgery.getCoreAudience()))
+                    .jwtID(IdentifierUtility.generateId())
+                    .subject(user.getId())
+                    .issueTime(issueDate)
+                    .expirationTime(expirationDate)
+                    .claim(JWTClaims.SID, userSession.getId())
+                    .claim(JWTClaims.NAME, userProfile.getDisplayName())
+                    .claim(JWTClaims.PREFERRED_USERNAME, userProfile.getDisplayName())
+                    .claim(JWTClaims.GIVEN_NAME, userProfile.getFirstName())
+                    .claim(JWTClaims.FAMILY_NAME, userProfile.getLastName())
+                    .claim(JWTClaims.LOCALE, userPreferences.getLanguage().toLanguageTag())
+                    .claim(JWTClaims.PICTURE_URL, "https://www.avatar.com") //FIXME
+                    .claim(JWTClaims.WEBSITE_URL, userProfile.getWebsiteUrl())
+                    .claim(JWTClaims.MAIL, userMail.getMail())
+                    .claim(JWTClaims.MAIL_VERIFIED, userMail.getVerified())
+                    .claim(JWTClaims.PHONE_NUMBER, userMobilePhone != null ? userMobilePhone.getMobilePhone().getE164Number() : Strings.EMPTY)
+                    .claim(JWTClaims.PHONE_NUMBER_VERIFIED, userMobilePhone != null ? userMobilePhone.getVerified() : Boolean.FALSE.toString())
+                    .claim(JWTClaims.ORGANIZATION, userProfile.getOrganization())
+                    .claim(JWTClaims.ORGANIZATION_UNIT, userProfile.getOrganizationUnit())
+                    .claim(JWTClaims.ROLES, user.getRoles())
+                    .claim(JWTClaims.MFA_VERIFIED, userSession.getMfaVerified())
+                    .build();
+                // @formatter:on
 
-        // Return token.
-        UserSessionAccessTokenDTO accessToken = new UserSessionAccessTokenDTO();
-        accessToken.setAccessToken(jwt);
-        accessToken.setExpiresAt(expirationDateTime);
-        accessToken.setExpiresIn(DateUtility.secondsUntil(expirationDateTime));
-        accessToken.setType(HttpHeaderUtility.BEARER);
-        return accessToken;
+                // Builds the JWT.
+                String jwt = this.tokenEmitter.emit(jwtClaimsSet.toString());
+
+                // Return token.
+                UserSessionAccessTokenDTO accessToken = new UserSessionAccessTokenDTO();
+                accessToken.setAccessToken(jwt);
+                accessToken.setExpiresAt(expirationDateTime);
+                accessToken.setExpiresIn(DateUtility.secondsUntil(expirationDateTime));
+                accessToken.setType(HttpHeaderUtility.BEARER);
+                return accessToken;
+            });
+        });
     }
 
     // ------------------------------------------ Utility methods.

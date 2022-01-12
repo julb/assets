@@ -24,10 +24,7 @@
 
 package me.julb.applications.disclaimer.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,6 +40,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to view user agreements.
@@ -74,7 +75,7 @@ public class DisclaimerAgreementController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('agreement', 'read')")
-    public Page<AgreementDTO> findAll(@PathVariable("disclaimerId") @Identifier String disclaimerId, Searchable searchable, Pageable pageable) {
+    public Flux<AgreementDTO> findAll(@PathVariable("disclaimerId") @Identifier String disclaimerId, Searchable searchable, Pageable pageable) {
         return disclaimerAgreementService.findAll(disclaimerId, searchable, pageable);
     }
 
@@ -87,7 +88,7 @@ public class DisclaimerAgreementController {
     @Operation(summary = "gets the agreement to a disclaimer for the user")
     @GetMapping(path = "/{userId}")
     @PreAuthorize("hasPermission('agreement', 'read')")
-    public AgreementDTO get(@PathVariable("disclaimerId") @Identifier String disclaimerId, @PathVariable("userId") @Identifier String userId) {
+    public Mono<AgreementDTO> get(@PathVariable("disclaimerId") @Identifier String disclaimerId, @PathVariable("userId") @Identifier String userId) {
         return disclaimerAgreementService.findOne(disclaimerId, userId);
     }
 

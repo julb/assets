@@ -42,6 +42,8 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The electronic purse service implementation.
  * <br>
@@ -70,7 +72,7 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      * {@inheritDoc}
      */
     @Override
-    public ElectronicPurseDTO findOne(@NotNull @Identifier String userId) {
+    public Mono<ElectronicPurseDTO> findOne(@NotNull @Identifier String userId) {
         return electronicPurseService.findByUserId(userId);
     }
 
@@ -81,9 +83,10 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Identifier String userId, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseOperationExecutionService.redeemMoneyVoucher(electronicPurse.getId(), redeemMoneyVoucher);
+    public Mono<ElectronicPurseDTO> redeemMoneyVoucher(@NotNull @Identifier String userId, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseOperationExecutionService.redeemMoneyVoucher(electronicPurse.getId(), redeemMoneyVoucher);
+        });
     }
 
     /**
@@ -91,9 +94,10 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO update(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseService.update(electronicPurse.getId(), updateDTO);
+    public Mono<ElectronicPurseDTO> update(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseService.update(electronicPurse.getId(), updateDTO);
+        });
     }
 
     /**
@@ -101,9 +105,10 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO patch(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPursePatchDTO patchDTO) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseService.patch(electronicPurse.getId(), patchDTO);
+    public Mono<ElectronicPurseDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPursePatchDTO patchDTO) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseService.patch(electronicPurse.getId(), patchDTO);
+        });
     }
 
     /**
@@ -111,9 +116,10 @@ public class UserElectronicPurseServiceImpl implements UserElectronicPurseServic
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        electronicPurseService.delete(electronicPurse.getId());
+    public Mono<Void> delete(@NotNull @Identifier String userId) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseService.delete(electronicPurse.getId());
+        });
     }
 
     // ------------------------------------------ Utility methods.

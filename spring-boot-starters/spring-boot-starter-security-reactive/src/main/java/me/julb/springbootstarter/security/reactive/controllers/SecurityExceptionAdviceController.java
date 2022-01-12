@@ -38,10 +38,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 
 import me.julb.library.dto.http.error.HttpErrorResponseDTO;
 import me.julb.library.utility.http.HttpErrorResponseBuilder;
+import me.julb.springbootstarter.opentracing.utility.TracingContextUtility;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
 
+import brave.Tracer;
 import reactor.core.publisher.Mono;
 
 /**
@@ -59,32 +63,44 @@ public class SecurityExceptionAdviceController {
      * The security service.
      */
     @Autowired
-    private me.julb.springbootstarter.security.reactive.services.ISecurityService securityService;
+    private ISecurityService securityService;
+
+    /**
+     * The tracer attribute.
+     */
+    @Autowired
+    private Tracer tracer;
 
     /**
      * Method that handles thrown Unauthorized accesses.
      * @param exception the exception that occurred.
+     * @param exchange the exchange.
      * @return the error response.
      */
     @ExceptionHandler({BadCredentialsException.class, InsufficientAuthenticationException.class, AuthenticationCredentialsNotFoundException.class})
-    public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleUnauthorizedException(Exception exception) {
+    public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleUnauthorizedException(Exception exception, ServerWebExchange exchange) {
 
         // For this exception, raise this HTTP Status.
         HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
         LOGGER.warn("Exception {} caught: {}. Root cause: {}", exception.getClass(), exception.getMessage(), (exception.getCause() != null ? exception.getCause().getMessage() : null));
         LOGGER.debug(HttpStatus.UNAUTHORIZED.getReasonPhrase(), exception);
         // Create the request
-        HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
+        HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(
+            httpStatus.value(), 
+            httpStatus.getReasonPhrase(), 
+            exchange.getRequest().getPath().toString(),
+            TracingContextUtility.asMap(tracer.currentSpan().context()));
         return Mono.just(new ResponseEntity<>(errorResponse, httpStatus));
     }
 
     /**
      * Method that handles thrown Forbidden exceptions.
      * @param exception the exception that occurred.
+     * @param exchange the exchange.
      * @return the error response.
      */
     @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
-    public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleForbiddenException(Exception exception) {
+    public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleForbiddenException(Exception exception, ServerWebExchange exchange) {
 
         // For this exception, raise this HTTP Status.
         return securityService.isAuthenticated().map(isAuthenticated -> {
@@ -98,7 +114,11 @@ public class SecurityExceptionAdviceController {
             LOGGER.debug(httpStatus.getReasonPhrase(), exception);
     
             // Create the request
-            HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
+            HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(
+                httpStatus.value(), 
+                httpStatus.getReasonPhrase(), 
+                exchange.getRequest().getPath().toString(),
+                TracingContextUtility.asMap(tracer.currentSpan().context()));
             return new ResponseEntity<>(errorResponse, httpStatus);
         });
     }

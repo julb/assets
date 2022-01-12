@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage history of an planned maintenance.
@@ -87,7 +88,7 @@ public class PlannedMaintenanceHistoryController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'read')")
-    public Page<PlannedMaintenanceHistoryDTO> findAll(@PathVariable @Identifier String plannedMaintenanceId, Searchable searchable, Pageable pageable) {
+    public Flux<PlannedMaintenanceHistoryDTO> findAll(@PathVariable @Identifier String plannedMaintenanceId, Searchable searchable, Pageable pageable) {
         return plannedMaintenanceHistoryService.findAll(plannedMaintenanceId, searchable, pageable);
     }
 
@@ -100,7 +101,7 @@ public class PlannedMaintenanceHistoryController {
     @Operation(summary = "gets an history of an planned maintenance")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'read')")
-    public PlannedMaintenanceHistoryDTO get(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String id) {
+    public Mono<PlannedMaintenanceHistoryDTO> get(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String id) {
         return plannedMaintenanceHistoryService.findOne(plannedMaintenanceId, id);
     }
 
@@ -116,7 +117,7 @@ public class PlannedMaintenanceHistoryController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'update')")
-    public PlannedMaintenanceHistoryDTO create(@PathVariable @Identifier String plannedMaintenanceId, @RequestBody @NotNull @Valid PlannedMaintenanceHistoryCreationDTO creationDTO) {
+    public Mono<PlannedMaintenanceHistoryDTO> create(@PathVariable @Identifier String plannedMaintenanceId, @RequestBody @NotNull @Valid PlannedMaintenanceHistoryCreationDTO creationDTO) {
         return plannedMaintenanceHistoryService.create(plannedMaintenanceId, creationDTO);
     }
 
@@ -130,7 +131,7 @@ public class PlannedMaintenanceHistoryController {
     @Operation(summary = "updates a planned maintenance history")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'update')")
-    public PlannedMaintenanceHistoryDTO update(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid PlannedMaintenanceHistoryUpdateDTO updateDTO) {
+    public Mono<PlannedMaintenanceHistoryDTO> update(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid PlannedMaintenanceHistoryUpdateDTO updateDTO) {
         return plannedMaintenanceHistoryService.update(plannedMaintenanceId, id, updateDTO);
     }
 
@@ -144,7 +145,7 @@ public class PlannedMaintenanceHistoryController {
     @Operation(summary = "patches a planned maintenance history")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'update')")
-    public PlannedMaintenanceHistoryDTO patch(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid PlannedMaintenanceHistoryPatchDTO patchDTO) {
+    public Mono<PlannedMaintenanceHistoryDTO> patch(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid PlannedMaintenanceHistoryPatchDTO patchDTO) {
         return plannedMaintenanceHistoryService.patch(plannedMaintenanceId, id, patchDTO);
     }
 
@@ -157,8 +158,8 @@ public class PlannedMaintenanceHistoryController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'update')")
-    public void delete(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable String id) {
-        plannedMaintenanceHistoryService.delete(plannedMaintenanceId, id);
+    public Mono<Void> delete(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable String id) {
+        return plannedMaintenanceHistoryService.delete(plannedMaintenanceId, id);
     }
     // ------------------------------------------ Utility methods.
 

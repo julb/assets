@@ -24,17 +24,19 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.profile.UserProfileEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user profile repository.
  * <br>
  * @author Julb.
  */
-public interface UserProfileRepository extends MongoRepository<UserProfileEntity, String>, MongoSpecificationExecutor<UserProfileEntity> {
+public interface UserProfileRepository extends ReactiveMongoRepository<UserProfileEntity, String>, MongoSpecificationExecutor<UserProfileEntity> {
 
     /**
      * Checks if an user profile by trademark and user exists.
@@ -42,7 +44,7 @@ public interface UserProfileRepository extends MongoRepository<UserProfileEntity
      * @param userId the user ID.
      * @return <code>true</code> if the user profile exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_Id(String tm, String userId);
+    Mono<Boolean> existsByTmAndUser_Id(String tm, String userId);
 
     /**
      * Finds an user profile by trademark and user.
@@ -50,6 +52,6 @@ public interface UserProfileRepository extends MongoRepository<UserProfileEntity
      * @param userId the user ID.
      * @return the user profile, or <code>null</code> if not exists.
      */
-    UserProfileEntity findByTmAndUser_Id(String tm, String userId);
+    Mono<UserProfileEntity> findByTmAndUser_Id(String tm, String userId);
 
 }

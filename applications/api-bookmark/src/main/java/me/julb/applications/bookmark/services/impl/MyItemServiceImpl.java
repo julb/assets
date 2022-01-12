@@ -24,13 +24,10 @@
 
 package me.julb.applications.bookmark.services.impl;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -48,7 +45,10 @@ import me.julb.library.dto.simple.identifier.IdentifierDTO;
 import me.julb.library.dto.simple.value.PositiveIntegerValueDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The my item service implementation.
@@ -78,36 +78,40 @@ public class MyItemServiceImpl implements MyItemService {
      * {@inheritDoc}
      */
     @Override
-    public Page<? extends AbstractItemDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.findAll(userId, searchable, pageable);
+    public Flux<? extends AbstractItemDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return itemService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<? extends AbstractItemDTO> findAllByParent(@Identifier String parentId) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.findAllByParent(userId, parentId);
+    public Flux<? extends AbstractItemDTO> findAllByParent(@Identifier String parentId) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return itemService.findAllByParent(userId, parentId);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Page<? extends AbstractItemDTO> findAllByType(@NotNull ItemType type, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.findAllByType(userId, type, searchable, pageable);
+    public Flux<? extends AbstractItemDTO> findAllByType(@NotNull ItemType type, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return itemService.findAllByType(userId, type, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AbstractItemDTO findOne(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.findOne(userId, id);
+    public Mono<AbstractItemDTO> findOne(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return itemService.findOne(userId, id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -117,9 +121,10 @@ public class MyItemServiceImpl implements MyItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO create(@NotNull @Valid AbstractItemCreationDTO creationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.create(userId, creationDTO);
+    public Mono<AbstractItemDTO> create(@NotNull @Valid AbstractItemCreationDTO creationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return itemService.create(userId, creationDTO);
+        });
     }
 
     /**
@@ -127,9 +132,10 @@ public class MyItemServiceImpl implements MyItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO update(@NotNull @Identifier String id, @NotNull @Valid AbstractItemUpdateDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.update(userId, userId, updateDTO);
+    public Mono<AbstractItemDTO> update(@NotNull @Identifier String id, @NotNull @Valid AbstractItemUpdateDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return itemService.update(userId, userId, updateDTO);
+        });
     }
 
     /**
@@ -137,9 +143,10 @@ public class MyItemServiceImpl implements MyItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO updatePosition(@Identifier String id, @NotNull @Valid PositiveIntegerValueDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.updatePosition(userId, id, updateDTO);
+    public Mono<AbstractItemDTO> updatePosition(@Identifier String id, @NotNull @Valid PositiveIntegerValueDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return itemService.updatePosition(userId, id, updateDTO);
+        });
     }
 
     /**
@@ -147,9 +154,10 @@ public class MyItemServiceImpl implements MyItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO updateParent(@Identifier String id, @Valid IdentifierDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.updateParent(userId, id, updateDTO);
+    public Mono<AbstractItemDTO> updateParent(@Identifier String id, @Valid IdentifierDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return itemService.updateParent(userId, id, updateDTO);
+        });
     }
 
     /**
@@ -157,9 +165,10 @@ public class MyItemServiceImpl implements MyItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO patch(@NotNull @Identifier String id, @NotNull @Valid AbstractItemPatchDTO patchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return itemService.patch(userId, id, patchDTO);
+    public Mono<AbstractItemDTO> patch(@NotNull @Identifier String id, @NotNull @Valid AbstractItemPatchDTO patchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return itemService.patch(userId, id, patchDTO);
+        });
     }
 
     /**
@@ -167,9 +176,10 @@ public class MyItemServiceImpl implements MyItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        itemService.delete(userId, id);
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return itemService.delete(userId, id);
+        });
     }
 
     // ------------------------------------------ Private methods.

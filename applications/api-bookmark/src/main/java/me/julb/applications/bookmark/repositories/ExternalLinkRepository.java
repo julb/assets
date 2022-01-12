@@ -24,15 +24,15 @@
 
 package me.julb.applications.bookmark.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.bookmark.entities.ExternalLinkEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
 
 /**
  * The external link repository.
  * <br>
  * @author Julb.
  */
-public interface ExternalLinkRepository extends MongoRepository<ExternalLinkEntity, String>, MongoSpecificationExecutor<ExternalLinkEntity> {
+public interface ExternalLinkRepository extends ReactiveMongoRepository<ExternalLinkEntity, String>, MongoSpecificationExecutor<ExternalLinkEntity> {
 }

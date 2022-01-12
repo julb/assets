@@ -21,10 +21,11 @@
         },
         {
             "type": "java",
-            "name": "Launch Application(2)",
+            "name": "Launch Barcode",
             "request": "launch",
             "mainClass": "me.julb.Application",
-            "projectName": "api-barcode"
+            "projectName": "api-barcode",
+            "args": "--spring.profiles.active=LOCAL --server.port=9092"
         },
         {
             "type": "java",
@@ -105,17 +106,19 @@
         },
         {
             "type": "java",
-            "name": "Launch Application(14)",
+            "name": "Launch web-analytics",
             "request": "launch",
             "mainClass": "me.julb.Application",
-            "projectName": "api-web-analytics"
+            "projectName": "api-web-analytics",
+            "args": "--spring.profiles.active=LOCAL --server.port=9099"
         },
         {
             "type": "java",
-            "name": "Launch Application(15)",
+            "name": "Launch web-notification",
             "request": "launch",
             "mainClass": "me.julb.Application",
-            "projectName": "api-web-notification"
+            "projectName": "api-web-notification",
+            "args": "--spring.profiles.active=LOCAL --server.port=9100"
         },
         {
             "type": "java",

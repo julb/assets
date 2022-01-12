@@ -26,12 +26,14 @@ package me.julb.applications.disclaimer.services;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.disclaimer.services.dto.agreement.AgreementDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The disclaimer agreement service.
@@ -49,7 +51,7 @@ public interface DisclaimerAgreementService {
      * @param pageable the pageable information.
      * @return a paged list of agreements.
      */
-    Page<AgreementDTO> findAll(@NotNull @Identifier String disclaimerId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<AgreementDTO> findAll(@NotNull @Identifier String disclaimerId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a agreement through its disclaimer ID.
@@ -57,7 +59,7 @@ public interface DisclaimerAgreementService {
      * @param userId the user ID.
      * @return the agreement.
      */
-    AgreementDTO findOne(@NotNull @Identifier String disclaimerId, @NotNull @Identifier String userId);
+    Mono<AgreementDTO> findOne(@NotNull @Identifier String disclaimerId, @NotNull @Identifier String userId);
 
     // ------------------------------------------ Write methods.
 

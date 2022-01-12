@@ -27,7 +27,6 @@ package me.julb.applications.platformhealth.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.platformhealth.services.dto.incidentcomponent.IncidentComponentCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.platformhealth.services.dto.incidentcomponent.Incide
 import me.julb.applications.platformhealth.services.dto.incidentcomponent.IncidentComponentUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident service.
@@ -53,7 +55,7 @@ public interface IncidentComponentService {
      * @param pageable the pageable information.
      * @return the paged list of components impacted.
      */
-    Page<IncidentComponentDTO> findAll(@NotNull @Identifier String incidentId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<IncidentComponentDTO> findAll(@NotNull @Identifier String incidentId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets the component with the impact level
@@ -61,7 +63,7 @@ public interface IncidentComponentService {
      * @param componentId the ID of the component.
      * @return the component with the impact level fetched.
      */
-    IncidentComponentDTO findOne(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId);
+    Mono<IncidentComponentDTO> findOne(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId);
 
     // ------------------------------------------ Write methods.
 
@@ -72,7 +74,7 @@ public interface IncidentComponentService {
      * @param creationDTO the DTO to create the link between the incident and the component.
      * @return the component with impact level.
      */
-    IncidentComponentDTO create(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentCreationDTO creationDTO);
+    Mono<IncidentComponentDTO> create(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentCreationDTO creationDTO);
 
     /**
      * Updates the link between the incident and the component.
@@ -81,7 +83,7 @@ public interface IncidentComponentService {
      * @param updateDTO the DTO to update the link between the incident and the component.
      * @return the component with impact level.
      */
-    IncidentComponentDTO update(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentUpdateDTO updateDTO);
+    Mono<IncidentComponentDTO> update(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentUpdateDTO updateDTO);
 
     /**
      * Patches the link between the incident and the component.
@@ -90,19 +92,19 @@ public interface IncidentComponentService {
      * @param patchDTO the DTO to patch the link between the incident and the component.
      * @return the component with impact level.
      */
-    IncidentComponentDTO patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentPatchDTO patchDTO);
+    Mono<IncidentComponentDTO> patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentPatchDTO patchDTO);
 
     /**
      * Unlink all components from the incident.
      * @param incidentId the incident identifier.
      */
-    void delete(@NotNull @Identifier String incidentId);
+    Mono<Void> delete(@NotNull @Identifier String incidentId);
 
     /**
      * Unlink an incident and a component.
      * @param incidentId the incident identifier.
      * @param componentId the ID of the component.
      */
-    void delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId);
+    Mono<Void> delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId);
 
 }

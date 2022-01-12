@@ -25,27 +25,29 @@
 package me.julb.applications.platformhealth.repositories;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceHistoryEntity;
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceStatus;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The planned maintenance history repository.
  * <br>
  * @author Julb.
  */
-public interface PlannedMaintenanceHistoryRepository extends MongoRepository<PlannedMaintenanceHistoryEntity, String>, MongoSpecificationExecutor<PlannedMaintenanceHistoryEntity> {
+public interface PlannedMaintenanceHistoryRepository extends ReactiveMongoRepository<PlannedMaintenanceHistoryEntity, String>, MongoSpecificationExecutor<PlannedMaintenanceHistoryEntity> {
     /**
      * Finds an planned maintenance history by its trademark and planned maintenance id.
      * @param tm the trademark.
      * @param plannedMaintenanceId the planned maintenance ID.
      * @return the planned maintenance history items.
      */
-    List<PlannedMaintenanceHistoryEntity> findByTmAndPlannedMaintenanceId(String tm, String plannedMaintenanceId);
+    Flux<PlannedMaintenanceHistoryEntity> findByTmAndPlannedMaintenanceId(String tm, String plannedMaintenanceId);
 
     /**
      * Finds an planned maintenance history by its trademark, planned maintenance id and id.
@@ -54,7 +56,7 @@ public interface PlannedMaintenanceHistoryRepository extends MongoRepository<Pla
      * @param id the id.
      * @return the planned maintenance history entity, <code>null</code> otherwise.
      */
-    PlannedMaintenanceHistoryEntity findByTmAndPlannedMaintenanceIdAndId(String tm, String plannedMaintenanceId, String id);
+    Mono<PlannedMaintenanceHistoryEntity> findByTmAndPlannedMaintenanceIdAndId(String tm, String plannedMaintenanceId, String id);
 
     /**
      * Finds the latest planned maintenance history by its trademark and planned maintenance id.
@@ -62,7 +64,7 @@ public interface PlannedMaintenanceHistoryRepository extends MongoRepository<Pla
      * @param plannedMaintenanceId the planned maintenance ID.
      * @return the latest planned maintenance history.
      */
-    PlannedMaintenanceHistoryEntity findTopByTmAndPlannedMaintenanceIdOrderByCreatedAtDesc(String tm, String plannedMaintenanceId);
+    Mono<PlannedMaintenanceHistoryEntity> findTopByTmAndPlannedMaintenanceIdOrderByCreatedAtDesc(String tm, String plannedMaintenanceId);
 
     /**
      * Finds the planned maintenance history by their trademark, planned maintenance and with status not set to given ones.
@@ -71,6 +73,6 @@ public interface PlannedMaintenanceHistoryRepository extends MongoRepository<Pla
      * @param statusToExclude the status to exclude.
      * @return the planned maintenance history by their trademark, planned maintenance and with status not set to given ones.
      */
-    List<PlannedMaintenanceHistoryEntity> findByTmAndPlannedMaintenanceIdAndStatusNotInOrderByCreatedAtDesc(String tm, String plannedMaintenanceId, Collection<PlannedMaintenanceStatus> statusToExclude);
+    Flux<PlannedMaintenanceHistoryEntity> findByTmAndPlannedMaintenanceIdAndStatusNotInOrderByCreatedAtDesc(String tm, String plannedMaintenanceId, Collection<PlannedMaintenanceStatus> statusToExclude);
 
 }

@@ -24,13 +24,13 @@
 
 package me.julb.applications.authorizationserver.services.impl;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.stereotype.Service;
 
-import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsLogoutHandlerDelegate;
+import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsLogoutHandlerDelegate;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The logout delegate service to trigger a session termination.
@@ -51,7 +51,8 @@ public class UserAuthenticationDetailsLogoutDelegateServiceImpl implements IAuth
      * {@inheritDoc}
      */
     @Override
-    public void onAuthenticationLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public Mono<Void> onAuthenticationLogout(WebFilterExchange exchange, Authentication authentication) {
         System.out.println(authentication);
+        return Mono.empty();
     }
 }

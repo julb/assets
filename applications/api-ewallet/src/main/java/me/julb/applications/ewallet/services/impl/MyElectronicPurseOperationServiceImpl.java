@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -42,7 +41,10 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The my electronic purse service implementation.
@@ -72,18 +74,20 @@ public class MyElectronicPurseOperationServiceImpl implements MyElectronicPurseO
      * {@inheritDoc}
      */
     @Override
-    public Page<ElectronicPurseOperationDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return userElectronicPurseOperationService.findAll(userId, searchable, pageable);
+    public Flux<ElectronicPurseOperationDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return userElectronicPurseOperationService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ElectronicPurseOperationDTO findOne(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return userElectronicPurseOperationService.findOne(userId, id);
+    public Mono<ElectronicPurseOperationDTO> findOne(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userElectronicPurseOperationService.findOne(userId, id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -93,9 +97,10 @@ public class MyElectronicPurseOperationServiceImpl implements MyElectronicPurseO
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseOperationDTO update(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userElectronicPurseOperationService.update(userId, id, updateDTO);
+    public Mono<ElectronicPurseOperationDTO> update(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userElectronicPurseOperationService.update(userId, id, updateDTO);
+        });
     }
 
     /**
@@ -103,9 +108,10 @@ public class MyElectronicPurseOperationServiceImpl implements MyElectronicPurseO
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseOperationDTO patch(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userElectronicPurseOperationService.patch(userId, id, patchDTO);
+    public Mono<ElectronicPurseOperationDTO> patch(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userElectronicPurseOperationService.patch(userId, id, patchDTO);
+        });
     }
 
     // ------------------------------------------ Utility methods.

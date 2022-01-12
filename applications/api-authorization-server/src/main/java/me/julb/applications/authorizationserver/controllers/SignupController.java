@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -44,6 +42,9 @@ import me.julb.applications.authorizationserver.services.SignupService;
 import me.julb.applications.authorizationserver.services.dto.signup.SignupWithPasswordCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.signup.SignupWithPincodeCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to handle sign-up.
@@ -74,7 +75,7 @@ public class SignupController {
     @PostMapping(path = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserDTO signupWithPassword(@RequestBody @NotNull @Valid SignupWithPasswordCreationDTO signupWithPasswordCreationDTO) {
+    public Mono<UserDTO> signupWithPassword(@RequestBody @NotNull @Valid SignupWithPasswordCreationDTO signupWithPasswordCreationDTO) {
         return signupService.signup(signupWithPasswordCreationDTO);
     }
 
@@ -87,7 +88,7 @@ public class SignupController {
     @PostMapping(path = "/pincode", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserDTO signupWithPincode(@RequestBody @NotNull @Valid SignupWithPincodeCreationDTO signupWithPincodeCreationDTO) {
+    public Mono<UserDTO> signupWithPincode(@RequestBody @NotNull @Valid SignupWithPincodeCreationDTO signupWithPincodeCreationDTO) {
         return signupService.signup(signupWithPincodeCreationDTO);
     }
 

@@ -24,12 +24,7 @@
 
 package me.julb.applications.disclaimer.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,15 +36,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 
 import me.julb.applications.disclaimer.services.MyAgreementService;
 import me.julb.applications.disclaimer.services.dto.agreement.AgreementCreationDTO;
 import me.julb.applications.disclaimer.services.dto.agreement.AgreementDTO;
 import me.julb.library.utility.data.search.Searchable;
-import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+import me.julb.springbootstarter.web.reactive.utility.ServerHttpRequestUtility;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage the connected user agreements.
@@ -80,7 +80,7 @@ public class MyAgreementController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public Page<AgreementDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<AgreementDTO> findAll(Searchable searchable, Pageable pageable) {
         return myAgreementService.findAll(searchable, pageable);
     }
 
@@ -92,7 +92,7 @@ public class MyAgreementController {
     @Operation(summary = "gets the agreement to a disclaimer for the connected user")
     @GetMapping(path = "/{disclaimerId}")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public AgreementDTO get(@PathVariable("disclaimerId") @Identifier String disclaimerId) {
+    public Mono<AgreementDTO> get(@PathVariable("disclaimerId") @Identifier String disclaimerId) {
         return myAgreementService.findOne(disclaimerId);
     }
 
@@ -101,16 +101,16 @@ public class MyAgreementController {
     /**
      * Creates a agreement.
      * @param disclaimerId the ID of the disclaimer to fetch.
-     * @param httpServletRequest the HTTP servlet request.
+     * @param exchange the exchange.
      * @return the created agreement.
      */
     @Operation(summary = "signify the agreement to a disclaimer for the connected user")
     @PostMapping(path = "/{disclaimerId}")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public AgreementDTO create(@PathVariable("disclaimerId") @Identifier String disclaimerId, HttpServletRequest httpServletRequest) {
+    public Mono<AgreementDTO> create(@PathVariable("disclaimerId") @Identifier String disclaimerId, ServerWebExchange exchange) {
         AgreementCreationDTO creationDTO = new AgreementCreationDTO();
-        creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(httpServletRequest));
+        creationDTO.setIpv4Address(ServerHttpRequestUtility.getUserIpAddress(exchange.getRequest()));
         return myAgreementService.create(disclaimerId, creationDTO);
     }
 

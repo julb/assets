@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -48,6 +46,9 @@ import me.julb.applications.authorizationserver.services.dto.profile.UserProfile
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfilePatchDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileUpdateDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage my profile.
@@ -74,7 +75,7 @@ public class MyProfileController {
     @Operation(summary = "gets my profile")
     @GetMapping()
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserProfileDTO get() {
+    public Mono<UserProfileDTO> get() {
         return myProfileService.findOne();
     }
 
@@ -89,7 +90,7 @@ public class MyProfileController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserProfileDTO create(@RequestBody @NotNull @Valid UserProfileCreationDTO creationDTO) {
+    public Mono<UserProfileDTO> create(@RequestBody @NotNull @Valid UserProfileCreationDTO creationDTO) {
         return myProfileService.create(creationDTO);
     }
 
@@ -101,7 +102,7 @@ public class MyProfileController {
     @Operation(summary = "updates my profile")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserProfileDTO update(@RequestBody @NotNull @Valid UserProfileUpdateDTO updateDTO) {
+    public Mono<UserProfileDTO> update(@RequestBody @NotNull @Valid UserProfileUpdateDTO updateDTO) {
         return myProfileService.update(updateDTO);
     }
 
@@ -113,7 +114,7 @@ public class MyProfileController {
     @Operation(summary = "patches my profile")
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserProfileDTO patch(@RequestBody @NotNull @Valid UserProfilePatchDTO updateDTO) {
+    public Mono<UserProfileDTO> patch(@RequestBody @NotNull @Valid UserProfilePatchDTO updateDTO) {
         return myProfileService.patch(updateDTO);
     }
 

@@ -31,7 +31,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import me.julb.applications.ewallet.entities.ElectronicPurseEntity;
 import me.julb.applications.ewallet.entities.ElectronicPurseOperationEntity;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
 
 /**
  * Specification on electronic purse operations.

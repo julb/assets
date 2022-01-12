@@ -24,13 +24,10 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,6 +54,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage my authentication by api-keys.
@@ -87,7 +88,7 @@ public class MyAuthenticationByApiKeyController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public Page<UserAuthenticationByApiKeyDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<UserAuthenticationByApiKeyDTO> findAll(Searchable searchable, Pageable pageable) {
         return myAuthenticationByApiKeyService.findAll(searchable, pageable);
     }
 
@@ -99,7 +100,7 @@ public class MyAuthenticationByApiKeyController {
     @Operation(summary = "gets my authentication by api-key")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByApiKeyDTO get(@PathVariable @Identifier String id) {
+    public Mono<UserAuthenticationByApiKeyDTO> get(@PathVariable @Identifier String id) {
         return myAuthenticationByApiKeyService.findOne(id);
     }
 
@@ -114,7 +115,7 @@ public class MyAuthenticationByApiKeyController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByApiKeyWithRawKeyDTO create(@RequestBody @NotNull @Valid UserAuthenticationByApiKeyCreationDTO creationDTO) {
+    public Mono<UserAuthenticationByApiKeyWithRawKeyDTO> create(@RequestBody @NotNull @Valid UserAuthenticationByApiKeyCreationDTO creationDTO) {
         return myAuthenticationByApiKeyService.create(creationDTO);
     }
 
@@ -127,7 +128,7 @@ public class MyAuthenticationByApiKeyController {
     @Operation(summary = "updates my authentication by api-key")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByApiKeyDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserAuthenticationByApiKeyUpdateDTO updateDTO) {
+    public Mono<UserAuthenticationByApiKeyDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserAuthenticationByApiKeyUpdateDTO updateDTO) {
         return myAuthenticationByApiKeyService.update(id, updateDTO);
     }
 
@@ -140,7 +141,7 @@ public class MyAuthenticationByApiKeyController {
     @Operation(summary = "patches my authentication by api-key")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByApiKeyDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserAuthenticationByApiKeyPatchDTO patchDTO) {
+    public Mono<UserAuthenticationByApiKeyDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserAuthenticationByApiKeyPatchDTO patchDTO) {
         return myAuthenticationByApiKeyService.patch(id, patchDTO);
     }
 
@@ -152,8 +153,8 @@ public class MyAuthenticationByApiKeyController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete(@PathVariable String id) {
-        myAuthenticationByApiKeyService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return myAuthenticationByApiKeyService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

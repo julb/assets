@@ -26,6 +26,7 @@ package me.julb.springbootstarter.web.reactive.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -35,7 +36,6 @@ import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.ServerWebInputException;
 
 import me.julb.library.dto.http.error.HttpErrorResponseDTO;
 import me.julb.library.utility.exceptions.BadRequestException;
@@ -71,6 +72,7 @@ import me.julb.library.utility.exceptions.ServiceUnavailableException;
 import me.julb.library.utility.exceptions.UnauthorizedException;
 import me.julb.library.utility.http.HttpErrorResponseBuilder;
 import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.core.localization.CustomLocaleContext;
 import me.julb.springbootstarter.core.messages.MessageSourceService;
 import me.julb.springbootstarter.opentracing.utility.TracingContextUtility;
 import me.julb.springbootstarter.web.resolvers.search.exceptions.SearchTermSearchQueryParseException;
@@ -111,10 +113,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
 
             // Create the request
             HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -129,7 +132,7 @@ public class CaughtExceptionAdviceController {
             // Set errors in stack
             List<FieldError> list = exception.getBindingResult().getFieldErrors();
             for (FieldError error : list) {
-                String message = getErrorMessage(tm, error.getDefaultMessage());
+                String message = getErrorMessage(tm, localeContext.getLocale(), error.getDefaultMessage());
                 errorResponse.getTrace().add(String.format("%s: %s", error.getField(), message));
             }
 
@@ -148,10 +151,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleMethodArgumentNotValidException(BindException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
 
             // Create the request
             HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -166,7 +170,7 @@ public class CaughtExceptionAdviceController {
             // Set errors in stack
             List<FieldError> list = exception.getBindingResult().getFieldErrors();
             for (FieldError error : list) {
-                String message = getErrorMessage(tm, error.getDefaultMessage());
+                String message = getErrorMessage(tm, localeContext.getLocale(), error.getDefaultMessage());
                 errorResponse.getTrace().add(String.format("%s: %s", error.getField(), message));
             }
 
@@ -185,10 +189,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleWebExchangeBindException(WebExchangeBindException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
 
             // Create the request
             HttpErrorResponseDTO errorResponse = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -203,7 +208,7 @@ public class CaughtExceptionAdviceController {
             // Set errors in stack
             List<FieldError> list = exception.getBindingResult().getFieldErrors();
             for (FieldError error : list) {
-                String message = getErrorMessage(tm, error.getDefaultMessage());
+                String message = getErrorMessage(tm, localeContext.getLocale(), error.getDefaultMessage());
                 errorResponse.getTrace().add(String.format("%s: %s", error.getField(), message));
             }
 
@@ -222,10 +227,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleConstraintViolationException(ConstraintViolationException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
             LOGGER.debug(HttpStatus.BAD_REQUEST.getReasonPhrase(), exception);
 
             // Create the request
@@ -238,12 +244,12 @@ public class CaughtExceptionAdviceController {
             // Fill the trace
             Set<ConstraintViolation<?>> errors = exception.getConstraintViolations();
             for (ConstraintViolation<?> error : errors) {
-                String message = getErrorMessage(tm, error.getMessage());
+                String message = getErrorMessage(tm, localeContext.getLocale(), error.getMessage());
                 errorResponse.getTrace().add(String.format("%s: %s", error.getPropertyPath(), message));
             }
 
             // Set the message with the first error
-            errorResponse.setMessage(errors.size() > 0 ? getErrorMessage(tm, errors.iterator().next().getMessage()) : getErrorMessage(tm, exception));
+            errorResponse.setMessage(errors.size() > 0 ? getErrorMessage(tm, localeContext.getLocale(), errors.iterator().next().getMessage()) : getErrorMessage(tm, localeContext.getLocale(), exception));
 
             return Mono.just(new ResponseEntity<>(errorResponse, httpStatus));
         });
@@ -256,15 +262,16 @@ public class CaughtExceptionAdviceController {
      * @return the error response.
      */
     @ExceptionHandler({ValidationException.class, HttpMessageNotReadableException.class, JsonProcessingException.class, BadRequestException.class, MethodArgumentTypeMismatchException.class,
-        UnsupportedOperationException.class, ResourceStillReferencedException.class, SearchTermSearchQueryParseException.class, IllegalArgumentException.class})
+        UnsupportedOperationException.class, ResourceStillReferencedException.class, SearchTermSearchQueryParseException.class, IllegalArgumentException.class, ServerWebInputException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleGenericBadRequestException(Exception exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
             LOGGER.debug(HttpStatus.BAD_REQUEST.getReasonPhrase(), exception);
 
             // Create the request
@@ -273,7 +280,7 @@ public class CaughtExceptionAdviceController {
                 httpStatus.getReasonPhrase(), 
                 exchange.getRequest().getPath().toString(),
                 TracingContextUtility.asMap(tracer.currentSpan().context()));
-            errorResponse.setMessage(getErrorMessage(tm, exception));
+            errorResponse.setMessage(getErrorMessage(tm, localeContext.getLocale(), exception));
             return Mono.just(new ResponseEntity<>(errorResponse, httpStatus));
         });
     }
@@ -289,10 +296,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleUnauthorizedException(UnauthorizedException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
             LOGGER.debug(httpStatus.getReasonPhrase(), exception);
 
             // Create the request
@@ -301,7 +309,7 @@ public class CaughtExceptionAdviceController {
                 httpStatus.getReasonPhrase(), 
                 exchange.getRequest().getPath().toString(),
                 TracingContextUtility.asMap(tracer.currentSpan().context()));
-            errorResponse.setMessage(getErrorMessage(tm, exception));
+            errorResponse.setMessage(getErrorMessage(tm, localeContext.getLocale(), exception));
             return Mono.just(new ResponseEntity<>(errorResponse, httpStatus));
         });
     }
@@ -317,10 +325,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleForbiddenException(ForbiddenException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.FORBIDDEN;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
             LOGGER.debug(HttpStatus.FORBIDDEN.getReasonPhrase(), exception);
 
             // Create the request
@@ -329,7 +338,7 @@ public class CaughtExceptionAdviceController {
                 httpStatus.getReasonPhrase(), 
                 exchange.getRequest().getPath().toString(),
                 TracingContextUtility.asMap(tracer.currentSpan().context()));
-            errorResponse.setMessage(getErrorMessage(tm, exception));
+            errorResponse.setMessage(getErrorMessage(tm, localeContext.getLocale(), exception));
             return Mono.just(new ResponseEntity<>(errorResponse, httpStatus));
         });
     }
@@ -345,10 +354,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleNotFoundException(NotFoundException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
             LOGGER.debug(HttpStatus.NOT_FOUND.getReasonPhrase(), exception);
 
             // Create the request
@@ -357,7 +367,7 @@ public class CaughtExceptionAdviceController {
                 httpStatus.getReasonPhrase(), 
                 exchange.getRequest().getPath().toString(),
                 TracingContextUtility.asMap(tracer.currentSpan().context()));
-            errorResponse.setMessage(getErrorMessage(tm, exception));
+            errorResponse.setMessage(getErrorMessage(tm, localeContext.getLocale(), exception));
             return Mono.just(new ResponseEntity<>(errorResponse, httpStatus));
         });
     }
@@ -373,10 +383,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handlMethodNotAllowedException(Exception exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.METHOD_NOT_ALLOWED;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
             LOGGER.debug(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(), exception);
 
             // Create the request
@@ -400,10 +411,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleConflictException(ConflictException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.CONFLICT;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : null));
             LOGGER.debug(HttpStatus.CONFLICT.getReasonPhrase(), exception);
 
             // Create the request
@@ -412,7 +424,7 @@ public class CaughtExceptionAdviceController {
                 httpStatus.getReasonPhrase(), 
                 exchange.getRequest().getPath().toString(),
                 TracingContextUtility.asMap(tracer.currentSpan().context()));
-            errorResponse.setMessage(getErrorMessage(tm, exception));
+            errorResponse.setMessage(getErrorMessage(tm, localeContext.getLocale(), exception));
             return Mono.just(new ResponseEntity<>(errorResponse, httpStatus));
         });
     }
@@ -428,10 +440,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus httpStatus = HttpStatus.UNSUPPORTED_MEDIA_TYPE;
-            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
+            LOGGER.info("Exception {} caught: {}. Root cause: {}", exception.getClass(), getErrorMessage(tm, localeContext.getLocale(), exception), (exception.getCause() != null ? exception.getCause().getMessage() : ""));
             LOGGER.debug(HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(), exception);
 
             // Create the request
@@ -455,10 +468,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleRemoteSystemClientErrorException(Exception exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus internalServerError = HttpStatus.INTERNAL_SERVER_ERROR;
-            LOGGER.error(getErrorMessage(tm, exception), exception);
+            LOGGER.error(getErrorMessage(tm, localeContext.getLocale(), exception), exception);
 
             // Create the request
             HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -481,10 +495,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleNotImplemented(NotImplementedException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus notImplementedError = HttpStatus.NOT_IMPLEMENTED;
-            LOGGER.error(getErrorMessage(tm, exception), exception);
+            LOGGER.error(getErrorMessage(tm, localeContext.getLocale(), exception), exception);
 
             // Create the request
             HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -507,10 +522,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleRemoteSystemFailure(RemoteSystemServerErrorException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus badGatewayError = HttpStatus.BAD_GATEWAY;
-            LOGGER.error(getErrorMessage(tm, exception), exception);
+            LOGGER.error(getErrorMessage(tm, localeContext.getLocale(), exception), exception);
 
             // Create the request
             HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -533,10 +549,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleRemoteSystemAccessException(RemoteSystemServiceUnavailableException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus serviceUnavailableStatus = HttpStatus.BAD_GATEWAY;
-            LOGGER.error(getErrorMessage(tm, exception), exception);
+            LOGGER.error(getErrorMessage(tm, localeContext.getLocale(), exception), exception);
 
             // Create the request
             HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -559,10 +576,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleNotImplemented(ServiceUnavailableException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus serviceUnavailableError = HttpStatus.SERVICE_UNAVAILABLE;
-            LOGGER.error(getErrorMessage(tm, exception), exception);
+            LOGGER.error(getErrorMessage(tm, localeContext.getLocale(), exception), exception);
 
             // Create the request
             HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -585,10 +603,11 @@ public class CaughtExceptionAdviceController {
     public final Mono<ResponseEntity<HttpErrorResponseDTO>> handleRemoteSystemTimeoutException(RemoteSystemGatewayTimeoutException exception, ServerWebExchange exchange) {
         return Mono.deferContextual(ctx -> {
             String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
             // For this exception, raise this HTTP Status.
             HttpStatus gatewayTimeoutError = HttpStatus.GATEWAY_TIMEOUT;
-            LOGGER.error(getErrorMessage(tm, exception), exception);
+            LOGGER.error(getErrorMessage(tm, localeContext.getLocale(), exception), exception);
 
             // Create the request
             HttpErrorResponseDTO status = HttpErrorResponseBuilder.defaultErrorResponse(
@@ -603,27 +622,29 @@ public class CaughtExceptionAdviceController {
     /**
      * Translate the exception message.
      * @param tm the trademark.
+     * @param locale the locale.
      * @param exception the exception message.
      * @return the message localized.
      */
-    private String getErrorMessage(String tm, Exception exception) {
+    private String getErrorMessage(String tm, Locale locale, Exception exception) {
         if (exception instanceof BaseException e) {
-            return getErrorMessage(tm, e.getMessage(), e.getMessageArgs());
+            return getErrorMessage(tm, locale, e.getMessage(), e.getMessageArgs());
         } else {
-            return getErrorMessage(tm, exception.getMessage());
+            return getErrorMessage(tm, locale, exception.getMessage());
         }
     }
 
     /**
      * Translate the message if it's in curly brackets.
      * @param tm the trademark.
+     * @param locale the locale.
      * @param message the message.
      * @return the message translated.
      */
-    private String getErrorMessage(String tm, String message, Object... args) {
+    private String getErrorMessage(String tm, Locale locale, String message, Object... args) {
         if (message.startsWith("{") && message.endsWith("}")) {
             String code = message.substring(1, message.length() - 1);
-            return messageSourceService.getMessage(tm, code, args, code, LocaleContextHolder.getLocale());
+            return messageSourceService.getMessage(tm, code, args, code, locale);
         } else {
             return message;
         }

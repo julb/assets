@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -46,6 +44,9 @@ import me.julb.applications.authorizationserver.services.UserMailService;
 import me.julb.applications.authorizationserver.services.dto.mail.UserMailDTO;
 import me.julb.applications.authorizationserver.services.dto.mail.UserMailVerifyDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage mails.
@@ -77,7 +78,7 @@ public class UserMailVerifyController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, path = "/users/{userId}/mails/{userMailId}/trigger-verify")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserMailDTO triggerVerify(@PathVariable("userId") @Identifier String userId, @PathVariable("userMailId") @Identifier String userMailId) {
+    public Mono<UserMailDTO> triggerVerify(@PathVariable("userId") @Identifier String userId, @PathVariable("userMailId") @Identifier String userMailId) {
         return userMailService.triggerMailVerify(userId, userMailId);
     }
 
@@ -92,7 +93,7 @@ public class UserMailVerifyController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, path = "/users/{userId}/mails/{userMailId}/verify")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserMailDTO verify(@PathVariable("userId") @Identifier String userId, @PathVariable("userMailId") @Identifier String userMailId, @RequestParam("verifyToken") @NotNull @NotBlank @Size(min = 128, max = 128) String verifyToken) {
+    public Mono<UserMailDTO> verify(@PathVariable("userId") @Identifier String userId, @PathVariable("userMailId") @Identifier String userMailId, @RequestParam("verifyToken") @NotNull @NotBlank @Size(min = 128, max = 128) String verifyToken) {
         UserMailVerifyDTO dto = new UserMailVerifyDTO();
         dto.setVerifyToken(verifyToken);
         return userMailService.updateVerify(userId, userMailId, dto);

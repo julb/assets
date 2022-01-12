@@ -27,7 +27,6 @@ package me.julb.applications.disclaimer.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.disclaimer.services.dto.disclaimer.DisclaimerCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.disclaimer.services.dto.disclaimer.DisclaimerPatchDT
 import me.julb.applications.disclaimer.services.dto.disclaimer.DisclaimerUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The disclaimer service.
@@ -52,14 +54,14 @@ public interface DisclaimerService {
      * @param pageable the pageable information.
      * @return a paged list of disclaimers.
      */
-    Page<DisclaimerDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<DisclaimerDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a disclaimer through its ID.
      * @param id the disclaimer identifier.
      * @return the disclaimer.
      */
-    DisclaimerDTO findOne(@NotNull @Identifier String id);
+    Mono<DisclaimerDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -68,7 +70,7 @@ public interface DisclaimerService {
      * @param disclaimerCreationDTO the DTO to create a disclaimer.
      * @return the created disclaimer.
      */
-    DisclaimerDTO create(@NotNull @Valid DisclaimerCreationDTO disclaimerCreationDTO);
+    Mono<DisclaimerDTO> create(@NotNull @Valid DisclaimerCreationDTO disclaimerCreationDTO);
 
     /**
      * Updates a disclaimer.
@@ -76,21 +78,21 @@ public interface DisclaimerService {
      * @param disclaimerUpdateDTO the DTO to update a disclaimer.
      * @return the updated disclaimer.
      */
-    DisclaimerDTO update(@NotNull @Identifier String id, @NotNull @Valid DisclaimerUpdateDTO disclaimerUpdateDTO);
+    Mono<DisclaimerDTO> update(@NotNull @Identifier String id, @NotNull @Valid DisclaimerUpdateDTO disclaimerUpdateDTO);
 
     /**
      * Publishes a disclaimer.
      * @param id the disclaimer identifier.
      * @return the published disclaimer.
      */
-    DisclaimerDTO publish(@NotNull @Identifier String id);
+    Mono<DisclaimerDTO> publish(@NotNull @Identifier String id);
 
     /**
      * Unpublishes a disclaimer.
      * @param id the disclaimer identifier.
      * @return the unpublished disclaimer.
      */
-    DisclaimerDTO unpublish(@NotNull @Identifier String id);
+    Mono<DisclaimerDTO> unpublish(@NotNull @Identifier String id);
 
     /**
      * Patches a disclaimer.
@@ -98,12 +100,13 @@ public interface DisclaimerService {
      * @param disclaimerPatchDTO the DTO to update a disclaimer.
      * @return the updated disclaimer.
      */
-    DisclaimerDTO patch(@NotNull @Identifier String id, @NotNull @Valid DisclaimerPatchDTO disclaimerPatchDTO);
+    Mono<DisclaimerDTO> patch(@NotNull @Identifier String id, @NotNull @Valid DisclaimerPatchDTO disclaimerPatchDTO);
 
     /**
      * Deletes a disclaimer.
      * @param id the id of the disclaimer to delete.
+     * @return the void result.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

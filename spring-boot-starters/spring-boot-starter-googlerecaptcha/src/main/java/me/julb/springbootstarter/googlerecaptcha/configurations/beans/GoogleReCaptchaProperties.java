@@ -35,6 +35,8 @@ import lombok.Setter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import me.julb.springbootstarter.consumer.configurations.properties.ConsumerEndpointProperties;
+
 /**
  * The Google Re-Captcha properties configuration.
  * <br>
@@ -45,6 +47,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @NoArgsConstructor
 @ConfigurationProperties(prefix = "google.recaptcha")
 public class GoogleReCaptchaProperties {
+
+    //@formatter:off
+     /**
+     * The endpoint attribute.
+     * -- GETTER --
+     * Getter for {@link #endpoint} property.
+     * @return the value.
+     * -- SETTER --
+     * Setter for {@link #endpoint} property.
+     * @param endpoint the value to set.
+     */
+     //@formatter:on
+    private ConsumerEndpointProperties endpoint;
 
     //@formatter:off
      /**

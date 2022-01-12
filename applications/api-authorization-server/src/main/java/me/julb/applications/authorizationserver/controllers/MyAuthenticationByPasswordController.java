@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -51,6 +49,9 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordUpdateDTO;
 
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
+
 /**
  * The rest controller to manage my authentication by passwords.
  * <br>
@@ -75,7 +76,7 @@ public class MyAuthenticationByPasswordController {
     @Operation(summary = "gets my authentication by password")
     @GetMapping()
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByPasswordDTO get() {
+    public Mono<UserAuthenticationByPasswordDTO> get() {
         return myAuthenticationByPasswordService.findOne();
     }
 
@@ -90,7 +91,7 @@ public class MyAuthenticationByPasswordController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByPasswordDTO create(@RequestBody @NotNull @Valid UserAuthenticationByPasswordCreationDTO creationDTO) {
+    public Mono<UserAuthenticationByPasswordDTO> create(@RequestBody @NotNull @Valid UserAuthenticationByPasswordCreationDTO creationDTO) {
         return myAuthenticationByPasswordService.create(creationDTO);
     }
 
@@ -102,7 +103,7 @@ public class MyAuthenticationByPasswordController {
     @Operation(summary = "updates my authentication by passwords")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByPasswordDTO update(@RequestBody @NotNull @Valid UserAuthenticationByPasswordUpdateDTO updateDTO) {
+    public Mono<UserAuthenticationByPasswordDTO> update(@RequestBody @NotNull @Valid UserAuthenticationByPasswordUpdateDTO updateDTO) {
         return myAuthenticationByPasswordService.update(updateDTO);
     }
 
@@ -114,7 +115,7 @@ public class MyAuthenticationByPasswordController {
     @Operation(summary = "patches my authentication by password")
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByPasswordDTO patch(@RequestBody @NotNull @Valid UserAuthenticationByPasswordPatchDTO patchDTO) {
+    public Mono<UserAuthenticationByPasswordDTO> patch(@RequestBody @NotNull @Valid UserAuthenticationByPasswordPatchDTO patchDTO) {
         return myAuthenticationByPasswordService.patch(patchDTO);
     }
 
@@ -127,7 +128,7 @@ public class MyAuthenticationByPasswordController {
     @PostMapping(path = "/update-password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserAuthenticationByPasswordDTO updatePassword(@RequestBody @NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO passwordChangeDTO) {
+    public Mono<UserAuthenticationByPasswordDTO> updatePassword(@RequestBody @NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO passwordChangeDTO) {
         return myAuthenticationByPasswordService.updatePassword(passwordChangeDTO);
     }
 
@@ -138,8 +139,8 @@ public class MyAuthenticationByPasswordController {
     @DeleteMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete() {
-        myAuthenticationByPasswordService.delete();
+    public Mono<Void> delete() {
+        return myAuthenticationByPasswordService.delete();
     }
     // ------------------------------------------ Utility methods.
 

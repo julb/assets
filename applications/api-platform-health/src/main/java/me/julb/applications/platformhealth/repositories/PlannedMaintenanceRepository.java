@@ -25,20 +25,22 @@
 package me.julb.applications.platformhealth.repositories;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceEntity;
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceStatus;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The planned maintenance repository.
  * <br>
  * @author Julb.
  */
-public interface PlannedMaintenanceRepository extends MongoRepository<PlannedMaintenanceEntity, String>, MongoSpecificationExecutor<PlannedMaintenanceEntity> {
+public interface PlannedMaintenanceRepository extends ReactiveMongoRepository<PlannedMaintenanceEntity, String>, MongoSpecificationExecutor<PlannedMaintenanceEntity> {
 
     /**
      * Finds an planned maintenance by trademark and id.
@@ -46,7 +48,7 @@ public interface PlannedMaintenanceRepository extends MongoRepository<PlannedMai
      * @param id the id.
      * @return the planned maintenance, or <code>null</code> if not exists.
      */
-    PlannedMaintenanceEntity findByTmAndId(String tm, String id);
+    Mono<PlannedMaintenanceEntity> findByTmAndId(String tm, String id);
 
     /**
      * Finds the planned maintenances having given status.
@@ -54,7 +56,7 @@ public interface PlannedMaintenanceRepository extends MongoRepository<PlannedMai
      * @param status the status to filter on.
      * @return the planned maintenances matching the given status.
      */
-    List<PlannedMaintenanceEntity> findByTmAndStatusIn(String tm, Collection<PlannedMaintenanceStatus> status);
+    Flux<PlannedMaintenanceEntity> findByTmAndStatusIn(String tm, Collection<PlannedMaintenanceStatus> status);
 
     /**
      * Finds the planned maintenances created after given date and not having given status.
@@ -63,5 +65,5 @@ public interface PlannedMaintenanceRepository extends MongoRepository<PlannedMai
      * @param status the status to exclude.
      * @return the planned maintenances.
      */
-    List<PlannedMaintenanceEntity> findByTmAndLastUpdatedAtGreaterThanEqualAndStatusNotInOrderByLastUpdatedAtDesc(String tm, String dateTimeThreshold, Collection<PlannedMaintenanceStatus> status);
+    Flux<PlannedMaintenanceEntity> findByTmAndLastUpdatedAtGreaterThanEqualAndStatusNotInOrderByLastUpdatedAtDesc(String tm, String dateTimeThreshold, Collection<PlannedMaintenanceStatus> status);
 }

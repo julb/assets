@@ -24,15 +24,10 @@
 
 package me.julb.applications.platformhealth.services.impl;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -57,22 +52,24 @@ import me.julb.applications.platformhealth.services.dto.incident.IncidentStatus;
 import me.julb.applications.platformhealth.services.dto.incident.IncidentUpdateDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.IdInSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.IdInSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident service implementation.
@@ -144,50 +141,52 @@ public class IncidentServiceImpl implements IncidentService {
      * {@inheritDoc}
      */
     @Override
-    public Page<IncidentDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<IncidentDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        ISpecification<IncidentEntity> spec = new SearchSpecification<IncidentEntity>(searchable).and(new TmSpecification<>(tm));
-        Page<IncidentEntity> result = incidentRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            ISpecification<IncidentEntity> spec = new SearchSpecification<IncidentEntity>(searchable).and(new TmSpecification<>(tm));
+            return incidentRepository.findAll(spec, pageable).map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Page<IncidentDTO> findAll(@NotNull @Identifier String componentId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<IncidentDTO> findAll(@NotNull @Identifier String componentId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check component
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
+            return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMapMany(component -> {
+                            return incidentComponentRepository.findByTmAndComponentId(tm, componentId)
+                                .map(IncidentComponentEntity::getIncident)
+                                .map(IncidentEntity::getId)
+                                .collectList()
+                                .flatMapMany(incidentIds -> {
+                                    ISpecification<IncidentEntity> spec = new SearchSpecification<IncidentEntity>(searchable).and(new TmSpecification<>(tm)).and(new IdInSpecification<>(incidentIds));
+                                    return incidentRepository.findAll(spec, pageable).map(mapper::map);
+                                });
+                        });
 
-        // Fetch incidents linked.
-        List<IncidentComponentEntity> incidentComponents = incidentComponentRepository.findByTmAndComponentId(tm, componentId);
-        Collection<String> incidentIds = incidentComponents.stream().map(IncidentComponentEntity::getIncident).map(IncidentEntity::getId).collect(Collectors.toSet());
-
-        ISpecification<IncidentEntity> spec = new SearchSpecification<IncidentEntity>(searchable).and(new TmSpecification<>(tm)).and(new IdInSpecification<>(incidentIds));
-        Page<IncidentEntity> result = incidentRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IncidentDTO findOne(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentDTO> findOne(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity result = incidentRepository.findByTmAndId(tm, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, id);
-        }
-
-        return mapper.map(result);
+            // Check that the item exists
+            return incidentRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, id)))
+                .map(mapper::map);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -197,23 +196,24 @@ public class IncidentServiceImpl implements IncidentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentDTO create(@NotNull @Valid IncidentCreationDTO creationDTO) {
-        // Update the entity
-        IncidentEntity entityToCreate = mapper.map(creationDTO);
+    public Mono<IncidentDTO> create(@NotNull @Valid IncidentCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        this.onPersist(entityToCreate);
+            // Update the entity
+            IncidentEntity entityToCreate = mapper.map(creationDTO);
+            return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                return incidentRepository.save(entityToCreateWithFields).flatMap(result -> {
+                    IncidentHistoryCreationDTO dto = new IncidentHistoryCreationDTO();
+                    dto.setLocalizedMessage(creationDTO.getLocalizedMessage());
+                    dto.setSendNotification(false);
+                    dto.setStatus(result.getStatus());
+                    return incidentHistoryService.create(result.getId(), dto)
+                        .thenReturn(mapper.map(result));
 
-        // Get result back.
-        IncidentEntity result = incidentRepository.save(entityToCreate);
-
-        // Add history item.
-        IncidentHistoryCreationDTO dto = new IncidentHistoryCreationDTO();
-        dto.setLocalizedMessage(creationDTO.getLocalizedMessage());
-        dto.setSendNotification(false);
-        dto.setStatus(result.getStatus());
-        incidentHistoryService.create(result.getId(), dto);
-
-        return mapper.map(result);
+                });
+            });
+        });
     }
 
     /**
@@ -221,21 +221,23 @@ public class IncidentServiceImpl implements IncidentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentDTO update(@NotNull @Identifier String id, @NotNull @Valid IncidentUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentDTO> update(@NotNull @Identifier String id, @NotNull @Valid IncidentUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity existing = incidentRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        IncidentEntity result = incidentRepository.save(existing);
-        return mapper.map(result);
+            // Check that the announcement exists
+            return incidentRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, id)))
+                .flatMap(existing -> {
+                    // Update the entity
+                    mapper.map(updateDTO, existing);
+                
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return incidentRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+                });
+        });
     }
 
     /**
@@ -243,21 +245,23 @@ public class IncidentServiceImpl implements IncidentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentDTO patch(@NotNull @Identifier String id, @NotNull @Valid IncidentPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentDTO> patch(@NotNull @Identifier String id, @NotNull @Valid IncidentPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity existing = incidentRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        IncidentEntity result = incidentRepository.save(existing);
-        return mapper.map(result);
+            // Check that the announcement exists
+            return incidentRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, id)))
+                .flatMap(existing -> {
+                    // Update the entity
+                    mapper.map(patchDTO, existing);
+                
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return incidentRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+                });
+        });
     }
 
     /**
@@ -265,24 +269,22 @@ public class IncidentServiceImpl implements IncidentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity existing = incidentRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, id);
-        }
-
-        // Delete dependent items.
-        incidentHistoryService.delete(existing.getId());
-        incidentComponentService.delete(existing.getId());
-
-        // Delete entity.
-        incidentRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            // Check that the announcement exists
+            return incidentRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, id)))
+                .flatMap(existing -> {
+                    // Delete entity.
+                    return incidentHistoryService.delete(existing.getId())
+                        .then(incidentComponentService.delete(existing.getId()))
+                        .then(incidentRepository.delete(existing))
+                        .then(this.onDelete(existing))
+                        .then();
+                });
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -291,35 +293,36 @@ public class IncidentServiceImpl implements IncidentService {
      * Method called when persisting an incident.
      * @param entity the entity.
      */
-    private void onPersist(IncidentEntity entity) {
-        entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
-        entity.setCreatedAt(DateUtility.dateTimeNow());
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        entity.setStatus(IncidentStatus.DRAFT);
+    private Mono<IncidentEntity> onPersist(String tm, IncidentEntity entity) {
+        return securityService.getConnectedUserRefIdentity().flatMap(connectedUser -> {
+            entity.setId(IdentifierUtility.generateId());
+            entity.setTm(tm);
+            entity.setCreatedAt(DateUtility.dateTimeNow());
+            entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+            entity.setStatus(IncidentStatus.DRAFT);
 
-        // Add author.
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(userRefMapper.map(connnectedUser));
+            // Add author.
+            entity.setUser(userRefMapper.map(connectedUser));
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+            return postResourceEvent(entity, ResourceEventType.CREATED);
+        });
     }
 
     /**
      * Method called when updating a incident.
      * @param entity the entity.
      */
-    private void onUpdate(IncidentEntity entity) {
+    private Mono<IncidentEntity> onUpdate(IncidentEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a incident.
      * @param entity the entity.
      */
-    private void onDelete(IncidentEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<IncidentEntity> onDelete(IncidentEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -327,15 +330,17 @@ public class IncidentServiceImpl implements IncidentService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(IncidentEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.INCIDENT)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<IncidentEntity> postResourceEvent(IncidentEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.INCIDENT)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

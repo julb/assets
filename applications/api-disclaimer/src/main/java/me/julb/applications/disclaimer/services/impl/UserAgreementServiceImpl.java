@@ -29,7 +29,6 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -47,10 +46,13 @@ import me.julb.applications.disclaimer.services.dto.agreement.AgreementDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user agreement service implementation.
@@ -86,34 +88,34 @@ public class UserAgreementServiceImpl implements UserAgreementService {
      * {@inheritDoc}
      */
     @Override
-    public Page<AgreementDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<AgreementDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        ISpecification<AgreementEntity> spec = new SearchSpecification<AgreementEntity>(searchable).and(new TmSpecification<>(tm)).and(new AgreementByUserIdSpecification(userId));
-        Page<AgreementEntity> result = agreementRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            ISpecification<AgreementEntity> spec = new SearchSpecification<AgreementEntity>(searchable)
+                .and(new TmSpecification<>(tm))
+                .and(new AgreementByUserIdSpecification(userId));
+            return agreementRepository.findAll(spec, pageable).map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AgreementDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String disclaimerId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AgreementDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String disclaimerId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the disclaimer exists
-        DisclaimerEntity disclaimer = disclaimerRepository.findByTmAndId(tm, disclaimerId);
-        if (disclaimer == null) {
-            throw new ResourceNotFoundException(DisclaimerEntity.class, disclaimerId);
-        }
-
-        // Gets the agreement.
-        AgreementEntity result = agreementRepository.findByTmAndDisclaimerIdAndUser_Id(tm, disclaimer.getId(), userId);
-        if (result == null) {
-            throw new ResourceNotFoundException(AgreementEntity.class, Map.<String, String> of("disclaimer", disclaimerId, "user", userId));
-        }
-
-        return mapper.map(result);
+            // Check that the disclaimer exists
+            return disclaimerRepository.findByTmAndId(tm, disclaimerId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(DisclaimerEntity.class, disclaimerId)))
+                .flatMap(disclaimer -> {
+                    return agreementRepository.findByTmAndDisclaimerIdAndUser_Id(tm, disclaimer.getId(), userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(AgreementEntity.class, Map.<String, String> of("disclaimer", disclaimerId, "user", userId))))
+                        .map(mapper::map);
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.

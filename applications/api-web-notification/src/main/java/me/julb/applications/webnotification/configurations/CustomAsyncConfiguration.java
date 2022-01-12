@@ -36,8 +36,10 @@ import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.library.dto.webnotification.WebNotificationMessageDTO;
-import me.julb.springbootstarter.messaging.configurations.AbstractAsyncConsumerConfiguration;
+import me.julb.springbootstarter.messaging.reactive.configurations.AbstractAsyncConsumerConfiguration;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The local async configuration.
@@ -60,21 +62,20 @@ public class CustomAsyncConfiguration extends AbstractAsyncConsumerConfiguration
     @Bean
     public Consumer<Message<ResourceEventAsyncMessageDTO>> resourceEvent() {
         return resourceEventAsyncMessage -> {
-            onReceiveStart(resourceEventAsyncMessage);
+            onReceive(resourceEventAsyncMessage, message -> {
+                // The payload.
+                ResourceEventAsyncMessageDTO payload = resourceEventAsyncMessage.getPayload();
 
-            // The payload.
-            ResourceEventAsyncMessageDTO payload = resourceEventAsyncMessage.getPayload();
+                // The resource concerns a user.
+                if (ResourceTypes.USER.equals(payload.getResourceType())) {
+                    if (ResourceEventType.UPDATED.equals(payload.getEventType())) {
 
-            // The resource concerns a user.
-            if (ResourceTypes.USER.equals(payload.getResourceType())) {
-                if (ResourceEventType.UPDATED.equals(payload.getEventType())) {
+                    } else if (ResourceEventType.DELETED.equals(payload.getEventType())) {
 
-                } else if (ResourceEventType.DELETED.equals(payload.getEventType())) {
-
+                    }
                 }
-            }
-
-            onReceiveEnd(resourceEventAsyncMessage);
+                return Mono.empty();
+            });
         };
     }
 
@@ -85,12 +86,9 @@ public class CustomAsyncConfiguration extends AbstractAsyncConsumerConfiguration
     @Bean
     public Consumer<Message<AsyncMessageDTO<WebNotificationMessageDTO>>> dispatchedWebNotification() {
         return notificationAsyncMessage -> {
-            onReceiveStart(notificationAsyncMessage);
-
-            // Invoke consumer.
-            webNotificationIngestionService.ingest(notificationAsyncMessage.getPayload().getBody());
-
-            onReceiveEnd(notificationAsyncMessage);
+            onReceive(notificationAsyncMessage, message -> {
+                return webNotificationIngestionService.ingest(message.getPayload().getBody());
+            });
         };
     }
 }

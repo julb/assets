@@ -24,13 +24,10 @@
 
 package me.julb.applications.disclaimer.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage disclaimers.
@@ -86,7 +87,7 @@ public class DisclaimerController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('disclaimer', 'read')")
-    public Page<DisclaimerDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<DisclaimerDTO> findAll(Searchable searchable, Pageable pageable) {
         return disclaimerService.findAll(searchable, pageable);
     }
 
@@ -98,7 +99,7 @@ public class DisclaimerController {
     @Operation(summary = "gets a disclaimer")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'disclaimer', 'read')")
-    public DisclaimerDTO get(@PathVariable @Identifier String id) {
+    public Mono<DisclaimerDTO> get(@PathVariable @Identifier String id) {
         return disclaimerService.findOne(id);
     }
 
@@ -113,7 +114,7 @@ public class DisclaimerController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('disclaimer', 'create')")
-    public DisclaimerDTO create(@RequestBody @NotNull @Valid DisclaimerCreationDTO creationDTO) {
+    public Mono<DisclaimerDTO> create(@RequestBody @NotNull @Valid DisclaimerCreationDTO creationDTO) {
         return disclaimerService.create(creationDTO);
     }
 
@@ -126,7 +127,7 @@ public class DisclaimerController {
     @Operation(summary = "updates a disclaimer")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'disclaimer', 'update')")
-    public DisclaimerDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid DisclaimerUpdateDTO updateDTO) {
+    public Mono<DisclaimerDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid DisclaimerUpdateDTO updateDTO) {
         return disclaimerService.update(id, updateDTO);
     }
 
@@ -138,7 +139,7 @@ public class DisclaimerController {
     @Operation(summary = "publishes a disclaimer")
     @PutMapping(path = "/{id}/active")
     @PreAuthorize("hasPermission(#id, 'disclaimer', 'update')")
-    public DisclaimerDTO publish(@PathVariable @Identifier String id) {
+    public Mono<DisclaimerDTO> publish(@PathVariable @Identifier String id) {
         return disclaimerService.publish(id);
     }
 
@@ -150,7 +151,7 @@ public class DisclaimerController {
     @Operation(summary = "unpublishes a disclaimer")
     @DeleteMapping(path = "/{id}/active")
     @PreAuthorize("hasPermission(#id, 'disclaimer', 'update')")
-    public DisclaimerDTO unpublish(@PathVariable @Identifier String id) {
+    public Mono<DisclaimerDTO> unpublish(@PathVariable @Identifier String id) {
         return disclaimerService.unpublish(id);
     }
 
@@ -163,20 +164,21 @@ public class DisclaimerController {
     @Operation(summary = "patches a disclaimer")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'disclaimer', 'update')")
-    public DisclaimerDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid DisclaimerPatchDTO patchDTO) {
+    public Mono<DisclaimerDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid DisclaimerPatchDTO patchDTO) {
         return disclaimerService.patch(id, patchDTO);
     }
 
     /**
      * Deletes a disclaimer.
      * @param id the id of the disclaimer to delete.
+     * @return the void result.
      */
     @Operation(summary = "deletes a disclaimer")
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'disclaimer', 'delete')")
-    public void delete(@PathVariable String id) {
-        disclaimerService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return disclaimerService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

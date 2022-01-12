@@ -24,21 +24,22 @@
 
 package me.julb.applications.bookmark.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.bookmark.entities.AbstractItemEntity;
 import me.julb.applications.bookmark.entities.FolderEntity;
 import me.julb.applications.bookmark.services.dto.ItemType;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The item repository.
  * <br>
  * @author Julb.
  */
-public interface ItemRepository extends MongoRepository<AbstractItemEntity, String>, MongoSpecificationExecutor<AbstractItemEntity> {
+public interface ItemRepository extends ReactiveMongoRepository<AbstractItemEntity, String>, MongoSpecificationExecutor<AbstractItemEntity> {
 
     /**
      * Gets the item by trademark aand id.
@@ -47,7 +48,7 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param id the id.
      * @return the item.
      */
-    AbstractItemEntity findByTmAndUser_IdAndId(String tm, String userId, String id);
+    Mono<AbstractItemEntity> findByTmAndUser_IdAndId(String tm, String userId, String id);
 
     /**
      * Gets the item by trademark aand id.
@@ -57,7 +58,7 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param id the id.
      * @return the item.
      */
-    AbstractItemEntity findByTmAndUser_IdAndTypeAndId(String tm, String userId, ItemType itemType, String id);
+    Mono<AbstractItemEntity> findByTmAndUser_IdAndTypeAndId(String tm, String userId, ItemType itemType, String id);
 
     /**
      * Finds the link without parent with the greatest position.
@@ -65,7 +66,7 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param userId the user ID.
      * @return the link without parent with the greatest position.
      */
-    AbstractItemEntity findTopByTmAndUser_IdAndParentIsNullOrderByPositionDesc(String tm, String userId);
+    Mono<AbstractItemEntity> findTopByTmAndUser_IdAndParentIsNullOrderByPositionDesc(String tm, String userId);
 
     /**
      * Finds the item with given parent with the greatest position.
@@ -74,7 +75,7 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param parent the parent folder.
      * @return the link with given parent with the greatest position.
      */
-    AbstractItemEntity findTopByTmAndUser_IdAndParentOrderByPositionDesc(String tm, String userId, FolderEntity parent);
+    Mono<AbstractItemEntity> findTopByTmAndUser_IdAndParentOrderByPositionDesc(String tm, String userId, FolderEntity parent);
 
     /**
      * Finds all items excluding given id with path starting with given path.
@@ -84,7 +85,7 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param path the path.
      * @return the items maatching this one.
      */
-    List<AbstractItemEntity> findByTmAndUser_IdAndIdNotAndPathStartsWith(String tm, String userId, String id, String path);
+    Flux<AbstractItemEntity> findByTmAndUser_IdAndIdNotAndPathStartsWith(String tm, String userId, String id, String path);
 
     /**
      * Finds all items at root order by position asc.
@@ -92,7 +93,7 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param userId the user ID.
      * @return the items.
      */
-    List<AbstractItemEntity> findByTmAndUser_IdAndParentIsNullOrderByPositionAsc(String tm, String userId);
+    Flux<AbstractItemEntity> findByTmAndUser_IdAndParentIsNullOrderByPositionAsc(String tm, String userId);
 
     /**
      * Finds all items under given parent order by position asc.
@@ -101,7 +102,7 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param parent the parent.
      * @return the items.
      */
-    List<AbstractItemEntity> findByTmAndUser_IdAndParentOrderByPositionAsc(String tm, String userId, FolderEntity parent);
+    Flux<AbstractItemEntity> findByTmAndUser_IdAndParentOrderByPositionAsc(String tm, String userId, FolderEntity parent);
 
     /**
      * Finds all items at root order by position asc.
@@ -110,7 +111,7 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param id the ID to exclude.
      * @return the items.
      */
-    List<AbstractItemEntity> findByTmAndUser_IdAndIdNotAndParentIsNullOrderByPositionAsc(String tm, String userId, String id);
+    Flux<AbstractItemEntity> findByTmAndUser_IdAndIdNotAndParentIsNullOrderByPositionAsc(String tm, String userId, String id);
 
     /**
      * Finds all items under given parent order by position asc.
@@ -120,6 +121,6 @@ public interface ItemRepository extends MongoRepository<AbstractItemEntity, Stri
      * @param parent the parent.
      * @return the items.
      */
-    List<AbstractItemEntity> findByTmAndUser_IdAndIdNotAndParentOrderByPositionAsc(String tm, String userId, String id, FolderEntity parent);
+    Flux<AbstractItemEntity> findByTmAndUser_IdAndIdNotAndParentOrderByPositionAsc(String tm, String userId, String id, FolderEntity parent);
 
 }

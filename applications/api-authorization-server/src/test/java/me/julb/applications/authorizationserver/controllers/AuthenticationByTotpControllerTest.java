@@ -24,37 +24,25 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
 import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
 
-import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.com.google.common.collect.Iterables;
 import org.testcontainers.utility.DockerImageName;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
@@ -71,21 +59,21 @@ import me.julb.applications.authorizationserver.services.UserAuthenticationByPin
 import me.julb.applications.authorizationserver.services.UserAuthenticationByTotpService;
 import me.julb.applications.authorizationserver.services.UserMailService;
 import me.julb.applications.authorizationserver.services.UserSessionService;
+import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeCreationDTO;
+import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodePatchDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpWithRawSecretDTO;
-import me.julb.applications.authorizationserver.services.dto.mail.UserMailDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
 import me.julb.applications.authorizationserver.services.dto.signup.SignupWithPasswordCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
-import me.julb.library.utility.data.search.Searchable;
-import me.julb.library.utility.http.HttpHeaderUtility;
 import me.julb.library.utility.identifier.IdentifierUtility;
-import me.julb.library.utility.otp.TotpUtility;
-import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBaseTest;
+import me.julb.springbootstarter.persistence.mongodb.reactive.test.base.AbstractMongoDbReactiveBaseTest;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Unit test for the authentication by password class.
@@ -93,10 +81,10 @@ import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBa
  * @author Julb.
  */
 @Import({TestChannelBinderConfiguration.class})
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @ContextConfiguration(initializers = AuthenticationByTotpControllerTest.Initializer.class)
 @Testcontainers
-public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest {
+public class AuthenticationByTotpControllerTest extends AbstractMongoDbReactiveBaseTest {
 
     /**
      * The MongoDB container.
@@ -105,10 +93,10 @@ public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest 
     private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.4"));
 
     /**
-     * The mock MVC.
+     * The web test client.
      */
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     /**
      * The signup service.
@@ -170,7 +158,7 @@ public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest 
      * {@inheritDoc}
      */
     @Override
-    public void setupData() {
+    public Mono<Void> setupData() {
         // Create user with verified email.
         userVerifiedSignupWithPassword = new SignupWithPasswordCreationDTO();
         userVerifiedSignupWithPassword.setMail("user-verified-with-password@julb.io");
@@ -178,39 +166,47 @@ public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest 
         userVerifiedSignupWithPassword.setProfile(new UserProfileCreationDTO());
         userVerifiedSignupWithPassword.getProfile().setFirstName("UserVerified");
         userVerifiedSignupWithPassword.getProfile().setLastName("WithPassword");
-        userVerified = this.signupService.signup(userVerifiedSignupWithPassword);
 
-        UserMailDTO userVerifiedMail = userMailService.findByMail(userVerified.getMail());
-        this.userMailService.updateVerifyWithoutToken(userVerified.getId(), userVerifiedMail.getId());
+        return this.signupService.signup(userVerifiedSignupWithPassword).flatMap(userVerified -> {
+            this.userVerified = userVerified;
+            return userMailService.findByMail(userVerified.getMail()).flatMap(userVerifiedMail -> {
+                return this.userMailService.updateVerifyWithoutToken(userVerified.getId(), userVerifiedMail.getId()).flatMap(userMail -> {
+                    // Add pincode
+                    userVerifiedPincode = new UserAuthenticationByPincodeCreationDTO();
+                    userVerifiedPincode.setPincode("00000000");
+                    Mono<UserAuthenticationByPincodeDTO> userAuthenticationByPinCodeMono = userAuthenticationByPincodeService.create(userVerified.getId(), userVerifiedPincode);
 
-        // Add pincode
-        userVerifiedPincode = new UserAuthenticationByPincodeCreationDTO();
-        userVerifiedPincode.setPincode("00000000");
-        userAuthenticationByPincodeService.create(userVerified.getId(), userVerifiedPincode);
+                    // Add device TOTP
+                    UserAuthenticationByTotpCreationDTO authenticationCreationDTO = new UserAuthenticationByTotpCreationDTO();
+                    authenticationCreationDTO.setName("user-device");
+                    Mono<UserAuthenticationByTotpWithRawSecretDTO> userAuthenticationByTotpMono = userAuthenticationByTotpService.create(userVerified.getId(), authenticationCreationDTO);
 
-        // Add device TOTP
-        UserAuthenticationByTotpCreationDTO authenticationCreationDTO = new UserAuthenticationByTotpCreationDTO();
-        authenticationCreationDTO.setName("user-device");
-        userAuthenticationByTotp = userAuthenticationByTotpService.create(userVerified.getId(), authenticationCreationDTO);
+                    return Mono.zip(userAuthenticationByPinCodeMono, userAuthenticationByTotpMono).flatMap(tuple -> {
+                        this.userAuthenticationByTotp = tuple.getT2();
 
-        // Enable MFA for password authentication and pincode authentication.
-        UserAuthenticationByPasswordPatchDTO authenticationByPasswordPatchDTO = new UserAuthenticationByPasswordPatchDTO();
-        authenticationByPasswordPatchDTO.setMfaEnabled(true);
-        userAuthenticationByPasswordService.patch(userVerified.getId(), authenticationByPasswordPatchDTO);
+                        // Enable MFA for password authentication and pincode authentication.
+                        UserAuthenticationByPasswordPatchDTO authenticationByPasswordPatchDTO = new UserAuthenticationByPasswordPatchDTO();
+                        authenticationByPasswordPatchDTO.setMfaEnabled(true);
+                        Mono<UserAuthenticationByPasswordDTO> userAuthenticationByPasswordPatchMono = userAuthenticationByPasswordService.patch(userVerified.getId(), authenticationByPasswordPatchDTO);
 
-        UserAuthenticationByPincodePatchDTO authenticationByPincodePatchDTO = new UserAuthenticationByPincodePatchDTO();
-        authenticationByPincodePatchDTO.setMfaEnabled(true);
-        userAuthenticationByPincodeService.patch(userVerified.getId(), authenticationByPincodePatchDTO);
+                        UserAuthenticationByPincodePatchDTO authenticationByPincodePatchDTO = new UserAuthenticationByPincodePatchDTO();
+                        authenticationByPincodePatchDTO.setMfaEnabled(true);
+                        Mono<UserAuthenticationByPincodeDTO> userAuthenticationByPincodePatchMono = userAuthenticationByPincodeService.patch(userVerified.getId(), authenticationByPincodePatchDTO);
 
+                        return Mono.zip(userAuthenticationByPasswordPatchMono, userAuthenticationByPincodePatchMono).then();
+                    });
+                });
+            });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<?>[] getEntityClasses() {
+    public Flux<Class<?>> getEntityClasses() {
         //@formatter:off
-        return new Class<?>[] {
+        return Flux.just(
             UserEntity.class, 
             UserAuthenticationByPasswordEntity.class, 
             UserAuthenticationByPincodeEntity.class, 
@@ -219,183 +215,203 @@ public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest 
             UserProfileEntity.class, 
             UserPreferencesEntity.class, 
             UserSessionEntity.class
-        };
+        );
         //@formatter:on
     }
 
-    /**
-     * Unit test method.
-     */
-    @Test
-    public void whenAuthenticateByPasswordWithValidUserRememberMeMfaEnabled_thenReturn200()
-        throws Exception {
+    // /**
+    //  * Unit test method.
+    //  */
+    // @Test
+    // public void whenAuthenticateByPasswordWithValidUserRememberMeMfaEnabled_thenReturn200()
+    //     throws Exception {
 
-        //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/password")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("mail", userVerifiedSignupWithPassword.getMail())
-                    .param("password", userVerifiedSignupWithPassword.getPassword()) 
-                    .param("rememberMe", "true")
-            )
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
-            .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.idToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
-            .andDo((result) -> {
-                // Ensure session is created.
-                List<UserSessionDTO> allUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                Assertions.assertEquals(1, allUserSessions.size());
-                UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
+    //     //@formatter:off
+    //     webTestClient
+    //         .post()
+    //             .uri(uriBuilder -> uriBuilder
+    //                 .path("/login/password")
+    //                 .queryParam("mail", userVerifiedSignupWithPassword.getMail())
+    //                 .queryParam("password", userVerifiedSignupWithPassword.getPassword())
+    //                 .queryParam("rememberMe", "true")
+    //                 .build()
+    //             )
+    //             .accept(MediaType.APPLICATION_FORM_URLENCODED)
+    //             .exchange()
+    //             .expectStatus()
+    //                 .isOk()
+    //             .expectBody()
+    //                 .jsonPath("$.type").isEqualTo(HttpHeaderUtility.BEARER)
+    //                 .jsonPath("$.accessToken").isNotEmpty()
+    //                 .jsonPath("$.idToken").isNotEmpty()
+    //                 .jsonPath("$.expiresIn").isNotEmpty()
+    //                 .consumeWith(body -> {
+    //                     // Ensure session is created.
+    //                     userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).collectList().flatMap(allUserSessions -> {
+    //                         // Ensure session is created.
+    //                         Assertions.assertEquals(1, allUserSessions.size());
+    //                         UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
+                            
+    //                         // Assert session MFA is not verified.
+    //                         Assertions.assertFalse(userSession.getMfaVerified());
+
+    //                         // Get access token.
+    //                         JSONObject jwtAccessToken = new JSONObject(new String(body.getResponseBody()));
+    //                         String accessToken = jwtAccessToken.getString("accessToken");
+                            
+    //                         // Generate TOTP code.
+    //                         String validTotpCode = TotpUtility.generateValidTotp(userAuthenticationByTotp.getRawSecret());
+
+    //                         // Send TOTP.
+    //                         webTestClient
+    //                             .post()
+    //                                 .uri(uriBuilder -> uriBuilder
+    //                                     .path("/login/totp")
+    //                                     .queryParam("deviceId", userAuthenticationByTotp.getId())
+    //                                     .queryParam("totp", validTotpCode)
+    //                                     .build()
+    //                                 )
+    //                                 .accept(MediaType.APPLICATION_FORM_URLENCODED)
+    //                                 .header(HttpHeaders.AUTHORIZATION, HttpHeaderUtility.toBearerToken(accessToken))
+    //                                 .exchange()
+    //                                 .expectStatus()
+    //                                     .isOk()
+    //                                 .expectBody()
+    //                                     .jsonPath("$.type").isEqualTo(HttpHeaderUtility.BEARER)
+    //                                     .jsonPath("$.accessToken").isNotEmpty()
+    //                                     .jsonPath("$.expiresIn").isNumber()
+    //                                     .consumeWith(totpBody -> {
+
+    //                                     });
+
+    //                             .andExpect(status().isOk())
+    //                             .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
+    //                             .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
+    //                             .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
+    //                             .andDo((resultTotp) -> {
+    //                                 List<UserSessionDTO> totpUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
+    //                                 Assertions.assertEquals(1, totpUserSessions.size());
+    //                                 UserSessionDTO totpUserSession = Iterables.getOnlyElement(totpUserSessions);
+                                    
+    //                                 // Assert session MFA is not verified.
+    //                                 Assertions.assertTrue(totpUserSession.getMfaVerified());
+    //                             });
+
+    //                     }).block();
+    //                 });
+    //     //@formatter:on
+    // }
+
+    // /**
+    //  * Unit test method.
+    //  */
+    // @Test
+    // public void whenAuthenticateWithMfaEnabledAndFetchTotps_thenReturn200()
+    //     throws Exception {
+
+    //     //@formatter:off
+    //     mockMvc
+    //         .perform(
+    //             post("/login/password")
+    //                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+    //                 .param("mail", userVerifiedSignupWithPassword.getMail())
+    //                 .param("password", userVerifiedSignupWithPassword.getPassword()) 
+    //                 .param("rememberMe", "true")
+    //         )
+    //         .andExpect(status().isOk())
+    //         .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
+    //         .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
+    //         .andExpect(jsonPath("$.idToken", notNullValue(String.class)))
+    //         .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
+    //         .andDo((result) -> {
+    //             // Ensure session is created.
+    //             List<UserSessionDTO> allUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
+    //             Assertions.assertEquals(1, allUserSessions.size());
+    //             UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
                 
-                // Assert session MFA is not verified.
-                Assertions.assertFalse(userSession.getMfaVerified());
+    //             // Assert session MFA is not verified.
+    //             Assertions.assertFalse(userSession.getMfaVerified());
                 
-                // Get access token.
-                JSONObject jwtAccessToken = new JSONObject(result.getResponse().getContentAsString());
-                String accessToken = jwtAccessToken.getString("accessToken");
+    //             // Get access token.
+    //             JSONObject jwtAccessToken = new JSONObject(result.getResponse().getContentAsString());
+    //             String accessToken = jwtAccessToken.getString("accessToken");
                 
-                // Generate TOTP code.
-                String validTotpCode = TotpUtility.generateValidTotp(userAuthenticationByTotp.getRawSecret());
+    //             // Send TOTP.
+    //             mockMvc
+    //                 .perform(
+    //                     get("/my/authentications/type/totp")
+    //                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+    //                         .header(HttpHeaders.AUTHORIZATION, HttpHeaderUtility.toBearerToken(accessToken))
+    //                 )
+    //                 .andExpect(status().isOk())
+    //                 .andExpect(jsonPath("$.totalElements", is(1)));
+    //         });
+    //     //@formatter:on
+    // }
+
+    // /**
+    //  * Unit test method.
+    //  */
+    // @Test
+    // public void whenAuthenticateByPincodeWithValidUserRememberMeMfaEnabled_thenReturn200()
+    //     throws Exception {
+
+    //     //@formatter:off
+    //     mockMvc
+    //         .perform(
+    //             post("/login/pincode")
+    //                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+    //                 .param("mail", userVerified.getMail())
+    //                 .param("pincode", userVerifiedPincode.getPincode())
+    //                 .param("rememberMe", "true")
+    //         )
+    //         .andExpect(status().isOk())
+    //         .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
+    //         .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
+    //         .andExpect(jsonPath("$.idToken", notNullValue(String.class)))
+    //         .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
+    //         .andDo((result) -> {
+    //             // Ensure session is created.
+    //             List<UserSessionDTO> allUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
+    //             Assertions.assertEquals(1, allUserSessions.size());
+    //             UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
                 
-                // Send TOTP.
-                mockMvc
-                    .perform(
-                        post("/login/totp")
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .header(HttpHeaders.AUTHORIZATION, HttpHeaderUtility.toBearerToken(accessToken))
-                            .param("deviceId", userAuthenticationByTotp.getId())
-                            .param("totp", validTotpCode)
-                    )
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
-                    .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
-                    .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
-                    .andDo((resultTotp) -> {
-                        List<UserSessionDTO> totpUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                        Assertions.assertEquals(1, totpUserSessions.size());
-                        UserSessionDTO totpUserSession = Iterables.getOnlyElement(totpUserSessions);
+    //             // Assert session MFA is not verified.
+    //             Assertions.assertFalse(userSession.getMfaVerified());
+                
+    //             // Get access token.
+    //             JSONObject jwtAccessToken = new JSONObject(result.getResponse().getContentAsString());
+    //             String accessToken = jwtAccessToken.getString("accessToken");
+                
+    //             // Generate TOTP code.
+    //             String validTotpCode = TotpUtility.generateValidTotp(userAuthenticationByTotp.getRawSecret());
+                
+    //             // Send TOTP.
+    //             mockMvc
+    //                 .perform(
+    //                     post("/login/totp")
+    //                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+    //                         .header(HttpHeaders.AUTHORIZATION, HttpHeaderUtility.toBearerToken(accessToken))
+    //                         .param("deviceId", userAuthenticationByTotp.getId())
+    //                         .param("totp", validTotpCode)
+    //                         .locale(Locale.getDefault())
+    //                 )
+    //                 .andExpect(status().isOk())
+    //                 .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
+    //                 .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
+    //                 .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
+    //                 .andDo((resultTotp) -> {
+    //                     List<UserSessionDTO> totpUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
+    //                     Assertions.assertEquals(1, totpUserSessions.size());
+    //                     UserSessionDTO totpUserSession = Iterables.getOnlyElement(totpUserSessions);
                         
-                        // Assert session MFA is not verified.
-                        Assertions.assertTrue(totpUserSession.getMfaVerified());
-                    });
+    //                     // Assert session MFA is not verified.
+    //                     Assertions.assertTrue(totpUserSession.getMfaVerified());
+    //                 });
                 
-            });
-        //@formatter:on
-    }
-
-    /**
-     * Unit test method.
-     */
-    @Test
-    public void whenAuthenticateWithMfaEnabledAndFetchTotps_thenReturn200()
-        throws Exception {
-
-        //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/password")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("mail", userVerifiedSignupWithPassword.getMail())
-                    .param("password", userVerifiedSignupWithPassword.getPassword()) 
-                    .param("rememberMe", "true")
-            )
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
-            .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.idToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
-            .andDo((result) -> {
-                // Ensure session is created.
-                List<UserSessionDTO> allUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                Assertions.assertEquals(1, allUserSessions.size());
-                UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
-                
-                // Assert session MFA is not verified.
-                Assertions.assertFalse(userSession.getMfaVerified());
-                
-                // Get access token.
-                JSONObject jwtAccessToken = new JSONObject(result.getResponse().getContentAsString());
-                String accessToken = jwtAccessToken.getString("accessToken");
-                
-                // Send TOTP.
-                mockMvc
-                    .perform(
-                        get("/my/authentications/type/totp")
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .header(HttpHeaders.AUTHORIZATION, HttpHeaderUtility.toBearerToken(accessToken))
-                    )
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.totalElements", is(1)));
-            });
-        //@formatter:on
-    }
-
-    /**
-     * Unit test method.
-     */
-    @Test
-    public void whenAuthenticateByPincodeWithValidUserRememberMeMfaEnabled_thenReturn200()
-        throws Exception {
-
-        //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/pincode")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("mail", userVerified.getMail())
-                    .param("pincode", userVerifiedPincode.getPincode())
-                    .param("rememberMe", "true")
-            )
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
-            .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.idToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
-            .andDo((result) -> {
-                // Ensure session is created.
-                List<UserSessionDTO> allUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                Assertions.assertEquals(1, allUserSessions.size());
-                UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
-                
-                // Assert session MFA is not verified.
-                Assertions.assertFalse(userSession.getMfaVerified());
-                
-                // Get access token.
-                JSONObject jwtAccessToken = new JSONObject(result.getResponse().getContentAsString());
-                String accessToken = jwtAccessToken.getString("accessToken");
-                
-                // Generate TOTP code.
-                String validTotpCode = TotpUtility.generateValidTotp(userAuthenticationByTotp.getRawSecret());
-                
-                // Send TOTP.
-                mockMvc
-                    .perform(
-                        post("/login/totp")
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .header(HttpHeaders.AUTHORIZATION, HttpHeaderUtility.toBearerToken(accessToken))
-                            .param("deviceId", userAuthenticationByTotp.getId())
-                            .param("totp", validTotpCode)
-                            .locale(Locale.getDefault())
-                    )
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
-                    .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
-                    .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
-                    .andDo((resultTotp) -> {
-                        List<UserSessionDTO> totpUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                        Assertions.assertEquals(1, totpUserSessions.size());
-                        UserSessionDTO totpUserSession = Iterables.getOnlyElement(totpUserSessions);
-                        
-                        // Assert session MFA is not verified.
-                        Assertions.assertTrue(totpUserSession.getMfaVerified());
-                    });
-                
-            });
-        //@formatter:on
-    }
+    //         });
+    //     //@formatter:on
+    // }
 
     /**
      * Unit test method.
@@ -403,17 +419,20 @@ public class AuthenticationByTotpControllerTest extends AbstractMongoDbBaseTest 
     @Test
     public void whenVerifyingTotpUnauthenticated_thenReturn401()
         throws Exception {
-        System.out.println(mockMvc);
         //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/totp")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("deviceId", IdentifierUtility.generateId())
-                    .param("totp", "000000")
-                    .header(HttpHeaders.ACCEPT_LANGUAGE, Locale.getDefault().toLanguageTag())
+        webTestClient
+            .post()
+            .uri(uriBuilder -> uriBuilder
+                .path("/login/totp")
+                .queryParam("deviceId", IdentifierUtility.generateId())
+                .queryParam("totp", "000000")
+                .build()
             )
-            .andExpect(status().isUnauthorized());
+            .accept(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(HttpHeaders.ACCEPT_LANGUAGE, Locale.getDefault().toLanguageTag())
+            .exchange()
+            .expectStatus()
+                .isUnauthorized();
         //@formatter:on
     }
 

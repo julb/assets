@@ -27,7 +27,6 @@ package me.julb.applications.authorizationserver.services.impl;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,7 +38,10 @@ import me.julb.applications.authorizationserver.services.UserSessionService;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user session service implementation.
@@ -68,18 +70,20 @@ public class MySessionsServiceImpl implements MySessionService {
      * {@inheritDoc}
      */
     @Override
-    public Page<UserSessionDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return userSessionService.findAll(userId, searchable, pageable);
+    public Flux<UserSessionDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return userSessionService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserSessionDTO findOne(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return userSessionService.findOne(userId, id);
+    public Mono<UserSessionDTO> findOne(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userSessionService.findOne(userId, id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -89,9 +93,10 @@ public class MySessionsServiceImpl implements MySessionService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete() {
-        String userId = securityService.getConnectedUserId();
-        userSessionService.delete(userId);
+    public Mono<Void> delete() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userSessionService.delete(userId);
+        });
     }
 
     /**
@@ -99,9 +104,10 @@ public class MySessionsServiceImpl implements MySessionService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        userSessionService.delete(userId, id);
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userSessionService.delete(userId, id);
+        });
     }
 
     // ------------------------------------------ Utility methods.

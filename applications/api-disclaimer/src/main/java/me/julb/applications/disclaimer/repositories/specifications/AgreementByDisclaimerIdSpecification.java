@@ -30,7 +30,7 @@ import java.util.Optional;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import me.julb.applications.disclaimer.entities.AgreementEntity;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
 
 /**
  * Specification on agreements.

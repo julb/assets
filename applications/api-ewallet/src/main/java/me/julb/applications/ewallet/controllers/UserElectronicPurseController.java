@@ -24,8 +24,6 @@
 
 package me.julb.applications.ewallet.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -49,6 +47,9 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPursePatchDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseUpdateDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage electronic purse of a user.
@@ -76,7 +77,7 @@ public class UserElectronicPurseController {
     @Operation(summary = "gets a electronic purse")
     @GetMapping
     @PreAuthorize("hasPermission('electronic-purse', 'read')")
-    public ElectronicPurseDTO get(@PathVariable @Identifier String userId) {
+    public Mono<ElectronicPurseDTO> get(@PathVariable @Identifier String userId) {
         return electronicPurseService.findOne(userId);
     }
 
@@ -91,7 +92,7 @@ public class UserElectronicPurseController {
     @Operation(summary = "updates a electronic purse")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission('electronic-purse', 'update')")
-    public ElectronicPurseDTO update(@PathVariable @Identifier String userId, @RequestBody @NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
+    public Mono<ElectronicPurseDTO> update(@PathVariable @Identifier String userId, @RequestBody @NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
         return electronicPurseService.update(userId, updateDTO);
     }
 
@@ -104,7 +105,7 @@ public class UserElectronicPurseController {
     @Operation(summary = "patches a electronic purse")
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission('electronic-purse', 'update')")
-    public ElectronicPurseDTO patch(@PathVariable @Identifier String userId, @RequestBody @NotNull @Valid ElectronicPursePatchDTO patchDTO) {
+    public Mono<ElectronicPurseDTO> patch(@PathVariable @Identifier String userId, @RequestBody @NotNull @Valid ElectronicPursePatchDTO patchDTO) {
         return electronicPurseService.patch(userId, patchDTO);
     }
 
@@ -116,8 +117,8 @@ public class UserElectronicPurseController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission('electronic-purse', 'delete')")
-    public void delete(@PathVariable @Identifier String userId) {
-        electronicPurseService.delete(userId);
+    public Mono<Void> delete(@PathVariable @Identifier String userId) {
+        return electronicPurseService.delete(userId);
     }
     // ------------------------------------------ Utility methods.
 

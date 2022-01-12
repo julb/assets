@@ -52,7 +52,8 @@ public class AuthenticationByApiKeyAuthenticationWebFilter extends Authenticatio
 
     /**
      * Default constructor.
-     * @param apiKeyHeader the API key header.
+     * @param reactiveAuthenticationManager the authentication manager.
+     * @param apiKeyHeaderName the API key header.
      */
     public AuthenticationByApiKeyAuthenticationWebFilter(ReactiveAuthenticationManager reactiveAuthenticationManager, String apiKeyHeaderName) {
         super(reactiveAuthenticationManager);

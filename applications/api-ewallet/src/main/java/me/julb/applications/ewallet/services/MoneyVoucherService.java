@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherCreationDTO;
@@ -39,6 +38,9 @@ import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherWithRa
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.MoneyVoucherCode;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The money voucher service.
@@ -55,21 +57,21 @@ public interface MoneyVoucherService {
      * @param pageable the pageable information.
      * @return a paged list of money vouchers.
      */
-    Page<MoneyVoucherDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<MoneyVoucherDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a money voucher through its code.
      * @param code the money voucher code.
      * @return the money voucher.
      */
-    MoneyVoucherDTO findByCode(@NotNull @NotBlank @MoneyVoucherCode String code);
+    Mono<MoneyVoucherDTO> findByCode(@NotNull @NotBlank @MoneyVoucherCode String code);
 
     /**
      * Gets a money voucher through its ID.
      * @param id the money voucher identifier.
      * @return the money voucher.
      */
-    MoneyVoucherDTO findOne(@NotNull @Identifier String id);
+    Mono<MoneyVoucherDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -78,14 +80,14 @@ public interface MoneyVoucherService {
      * @param moneyVoucherCreationDTO the DTO to create a money voucher.
      * @return the created money voucher.
      */
-    MoneyVoucherWithRawCodeDTO create(@NotNull @Valid MoneyVoucherCreationDTO moneyVoucherCreationDTO);
+    Mono<MoneyVoucherWithRawCodeDTO> create(@NotNull @Valid MoneyVoucherCreationDTO moneyVoucherCreationDTO);
 
     /**
      * Redeems the money voucher.
      * @param id the money voucher identifier.
      * @return the updated money voucher.
      */
-    MoneyVoucherDTO redeem(@NotNull @Identifier String id);
+    Mono<MoneyVoucherDTO> redeem(@NotNull @Identifier String id);
 
     /**
      * Updates a money voucher.
@@ -93,7 +95,7 @@ public interface MoneyVoucherService {
      * @param moneyVoucherUpdateDTO the DTO to update a money voucher.
      * @return the updated money voucher.
      */
-    MoneyVoucherDTO update(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherUpdateDTO moneyVoucherUpdateDTO);
+    Mono<MoneyVoucherDTO> update(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherUpdateDTO moneyVoucherUpdateDTO);
 
     /**
      * Patches a money voucher.
@@ -101,12 +103,12 @@ public interface MoneyVoucherService {
      * @param moneyVoucherPatchDTO the DTO to update a money voucher.
      * @return the updated money voucher.
      */
-    MoneyVoucherDTO patch(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherPatchDTO moneyVoucherPatchDTO);
+    Mono<MoneyVoucherDTO> patch(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherPatchDTO moneyVoucherPatchDTO);
 
     /**
      * Deletes a money voucher.
      * @param id the id of the money voucher to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

@@ -24,17 +24,19 @@
 
 package me.julb.applications.disclaimer.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.disclaimer.entities.AgreementEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The agreement repository.
  * <br>
  * @author Julb.
  */
-public interface AgreementRepository extends MongoRepository<AgreementEntity, String>, MongoSpecificationExecutor<AgreementEntity> {
+public interface AgreementRepository extends ReactiveMongoRepository<AgreementEntity, String>, MongoSpecificationExecutor<AgreementEntity> {
 
     /**
      * Checks if an agreement exists between the disclaimer and the user.
@@ -43,7 +45,7 @@ public interface AgreementRepository extends MongoRepository<AgreementEntity, St
      * @param userId the user ID.
      * @return <code>true</code> if the agreement exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndDisclaimerIdAndUser_Id(String tm, String disclaimerId, String userId);
+    Mono<Boolean> existsByTmAndDisclaimerIdAndUser_Id(String tm, String disclaimerId, String userId);
 
     /**
      * Checks if an agreement exists between the disclaimer and the user.
@@ -52,6 +54,6 @@ public interface AgreementRepository extends MongoRepository<AgreementEntity, St
      * @param userId the user ID.
      * @return <code>true</code> if the agreement exists, <code>false</code> otherwise.
      */
-    AgreementEntity findByTmAndDisclaimerIdAndUser_Id(String tm, String disclaimerId, String userId);
+    Mono<AgreementEntity> findByTmAndDisclaimerIdAndUser_Id(String tm, String disclaimerId, String userId);
 
 }

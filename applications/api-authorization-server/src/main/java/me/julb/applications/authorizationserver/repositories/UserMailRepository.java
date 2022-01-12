@@ -24,19 +24,20 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user mail repository.
  * <br>
  * @author Julb.
  */
-public interface UserMailRepository extends MongoRepository<UserMailEntity, String>, MongoSpecificationExecutor<UserMailEntity> {
+public interface UserMailRepository extends ReactiveMongoRepository<UserMailEntity, String>, MongoSpecificationExecutor<UserMailEntity> {
 
     /**
      * Finds an user primary mail by trademark and user ID.
@@ -44,7 +45,7 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @param userId the user ID.
      * @return the user mail, or <code>null</code> if not exists.
      */
-    UserMailEntity findByTmAndUser_IdAndPrimaryIsTrue(String tm, String userId);
+    Mono<UserMailEntity> findByTmAndUser_IdAndPrimaryIsTrue(String tm, String userId);
 
     /**
      * Finds an user mail by trademark and id.
@@ -53,7 +54,7 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @param id the id.
      * @return the user mail, or <code>null</code> if not exists.
      */
-    UserMailEntity findByTmAndUser_IdAndId(String tm, String userId, String id);
+    Mono<UserMailEntity> findByTmAndUser_IdAndId(String tm, String userId, String id);
 
     /**
      * Finds an user mail by trademark and mail address.
@@ -61,7 +62,7 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @param mail the mail address.
      * @return the user mail.
      */
-    UserMailEntity findByTmAndMailIgnoreCase(String tm, String mail);
+    Mono<UserMailEntity> findByTmAndMailIgnoreCase(String tm, String mail);
 
     /**
      * Check existence of an user mail by trademark and mail address.
@@ -69,7 +70,7 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @param mail the mail address.
      * @return <code>true</code> if the mail exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndMailIgnoreCase(String tm, String mail);
+    Mono<Boolean> existsByTmAndMailIgnoreCase(String tm, String mail);
 
     /**
      * Finds an user mail by trademark and mail address.
@@ -77,7 +78,7 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @param mail the mail address.
      * @return the user mail.
      */
-    UserMailEntity findByTmAndMailIgnoreCaseAndVerifiedIsTrue(String tm, String mail);
+    Mono<UserMailEntity> findByTmAndMailIgnoreCaseAndVerifiedIsTrue(String tm, String mail);
 
     /**
      * Finds verified user mails by trademark and id.
@@ -85,7 +86,7 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @param userId the user ID.
      * @return the verified user mails, or <code>null</code> if not exists.
      */
-    List<UserMailEntity> findByTmAndUser_IdAndVerifiedIsTrue(String tm, String userId);
+    Flux<UserMailEntity> findByTmAndUser_IdAndVerifiedIsTrue(String tm, String userId);
 
     /**
      * Finds an user mail by trademark and id.
@@ -94,5 +95,5 @@ public interface UserMailRepository extends MongoRepository<UserMailEntity, Stri
      * @param id the id.
      * @return the user mail, or <code>null</code> if not exists.
      */
-    UserMailEntity findByTmAndUser_IdAndIdAndVerifiedIsTrue(String tm, String userId, String id);
+    Mono<UserMailEntity> findByTmAndUser_IdAndIdAndVerifiedIsTrue(String tm, String userId, String id);
 }

@@ -33,8 +33,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
-import me.julb.applications.authorizationserver.entities.session.UserSessionEntity;
 import me.julb.applications.authorizationserver.repositories.UserMailRepository;
 import me.julb.applications.authorizationserver.repositories.UserSessionRepository;
 import me.julb.applications.authorizationserver.services.UserAuthenticationByApiKeyService;
@@ -46,11 +44,13 @@ import me.julb.applications.authorizationserver.services.dto.security.UserAuthen
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecureApiKey;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationByApiKeyUserDetailsDelegateService;
-import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationByPasswordUserDetailsDelegateService;
-import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationByPincodeUserDetailsDelegateService;
-import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationByTotpUserDetailsDelegateService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationByApiKeyUserDetailsDelegateService;
+import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationByPasswordUserDetailsDelegateService;
+import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationByPincodeUserDetailsDelegateService;
+import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationByTotpUserDetailsDelegateService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The delegate service implementation for user authentication details.
@@ -101,81 +101,68 @@ public class UserAuthenticationDetailsDelegateServiceImpl
      * {@inheritDoc}
      */
     @Override
-    public UserDetails loadUserDetailsByApiKey(@NotNull @NotBlank @SecureApiKey String apiKey) {
-        try {
-            UserAuthenticationCredentialsDTO credentials = userAuthenticationByApiKeyService.findOneCredentials(apiKey);
-            return buildUserDetails(credentials);
-        } catch (ResourceNotFoundException e) {
-            throw new UsernameNotFoundException("User not found.", e);
-        }
+    public Mono<UserDetails> loadUserDetailsByApiKey(@NotNull @NotBlank @SecureApiKey String apiKey) {
+        return userAuthenticationByApiKeyService.findOneCredentials(apiKey)
+            .onErrorMap(ResourceNotFoundException.class, e -> new UsernameNotFoundException("User not found.", e))
+            .map(this::buildUserDetails);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserDetails loadUserDetailsByPassword(@NotNull @NotBlank @Email String mail) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserDetails> loadUserDetailsByPassword(@NotNull @NotBlank @Email String mail) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Get the user with the mail.
-        UserMailEntity userMail = userMailRepository.findByTmAndMailIgnoreCaseAndVerifiedIsTrue(tm, mail);
-        if (userMail == null) {
-            throw new UsernameNotFoundException(mail);
-        }
-
-        // Finds the credentials.
-        try {
-            UserAuthenticationCredentialsDTO credentials = userAuthenticationByPasswordService.findOneCredentials(userMail.getUser().getId());
-            return buildUserDetails(credentials);
-        } catch (ResourceNotFoundException e) {
-            throw new UsernameNotFoundException("User not found.", e);
-        }
+            return userMailRepository.findByTmAndMailIgnoreCaseAndVerifiedIsTrue(tm, mail)
+                .switchIfEmpty(Mono.error(new UsernameNotFoundException(mail)))
+                .flatMap(userMail -> {
+                    return userAuthenticationByPasswordService.findOneCredentials(userMail.getUser().getId())
+                        .onErrorMap(ResourceNotFoundException.class, e -> new UsernameNotFoundException("User not found.", e))
+                        .map(this::buildUserDetails);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserDetails loadUserDetailsByPincode(@NotNull @NotBlank @Email String mail) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserDetails> loadUserDetailsByPincode(@NotNull @NotBlank @Email String mail) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Get the user with the mail.
-        UserMailEntity userMail = userMailRepository.findByTmAndMailIgnoreCaseAndVerifiedIsTrue(tm, mail);
-        if (userMail == null) {
-            throw new UsernameNotFoundException(mail);
-        }
-
-        // Finds the credentials.
-        try {
-            UserAuthenticationCredentialsDTO credentials = userAuthenticationByPincodeService.findOneCredentials(userMail.getUser().getId());
-            return buildUserDetails(credentials);
-        } catch (ResourceNotFoundException e) {
-            throw new UsernameNotFoundException("User not found.", e);
-        }
+            return userMailRepository.findByTmAndMailIgnoreCaseAndVerifiedIsTrue(tm, mail)
+                .switchIfEmpty(Mono.error(new UsernameNotFoundException(mail)))
+                .flatMap(userMail -> {
+                    return userAuthenticationByPincodeService.findOneCredentials(userMail.getUser().getId())
+                        .onErrorMap(ResourceNotFoundException.class, e -> new UsernameNotFoundException("User not found.", e))
+                        .map(this::buildUserDetails);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserDetails loadUserDetailsByTotp(@NotNull @NotBlank @Identifier String userId, @NotNull @NotBlank @Identifier String sessionId, @NotNull @NotBlank @Identifier String deviceId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserDetails> loadUserDetailsByTotp(@NotNull @NotBlank @Identifier String userId, @NotNull @NotBlank @Identifier String sessionId, @NotNull @NotBlank @Identifier String deviceId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Get the user with the mail.
-        UserSessionEntity userSession = userSessionRepository.findByTmAndUser_IdAndId(tm, userId, sessionId);
-        if (userSession == null) {
-            throw new UsernameNotFoundException(sessionId);
-        }
-
-        // Finds the credentials.
-        try {
-            UserAuthenticationCredentialsDTO credentials = userAuthenticationByTotpService.findOneCredentials(userSession.getUser().getId(), deviceId);
-            UserAuthenticationUserDetailsDTO buildUserDetails = buildUserDetails(credentials);
-            buildUserDetails.setMfaSessionId(sessionId);
-            return buildUserDetails;
-        } catch (ResourceNotFoundException e) {
-            throw new UsernameNotFoundException("User not found.", e);
-        }
+            return userSessionRepository.findByTmAndUser_IdAndId(tm, userId, sessionId)
+                .switchIfEmpty(Mono.error(new UsernameNotFoundException(sessionId)))
+                .flatMap(userSession -> {
+                    return userAuthenticationByTotpService.findOneCredentials(userSession.getUser().getId(), deviceId)
+                        .onErrorMap(ResourceNotFoundException.class, e -> new UsernameNotFoundException("User not found.", e))
+                        .map(this::buildUserDetails)
+                        .map(buildUserDetails -> {
+                            buildUserDetails.setMfaSessionId(sessionId);
+                            return buildUserDetails;
+                        });
+                });
+        });
     }
 
     /**

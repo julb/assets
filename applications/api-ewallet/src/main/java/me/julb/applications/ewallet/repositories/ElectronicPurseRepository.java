@@ -24,17 +24,20 @@
 
 package me.julb.applications.ewallet.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.ewallet.entities.ElectronicPurseEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The electronic purse repository.
  * <br>
  * @author Julb.
  */
-public interface ElectronicPurseRepository extends MongoRepository<ElectronicPurseEntity, String>, MongoSpecificationExecutor<ElectronicPurseEntity> {
+public interface ElectronicPurseRepository extends ReactiveMongoRepository<ElectronicPurseEntity, String>, MongoSpecificationExecutor<ElectronicPurseEntity> {
 
     /**
      * Checks if the given user has electronic purses or not.
@@ -42,7 +45,7 @@ public interface ElectronicPurseRepository extends MongoRepository<ElectronicPur
      * @param userId the user ID.
      * @return <code>true</code> if the user has, at least, one electronic purse, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_Id(String tm, String userId);
+    Mono<Boolean> existsByTmAndUser_Id(String tm, String userId);
 
     /**
      * Finds an electronic purses by trademark and user id.
@@ -50,7 +53,7 @@ public interface ElectronicPurseRepository extends MongoRepository<ElectronicPur
      * @param userId the user ID.
      * @return the electronic purse, or <code>null</code> if not exists.
      */
-    ElectronicPurseEntity findByTmAndUser_Id(String tm, String userId);
+    Mono<ElectronicPurseEntity> findByTmAndUser_Id(String tm, String userId);
 
     /**
      * Finds an electronic purses by trademark and id.
@@ -58,6 +61,6 @@ public interface ElectronicPurseRepository extends MongoRepository<ElectronicPur
      * @param id the ID.
      * @return the electronic purse, or <code>null</code> if not exists.
      */
-    ElectronicPurseEntity findByTmAndId(String tm, String id);
+    Mono<ElectronicPurseEntity> findByTmAndId(String tm, String id);
 
 }

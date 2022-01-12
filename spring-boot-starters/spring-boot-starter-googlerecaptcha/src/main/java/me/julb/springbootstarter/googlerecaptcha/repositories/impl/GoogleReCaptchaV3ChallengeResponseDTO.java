@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package me.julb.springbootstarter.googlerecaptcha.consumers;
+package me.julb.springbootstarter.googlerecaptcha.repositories.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

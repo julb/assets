@@ -24,12 +24,12 @@
 
 package me.julb.applications.authorizationserver.services;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
 
 /**
  * The user account recovery service.
@@ -45,7 +45,7 @@ public interface UserAccountRecoveryService {
      * @param userId the user identifier.
      * @return a list of recovery channel devices.
      */
-    List<RecoveryChannelDeviceDTO> findAll(@NotNull @Identifier String userId);
+    Flux<RecoveryChannelDeviceDTO> findAll(@NotNull @Identifier String userId);
 
     // ------------------------------------------ Write methods.
 

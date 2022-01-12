@@ -24,10 +24,6 @@
 
 package me.julb.applications.authorizationserver.services.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -39,8 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
-import me.julb.applications.authorizationserver.entities.mail.UserMailEntity;
-import me.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
 import me.julb.applications.authorizationserver.repositories.UserMailRepository;
 import me.julb.applications.authorizationserver.repositories.UserMobilePhoneRepository;
 import me.julb.applications.authorizationserver.repositories.UserRepository;
@@ -51,8 +45,11 @@ import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user account recovery service.
@@ -86,7 +83,7 @@ public class UserAccountRecoveryServiceImpl implements UserAccountRecoveryServic
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     // ------------------------------------------ Read methods.
 
@@ -94,44 +91,43 @@ public class UserAccountRecoveryServiceImpl implements UserAccountRecoveryServic
      * {@inheritDoc}
      */
     @Override
-    public List<RecoveryChannelDeviceDTO> findAll(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<RecoveryChannelDeviceDTO> findAll(@NotNull @Identifier String userId) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMapMany(user -> {
+                    // Assert the recovery channel is supported.
+                    RecoveryChannelType[] supportedRecoveryChannelTypes = configSourceService.getTypedProperty(tm, "authorization-server.account-recovery.channel-types", RecoveryChannelType[].class);
 
-        // Assert the recovery channel is supported.
-        RecoveryChannelType[] supportedRecoveryChannelTypes = configSourceService.getTypedProperty("authorization-server.account-recovery.channel-types", RecoveryChannelType[].class);
+                    // Result list
+                    Flux<RecoveryChannelDeviceDTO> mailRecoveryChannelDevices;
+                    Flux<RecoveryChannelDeviceDTO> mobilePhoneRecoveryChannelDevices;
 
-        // Result list
-        List<RecoveryChannelDeviceDTO> channelDeviceTypes = new ArrayList<>();
+                    // Channel mail.
+                    if (ArrayUtils.contains(supportedRecoveryChannelTypes, RecoveryChannelType.MAIL)) {
+                        mailRecoveryChannelDevices = userMailRepository.findByTmAndUser_IdAndVerifiedIsTrue(tm, userId).map(userMail -> {
+                            String maskedMail = maskMailAddress(userMail.getMail());
+                            return new RecoveryChannelDeviceDTO(userMail.getId(), RecoveryChannelType.MAIL, maskedMail);
+                        });
+                    } else {
+                        mailRecoveryChannelDevices = Flux.empty();
+                    }
 
-        // Channel mail.
-        if (ArrayUtils.contains(supportedRecoveryChannelTypes, RecoveryChannelType.MAIL)) {
-            List<UserMailEntity> verifiedUserMails = userMailRepository.findByTmAndUser_IdAndVerifiedIsTrue(tm, userId);
-            for (UserMailEntity userMail : verifiedUserMails) {
-                String maskedMail = maskMailAddress(userMail.getMail());
-                channelDeviceTypes.add(new RecoveryChannelDeviceDTO(userMail.getId(), RecoveryChannelType.MAIL, maskedMail));
-            }
-        }
+                    // Channel mobile phones.
+                    if (ArrayUtils.contains(supportedRecoveryChannelTypes, RecoveryChannelType.MOBILE_PHONE)) {
+                        mobilePhoneRecoveryChannelDevices = userMobilePhoneRepository.findByTmAndUser_IdAndVerifiedIsTrue(tm, userId).map(userMobilePhone -> {
+                            String maskedMobilePhone = maskMobilePhoneNumber(userMobilePhone.getMobilePhone().getE164Number());
+                            return new RecoveryChannelDeviceDTO(userMobilePhone.getId(), RecoveryChannelType.MOBILE_PHONE, maskedMobilePhone);
+                        });
+                    } else {
+                        mobilePhoneRecoveryChannelDevices = Flux.empty();
+                    }
 
-        // Channel mobile phones.
-        if (ArrayUtils.contains(supportedRecoveryChannelTypes, RecoveryChannelType.MOBILE_PHONE)) {
-            List<UserMobilePhoneEntity> verifiedMobilePhones = userMobilePhoneRepository.findByTmAndUser_IdAndVerifiedIsTrue(tm, userId);
-            for (UserMobilePhoneEntity userMobilePhone : verifiedMobilePhones) {
-                String maskedMobilePhone = maskMobilePhoneNumber(userMobilePhone.getMobilePhone().getE164Number());
-                channelDeviceTypes.add(new RecoveryChannelDeviceDTO(userMobilePhone.getId(), RecoveryChannelType.MOBILE_PHONE, maskedMobilePhone));
-            }
-        }
-
-        // Sort result
-        Collections.sort(channelDeviceTypes);
-
-        // Return result.
-        return channelDeviceTypes;
+                    return Flux.concat(mailRecoveryChannelDevices, mobilePhoneRecoveryChannelDevices).sort();
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -146,7 +142,7 @@ public class UserAccountRecoveryServiceImpl implements UserAccountRecoveryServic
     protected String maskMailAddress(String mailAddress) {
         String[] mailAddressParts = StringUtils.split(mailAddress, Chars.AT);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(mailAddressParts[0].substring(Integers.ZERO, Integers.ONE));
         sb.append(StringUtils.repeat(Chars.STAR, Integers.TEN));
         sb.append(mailAddressParts[0].substring(mailAddressParts[0].length() - Integers.ONE));
@@ -161,7 +157,7 @@ public class UserAccountRecoveryServiceImpl implements UserAccountRecoveryServic
      * @return the masked mobile phone number.
      */
     protected String maskMobilePhoneNumber(String mobilePhoneNumber) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(mobilePhoneNumber.substring(Integers.ZERO, Integers.FOUR));
         sb.append(StringUtils.repeat(Chars.STAR, Integers.TEN));
         sb.append(mobilePhoneNumber.substring(mobilePhoneNumber.length() - Integers.TWO));

@@ -27,14 +27,12 @@ package me.julb.applications.ewallet.services.impl;
 import com.google.common.base.Objects;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -56,23 +54,25 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.exceptions.ElectronicPurseOperationCannotBeExecutedCurrencyMismatch;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.mapping.entities.moneyamount.mappers.MoneyAmountEntityMapper;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The electronic purse service implementation.
@@ -132,57 +132,55 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      * {@inheritDoc}
      */
     @Override
-    public Page<ElectronicPurseOperationDTO> findAll(@NotNull @Identifier String electronicPurseId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<ElectronicPurseOperationDTO> findAll(@NotNull @Identifier String electronicPurseId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMapMany(electronicPurse -> {
+                    ISpecification<ElectronicPurseOperationEntity> spec = new SearchSpecification<ElectronicPurseOperationEntity>(searchable)
+                        .and(new TmSpecification<>(tm))
+                        .and(new ElectronicPurseOperationByElectronicPurseSpecification(electronicPurse));
 
-        ISpecification<ElectronicPurseOperationEntity> spec = new SearchSpecification<ElectronicPurseOperationEntity>(searchable).and(new TmSpecification<>(tm)).and(new ElectronicPurseOperationByElectronicPurseSpecification(electronicPurse));
-        Page<ElectronicPurseOperationEntity> result = electronicPurseOperationRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+                    return electronicPurseOperationRepository.findAll(spec, pageable).map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<ElectronicPurseOperationDTO> findAll(@NotNull @Identifier String electronicPurseId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<ElectronicPurseOperationDTO> findAll(@NotNull @Identifier String electronicPurseId) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
-
-        List<ElectronicPurseOperationEntity> result = electronicPurseOperationRepository.findByTmAndElectronicPurseId(tm, electronicPurseId);
-        return result.stream().map(mapper::map).toList();
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMapMany(electronicPurse -> {
+                    return electronicPurseOperationRepository.findByTmAndElectronicPurseId(tm, electronicPurseId)
+                        .map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ElectronicPurseOperationDTO findOne(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<ElectronicPurseOperationDTO> findOne(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
-
-        // Check that the electronic purse operation exists
-        ElectronicPurseOperationEntity result = electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id);
-        }
-
-        return mapper.map(result);
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMap(electronicPurse -> {
+                    return electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -192,30 +190,27 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseOperationDTO create(@NotNull @Identifier String electronicPurseId, @NotNull @Valid ElectronicPurseOperationCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<ElectronicPurseOperationDTO> create(@NotNull @Identifier String electronicPurseId, @NotNull @Valid ElectronicPurseOperationCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMap(electronicPurse -> {
+                    // Check that operation currency is matching electronic purse currency.
+                    if (!Objects.equal(electronicPurse.getAmount().getCurrency(), creationDTO.getAmount().getCurrency())) {
+                        throw new ElectronicPurseOperationCannotBeExecutedCurrencyMismatch(electronicPurse.getId(), electronicPurse.getAmount().getCurrency(), creationDTO.getAmount().getCurrency());
+                    }
 
-        // Check that operation currency is matching electronic purse currency.
-        if (!Objects.equal(electronicPurse.getAmount().getCurrency(), creationDTO.getAmount().getCurrency())) {
-            throw new ElectronicPurseOperationCannotBeExecutedCurrencyMismatch(electronicPurse.getId(), electronicPurse.getAmount().getCurrency(), creationDTO.getAmount().getCurrency());
-        }
-
-        // Update the entity
-        ElectronicPurseOperationEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setElectronicPurse(electronicPurse);
-        entityToCreate.setExecutionDateTime(DateUtility.dateTimeNow());
-        this.onPersist(entityToCreate);
-
-        // Get result back.
-        ElectronicPurseOperationEntity result = electronicPurseOperationRepository.save(entityToCreate);
-
-        return mapper.map(result);
+                    // Update the entity
+                    ElectronicPurseOperationEntity entityToCreate = mapper.map(creationDTO);
+                    entityToCreate.setElectronicPurse(electronicPurse);
+                    entityToCreate.setExecutionDateTime(DateUtility.dateTimeNow());
+                    return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                        return electronicPurseOperationRepository.save(entityToCreateWithFields).map(mapper::map);
+                    });
+                });
+        });
     }
 
     /**
@@ -223,27 +218,26 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseOperationDTO update(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<ElectronicPurseOperationDTO> update(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
-
-        // Check that the electronic purse operation exists
-        ElectronicPurseOperationEntity existing = electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        ElectronicPurseOperationEntity result = electronicPurseOperationRepository.save(existing);
-        return mapper.map(result);
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMap(electronicPurse -> {
+                    return electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id)))
+                        .flatMap(existing -> {
+                            // Update the entity
+                            mapper.map(updateDTO, existing);
+                        
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return electronicPurseOperationRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -251,27 +245,26 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseOperationDTO patch(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<ElectronicPurseOperationDTO> patch(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
-
-        // Check that the electronic purse operation exists
-        ElectronicPurseOperationEntity existing = electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        ElectronicPurseOperationEntity result = electronicPurseOperationRepository.save(existing);
-        return mapper.map(result);
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMap(electronicPurse -> {
+                    return electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id)))
+                        .flatMap(existing -> {
+                            // Update the entity
+                            mapper.map(patchDTO, existing);
+                        
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return electronicPurseOperationRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -279,45 +272,43 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void cancel(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> cancel(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMap(electronicPurse -> {
+                    return electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id)))
+                        .flatMap(originalOperation -> {
+                            ElectronicPurseOperationType cancellingOperationType;
+                            switch (originalOperation.getKind()) {
+                                case CREDIT:
+                                    cancellingOperationType = ElectronicPurseOperationType.DEBIT_CREDIT_OPERATION_CANCELLED;
+                                    break;
+                                case DEBIT:
+                                    cancellingOperationType = ElectronicPurseOperationType.CREDIT_DEBIT_OPERATION_CANCELLED;
+                                    break;
+                                default:
+                                    return Mono.error(new UnsupportedOperationException());
+                            }
 
-        // Check that the electronic purse operation exists
-        ElectronicPurseOperationEntity originalOperation = electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id);
-        if (originalOperation == null) {
-            throw new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id);
-        }
+                            // Create cancel operation.
+                            ElectronicPurseOperationCreationDTO cancelOperation = new ElectronicPurseOperationCreationDTO();
+                            cancelOperation.setAmount(moneyAmountMapper.map(originalOperation.getAmount()));
+                            cancelOperation.setLocalizedMessage(new HashMap<>());
+                            cancelOperation.setSendNotification(true);
+                            cancelOperation.setType(cancellingOperationType);
 
-        // Check if the operation to cancel has not already been cancelled in another context
-        ElectronicPurseOperationType cancellingOperationType;
-        switch (originalOperation.getKind()) {
-            case CREDIT:
-                cancellingOperationType = ElectronicPurseOperationType.DEBIT_CREDIT_OPERATION_CANCELLED;
-                break;
-            case DEBIT:
-                cancellingOperationType = ElectronicPurseOperationType.CREDIT_DEBIT_OPERATION_CANCELLED;
-                break;
-            default:
-                throw new UnsupportedOperationException();
-        }
-        ElectronicPurseOperationEntity existingCancellingOperation = electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndTypeAndOriginalOperation(tm, electronicPurseId, cancellingOperationType, originalOperation);
-        if (existingCancellingOperation != null) {
-            throw new ResourceAlreadyExistsException(ElectronicPurseOperationEntity.class, Map.of("electronicPurseId", electronicPurseId, "type", cancellingOperationType.toString(), "originalOperation", originalOperation.getId()));
-        }
-
-        // Create cancel operation.
-        ElectronicPurseOperationCreationDTO cancelOperation = new ElectronicPurseOperationCreationDTO();
-        cancelOperation.setAmount(moneyAmountMapper.map(originalOperation.getAmount()));
-        cancelOperation.setLocalizedMessage(new HashMap<>());
-        cancelOperation.setSendNotification(true);
-        cancelOperation.setType(cancellingOperationType);
-        create(electronicPurseId, cancelOperation);
+                            // If an operation already exists, fail. Otherwise create the cancel operation.
+                            return electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndTypeAndOriginalOperation(tm, electronicPurseId, cancellingOperationType, originalOperation)
+                                .flatMap(existingCancellingOperation -> Mono.error(new ResourceAlreadyExistsException(ElectronicPurseOperationEntity.class, Map.of("electronicPurseId", electronicPurseId, "type", cancellingOperationType.toString(), "originalOperation", originalOperation.getId()))))
+                                .or(create(electronicPurseId, cancelOperation))
+                                .then();
+                        });
+                });
+        });
     }
 
     /**
@@ -325,24 +316,20 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String electronicPurseId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String electronicPurseId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
-
-        // Check that the electronic purse operation exists
-        List<ElectronicPurseOperationEntity> existings = electronicPurseOperationRepository.findByTmAndElectronicPurseId(tm, electronicPurseId);
-        for (ElectronicPurseOperationEntity existing : existings) {
-            // Delete entity.
-            electronicPurseOperationRepository.delete(existing);
-
-            // Handle deletion.
-            this.onDelete(existing);
-        }
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMap(electronicPurse -> {
+                    return electronicPurseOperationRepository.findByTmAndElectronicPurseId(tm, electronicPurseId)
+                        .flatMap(existing -> {
+                            // Delete entity.
+                            return electronicPurseOperationRepository.delete(existing).then(this.onDelete(existing));
+                        }).then();
+                });
+        });
     }
 
     /**
@@ -350,26 +337,23 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the electronic purse exists
-        ElectronicPurseEntity electronicPurse = electronicPurseRepository.findByTmAndId(tm, electronicPurseId);
-        if (electronicPurse == null) {
-            throw new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId);
-        }
-
-        // Check that the electronic purse operation exists
-        ElectronicPurseOperationEntity existing = electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id);
-        }
-
-        // Delete entity.
-        electronicPurseOperationRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return electronicPurseRepository.findByTmAndId(tm, electronicPurseId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseEntity.class, electronicPurseId)))
+                .flatMap(electronicPurse -> {
+                    return electronicPurseOperationRepository.findByTmAndElectronicPurseIdAndId(tm, electronicPurseId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ElectronicPurseOperationEntity.class, id)))
+                        .flatMap(existing -> {
+                            // Delete entity.
+                            return electronicPurseOperationRepository.delete(existing)
+                                .then(this.onDelete(existing))
+                                .then();
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -380,34 +364,35 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      * Method called when persisting an electronic purse operation.
      * @param entity the entity.
      */
-    private void onPersist(ElectronicPurseOperationEntity entity) {
-        entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
-        entity.setCreatedAt(DateUtility.dateTimeNow());
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+    private Mono<ElectronicPurseOperationEntity> onPersist(String tm, ElectronicPurseOperationEntity entity) {
+        return securityService.getConnectedUserRefIdentity().flatMap(connnectedUser -> {
+            entity.setId(IdentifierUtility.generateId());
+            entity.setTm(tm);
+            entity.setCreatedAt(DateUtility.dateTimeNow());
+            entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        // Add author.
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(userRefMmapper.map(connnectedUser));
+            // Add author.
+            entity.setUser(userRefMmapper.map(connnectedUser));
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+            return postResourceEvent(entity, ResourceEventType.CREATED);
+        });
     }
 
     /**
      * Method called when updating a electronic purse operation.
      * @param entity the entity.
      */
-    private void onUpdate(ElectronicPurseOperationEntity entity) {
+    private Mono<ElectronicPurseOperationEntity> onUpdate(ElectronicPurseOperationEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a electronic purse operation.
      * @param entity the entity.
      */
-    private void onDelete(ElectronicPurseOperationEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<ElectronicPurseOperationEntity> onDelete(ElectronicPurseOperationEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -415,15 +400,17 @@ public class ElectronicPurseOperationServiceImpl implements ElectronicPurseOpera
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(ElectronicPurseOperationEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.ELECTRONIC_PURSE_OPERATION)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<ElectronicPurseOperationEntity> postResourceEvent(ElectronicPurseOperationEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.ELECTRONIC_PURSE_OPERATION)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

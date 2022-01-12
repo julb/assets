@@ -24,13 +24,10 @@
 
 package me.julb.applications.ewallet.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage money vouchers.
@@ -86,7 +87,7 @@ public class MoneyVoucherController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('money-voucher', 'read')")
-    public Page<MoneyVoucherDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<MoneyVoucherDTO> findAll(Searchable searchable, Pageable pageable) {
         return moneyVoucherService.findAll(searchable, pageable);
     }
 
@@ -98,7 +99,7 @@ public class MoneyVoucherController {
     @Operation(summary = "gets a money voucher")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'money-voucher', 'read')")
-    public MoneyVoucherDTO get(@PathVariable @Identifier String id) {
+    public Mono<MoneyVoucherDTO> get(@PathVariable @Identifier String id) {
         return moneyVoucherService.findOne(id);
     }
 
@@ -113,8 +114,8 @@ public class MoneyVoucherController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('money-voucher', 'create')")
-    public MoneyVoucherDTO create(@RequestBody @NotNull @Valid MoneyVoucherCreationDTO creationDTO) {
-        return moneyVoucherService.create(creationDTO);
+    public Mono<MoneyVoucherDTO> create(@RequestBody @NotNull @Valid MoneyVoucherCreationDTO creationDTO) {
+        return moneyVoucherService.create(creationDTO).cast(MoneyVoucherDTO.class);
     }
 
     /**
@@ -126,7 +127,7 @@ public class MoneyVoucherController {
     @Operation(summary = "updates a money voucher")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'money-voucher', 'update')")
-    public MoneyVoucherDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid MoneyVoucherUpdateDTO updateDTO) {
+    public Mono<MoneyVoucherDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid MoneyVoucherUpdateDTO updateDTO) {
         return moneyVoucherService.update(id, updateDTO);
     }
 
@@ -139,7 +140,7 @@ public class MoneyVoucherController {
     @Operation(summary = "patches a money voucher")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'money-voucher', 'update')")
-    public MoneyVoucherDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid MoneyVoucherPatchDTO patchDTO) {
+    public Mono<MoneyVoucherDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid MoneyVoucherPatchDTO patchDTO) {
         return moneyVoucherService.patch(id, patchDTO);
     }
 
@@ -151,8 +152,8 @@ public class MoneyVoucherController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'money-voucher', 'delete')")
-    public void delete(@PathVariable String id) {
-        moneyVoucherService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return moneyVoucherService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

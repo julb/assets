@@ -26,17 +26,14 @@ package me.julb.applications.platformhealth.services.impl;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import me.julb.applications.platformhealth.entities.PlannedMaintenanceEntity;
 import me.julb.applications.platformhealth.repositories.PlannedMaintenanceRepository;
 import me.julb.applications.platformhealth.services.ICSFeedService;
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceStatus;
@@ -45,9 +42,12 @@ import me.julb.library.dto.icsfeed.ICSFeedEventDTO;
 import me.julb.library.dto.simple.interval.date.DateTimeIntervalDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.context.messages.ContextMessageSourceService;
-import me.julb.springbootstarter.core.context.rendering.ContextContentRenderService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.core.localization.CustomLocaleContext;
+import me.julb.springbootstarter.core.messages.MessageSourceService;
+import me.julb.springbootstarter.core.rendering.ContentRenderService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The ICS feed service.
@@ -63,13 +63,13 @@ public class ICSFeedServiceImpl implements ICSFeedService {
      * The message resource.
      */
     @Autowired
-    private ContextMessageSourceService messageSourceService;
+    private MessageSourceService messageSourceService;
 
     /**
      * The content render service.
      */
     @Autowired
-    private ContextContentRenderService contentRenderService;
+    private ContentRenderService contentRenderService;
 
     /**
      * The planned maintenance repository.
@@ -81,29 +81,34 @@ public class ICSFeedServiceImpl implements ICSFeedService {
      * {@inheritDoc}
      */
     @Override
-    public ICSFeedDTO buildPlannedMaintenancesFeed() {
-        // Get current context.
-        String tm = TrademarkContextHolder.getTrademark();
-        Locale locale = LocaleContextHolder.getLocale();
+    public Mono<ICSFeedDTO> buildPlannedMaintenancesFeed() {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
+            Locale locale = localeContext.getLocale();
 
-        // Build RSS feed.
-        ICSFeedDTO icsFeed = new ICSFeedDTO();
-        icsFeed.setTitle(messageSourceService.getMessage("platform-health.ics.feed.planned-maintenances.title", new Object[] {tm}, locale));
+            // Add items.
+            String dateTimeThreshold = DateUtility.dateTimeMinus(Integers.ONE, ChronoUnit.YEARS);
 
-        // Add items.
-        String dateTimeThreshold = DateUtility.dateTimeMinus(Integers.ONE, ChronoUnit.YEARS);
-
-        // Get planned maintenances not DRAFT created in the last 30 days.
-        List<PlannedMaintenanceEntity> plannedMaintenances = plannedMaintenanceRepository.findByTmAndLastUpdatedAtGreaterThanEqualAndStatusNotInOrderByLastUpdatedAtDesc(tm, dateTimeThreshold, Arrays.asList(PlannedMaintenanceStatus.DRAFT));
-        for (PlannedMaintenanceEntity plannedMaintenance : plannedMaintenances) {
-            ICSFeedEventDTO event = new ICSFeedEventDTO();
-            event.setId(plannedMaintenance.getId());
-            event.setTitle(contentRenderService.renderToText(plannedMaintenance.getLocalizedTitle()));
-            event.setDescription(contentRenderService.renderToText(plannedMaintenance.getLocalizedMessage()));
-            event.setDateTimeInterval(new DateTimeIntervalDTO(plannedMaintenance.getSlotDateTime().getFrom(), plannedMaintenance.getSlotDateTime().getTo()));
-            icsFeed.getEvents().add(event);
-        }
-
-        return icsFeed;
+            // Get planned maintenances not DRAFT created in the last 30 days.
+            return plannedMaintenanceRepository.findByTmAndLastUpdatedAtGreaterThanEqualAndStatusNotInOrderByLastUpdatedAtDesc(tm, dateTimeThreshold, Arrays.asList(PlannedMaintenanceStatus.DRAFT))
+                .map(plannedMaintenance -> {
+                    ICSFeedEventDTO event = new ICSFeedEventDTO();
+                    event.setId(plannedMaintenance.getId());
+                    event.setTitle(contentRenderService.renderToText(tm, localeContext, plannedMaintenance.getLocalizedTitle()));
+                    event.setDescription(contentRenderService.renderToText(tm, localeContext, plannedMaintenance.getLocalizedMessage()));
+                    event.setDateTimeInterval(new DateTimeIntervalDTO(plannedMaintenance.getSlotDateTime().getFrom(), plannedMaintenance.getSlotDateTime().getTo()));
+                    return event;
+                })
+                .reduceWith(() -> {
+                    // Build RSS feed.
+                    ICSFeedDTO icsFeed = new ICSFeedDTO();
+                    icsFeed.setTitle(messageSourceService.getMessage(tm, "platform-health.ics.feed.planned-maintenances.title", new Object[] {tm}, locale));
+                    return icsFeed;
+                }, (initial, itemToAdd) -> {
+                    initial.getEvents().add(itemToAdd);
+                    return initial;
+                });
+        });
     }
 }

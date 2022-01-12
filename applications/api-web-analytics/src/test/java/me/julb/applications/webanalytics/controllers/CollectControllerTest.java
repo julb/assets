@@ -24,19 +24,17 @@
 
 package me.julb.applications.webanalytics.controllers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.messaging.Message;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
+import me.julb.library.utility.constants.CustomHttpHeaders;
 import me.julb.springbootstarter.test.messaging.base.AbstractMessagingBaseTest;
 import me.julb.springbootstarter.test.security.annotations.WithMockUser;
+
 import net.javacrumbs.jsonunit.JsonAssert;
 
 /**
@@ -44,14 +42,14 @@ import net.javacrumbs.jsonunit.JsonAssert;
  * <br>
  * @author Julb.
  */
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 public class CollectControllerTest extends AbstractMessagingBaseTest {
 
     /**
-     * The mock MVC.
+     * The web test client.
      */
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     /**
      * Unit test method.
@@ -61,28 +59,33 @@ public class CollectControllerTest extends AbstractMessagingBaseTest {
     public void whenCollect_thenReturn204()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(
-                get("/collect")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .queryParam("an", "test")
-                    .queryParam("av", "1.0.0")
-                    .queryParam("t", "pageview")
-                    .queryParam("ds", "app")
-                    .queryParam("uid", "abcdefgh")
-                    .queryParam("l", "ERROR")
+        webTestClient
+            .get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/collect")
+                .queryParam("an", "test")
+                .queryParam("av", "1.0.0")
+                .queryParam("t", "pageview")
+                .queryParam("ds", "app")
+                .queryParam("uid", "abcdefgh")
+                .queryParam("l", "ERROR")
+                .build()
             )
-            .andExpect(status().isNoContent())
-            .andDo((handler) -> {
-                Message<byte[]> message = output.receive();
-                String payload = new String(message.getPayload());
-                JsonAssert.assertJsonPartEquals("test", payload, "body.applicationName");
-                JsonAssert.assertJsonPartEquals("1.0.0", payload, "body.applicationVersion");
-                JsonAssert.assertJsonPartEquals("pageview", payload, "body.hitType");
-                JsonAssert.assertJsonPartEquals("app", payload, "body.dataSource");
-                JsonAssert.assertJsonPartEquals("abcdefgh", payload, "body.visitorId");
-                JsonAssert.assertJsonPartEquals("ERROR", payload, "level");
-            });
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isNoContent()
+            .expectBody()
+                .consumeWith(response -> {
+                    Message<byte[]> message = output.receive();
+                    String payload = new String(message.getPayload());
+                    JsonAssert.assertJsonPartEquals("test", payload, "body.applicationName");
+                    JsonAssert.assertJsonPartEquals("1.0.0", payload, "body.applicationVersion");
+                    JsonAssert.assertJsonPartEquals("pageview", payload, "body.hitType");
+                    JsonAssert.assertJsonPartEquals("app", payload, "body.dataSource");
+                    JsonAssert.assertJsonPartEquals("abcdefgh", payload, "body.visitorId");
+                    JsonAssert.assertJsonPartEquals("ERROR", payload, "level");
+                });
         //@formatter:on
     }
 
@@ -94,12 +97,20 @@ public class CollectControllerTest extends AbstractMessagingBaseTest {
     public void whenCollectWithMissingParams_thenReturn400()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/collect").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isBadRequest())
-            .andDo((handler) -> {
-                Assertions.assertNull(output.receive());
-            });
+        webTestClient
+            .get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/collect")
+                .build()
+            )
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isBadRequest()
+            .expectBody()
+                .consumeWith(response -> {
+                    Assertions.assertNull(output.receive());
+                });
         //@formatter:on
     }
 
@@ -110,21 +121,26 @@ public class CollectControllerTest extends AbstractMessagingBaseTest {
     public void whenCollectNotAuthenticated_thenReturn401()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(
-                get("/collect")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .queryParam("an", "test")
-                    .queryParam("av", "1.0.0")
-                    .queryParam("t", "pageview")
-                    .queryParam("ds", "app")
-                    .queryParam("uid", "abcdefgh")
-                    .queryParam("l", "ERROR")
+        webTestClient
+            .get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/collect")
+                .queryParam("an", "test")
+                .queryParam("av", "1.0.0")
+                .queryParam("t", "pageview")
+                .queryParam("ds", "app")
+                .queryParam("uid", "abcdefgh")
+                .queryParam("l", "ERROR")
+                .build()
             )
-            .andExpect(status().isUnauthorized())
-            .andDo((handler) -> {
-                Assertions.assertNull(output.receive());
-            });
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isUnauthorized()
+            .expectBody()
+                .consumeWith(response -> {
+                    Assertions.assertNull(output.receive());
+                });
         //@formatter:on
     }
 }

@@ -24,22 +24,14 @@
 
 package me.julb.applications.configurations.controllers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.Map;
-
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import me.julb.applications.configuration.controllers.PropertiesController;
+import me.julb.library.utility.constants.CustomHttpHeaders;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 import me.julb.springbootstarter.test.security.annotations.WithMockUser;
 
@@ -48,14 +40,14 @@ import me.julb.springbootstarter.test.security.annotations.WithMockUser;
  * <br>
  * @author Julb.
  */
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 public class PropertiesControllerTest extends AbstractBaseTest {
 
     /**
-     * The mock MVC.
+     * The web test client.
      */
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     /**
      * Unit test method.
@@ -66,19 +58,19 @@ public class PropertiesControllerTest extends AbstractBaseTest {
         throws Exception {
 
         //@formatter:off
-        mockMvc
-            .perform(
-                get("/properties").contentType(MediaType.APPLICATION_JSON_VALUE)
-            )
-            .andExpect(status().isOk())
-            .andDo((result) -> {
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, String> map = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<Map<String, String>>() {});
-                Assertions.assertEquals(3, map.size());
-                Assertions.assertEquals("Testio-Value-a", map.get("a.property"));
-                Assertions.assertEquals("Testio-Value-b", map.get("b.property"));
-                Assertions.assertEquals("$$REDACTED$$", map.get("c.property"));
-            });
+        webTestClient
+            .get()
+            .uri(uriBuilder -> uriBuilder.path("/properties").build())
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.['a.property']").isEqualTo("Testio-Value-a")
+                .jsonPath("$.['b.property']").isEqualTo("Testio-Value-b")
+                .jsonPath("$.['c.property']").isEqualTo("$$REDACTED$$")
+                .jsonPath("$.length()").isEqualTo(3);
         //@formatter:on
     }
 
@@ -91,17 +83,17 @@ public class PropertiesControllerTest extends AbstractBaseTest {
         throws Exception {
 
         //@formatter:off
-        mockMvc
-            .perform(
-                get("/properties?prefix=a").contentType(MediaType.APPLICATION_JSON_VALUE)
-            )
-            .andExpect(status().isOk())
-            .andDo((result) -> {
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, String> map = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<Map<String, String>>() {});
-                Assertions.assertEquals(1, map.size());
-                Assertions.assertEquals("Testio-Value-a", map.get("a.property"));
-            });
+        webTestClient
+            .get()
+            .uri(uriBuilder -> uriBuilder.path("/properties").queryParam("prefix", "a").build())
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.['a.property']").isEqualTo("Testio-Value-a")
+                .jsonPath("$.length()").isEqualTo(1);
         //@formatter:on
     }
 
@@ -114,16 +106,16 @@ public class PropertiesControllerTest extends AbstractBaseTest {
         throws Exception {
 
         //@formatter:off
-        mockMvc
-            .perform(
-                get("/properties?prefix=zzz").contentType(MediaType.APPLICATION_JSON_VALUE)
-            )
-            .andExpect(status().isOk())
-            .andDo((result) -> {
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, String> map = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<Map<String, String>>() {});
-                Assertions.assertEquals(0, map.size());
-            });
+        webTestClient
+            .get()
+            .uri(uriBuilder -> uriBuilder.path("/properties").queryParam("prefix", "zzz").build())
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$").isEmpty();
         //@formatter:on
     }
 }

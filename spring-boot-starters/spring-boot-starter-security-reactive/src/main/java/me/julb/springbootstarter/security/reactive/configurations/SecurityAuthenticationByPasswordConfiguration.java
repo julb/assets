@@ -63,7 +63,6 @@ public class SecurityAuthenticationByPasswordConfiguration {
 
     /**
      * Builds a filter to authenticate by user and password.
-     * @param reactiveAuthenticationManager the authentication manager.
      * @return the filter.
      * @throws Exception if an error occurs.
      */

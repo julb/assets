@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage components of a category.
@@ -87,7 +88,7 @@ public class ComponentController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('component', 'read')")
-    public Page<ComponentDTO> findAll(@PathVariable @Identifier String componentCategoryId, Searchable searchable, Pageable pageable) {
+    public Flux<ComponentDTO> findAll(@PathVariable @Identifier String componentCategoryId, Searchable searchable, Pageable pageable) {
         return componentService.findAll(componentCategoryId, searchable, pageable);
     }
 
@@ -100,7 +101,7 @@ public class ComponentController {
     @Operation(summary = "gets a component of a component category")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission('component', 'read')")
-    public ComponentDTO get(@PathVariable @Identifier String componentCategoryId, @PathVariable @Identifier String id) {
+    public Mono<ComponentDTO> get(@PathVariable @Identifier String componentCategoryId, @PathVariable @Identifier String id) {
         return componentService.findOne(componentCategoryId, id);
     }
 
@@ -116,7 +117,7 @@ public class ComponentController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#id, 'component', 'create')")
-    public ComponentDTO create(@PathVariable @Identifier String componentCategoryId, @RequestBody @NotNull @Valid ComponentCreationDTO creationDTO) {
+    public Mono<ComponentDTO> create(@PathVariable @Identifier String componentCategoryId, @RequestBody @NotNull @Valid ComponentCreationDTO creationDTO) {
         return componentService.create(componentCategoryId, creationDTO);
     }
 
@@ -130,7 +131,7 @@ public class ComponentController {
     @Operation(summary = "updates a component")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'component', 'update')")
-    public ComponentDTO update(@PathVariable @Identifier String componentCategoryId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ComponentUpdateDTO updateDTO) {
+    public Mono<ComponentDTO> update(@PathVariable @Identifier String componentCategoryId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ComponentUpdateDTO updateDTO) {
         return componentService.update(componentCategoryId, id, updateDTO);
     }
 
@@ -144,7 +145,7 @@ public class ComponentController {
     @Operation(summary = "patches a component")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'component', 'update')")
-    public ComponentDTO patch(@PathVariable @Identifier String componentCategoryId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ComponentPatchDTO patchDTO) {
+    public Mono<ComponentDTO> patch(@PathVariable @Identifier String componentCategoryId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ComponentPatchDTO patchDTO) {
         return componentService.patch(componentCategoryId, id, patchDTO);
     }
 
@@ -157,8 +158,8 @@ public class ComponentController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'component', 'delete')")
-    public void delete(@PathVariable @Identifier String componentCategoryId, @PathVariable String id) {
-        componentService.delete(componentCategoryId, id);
+    public Mono<Void> delete(@PathVariable @Identifier String componentCategoryId, @PathVariable String id) {
+        return componentService.delete(componentCategoryId, id);
     }
     // ------------------------------------------ Utility methods.
 

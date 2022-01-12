@@ -78,14 +78,16 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
-import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.NotificationDispatchAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
 import me.julb.springbootstarter.security.services.PasswordEncoderService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication by pincode service implementation.
@@ -161,7 +163,7 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     /**
      * The password encoder.
@@ -175,55 +177,49 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPincodeDTO findOne(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPincodeDTO> findOne(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
-        }
-
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationCredentialsDTO findOneCredentials(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationCredentialsDTO> findOneCredentials(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId)))
+                        .map(result -> {
+                            // Get credentials
+                            UserAuthenticationCredentialsDTO credentials = new UserAuthenticationCredentialsDTO();
+                            credentials.setUniqueCredentials(result.getSecuredPincode());
+                            if (StringUtils.isNotBlank(result.getPincodeExpiryDateTime())) {
+                                credentials.setCredentialsNonExpired(DateUtility.dateTimeNow().compareTo(result.getPincodeExpiryDateTime()) <= 0);
+                            } else {
+                                credentials.setCredentialsNonExpired(true);
+                            }
+                            credentials.setUserAuthentication(mapper.map(result));
+                            credentials.setUser(userMapper.map(result.getUser()));
 
-        // Check that the item exists
-        UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
-        }
-
-        // Get credentials
-        UserAuthenticationCredentialsDTO credentials = new UserAuthenticationCredentialsDTO();
-        credentials.setUniqueCredentials(result.getSecuredPincode());
-        if (StringUtils.isNotBlank(result.getPincodeExpiryDateTime())) {
-            credentials.setCredentialsNonExpired(DateUtility.dateTimeNow().compareTo(result.getPincodeExpiryDateTime()) <= 0);
-        } else {
-            credentials.setCredentialsNonExpired(true);
-        }
-        credentials.setUserAuthentication(mapper.map(result));
-        credentials.setUser(userMapper.map(result.getUser()));
-
-        return credentials;
+                            return credentials;
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -233,27 +229,27 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPincodeDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPincodeDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .flatMap(alreadyExists -> {
+                            if (alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(UserAuthenticationByPincodeEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.PINCODE.toString())));
+                            }
 
-        // Check that the item exists
-        if (userAuthenticationByPincodeRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)) {
-            throw new ResourceAlreadyExistsException(UserAuthenticationByPincodeEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.PINCODE.toString()));
-        }
-
-        UserAuthenticationByPincodeEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setUser(user);
-        entityToCreate.setMfaEnabled(Boolean.FALSE);
-        this.onPersist(entityToCreate);
-
-        // Update pincode.
-        return updatePincode(entityToCreate, creationDTO.getPincode());
+                            UserAuthenticationByPincodeEntity entityToCreate = mapper.map(creationDTO);
+                            entityToCreate.setUser(user);
+                            entityToCreate.setMfaEnabled(Boolean.FALSE);
+                            return this.onPersist(tm, entityToCreate)
+                                .flatMap(entityToCreateWithFields -> updatePincode(entityToCreateWithFields, creationDTO.getPincode()));
+                        });
+                });
+        });
     }
 
     /**
@@ -261,34 +257,42 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPincodeDTO update(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPincodeDTO> update(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByPincodeEntity existing = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
-        }
-
-        // Ensure device are registered for user for MFA
-        if (updateDTO.getMfaEnabled() && !existing.getMfaEnabled()) {
-            if (!userAuthenticationByTotpRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP)) {
-                throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, Map.of("userId", userId));
-            }
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId)))
+                        .flatMap(existing -> {
+                            if (updateDTO.getMfaEnabled().booleanValue() && !existing.getMfaEnabled().booleanValue()) {
+                                return userAuthenticationByTotpRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP)
+                                    .flatMap(deviceExists -> {
+                                        if (!deviceExists.booleanValue()) {
+                                            return Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, Map.of("userId", userId)));
+                                        }
+                                        // Update the entity
+                                        mapper.map(updateDTO, existing);
+                            
+                                        // Proceed to the update
+                                        return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                            return userAuthenticationByPincodeRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                        });
+                                    });
+                            } else {
+                                // Update the entity
+                                mapper.map(updateDTO, existing);
+                    
+                                // Proceed to the update
+                                return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return userAuthenticationByPincodeRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                });
+                            }
+                        });
+                });
+        });
     }
 
     /**
@@ -296,198 +300,202 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPincodeDTO patch(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPincodeDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByPincodeEntity existing = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
-        }
-
-        // Ensure device are registered for user for MFA
-        if (patchDTO.getMfaEnabled() != null && patchDTO.getMfaEnabled() && !existing.getMfaEnabled()) {
-            if (!userAuthenticationByTotpRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP)) {
-                throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, Map.of("userId", userId));
-            }
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId)))
+                        .flatMap(existing -> {
+                            if (patchDTO.getMfaEnabled() != null && patchDTO.getMfaEnabled().booleanValue() && !existing.getMfaEnabled().booleanValue()) {
+                                return userAuthenticationByTotpRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP)
+                                    .flatMap(deviceExists -> {
+                                        if (!deviceExists.booleanValue()) {
+                                            return Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, Map.of("userId", userId)));
+                                        }
+                                        // Update the entity
+                                        mapper.map(patchDTO, existing);
+                            
+                                        // Proceed to the update
+                                        return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                            return userAuthenticationByPincodeRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                        });
+                                    });
+                            } else {
+                                // Update the entity
+                                mapper.map(patchDTO, existing);
+                    
+                                // Proceed to the update
+                                return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return userAuthenticationByPincodeRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                });
+                            }
+                        });
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPincodeDTO triggerPincodeReset(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeTriggerPincodeResetDTO triggerPincodeResetDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPincodeDTO> triggerPincodeReset(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeTriggerPincodeResetDTO triggerPincodeResetDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId)))
+                        .flatMap(existing -> {
+                            return userPreferencesRepository.findByTmAndUser_Id(tm, userId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId)))
+                                .flatMap(preferences -> {
+                                    // Assert the recovery channel is supported.
+                                    RecoveryChannelType[] supportedRecoveryChannelTypes = configSourceService.getTypedProperty(tm, "authorization-server.account-recovery.channel-types", RecoveryChannelType[].class);
+                                    if (!ArrayUtils.contains(supportedRecoveryChannelTypes, triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
+                                        return Mono.error(new BadRequestException());
+                                    }
 
-        // Check that the item exists
-        UserAuthenticationByPincodeEntity existing = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
-        }
+                                    // Generate a pincode reset token
+                                    if (RecoveryChannelType.MAIL.equals(triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
+                                        // Find the mail.
+                                        return userMailRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPincodeResetDTO.getRecoveryChannelDevice().getId())
+                                            .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, triggerPincodeResetDTO.getRecoveryChannelDevice().getId())))
+                                            .flatMap(userMailEntity -> {
+                                                // Generate token for mail purpose.
+                                                String pincodeResetToken = RandomUtility.generateRandomTokenForMailPurpose();
 
-        // Check that the item exists
-        UserPreferencesEntity preferences = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
-        if (preferences == null) {
-            throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
-        }
+                                                // Update entity.
+                                                existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
 
-        // Assert the recovery channel is supported.
-        RecoveryChannelType[] supportedRecoveryChannelTypes = configSourceService.getTypedProperty("authorization-server.account-recovery.channel-types", RecoveryChannelType[].class);
-        if (!ArrayUtils.contains(supportedRecoveryChannelTypes, triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
-            throw new BadRequestException();
-        }
+                                                // Compute expiry.
+                                                Integer expiryValue = configSourceService.getTypedProperty(tm, "authorization-server.mail.pincode-reset.expiry.value", Integer.class);
+                                                ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty(tm, "authorization-server.mail.pincode-reset.expiry.chrono-unit", ChronoUnit.class);
+                                                existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
+                                                
+                                                // Proceed to the update
+                                                //@formatter:off
+                                                return asyncMessagePosterService.postNotificationMessage(
+                                                    new NotificationDispatchAsyncMessageBuilder()
+                                                        .kind(NotificationKind.TRIGGER_PINCODE_RESET_WITH_MAIL)
+                                                        .parameter("userMail", userMailEntity.getMail())
+                                                        .parameter("resetToken", pincodeResetToken)
+                                                        .parameter("expiryDateTime", existing.getPincodeResetTokenExpiryDateTime())
+                                                        .sms()
+                                                            .to(userMailEntity.getMail(), preferences.getLanguage())
+                                                        .and()
+                                                    .build()
+                                                ).flatMap(message -> {
+                                                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                                        return userAuthenticationByPincodeRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                                    });
+                                                });
+                                                //@formatter:on
+                                            });
+                                    } else if (RecoveryChannelType.MOBILE_PHONE.equals(triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
+                                        // Find the mail.
+                                        return userMobilePhoneRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPincodeResetDTO.getRecoveryChannelDevice().getId())
+                                            .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMobilePhoneEntity.class, triggerPincodeResetDTO.getRecoveryChannelDevice().getId())))
+                                            .flatMap(userMobilePhoneEntity -> {
+                                                // Generate token for mobilePhone purpose.
+                                                String pincodeResetToken = RandomUtility.generateRandomTokenForMobilePhonePurpose();
 
-        // Generate a pincode reset token
-        if (RecoveryChannelType.MAIL.equals(triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
-            // Find the mail.
-            UserMailEntity userMailEntity = userMailRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
-            if (userMailEntity == null) {
-                throw new ResourceNotFoundException(UserMailEntity.class, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
-            }
+                                                // Update entity.
+                                                existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
 
-            // Generate token for mail purpose.
-            String pincodeResetToken = RandomUtility.generateRandomTokenForMailPurpose();
-
-            // Update entity.
-            existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
-
-            // Manage expiry
-            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mail.pincode-reset.expiry.value", Integer.class);
-            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mail.pincode-reset.expiry.chrono-unit", ChronoUnit.class);
-            existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
-
-            this.onUpdate(existing);
-
-            //@formatter:off
-            asyncMessagePosterService.postNotificationMessage(
-                new NotificationDispatchAsyncMessageBuilder()
-                    .kind(NotificationKind.TRIGGER_PINCODE_RESET_WITH_MAIL)
-                    .parameter("userMail", userMailEntity.getMail())
-                    .parameter("resetToken", pincodeResetToken)
-                    .parameter("expiryDateTime", existing.getPincodeResetTokenExpiryDateTime())
-                    .sms()
-                        .to(userMailEntity.getMail(), preferences.getLanguage())
-                    .and()
-                .build()
-            );
-            //@formatter:on
-        } else if (RecoveryChannelType.MOBILE_PHONE.equals(triggerPincodeResetDTO.getRecoveryChannelDevice().getType())) {
-            // Find the mail.
-            UserMobilePhoneEntity userMobilePhoneEntity = userMobilePhoneRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
-            if (userMobilePhoneEntity == null) {
-                throw new ResourceNotFoundException(UserMobilePhoneEntity.class, triggerPincodeResetDTO.getRecoveryChannelDevice().getId());
-            }
-
-            // Generate token for mobilePhone purpose.
-            String pincodeResetToken = RandomUtility.generateRandomTokenForMobilePhonePurpose();
-
-            // Update entity.
-            existing.setSecuredPincodeResetToken(passwordEncoderService.encode(pincodeResetToken));
-
-            // Manage expiry
-            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mobile-phone.pincode-reset.expiry.value", Integer.class);
-            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mobile-phone.pincode-reset.expiry.chrono-unit", ChronoUnit.class);
-            existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
-
-            this.onUpdate(existing);
-
-            //@formatter:off
-            asyncMessagePosterService.postNotificationMessage(
-                new NotificationDispatchAsyncMessageBuilder()
-                    .kind(NotificationKind.TRIGGER_PINCODE_RESET_WITH_MOBILE_PHONE)
-                    .parameter("userMobilePhoneE164Number", userMobilePhoneEntity.getMobilePhone().getE164Number())
-                    .parameter("resetToken", pincodeResetToken)
-                    .parameter("expiryDateTime", existing.getPincodeResetTokenExpiryDateTime())
-                    .sms()
-                        .to(userMobilePhoneEntity.getMobilePhone().getE164Number(), preferences.getLanguage())
-                    .and()
-                .build()
-            );
-            //@formatter:on
-        }
-
-        UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(existing);
-        return mapper.map(result);
+                                                // Manage expiry
+                                                Integer expiryValue = configSourceService.getTypedProperty(tm, "authorization-server.mobile-phone.pincode-reset.expiry.value", Integer.class);
+                                                ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty(tm, "authorization-server.mobile-phone.pincode-reset.expiry.chrono-unit", ChronoUnit.class);
+                                                existing.setPincodeResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
+                                                
+                                                // Proceed to the update
+                                                //@formatter:off
+                                                return asyncMessagePosterService.postNotificationMessage(
+                                                    new NotificationDispatchAsyncMessageBuilder()
+                                                        .kind(NotificationKind.TRIGGER_PINCODE_RESET_WITH_MOBILE_PHONE)
+                                                        .parameter("userMobilePhoneE164Number", userMobilePhoneEntity.getMobilePhone().getE164Number())
+                                                        .parameter("resetToken", pincodeResetToken)
+                                                        .parameter("expiryDateTime", existing.getPincodeResetTokenExpiryDateTime())
+                                                        .sms()
+                                                            .to(userMobilePhoneEntity.getMobilePhone().getE164Number(), preferences.getLanguage())
+                                                        .and()
+                                                    .build()
+                                                ).flatMap(message -> {
+                                                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                                        return userAuthenticationByPincodeRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                                    });
+                                                });
+                                                //@formatter:on
+                                            });
+                                    } else {
+                                        return Mono.error(new BadRequestException());
+                                    }
+                                });
+                        });
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPincodeDTO updatePincode(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePincodeChangeDTO changePincodeDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPincodeDTO> updatePincode(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePincodeChangeDTO changePincodeDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Check if old pincode match
+                            if (!passwordEncoderService.matches(changePincodeDTO.getOldPincode(), existing.getSecuredPincode())) {
+                                return Mono.error(new InvalidPincodeException());
+                            }
 
-        // Check that the item exists
-        UserAuthenticationByPincodeEntity existing = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
-        }
-
-        // Check if old pincode match
-        if (!passwordEncoderService.matches(changePincodeDTO.getOldPincode(), existing.getSecuredPincode())) {
-            throw new InvalidPincodeException();
-        }
-
-        // Update pincode.
-        return updatePincode(existing, changePincodeDTO.getNewPincode());
+                            // Update pincode.
+                            return updatePincode(existing, changePincodeDTO.getNewPincode());
+                        });
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPincodeDTO updatePincode(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePincodeResetDTO changePincodeDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPincodeDTO> updatePincode(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePincodeResetDTO changePincodeDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Check if token match
+                            if (StringUtils.isBlank(existing.getSecuredPincodeResetToken()) || !passwordEncoderService.matches(changePincodeDTO.getResetToken(), existing.getSecuredPincodeResetToken())) {
+                                return Mono.error(new InvalidPincodeResetTokenException());
+                            }
 
-        // Check that the item exists
-        UserAuthenticationByPincodeEntity existing = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
-        }
+                            // Check if token is not expired
+                            if (DateUtility.dateTimeNow().compareTo(existing.getPincodeResetTokenExpiryDateTime()) > 0) {
+                                return Mono.error(new PincodeResetTokenExpiredException());
+                            }
 
-        // Check if token match
-        if (StringUtils.isBlank(existing.getSecuredPincodeResetToken()) || !passwordEncoderService.matches(changePincodeDTO.getResetToken(), existing.getSecuredPincodeResetToken())) {
-            throw new InvalidPincodeResetTokenException();
-        }
-
-        // Check if token is not expired
-        if (DateUtility.dateTimeNow().compareTo(existing.getPincodeResetTokenExpiryDateTime()) > 0) {
-            throw new PincodeResetTokenExpiredException();
-        }
-
-        return updatePincode(existing, changePincodeDTO.getNewPincode());
+                            // Update pincode.
+                            return updatePincode(existing, changePincodeDTO.getNewPincode());
+                        });
+                });
+        });
     }
 
     /**
@@ -495,26 +503,23 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByPincodeEntity existing = userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId);
-        }
-
-        // Delete entity.
-        userAuthenticationByPincodeRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPincodeRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PINCODE)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPincodeEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Delete entity.
+                            return userAuthenticationByPincodeRepository.delete(existing).then(
+                                this.onDelete(existing)
+                            ).then();
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -525,7 +530,7 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      * @param newPincode the new pincode.
      * @return the DTO.
      */
-    private UserAuthenticationByPincodeDTO updatePincode(UserAuthenticationByPincodeEntity userAuthentication, String newPincode) {
+    private Mono<UserAuthenticationByPincodeDTO> updatePincode(UserAuthenticationByPincodeEntity userAuthentication, String newPincode) {
         if (StringUtils.isNotBlank(userAuthentication.getSecuredPincode())) {
             // Register last used pincode.
             if (userAuthentication.getLastUsedSecuredPincodes() == null) {
@@ -542,11 +547,11 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
         userAuthentication.setPincodeResetTokenExpiryDateTime(null);
         userAuthentication.setSecuredPincode(passwordEncoderService.encode(newPincode));
         userAuthentication.setSecuredPincodeResetToken(null);
-
-        this.onUpdate(userAuthentication);
-
-        UserAuthenticationByPincodeEntity result = userAuthenticationByPincodeRepository.save(userAuthentication);
-        return mapper.map(result);
+        
+        // Proceed to the update
+        return this.onUpdate(userAuthentication).flatMap(entityToUpdateWithFields -> {
+            return userAuthenticationByPincodeRepository.save(entityToUpdateWithFields).map(mapper::map);
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -555,30 +560,30 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      * Method called when persisting an item.
      * @param entity the entity.
      */
-    private void onPersist(UserAuthenticationByPincodeEntity entity) {
+    private Mono<UserAuthenticationByPincodeEntity> onPersist(String tm, UserAuthenticationByPincodeEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(UserAuthenticationByPincodeEntity entity) {
+    private Mono<UserAuthenticationByPincodeEntity> onUpdate(UserAuthenticationByPincodeEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a item.
      * @param entity the entity.
      */
-    private void onDelete(UserAuthenticationByPincodeEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<UserAuthenticationByPincodeEntity> onDelete(UserAuthenticationByPincodeEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -586,15 +591,17 @@ public class UserAuthenticationByPincodeServiceImpl implements UserAuthenticatio
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(UserAuthenticationByPincodeEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_AUTHENTICATION)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<UserAuthenticationByPincodeEntity> postResourceEvent(UserAuthenticationByPincodeEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_AUTHENTICATION)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

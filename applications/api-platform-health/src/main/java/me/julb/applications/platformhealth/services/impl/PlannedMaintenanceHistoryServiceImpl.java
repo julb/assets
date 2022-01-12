@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.services.impl;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -50,21 +47,23 @@ import me.julb.applications.platformhealth.services.dto.plannedmaintenance.Plann
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceHistoryUpdateDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The planned maintenance service implementation.
@@ -118,41 +117,37 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      * {@inheritDoc}
      */
     @Override
-    public Page<PlannedMaintenanceHistoryDTO> findAll(@NotNull @Identifier String plannedMaintenanceId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<PlannedMaintenanceHistoryDTO> findAll(@NotNull @Identifier String plannedMaintenanceId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        ISpecification<PlannedMaintenanceHistoryEntity> spec =
-            new SearchSpecification<PlannedMaintenanceHistoryEntity>(searchable).and(new TmSpecification<>(tm)).and(new PlannedMaintenanceHistoryByPlannedMaintenanceSpecification(plannedMaintenance));
-        Page<PlannedMaintenanceHistoryEntity> result = plannedMaintenanceHistoryRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            // Check that the announcement exists
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMapMany(plannedMaintenance -> {
+                    ISpecification<PlannedMaintenanceHistoryEntity> spec = new SearchSpecification<PlannedMaintenanceHistoryEntity>(searchable)
+                        .and(new TmSpecification<>(tm)).and(new PlannedMaintenanceHistoryByPlannedMaintenanceSpecification(plannedMaintenance));
+                    return plannedMaintenanceHistoryRepository.findAll(spec, pageable).map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PlannedMaintenanceHistoryDTO findOne(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<PlannedMaintenanceHistoryDTO> findOne(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Check that the planned maintenance history exists
-        PlannedMaintenanceHistoryEntity result = plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceIdAndId(tm, plannedMaintenanceId, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id);
-        }
-
-        return mapper.map(result);
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceIdAndId(tm, plannedMaintenanceId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -162,31 +157,29 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public PlannedMaintenanceHistoryDTO create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Valid PlannedMaintenanceHistoryCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<PlannedMaintenanceHistoryDTO> create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Valid PlannedMaintenanceHistoryCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Update the entity
-        PlannedMaintenanceHistoryEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setPlannedMaintenance(plannedMaintenance);
-        entityToCreate.setPreviousStatus(plannedMaintenance.getStatus());
-        this.onPersist(entityToCreate);
-
-        // Get result back.
-        PlannedMaintenanceHistoryEntity result = plannedMaintenanceHistoryRepository.save(entityToCreate);
-
-        // Add history item.
-        plannedMaintenance.setStatus(creationDTO.getStatus());
-        plannedMaintenance.setLastUpdatedAt(DateUtility.dateTimeNow());
-        plannedMaintenanceRepository.save(plannedMaintenance);
-        postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED);
-
-        return mapper.map(result);
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    PlannedMaintenanceHistoryEntity entityToCreate = mapper.map(creationDTO);
+                    entityToCreate.setPlannedMaintenance(plannedMaintenance);
+                    entityToCreate.setPreviousStatus(plannedMaintenance.getStatus());
+                    return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                        return plannedMaintenanceHistoryRepository.save(entityToCreateWithFields)
+                            .flatMap(result -> {
+                                // Add history item.
+                                plannedMaintenance.setStatus(creationDTO.getStatus());
+                                plannedMaintenance.setLastUpdatedAt(DateUtility.dateTimeNow());
+                                return plannedMaintenanceRepository.save(plannedMaintenance)
+                                    .then(postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED))
+                                    .thenReturn(mapper.map(result));
+                            });
+                    });
+                });
+        });
     }
 
     /**
@@ -194,30 +187,27 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public PlannedMaintenanceHistoryDTO update(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceHistoryUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<PlannedMaintenanceHistoryDTO> update(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceHistoryUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Check that the planned maintenance history exists
-        PlannedMaintenanceHistoryEntity existing = plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceIdAndId(tm, plannedMaintenanceId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        // Update the planned maintenance.
-        postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED);
-
-        PlannedMaintenanceHistoryEntity result = plannedMaintenanceHistoryRepository.save(existing);
-        return mapper.map(result);
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceIdAndId(tm, plannedMaintenanceId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id)))
+                        .flatMap(existing -> {
+                            mapper.map(updateDTO, existing);
+                        
+                            // Proceed to the update
+                            return postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED).then(
+                                this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return plannedMaintenanceHistoryRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                })
+                            );
+                        });
+                });
+        });
     }
 
     /**
@@ -225,30 +215,27 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public PlannedMaintenanceHistoryDTO patch(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceHistoryPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<PlannedMaintenanceHistoryDTO> patch(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceHistoryPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Check that the planned maintenance history exists
-        PlannedMaintenanceHistoryEntity existing = plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceIdAndId(tm, plannedMaintenanceId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        // Update the planned maintenance.
-        postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED);
-
-        PlannedMaintenanceHistoryEntity result = plannedMaintenanceHistoryRepository.save(existing);
-        return mapper.map(result);
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceIdAndId(tm, plannedMaintenanceId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id)))
+                        .flatMap(existing -> {
+                            mapper.map(patchDTO, existing);
+                        
+                            // Proceed to the update
+                            return postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED).then(
+                                this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return plannedMaintenanceHistoryRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                })
+                            );
+                        });
+                });
+        });
     }
 
     /**
@@ -256,24 +243,21 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String plannedMaintenanceId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String plannedMaintenanceId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Check that the planned maintenance history exists
-        List<PlannedMaintenanceHistoryEntity> existings = plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceId(tm, plannedMaintenanceId);
-        for (PlannedMaintenanceHistoryEntity existing : existings) {
-            // Delete entity.
-            plannedMaintenanceHistoryRepository.delete(existing);
-
-            // Handle deletion.
-            this.onDelete(existing);
-        }
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceId(tm, plannedMaintenanceId)
+                        .flatMap(existing -> {
+                            return plannedMaintenanceHistoryRepository.delete(existing)
+                                .then(this.onDelete(existing))
+                                .then();
+                        }).then();
+                });
+        });
     }
 
     /**
@@ -281,37 +265,31 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Check that the planned maintenance history exists
-        PlannedMaintenanceHistoryEntity existing = plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceIdAndId(tm, plannedMaintenanceId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id);
-        }
-
-        // Delete entity.
-        plannedMaintenanceHistoryRepository.delete(existing);
-
-        // Update status of the incident.
-        PlannedMaintenanceHistoryEntity latestIncidentHistory = plannedMaintenanceHistoryRepository.findTopByTmAndPlannedMaintenanceIdOrderByCreatedAtDesc(tm, plannedMaintenanceId);
-        if (latestIncidentHistory != null) {
-            plannedMaintenance.setStatus(latestIncidentHistory.getStatus());
-            plannedMaintenance.setLastUpdatedAt(DateUtility.dateTimeNow());
-            plannedMaintenanceRepository.save(plannedMaintenance);
-
-            // Update the planned maintenance.
-            postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED);
-        }
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return plannedMaintenanceHistoryRepository.findByTmAndPlannedMaintenanceIdAndId(tm, plannedMaintenanceId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceHistoryEntity.class, id)))
+                        .flatMap(existing -> {
+                            return plannedMaintenanceHistoryRepository.delete(existing)
+                                .then(this.onDelete(existing))
+                                .flatMap(plannedMaintenanceHistoryDeleted -> {
+                                    return plannedMaintenanceHistoryRepository.findTopByTmAndPlannedMaintenanceIdOrderByCreatedAtDesc(tm, plannedMaintenanceId)
+                                        .flatMap(latestPlannedMaintenanceHistory -> {
+                                            plannedMaintenance.setStatus(latestPlannedMaintenanceHistory.getStatus());
+                                            plannedMaintenance.setLastUpdatedAt(DateUtility.dateTimeNow());
+                                            return plannedMaintenanceRepository.save(plannedMaintenance)
+                                                        .then(postResourceEvent(plannedMaintenance, ResourceEventType.UPDATED))
+                                                        .then();
+                                        });
+                                });
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -320,34 +298,35 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      * Method called when persisting an planned maintenance history.
      * @param entity the entity.
      */
-    private void onPersist(PlannedMaintenanceHistoryEntity entity) {
-        entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
-        entity.setCreatedAt(DateUtility.dateTimeNow());
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+    private Mono<PlannedMaintenanceHistoryEntity> onPersist(String tm, PlannedMaintenanceHistoryEntity entity) {
+        return securityService.getConnectedUserRefIdentity().flatMap(connectedUser -> {
+            entity.setId(IdentifierUtility.generateId());
+            entity.setTm(tm);
+            entity.setCreatedAt(DateUtility.dateTimeNow());
+            entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        // Add author.
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(userRefMapper.map(connnectedUser));
+            // Add author.
+            entity.setUser(userRefMapper.map(connectedUser));
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+            return postResourceEvent(entity, ResourceEventType.CREATED);
+        });
     }
 
     /**
      * Method called when updating a planned maintenance history.
      * @param entity the entity.
      */
-    private void onUpdate(PlannedMaintenanceHistoryEntity entity) {
+    private Mono<PlannedMaintenanceHistoryEntity> onUpdate(PlannedMaintenanceHistoryEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a planned maintenance history.
      * @param entity the entity.
      */
-    private void onDelete(PlannedMaintenanceHistoryEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<PlannedMaintenanceHistoryEntity> onDelete(PlannedMaintenanceHistoryEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -355,16 +334,18 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(PlannedMaintenanceEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.PLANNED_MAINTENANCE)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<PlannedMaintenanceEntity> postResourceEvent(PlannedMaintenanceEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.PLANNED_MAINTENANCE)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 
     /**
@@ -372,15 +353,17 @@ public class PlannedMaintenanceHistoryServiceImpl implements PlannedMaintenanceH
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(PlannedMaintenanceHistoryEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.PLANNED_MAINTENANCE_HISTORY)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<PlannedMaintenanceHistoryEntity> postResourceEvent(PlannedMaintenanceHistoryEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.PLANNED_MAINTENANCE_HISTORY)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

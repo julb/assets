@@ -294,16 +294,16 @@ public class WebAnalyticsEventDTO {
 
     //@formatter:off
      /**
-     * The userIpv4Address attribute.
+     * The userIpAddress attribute.
      * -- GETTER --
-     * Getter for {@link #userIpv4Address} property.
+     * Getter for {@link #userIpAddress} property.
      * @return the value.
      * -- SETTER --
-     * Setter for {@link #userIpv4Address} property.
-     * @param userIpv4Address the value to set.
+     * Setter for {@link #userIpAddress} property.
+     * @param userIpAddress the value to set.
      */
      //@formatter:on
-    private String userIpv4Address;
+    private String userIpAddress;
 
     //@formatter:off
      /**

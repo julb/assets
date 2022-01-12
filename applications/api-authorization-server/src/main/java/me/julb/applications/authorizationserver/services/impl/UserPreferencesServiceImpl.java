@@ -50,11 +50,13 @@ import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user preferences service implementation.
@@ -102,22 +104,18 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
      * {@inheritDoc}
      */
     @Override
-    public UserPreferencesDTO findOne(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserPreferencesDTO> findOne(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserPreferencesEntity result = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserPreferencesEntity.class, userId);
-        }
-
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userPreferencesRepository.findByTmAndUser_Id(tm, userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserPreferencesEntity.class, userId)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -127,26 +125,27 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserPreferencesDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserPreferencesDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userPreferencesRepository.existsByTmAndUser_Id(tm, userId)
+                        .flatMap(alreadyExists -> {
+                            if (alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(UserPreferencesEntity.class, "user", userId));
+                            }
 
-        // Check that the item exists
-        if (userPreferencesRepository.existsByTmAndUser_Id(tm, userId)) {
-            throw new ResourceAlreadyExistsException(UserPreferencesEntity.class, "user", userId);
-        }
-
-        UserPreferencesEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setUser(user);
-        this.onPersist(entityToCreate);
-
-        UserPreferencesEntity result = userPreferencesRepository.save(entityToCreate);
-        return mapper.map(result);
+                            UserPreferencesEntity entityToCreate = mapper.map(creationDTO);
+                            entityToCreate.setUser(user);
+                            return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                return userPreferencesRepository.save(entityToCreateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -154,27 +153,26 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserPreferencesDTO update(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserPreferencesDTO> update(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserPreferencesEntity existing = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserPreferencesEntity.class, userId);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        UserPreferencesEntity result = userPreferencesRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userPreferencesRepository.findByTmAndUser_Id(tm, userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserPreferencesEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Update the entity
+                            mapper.map(updateDTO, existing);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userPreferencesRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -182,27 +180,26 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserPreferencesDTO patch(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserPreferencesDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserPreferencesEntity existing = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserPreferencesEntity.class, userId);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        UserPreferencesEntity result = userPreferencesRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userPreferencesRepository.findByTmAndUser_Id(tm, userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserPreferencesEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Update the entity
+                            mapper.map(patchDTO, existing);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userPreferencesRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -210,26 +207,24 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserPreferencesEntity existing = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserPreferencesEntity.class, userId);
-        }
-
-        // Delete entity.
-        userPreferencesRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userPreferencesRepository.findByTmAndUser_Id(tm, userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserPreferencesEntity.class, userId)))
+                        .flatMap(existing -> {
+                            
+                            // Delete entity.
+                            return userPreferencesRepository.delete(existing).then(
+                                this.onDelete(existing)
+                            ).then();
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -240,30 +235,30 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
      * Method called when persisting an item.
      * @param entity the entity.
      */
-    private void onPersist(UserPreferencesEntity entity) {
+    private Mono<UserPreferencesEntity> onPersist(String tm, UserPreferencesEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(UserPreferencesEntity entity) {
+    private Mono<UserPreferencesEntity> onUpdate(UserPreferencesEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a item.
      * @param entity the entity.
      */
-    private void onDelete(UserPreferencesEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<UserPreferencesEntity> onDelete(UserPreferencesEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -271,15 +266,17 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(UserPreferencesEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_PREFERENCES)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<UserPreferencesEntity> postResourceEvent(UserPreferencesEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_PREFERENCES)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

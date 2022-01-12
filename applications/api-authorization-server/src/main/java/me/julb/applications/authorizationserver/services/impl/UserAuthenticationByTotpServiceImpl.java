@@ -33,7 +33,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -71,15 +70,18 @@ import me.julb.library.utility.exceptions.ResourceStillReferencedException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.otp.TotpUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
 import me.julb.springbootstarter.security.services.PasswordEncoderService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication service implementation.
@@ -151,77 +153,69 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
      * {@inheritDoc}
      */
     @Override
-    public Page<UserAuthenticationByTotpDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<UserAuthenticationByTotpDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        ISpecification<UserAuthenticationByTotpEntity> spec =
-            new SearchSpecification<UserAuthenticationByTotpEntity>(searchable).and(new UserAuthenticationOfGivenTypeSpecification<>(UserAuthenticationType.TOTP)).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
-        Page<UserAuthenticationByTotpEntity> result = userAuthenticationByTotpRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMapMany(user -> {
+                    ISpecification<UserAuthenticationByTotpEntity> spec =
+                        new SearchSpecification<UserAuthenticationByTotpEntity>(searchable).and(new UserAuthenticationOfGivenTypeSpecification<>(UserAuthenticationType.TOTP)).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
+                    return userAuthenticationByTotpRepository.findAll(spec, pageable).map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByTotpDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByTotpDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByTotpEntity result = userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id);
-        }
-
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationCredentialsDTO findOneCredentials(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationCredentialsDTO> findOneCredentials(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id)))
+                        .map(result -> {
+                            // Generate valid OTP
+                            Iterable<String> validTotps = TotpUtility.generateValidTotps(result.getSecret(), Integers.ONE);
+                            List<String> encodedValidTotps = new ArrayList<>();
+                            for (String validTotp : validTotps) {
+                                encodedValidTotps.add(passwordEncoderService.encode(validTotp));
+                            }
 
-        // Check that the item exists
-        UserAuthenticationByTotpEntity result = userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id);
-        }
-
-        // Generate valid OTP
-        Iterable<String> validTotps = TotpUtility.generateValidTotps(result.getSecret(), Integers.ONE);
-        List<String> encodedValidTotps = new ArrayList<>();
-        for (String validTotp : validTotps) {
-            encodedValidTotps.add(passwordEncoderService.encode(validTotp));
-        }
-
-        // Get credentials
-        UserAuthenticationCredentialsDTO credentials = new UserAuthenticationCredentialsDTO();
-        credentials.setCredentials(encodedValidTotps.toArray(new String[0]));
-        credentials.setCredentialsNonExpired(true);
-        credentials.setUserAuthentication(mapper.map(result));
-        credentials.setUser(userMapper.map(result.getUser()));
-
-        return credentials;
+                            // Get credentials
+                            UserAuthenticationCredentialsDTO credentials = new UserAuthenticationCredentialsDTO();
+                            credentials.setCredentials(encodedValidTotps.toArray(new String[0]));
+                            credentials.setCredentialsNonExpired(true);
+                            credentials.setUserAuthentication(mapper.map(result));
+                            credentials.setUser(userMapper.map(result.getUser()));
+                            return credentials;
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -231,36 +225,36 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByTotpWithRawSecretDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByTotpCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByTotpWithRawSecretDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByTotpCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByTotpRepository.existsByTmAndUser_IdAndTypeAndNameIgnoreCase(tm, userId, UserAuthenticationType.TOTP, creationDTO.getName())
+                        .flatMap(alreadyExists -> {
+                            if (alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(UserAuthenticationByTotpEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.TOTP.toString(), "name", creationDTO.getName())));
+                            }
 
-        // Check that the item exists
-        if (userAuthenticationByTotpRepository.existsByTmAndUser_IdAndTypeAndNameIgnoreCase(tm, userId, UserAuthenticationType.TOTP, creationDTO.getName())) {
-            throw new ResourceAlreadyExistsException(UserAuthenticationByTotpEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.TOTP.toString(), "name", creationDTO.getName()));
-        }
+                            String secret = TotpUtility.generateRandomTotpSecret();
 
-        // Generate random reset.
-        String secret = TotpUtility.generateRandomTotpSecret();
+                            UserAuthenticationByTotpEntity entityToCreate = mapper.map(creationDTO);
+                            entityToCreate.setUser(user);
+                            entityToCreate.setSecret(secret);
 
-        UserAuthenticationByTotpEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setUser(user);
-        entityToCreate.setSecret(secret);
-
-        this.onPersist(entityToCreate);
-
-        UserAuthenticationByTotpEntity result = userAuthenticationByTotpRepository.save(entityToCreate);
-
-        // Return result
-        UserAuthenticationByTotpWithRawSecretDTO userAuthenticationByTotpWithRawSecret = mapper.mapWithRawSecret(result);
-        userAuthenticationByTotpWithRawSecret.setRawSecret(secret);
-        userAuthenticationByTotpWithRawSecret.setQrCodeUri(TotpUtility.generateQrcodeUri(user.getMail(), tm, secret));
-        return userAuthenticationByTotpWithRawSecret;
+                            return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                return userAuthenticationByTotpRepository.save(entityToCreateWithFields).map(result -> {
+                                    UserAuthenticationByTotpWithRawSecretDTO userAuthenticationByTotpWithRawSecret = mapper.mapWithRawSecret(result);
+                                    userAuthenticationByTotpWithRawSecret.setRawSecret(secret);
+                                    userAuthenticationByTotpWithRawSecret.setQrCodeUri(TotpUtility.generateQrcodeUri(user.getMail(), tm, secret));
+                                    return userAuthenticationByTotpWithRawSecret;
+                                });
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -268,32 +262,32 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByTotpDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByTotpDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id)))
+                        .flatMap(existing -> {
+                            return userAuthenticationByTotpRepository.existsByTmAndUser_IdAndTypeAndIdNotAndNameIgnoreCase(tm, userId, UserAuthenticationType.TOTP, id, updateDTO.getName())
+                                .flatMap(alreadyExists -> {
+                                    if (alreadyExists.booleanValue()) {
+                                        return Mono.error(new ResourceAlreadyExistsException(UserAuthenticationByTotpEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.TOTP.toString(), "name", updateDTO.getName())));
+                                    }
 
-        // Check that the item exists
-        UserAuthenticationByTotpEntity existing = userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id);
-        }
-
-        // Check that the item exists
-        if (userAuthenticationByTotpRepository.existsByTmAndUser_IdAndTypeAndIdNotAndNameIgnoreCase(tm, userId, UserAuthenticationType.TOTP, id, updateDTO.getName())) {
-            throw new ResourceAlreadyExistsException(UserAuthenticationByTotpEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.TOTP.toString(), "name", updateDTO.getName()));
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        UserAuthenticationByTotpEntity result = userAuthenticationByTotpRepository.save(existing);
-        return mapper.map(result);
+                                    mapper.map(updateDTO, existing);
+                
+                                    // Proceed to the update
+                                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                        return userAuthenticationByTotpRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                    });
+                                });
+                        });
+                });
+        });
     }
 
     /**
@@ -301,32 +295,41 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByTotpDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByTotpDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id)))
+                        .flatMap(existing -> {
+                            if (StringUtils.isNotBlank(patchDTO.getName())) {
+                                return userAuthenticationByTotpRepository.existsByTmAndUser_IdAndTypeAndIdNotAndNameIgnoreCase(tm, userId, UserAuthenticationType.TOTP, id, patchDTO.getName())
+                                    .flatMap(alreadyExists -> {
+                                        if (alreadyExists.booleanValue()) {
+                                            return Mono.error(new ResourceAlreadyExistsException(UserAuthenticationByTotpEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.TOTP.toString(), "name", patchDTO.getName())));
+                                        }
 
-        // Check that the item exists
-        UserAuthenticationByTotpEntity existing = userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id);
-        }
-
-        // Check that the item exists
-        if (StringUtils.isNotBlank(patchDTO.getName()) && userAuthenticationByTotpRepository.existsByTmAndUser_IdAndTypeAndIdNotAndNameIgnoreCase(tm, userId, UserAuthenticationType.TOTP, id, patchDTO.getName())) {
-            throw new ResourceAlreadyExistsException(UserAuthenticationByTotpEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.TOTP.toString(), "name", patchDTO.getName()));
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        UserAuthenticationByTotpEntity result = userAuthenticationByTotpRepository.save(existing);
-        return mapper.map(result);
+                                        mapper.map(patchDTO, existing);
+                    
+                                        // Proceed to the update
+                                        return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                            return userAuthenticationByTotpRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                        });
+                                    });
+                            } else {
+                                mapper.map(patchDTO, existing);
+                    
+                                // Proceed to the update
+                                return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return userAuthenticationByTotpRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                });
+                            }
+                        });
+                });
+        });
     }
 
     /**
@@ -334,38 +337,45 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id)))
+                        .flatMap(existing -> {
+                            return userAuthenticationByTotpRepository.countByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP).flatMap(count -> {
+                                if (count == Integers.ONE) {
+                                    return Mono.zip(
+                                        userAuthenticationByPasswordRepository.existsByTmAndUser_IdAndTypeAndMfaEnabledIsTrue(tm, userId, UserAuthenticationType.PASSWORD),
+                                        userAuthenticationByPincodeRepository.existsByTmAndUser_IdAndTypeAndMfaEnabledIsTrue(tm, userId, UserAuthenticationType.PINCODE)
+                                    ).flatMap(tuple -> {
+                                        if (tuple.getT1().booleanValue()) {
+                                            return Mono.error(new ResourceStillReferencedException(UserAuthenticationByTotpEntity.class, id, UserAuthenticationByPasswordEntity.class));
+                                        }
 
-        // Check that the item exists
-        UserAuthenticationByTotpEntity existing = userAuthenticationByTotpRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, UserAuthenticationType.TOTP, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, id);
-        }
+                                        if (tuple.getT2().booleanValue()) {
+                                            return Mono.error(new ResourceStillReferencedException(UserAuthenticationByTotpEntity.class, id, UserAuthenticationByPincodeEntity.class));
+                                        }
 
-        // If this is the last one, check MFA is not enabled
-        if (userAuthenticationByTotpRepository.countByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP) == Integers.ONE) {
-            if (userAuthenticationByPasswordRepository.existsByTmAndUser_IdAndTypeAndMfaEnabledIsTrue(tm, userId, UserAuthenticationType.PASSWORD)) {
-                throw new ResourceStillReferencedException(UserAuthenticationByTotpEntity.class, id, UserAuthenticationByPasswordEntity.class);
-            }
-
-            if (userAuthenticationByPincodeRepository.existsByTmAndUser_IdAndTypeAndMfaEnabledIsTrue(tm, userId, UserAuthenticationType.PINCODE)) {
-                throw new ResourceStillReferencedException(UserAuthenticationByTotpEntity.class, id, UserAuthenticationByPincodeEntity.class);
-            }
-
-        }
-
-        // Delete entity.
-        userAuthenticationByTotpRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+                                        // Delete entity.
+                                        return userAuthenticationByTotpRepository.delete(existing).then(
+                                            this.onDelete(existing)
+                                        ).then();
+                                    });
+                                } else {
+                                    // Delete entity.
+                                    return userAuthenticationByTotpRepository.delete(existing).then(
+                                        this.onDelete(existing)
+                                    ).then();
+                                }
+                            });
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -376,30 +386,30 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
      * Method called when persisting an item.
      * @param entity the entity.
      */
-    private void onPersist(UserAuthenticationByTotpEntity entity) {
+    private Mono<UserAuthenticationByTotpEntity> onPersist(String tm, UserAuthenticationByTotpEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(UserAuthenticationByTotpEntity entity) {
+    private Mono<UserAuthenticationByTotpEntity> onUpdate(UserAuthenticationByTotpEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a item.
      * @param entity the entity.
      */
-    private void onDelete(UserAuthenticationByTotpEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<UserAuthenticationByTotpEntity> onDelete(UserAuthenticationByTotpEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -407,15 +417,17 @@ public class UserAuthenticationByTotpServiceImpl implements UserAuthenticationBy
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(UserAuthenticationByTotpEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_AUTHENTICATION)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<UserAuthenticationByTotpEntity> postResourceEvent(UserAuthenticationByTotpEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_AUTHENTICATION)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

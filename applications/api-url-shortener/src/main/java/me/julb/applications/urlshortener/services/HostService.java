@@ -24,12 +24,13 @@
 
 package me.julb.applications.urlshortener.services;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
 import me.julb.library.dto.simple.value.ValueDTO;
 import me.julb.library.utility.validator.constraints.DNS;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The host service.
@@ -44,14 +45,14 @@ public interface HostService {
      * Gets the available hosts.
      * @return the list of hosts.
      */
-    List<ValueDTO> findAll();
+    Flux<ValueDTO> findAll();
 
     /**
      * Checks if the host exists.
      * @param host the host.
      * @return <code>true</code> if the host exists, false otherwise.
      */
-    boolean exists(@NotNull @DNS String host);
+    Mono<Boolean> exists(@NotNull @DNS String host);
 
     // ------------------------------------------ Write methods.
 

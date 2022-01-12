@@ -24,15 +24,12 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -61,6 +58,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage my mails.
@@ -91,7 +92,7 @@ public class MyMailController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public Page<UserMailDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<UserMailDTO> findAll(Searchable searchable, Pageable pageable) {
         return myMailService.findAll(searchable, pageable);
     }
 
@@ -103,7 +104,7 @@ public class MyMailController {
     @Operation(summary = "gets my mails")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserMailDTO get(@PathVariable @Identifier String id) {
+    public Mono<UserMailDTO> get(@PathVariable @Identifier String id) {
         return myMailService.findOne(id);
     }
 
@@ -118,7 +119,7 @@ public class MyMailController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserMailDTO create(@RequestBody @NotNull @Valid UserMailCreationDTO creationDTO) {
+    public Mono<UserMailDTO> create(@RequestBody @NotNull @Valid UserMailCreationDTO creationDTO) {
         return myMailService.create(creationDTO);
     }
 
@@ -131,7 +132,7 @@ public class MyMailController {
     @Operation(summary = "updates my mails")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserMailDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserMailUpdateDTO updateDTO) {
+    public Mono<UserMailDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserMailUpdateDTO updateDTO) {
         return myMailService.update(id, updateDTO);
     }
 
@@ -144,7 +145,7 @@ public class MyMailController {
     @Operation(summary = "patches my mails")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserMailDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserMailPatchDTO patchDTO) {
+    public Mono<UserMailDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserMailPatchDTO patchDTO) {
         return myMailService.patch(id, patchDTO);
     }
 
@@ -157,7 +158,7 @@ public class MyMailController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, path = "/{id}/trigger-verify")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserMailDTO triggerVerify(@PathVariable("id") @Identifier String id) {
+    public Mono<UserMailDTO> triggerVerify(@PathVariable("id") @Identifier String id) {
         return myMailService.triggerMailVerify(id);
     }
 
@@ -171,7 +172,7 @@ public class MyMailController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, path = "/{id}/verify")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserMailDTO verify(@PathVariable("id") @Identifier String id, @RequestParam("verifyToken") @NotNull @NotBlank @Size(min = 128, max = 128) String verifyToken) {
+    public Mono<UserMailDTO> verify(@PathVariable("id") @Identifier String id, @RequestParam("verifyToken") @NotNull @NotBlank @Size(min = 128, max = 128) String verifyToken) {
         UserMailVerifyDTO dto = new UserMailVerifyDTO();
         dto.setVerifyToken(verifyToken);
         return myMailService.updateVerify(id, dto);
@@ -185,8 +186,8 @@ public class MyMailController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete(@PathVariable String id) {
-        myMailService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return myMailService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

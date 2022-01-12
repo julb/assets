@@ -27,7 +27,6 @@ package me.julb.applications.urlshortener.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.urlshortener.services.dto.LinkCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.urlshortener.services.dto.LinkPatchDTO;
 import me.julb.applications.urlshortener.services.dto.LinkUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The host service.
@@ -52,14 +54,14 @@ public interface LinkService {
      * @param pageable the pageable information.
      * @return a paged list of links.
      */
-    Page<LinkDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<LinkDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a link through its ID.
      * @param id the link identifier.
      * @return the link.
      */
-    LinkDTO findOne(@NotNull @Identifier String id);
+    Mono<LinkDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -68,21 +70,21 @@ public interface LinkService {
      * @param linkCreationDTO the DTO to create a link.
      * @return the created link.
      */
-    LinkDTO create(@NotNull @Valid LinkCreationDTO linkCreationDTO);
+    Mono<LinkDTO> create(@NotNull @Valid LinkCreationDTO linkCreationDTO);
 
     /**
      * Increments the number of hits of a link.
      * @param id the link identifier.
      * @return the updated link.
      */
-    LinkDTO incrementNumberOfHits(@NotNull @Identifier String id);
+    Mono<LinkDTO> incrementNumberOfHits(@NotNull @Identifier String id);
 
     /**
      * Resets the number of hits of a link.
      * @param id the link identifier.
      * @return the updated link.
      */
-    LinkDTO resetNumberOfHits(@NotNull @Identifier String id);
+    Mono<LinkDTO> resetNumberOfHits(@NotNull @Identifier String id);
 
     /**
      * Updates a link.
@@ -90,7 +92,7 @@ public interface LinkService {
      * @param linkUpdateDTO the DTO to update a link.
      * @return the updated link.
      */
-    LinkDTO update(@NotNull @Identifier String id, @NotNull @Valid LinkUpdateDTO linkUpdateDTO);
+    Mono<LinkDTO> update(@NotNull @Identifier String id, @NotNull @Valid LinkUpdateDTO linkUpdateDTO);
 
     /**
      * Patches a link.
@@ -98,12 +100,12 @@ public interface LinkService {
      * @param linkPatchDTO the DTO to update a link.
      * @return the updated link.
      */
-    LinkDTO patch(@NotNull @Identifier String id, @NotNull @Valid LinkPatchDTO linkPatchDTO);
+    Mono<LinkDTO> patch(@NotNull @Identifier String id, @NotNull @Valid LinkPatchDTO linkPatchDTO);
 
     /**
      * Deletes a link.
      * @param id the id of the link to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

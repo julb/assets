@@ -31,7 +31,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import me.julb.applications.platformhealth.entities.ComponentCategoryEntity;
 import me.julb.applications.platformhealth.entities.ComponentEntity;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
 
 /**
  * Specification on component category.

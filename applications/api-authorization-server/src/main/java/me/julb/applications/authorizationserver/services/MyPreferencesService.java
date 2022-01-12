@@ -32,6 +32,8 @@ import me.julb.applications.authorizationserver.services.dto.preferences.UserPre
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesUpdateDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The user preferences service.
  * <br>
@@ -45,7 +47,7 @@ public interface MyPreferencesService {
      * Gets a user preferences.
      * @return the user preferences.
      */
-    UserPreferencesDTO findOne();
+    Mono<UserPreferencesDTO> findOne();
 
     // ------------------------------------------ Write methods.
 
@@ -54,20 +56,20 @@ public interface MyPreferencesService {
      * @param userPreferencesCreationDTO the DTO to create a user preferences.
      * @return the created user preferences.
      */
-    UserPreferencesDTO create(@NotNull @Valid UserPreferencesCreationDTO userPreferencesCreationDTO);
+    Mono<UserPreferencesDTO> create(@NotNull @Valid UserPreferencesCreationDTO userPreferencesCreationDTO);
 
     /**
      * Updates a user preferences.
      * @param userPreferencesUpdateDTO the DTO to update a user preferences.
      * @return the updated user preferences.
      */
-    UserPreferencesDTO update(@NotNull @Valid UserPreferencesUpdateDTO userPreferencesUpdateDTO);
+    Mono<UserPreferencesDTO> update(@NotNull @Valid UserPreferencesUpdateDTO userPreferencesUpdateDTO);
 
     /**
      * Patches a user preferences.
      * @param userPreferencesPatchDTO the DTO to update a user preferences.
      * @return the updated user preferences.
      */
-    UserPreferencesDTO patch(@NotNull @Valid UserPreferencesPatchDTO userPreferencesPatchDTO);
+    Mono<UserPreferencesDTO> patch(@NotNull @Valid UserPreferencesPatchDTO userPreferencesPatchDTO);
 
 }

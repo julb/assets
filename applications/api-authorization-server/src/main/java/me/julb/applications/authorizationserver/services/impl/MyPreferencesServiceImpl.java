@@ -39,7 +39,9 @@ import me.julb.applications.authorizationserver.services.dto.preferences.UserPre
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesDTO;
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesUpdateDTO;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The preferences service implementation.
@@ -68,9 +70,10 @@ public class MyPreferencesServiceImpl implements MyPreferencesService {
      * {@inheritDoc}
      */
     @Override
-    public UserPreferencesDTO findOne() {
-        String userId = securityService.getConnectedUserId();
-        return userPreferencesService.findOne(userId);
+    public Mono<UserPreferencesDTO> findOne() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userPreferencesService.findOne(userId);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -80,9 +83,10 @@ public class MyPreferencesServiceImpl implements MyPreferencesService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserPreferencesDTO create(@NotNull @Valid UserPreferencesCreationDTO userPreferencesCreationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userPreferencesService.create(userId, userPreferencesCreationDTO);
+    public Mono<UserPreferencesDTO> create(@NotNull @Valid UserPreferencesCreationDTO userPreferencesCreationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userPreferencesService.create(userId, userPreferencesCreationDTO);
+        });
     }
 
     /**
@@ -90,9 +94,10 @@ public class MyPreferencesServiceImpl implements MyPreferencesService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserPreferencesDTO update(@NotNull @Valid UserPreferencesUpdateDTO userPreferencesUpdateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userPreferencesService.update(userId, userPreferencesUpdateDTO);
+    public Mono<UserPreferencesDTO> update(@NotNull @Valid UserPreferencesUpdateDTO userPreferencesUpdateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userPreferencesService.update(userId, userPreferencesUpdateDTO);
+        });
     }
 
     /**
@@ -100,9 +105,10 @@ public class MyPreferencesServiceImpl implements MyPreferencesService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserPreferencesDTO patch(@NotNull @Valid UserPreferencesPatchDTO userPreferencesPatchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userPreferencesService.patch(userId, userPreferencesPatchDTO);
+    public Mono<UserPreferencesDTO> patch(@NotNull @Valid UserPreferencesPatchDTO userPreferencesPatchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userPreferencesService.patch(userId, userPreferencesPatchDTO);
+        });
     }
 
     // ------------------------------------------ Utility methods.

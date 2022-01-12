@@ -31,7 +31,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import me.julb.applications.authorizationserver.entities.authentication.AbstractUserAuthenticationEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
 
 /**
  * Specification on user authentications.

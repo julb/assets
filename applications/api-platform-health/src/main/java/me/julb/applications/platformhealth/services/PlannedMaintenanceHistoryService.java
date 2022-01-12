@@ -27,7 +27,6 @@ package me.julb.applications.platformhealth.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceHistoryCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.platformhealth.services.dto.plannedmaintenance.Plann
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceHistoryUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The planned maintenance service.
@@ -53,7 +55,7 @@ public interface PlannedMaintenanceHistoryService {
      * @param pageable the pageable information.
      * @return a paged list of planned maintenances.
      */
-    Page<PlannedMaintenanceHistoryDTO> findAll(@NotNull @Identifier String plannedMaintenanceId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<PlannedMaintenanceHistoryDTO> findAll(@NotNull @Identifier String plannedMaintenanceId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a planned maintenance history through its ID.
@@ -61,7 +63,7 @@ public interface PlannedMaintenanceHistoryService {
      * @param id the planned maintenance history identifier.
      * @return the planned maintenance history.
      */
-    PlannedMaintenanceHistoryDTO findOne(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id);
+    Mono<PlannedMaintenanceHistoryDTO> findOne(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -71,7 +73,7 @@ public interface PlannedMaintenanceHistoryService {
      * @param creationDTO the DTO to create a planned maintenance history.
      * @return the created planned maintenance history.
      */
-    PlannedMaintenanceHistoryDTO create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Valid PlannedMaintenanceHistoryCreationDTO creationDTO);
+    Mono<PlannedMaintenanceHistoryDTO> create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Valid PlannedMaintenanceHistoryCreationDTO creationDTO);
 
     /**
      * Updates a planned maintenance history.
@@ -80,7 +82,7 @@ public interface PlannedMaintenanceHistoryService {
      * @param updateDTO the DTO to update a planned maintenance history.
      * @return the updated planned maintenance history.
      */
-    PlannedMaintenanceHistoryDTO update(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceHistoryUpdateDTO updateDTO);
+    Mono<PlannedMaintenanceHistoryDTO> update(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceHistoryUpdateDTO updateDTO);
 
     /**
      * Patches a planned maintenance history.
@@ -89,19 +91,19 @@ public interface PlannedMaintenanceHistoryService {
      * @param patchDTO the DTO to update a planned maintenance history.
      * @return the updated planned maintenance history.
      */
-    PlannedMaintenanceHistoryDTO patch(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceHistoryPatchDTO patchDTO);
+    Mono<PlannedMaintenanceHistoryDTO> patch(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceHistoryPatchDTO patchDTO);
 
     /**
      * Deletes all history of a planned maintenance.
      * @param plannedMaintenanceId the planned maintenance ID.
      */
-    void delete(@NotNull @Identifier String plannedMaintenanceId);
+    Mono<Void> delete(@NotNull @Identifier String plannedMaintenanceId);
 
     /**
      * Deletes a planned maintenance history.
      * @param plannedMaintenanceId the planned maintenance ID.
      * @param id the id of the planned maintenance history to delete.
      */
-    void delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String id);
 
 }

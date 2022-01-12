@@ -24,10 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.julb.applications.authorizationserver.services.MyAccountRecoveryService;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
 
 /**
  * The rest controller to list all recovery devices for the connected user.
@@ -64,7 +63,7 @@ public class MyAccountRecoveryController {
     @Operation(summary = "get the list of devices for the connected user to recover the account")
     @GetMapping(path = "/my/recovery-devices", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public List<RecoveryChannelDeviceDTO> findAll() {
+    public Flux<RecoveryChannelDeviceDTO> findAll() {
         return myAccountRecoveryService.findAll();
     }
 

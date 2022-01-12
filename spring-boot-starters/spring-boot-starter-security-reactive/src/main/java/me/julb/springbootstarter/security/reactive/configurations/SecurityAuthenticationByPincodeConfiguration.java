@@ -63,7 +63,6 @@ public class SecurityAuthenticationByPincodeConfiguration {
 
     /**
      * Builds a filter to authenticate by user and pincode.
-     * @param authenticationManager the authentication manager.
      * @return the filter.
      * @throws Exception if an error occurs.
      */

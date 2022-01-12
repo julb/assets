@@ -27,13 +27,15 @@ package me.julb.applications.disclaimer.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.disclaimer.services.dto.agreement.AgreementCreationDTO;
 import me.julb.applications.disclaimer.services.dto.agreement.AgreementDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The connected user agreement service.
@@ -50,14 +52,14 @@ public interface MyAgreementService {
      * @param pageable the pageable information.
      * @return a paged list of agreements.
      */
-    Page<AgreementDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<AgreementDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a agreement through its disclaimer ID.
      * @param disclaimerId the disclaimer identifier.
      * @return the agreement.
      */
-    AgreementDTO findOne(@NotNull @Identifier String disclaimerId);
+    Mono<AgreementDTO> findOne(@NotNull @Identifier String disclaimerId);
 
     // ------------------------------------------ Write methods.
 
@@ -67,6 +69,6 @@ public interface MyAgreementService {
      * @param agreementCreationDTO the DTO to create a agreement.
      * @return the created agreement.
      */
-    AgreementDTO create(@NotNull @Identifier String disclaimerId, @NotNull @Valid AgreementCreationDTO agreementCreationDTO);
+    Mono<AgreementDTO> create(@NotNull @Identifier String disclaimerId, @NotNull @Valid AgreementCreationDTO agreementCreationDTO);
 
 }

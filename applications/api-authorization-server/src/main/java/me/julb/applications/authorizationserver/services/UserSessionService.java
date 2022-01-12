@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
@@ -44,6 +43,9 @@ import me.julb.applications.authorizationserver.services.dto.session.UserSession
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecureIdToken;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user session service.
@@ -61,7 +63,7 @@ public interface UserSessionService {
      * @param pageable the pageable information.
      * @return a paged list of sessions.
      */
-    Page<UserSessionDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<UserSessionDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a session through its ID.
@@ -69,14 +71,14 @@ public interface UserSessionService {
      * @param id the session identifier.
      * @return the session.
      */
-    UserSessionDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<UserSessionDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
     /**
      * Gets the credentials of the user.
      * @param rawIdToken the raw ID token
      * @return the DTO holding the credentials.
      */
-    UserSessionCredentialsDTO findOneCredentials(@NotNull @NotBlank @SecureIdToken String rawIdToken);
+    Mono<UserSessionCredentialsDTO> findOneCredentials(@NotNull @NotBlank @SecureIdToken String rawIdToken);
 
     // ------------------------------------------ Write methods.
 
@@ -86,14 +88,14 @@ public interface UserSessionService {
      * @param sessionCreationDTO the DTO to create a session.
      * @return the created session.
      */
-    UserSessionWithRawIdTokenDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserSessionCreationDTO sessionCreationDTO);
+    Mono<UserSessionWithRawIdTokenDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserSessionCreationDTO sessionCreationDTO);
 
     /**
      * Generates an access token from an id token.
      * @param accessTokenCreation the access token creation.
      * @return the access token.
      */
-    UserSessionAccessTokenWithIdTokenDTO createAccessTokenFromIdToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation);
+    Mono<UserSessionAccessTokenWithIdTokenDTO> createAccessTokenFromIdToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation);
 
     /**
      * Generates an access token for a user.
@@ -102,7 +104,7 @@ public interface UserSessionService {
      * @param accessTokenCreation the access token creation.
      * @return the access token.
      */
-    UserSessionAccessTokenDTO createAccessTokenFirst(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserSessionAccessTokenFirstCreationDTO accessTokenCreation);
+    Mono<UserSessionAccessTokenDTO> createAccessTokenFirst(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserSessionAccessTokenFirstCreationDTO accessTokenCreation);
 
     /**
      * Updates a session.
@@ -111,7 +113,7 @@ public interface UserSessionService {
      * @param sessionUpdateDTO the DTO to update a session.
      * @return the updated session.
      */
-    UserSessionDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserSessionUpdateDTO sessionUpdateDTO);
+    Mono<UserSessionDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserSessionUpdateDTO sessionUpdateDTO);
 
     /**
      * Patches a session.
@@ -120,7 +122,7 @@ public interface UserSessionService {
      * @param sessionPatchDTO the DTO to update a session.
      * @return the updated session.
      */
-    UserSessionDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserSessionPatchDTO sessionPatchDTO);
+    Mono<UserSessionDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserSessionPatchDTO sessionPatchDTO);
 
     /**
      * Mark MFA as verified on a session.
@@ -128,19 +130,19 @@ public interface UserSessionService {
      * @param id the session identifier.
      * @return the updated session.
      */
-    UserSessionDTO markMfaAsVerified(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<UserSessionDTO> markMfaAsVerified(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
     /**
      * Deletes all sessions of a user.
      * @param userId the user identifier.
      */
-    void delete(@NotNull @Identifier String userId);
+    Mono<Void> delete(@NotNull @Identifier String userId);
 
     /**
      * Deletes a session.
      * @param userId the user identifier.
      * @param id the id of the session to delete.
      */
-    void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
 }

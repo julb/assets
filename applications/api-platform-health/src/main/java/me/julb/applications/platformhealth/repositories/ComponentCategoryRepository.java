@@ -24,22 +24,23 @@
 
 package me.julb.applications.platformhealth.repositories;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.platformhealth.entities.ComponentCategoryEntity;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The component category repository.
  * <br>
  * @author Julb.
  */
-public interface ComponentCategoryRepository extends MongoRepository<ComponentCategoryEntity, String>, MongoSpecificationExecutor<ComponentCategoryEntity> {
+public interface ComponentCategoryRepository extends ReactiveMongoRepository<ComponentCategoryEntity, String>, MongoSpecificationExecutor<ComponentCategoryEntity> {
 
     /**
      * Finds an component category by trademark and id.
@@ -47,12 +48,12 @@ public interface ComponentCategoryRepository extends MongoRepository<ComponentCa
      * @param id the id.
      * @return the component category, or <code>null</code> if not exists.
      */
-    ComponentCategoryEntity findByTmAndId(String tm, @NotNull @Identifier String id);
+    Mono<ComponentCategoryEntity> findByTmAndId(String tm, @NotNull @Identifier String id);
 
     /**
      * Finds all the component categories by their trademark ordered by position.
      * @param tm the trademark.
      * @return the component categories.
      */
-    List<ComponentCategoryEntity> findByTmOrderByPositionAsc(String tm);
+    Flux<ComponentCategoryEntity> findByTmOrderByPositionAsc(String tm);
 }

@@ -61,7 +61,7 @@ public class SearchableQueryParser {
 
     /**
      * Asserts uniqueness of all {@link Searchable} parameters of the method of the given {@link MethodParameter}.
-     * @param parameter must not be {@literal null}.
+     * @param searchQuery must not be {@literal null}.
      */
     public static Searchable parse(String searchQuery) {
         try {
@@ -122,7 +122,8 @@ public class SearchableQueryParser {
     /**
      * Builds an attribute predicate from a search term.
      * @param originalSearchQuery the original search query.
-     * @param term the search term.
+     * @param fieldName the field name.
+     * @param fieldValue the field value.
      * @return the attribute predicate.
      */
     protected static SearchPredicate searchTermToPredicate(String originalSearchQuery, String fieldName, String fieldValue) {

@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.services.impl;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -50,21 +47,23 @@ import me.julb.applications.platformhealth.services.dto.incident.IncidentHistory
 import me.julb.applications.platformhealth.services.dto.incident.IncidentHistoryUpdateDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident service implementation.
@@ -118,40 +117,37 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      * {@inheritDoc}
      */
     @Override
-    public Page<IncidentHistoryDTO> findAll(@NotNull @Identifier String incidentId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<IncidentHistoryDTO> findAll(@NotNull @Identifier String incidentId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        ISpecification<IncidentHistoryEntity> spec = new SearchSpecification<IncidentHistoryEntity>(searchable).and(new TmSpecification<>(tm)).and(new IncidentHistoryByIncidentSpecification(incident));
-        Page<IncidentHistoryEntity> result = incidentHistoryRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            // Check that the announcement exists
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMapMany(incident -> {
+                    ISpecification<IncidentHistoryEntity> spec = new SearchSpecification<IncidentHistoryEntity>(searchable)
+                        .and(new TmSpecification<>(tm)).and(new IncidentHistoryByIncidentSpecification(incident));
+                    return incidentHistoryRepository.findAll(spec, pageable).map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IncidentHistoryDTO findOne(@NotNull @Identifier String incidentId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentHistoryDTO> findOne(@NotNull @Identifier String incidentId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the incident history exists
-        IncidentHistoryEntity result = incidentHistoryRepository.findByTmAndIncidentIdAndId(tm, incidentId, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(IncidentHistoryEntity.class, id);
-        }
-
-        return mapper.map(result);
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return incidentHistoryRepository.findByTmAndIncidentIdAndId(tm, incidentId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentHistoryEntity.class, id)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -161,31 +157,29 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentHistoryDTO create(@NotNull @Identifier String incidentId, @NotNull @Valid IncidentHistoryCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentHistoryDTO> create(@NotNull @Identifier String incidentId, @NotNull @Valid IncidentHistoryCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Update the entity
-        IncidentHistoryEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setIncident(incident);
-        entityToCreate.setPreviousStatus(incident.getStatus());
-        this.onPersist(entityToCreate);
-
-        // Get result back.
-        IncidentHistoryEntity result = incidentHistoryRepository.save(entityToCreate);
-
-        // Add history item.
-        incident.setStatus(creationDTO.getStatus());
-        incident.setLastUpdatedAt(DateUtility.dateTimeNow());
-        incidentRepository.save(incident);
-        postResourceEvent(incident, ResourceEventType.UPDATED);
-
-        return mapper.map(result);
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    IncidentHistoryEntity entityToCreate = mapper.map(creationDTO);
+                    entityToCreate.setIncident(incident);
+                    entityToCreate.setPreviousStatus(incident.getStatus());
+                    return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                        return incidentHistoryRepository.save(entityToCreateWithFields)
+                            .flatMap(result -> {
+                                // Add history item.
+                                incident.setStatus(creationDTO.getStatus());
+                                incident.setLastUpdatedAt(DateUtility.dateTimeNow());
+                                return incidentRepository.save(incident)
+                                    .then(postResourceEvent(incident, ResourceEventType.UPDATED))
+                                    .thenReturn(mapper.map(result));
+                            });
+                    });
+                });
+        });
     }
 
     /**
@@ -193,30 +187,27 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentHistoryDTO update(@NotNull @Identifier String incidentId, @NotNull @Identifier String id, @NotNull @Valid IncidentHistoryUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentHistoryDTO> update(@NotNull @Identifier String incidentId, @NotNull @Identifier String id, @NotNull @Valid IncidentHistoryUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the incident history exists
-        IncidentHistoryEntity existing = incidentHistoryRepository.findByTmAndIncidentIdAndId(tm, incidentId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(IncidentHistoryEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        // Incident updated
-        postResourceEvent(incident, ResourceEventType.UPDATED);
-
-        IncidentHistoryEntity result = incidentHistoryRepository.save(existing);
-        return mapper.map(result);
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return incidentHistoryRepository.findByTmAndIncidentIdAndId(tm, incidentId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentHistoryEntity.class, id)))
+                        .flatMap(existing -> {
+                            mapper.map(updateDTO, existing);
+                        
+                            // Proceed to the update
+                            return postResourceEvent(incident, ResourceEventType.UPDATED).then(
+                                this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return incidentHistoryRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                })
+                            );
+                        });
+                });
+        });
     }
 
     /**
@@ -224,30 +215,27 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentHistoryDTO patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String id, @NotNull @Valid IncidentHistoryPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentHistoryDTO> patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String id, @NotNull @Valid IncidentHistoryPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the incident history exists
-        IncidentHistoryEntity existing = incidentHistoryRepository.findByTmAndIncidentIdAndId(tm, incidentId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(IncidentHistoryEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        // Incident updated
-        postResourceEvent(incident, ResourceEventType.UPDATED);
-
-        IncidentHistoryEntity result = incidentHistoryRepository.save(existing);
-        return mapper.map(result);
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return incidentHistoryRepository.findByTmAndIncidentIdAndId(tm, incidentId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentHistoryEntity.class, id)))
+                        .flatMap(existing -> {
+                            mapper.map(patchDTO, existing);
+                        
+                            // Proceed to the update
+                            return postResourceEvent(incident, ResourceEventType.UPDATED).then(
+                                this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return incidentHistoryRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                })
+                            );
+                        });
+                });
+        });
     }
 
     /**
@@ -255,24 +243,21 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String incidentId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String incidentId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the incident history exists
-        List<IncidentHistoryEntity> existings = incidentHistoryRepository.findByTmAndIncidentId(tm, incidentId);
-        for (IncidentHistoryEntity existing : existings) {
-            // Delete entity.
-            incidentHistoryRepository.delete(existing);
-
-            // Handle deletion.
-            this.onDelete(existing);
-        }
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return incidentHistoryRepository.findByTmAndIncidentId(tm, incidentId)
+                        .flatMap(existing -> {
+                            return incidentHistoryRepository.delete(existing)
+                                .then(this.onDelete(existing))
+                                .then();
+                        }).then();
+                });
+        });
     }
 
     /**
@@ -280,37 +265,31 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the incident history exists
-        IncidentHistoryEntity existing = incidentHistoryRepository.findByTmAndIncidentIdAndId(tm, incidentId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(IncidentHistoryEntity.class, id);
-        }
-
-        // Delete entity.
-        incidentHistoryRepository.delete(existing);
-
-        // Update status of the incident.
-        IncidentHistoryEntity latestIncidentHistory = incidentHistoryRepository.findTopByTmAndIncidentIdOrderByCreatedAtDesc(tm, incidentId);
-        if (latestIncidentHistory != null) {
-            incident.setStatus(latestIncidentHistory.getStatus());
-            incident.setLastUpdatedAt(DateUtility.dateTimeNow());
-            incidentRepository.save(incident);
-
-            // Incident updated
-            postResourceEvent(incident, ResourceEventType.UPDATED);
-        }
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return incidentHistoryRepository.findByTmAndIncidentIdAndId(tm, incidentId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentHistoryEntity.class, id)))
+                        .flatMap(existing -> {
+                            return incidentHistoryRepository.delete(existing)
+                                .then(this.onDelete(existing))
+                                .flatMap(incidentHistoryDeleted -> {
+                                    return incidentHistoryRepository.findTopByTmAndIncidentIdOrderByCreatedAtDesc(tm, incidentId)
+                                        .flatMap(latestIncidentHistory -> {
+                                            incident.setStatus(latestIncidentHistory.getStatus());
+                                            incident.setLastUpdatedAt(DateUtility.dateTimeNow());
+                                            return incidentRepository.save(incident)
+                                                        .then(postResourceEvent(incident, ResourceEventType.UPDATED))
+                                                        .then();
+                                        });
+                                });
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -319,34 +298,35 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      * Method called when persisting an incident history.
      * @param entity the entity.
      */
-    private void onPersist(IncidentHistoryEntity entity) {
-        entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
-        entity.setCreatedAt(DateUtility.dateTimeNow());
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-
-        // Add author.
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(userRefMapper.map(connnectedUser));
-
-        postResourceEvent(entity, ResourceEventType.CREATED);
+    private Mono<IncidentHistoryEntity> onPersist(String tm, IncidentHistoryEntity entity) {
+        return securityService.getConnectedUserRefIdentity().flatMap(connectedUser -> {
+            entity.setId(IdentifierUtility.generateId());
+            entity.setTm(tm);
+            entity.setCreatedAt(DateUtility.dateTimeNow());
+            entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+    
+            // Add author.
+            entity.setUser(userRefMapper.map(connectedUser));
+    
+            return postResourceEvent(entity, ResourceEventType.CREATED);
+        });
     }
 
     /**
      * Method called when updating a incident history.
      * @param entity the entity.
      */
-    private void onUpdate(IncidentHistoryEntity entity) {
+    private Mono<IncidentHistoryEntity> onUpdate(IncidentHistoryEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a incident history.
      * @param entity the entity.
      */
-    private void onDelete(IncidentHistoryEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<IncidentHistoryEntity> onDelete(IncidentHistoryEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -354,16 +334,18 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(IncidentEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.INCIDENT)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<IncidentEntity> postResourceEvent(IncidentEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.INCIDENT)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 
     /**
@@ -371,15 +353,17 @@ public class IncidentHistoryServiceImpl implements IncidentHistoryService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(IncidentHistoryEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.INCIDENT_HISTORY)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<IncidentHistoryEntity> postResourceEvent(IncidentHistoryEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.INCIDENT_HISTORY)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

@@ -24,11 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -45,7 +40,9 @@ import org.springframework.web.bind.annotation.RestController;
 import me.julb.applications.authorizationserver.services.UserAccountRecoveryService;
 import me.julb.applications.authorizationserver.services.UserMailService;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
 
 /**
  * The rest controller to recover the account.
@@ -79,13 +76,10 @@ public class UserAccountRecoveryController {
     @Operation(summary = "get the list of devices to recover the account")
     @GetMapping(path = "/users/recovery-devices", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @PreAuthorize("permitAll()")
-    public List<RecoveryChannelDeviceDTO> findAllByMailAddress(@RequestParam("mail") @NotNull @NotBlank @Email String mail) {
-        UserDTO user = userMailService.findUserByMailVerified(mail);
-        if (user != null) {
+    public Flux<RecoveryChannelDeviceDTO> findAllByMailAddress(@RequestParam("mail") @NotNull @NotBlank @Email String mail) {
+        return userMailService.findUserByMailVerified(mail).flatMapMany(user -> {
             return userAccountRecoveryService.findAll(user.getId());
-        } else {
-            return new ArrayList<>();
-        }
+        });
     }
 
     // ------------------------------------------ Write methods.

@@ -55,9 +55,11 @@ import me.julb.applications.platformhealth.services.dto.availability.ComponentCa
 import me.julb.applications.platformhealth.services.dto.availability.PlatformAvailabilityDTO;
 import me.julb.applications.platformhealth.services.dto.incident.IncidentStatus;
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceStatus;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.persistence.mongodb.specifications.AttributeInIdentifiableSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.AttributeInIdentifiableSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The platform availability service implementation.
@@ -121,72 +123,84 @@ public class PlatformAvailabilityServiceImpl implements PlatformAvailabilityServ
      * {@inheritDoc}
      */
     @Override
-    public PlatformAvailabilityDTO getPlatformAvailability() {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<PlatformAvailabilityDTO> getPlatformAvailability() {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Gets all the data.
-        List<ComponentCategoryEntity> componentCategories = componentCategoryRepository.findByTmOrderByPositionAsc(tm);
-        List<ComponentEntity> components = componentRepository.findByTmOrderByPositionAsc(tm);
-        List<IncidentEntity> incidentsInProgress = incidentRepository.findByTmAndStatusIn(tm, IncidentStatus.inProgressStatuses());
-        List<PlannedMaintenanceEntity> plannedMaintenancesInProgress = plannedMaintenanceRepository.findByTmAndStatusIn(tm, PlannedMaintenanceStatus.inProgressStatuses());
+            return Mono.zip(
+                componentCategoryRepository.findByTmOrderByPositionAsc(tm).collectList(), 
+                componentRepository.findByTmOrderByPositionAsc(tm).collectList(), 
+                incidentRepository.findByTmAndStatusIn(tm, IncidentStatus.inProgressStatuses()).collectList(), 
+                plannedMaintenanceRepository.findByTmAndStatusIn(tm, PlannedMaintenanceStatus.inProgressStatuses()).collectList()
+            ).flatMap(quadruple -> {
+                // Gets all the data.
+                List<ComponentCategoryEntity> componentCategories = quadruple.getT1();
+                List<ComponentEntity> components = quadruple.getT2();
+                List<IncidentEntity> incidentsInProgress = quadruple.getT3();
+                List<PlannedMaintenanceEntity> plannedMaintenancesInProgress = quadruple.getT4();
 
-        // Get links between incidents and components.
-        List<IncidentComponentEntity> incidentComponentsInProgress = incidentComponentRepository.findAll(new TmSpecification<IncidentComponentEntity>(tm).and(new AttributeInIdentifiableSpecification<>("incident", incidentsInProgress)));
+                return Mono.zip(
+                    incidentComponentRepository.findAll(new TmSpecification<IncidentComponentEntity>(tm).and(new AttributeInIdentifiableSpecification<>("incident", incidentsInProgress))).collectList(),
+                    plannedMaintenanceComponentRepository.findAll(new TmSpecification<PlannedMaintenanceComponentEntity>(tm).and(new AttributeInIdentifiableSpecification<>("plannedMaintenance", plannedMaintenancesInProgress))).collectList()
+                ).map(tuple -> {
+                    // Get links between incidents and components.
+                    List<IncidentComponentEntity> incidentComponentsInProgress = tuple.getT1();
 
-        // Get links between incidents and components.
-        List<PlannedMaintenanceComponentEntity> plannedMaintenanceComponentsInProgress =
-            plannedMaintenanceComponentRepository.findAll(new TmSpecification<PlannedMaintenanceComponentEntity>(tm).and(new AttributeInIdentifiableSpecification<>("plannedMaintenance", plannedMaintenancesInProgress)));
+                    // Get links between incidents and components.
+                    List<PlannedMaintenanceComponentEntity> plannedMaintenanceComponentsInProgress = tuple.getT2();
 
-        // Build tree.
-        PlatformAvailabilityDTO availabilityDTO = new PlatformAvailabilityDTO();
-        availabilityDTO.setIncidentsInProgressCount(Long.valueOf(incidentsInProgress.size()));
-        availabilityDTO.setPlannedMaintenancesInProgressCount(Long.valueOf(plannedMaintenancesInProgress.size()));
+                    // Build tree.
+                    PlatformAvailabilityDTO availabilityDTO = new PlatformAvailabilityDTO();
+                    availabilityDTO.setIncidentsInProgressCount(Long.valueOf(incidentsInProgress.size()));
+                    availabilityDTO.setPlannedMaintenancesInProgressCount(Long.valueOf(plannedMaintenancesInProgress.size()));
 
-        for (ComponentCategoryEntity componentCategory : componentCategories) {
-            // Map category to DTO.
-            ComponentCategoryAvailabilityHierarchyDTO componentCategoryAvailability = componentCategoryAvailabilityMapper.map(componentCategory);
+                    for (ComponentCategoryEntity componentCategory : componentCategories) {
+                        // Map category to DTO.
+                        ComponentCategoryAvailabilityHierarchyDTO componentCategoryAvailability = componentCategoryAvailabilityMapper.map(componentCategory);
 
-            // Availability of the category.
-            AvailabilityStatus categoryAvailability = AvailabilityStatus.UP;
+                        // Availability of the category.
+                        AvailabilityStatus categoryAvailability = AvailabilityStatus.UP;
 
-            // Add sub components to the category.
-            for (ComponentEntity component : components) {
-                if (component.getComponentCategory().equals(componentCategory)) {
-                    // Map component to availability
-                    ComponentAvailabilityDTO componentAvailability = componentAvailabilityMapper.map(component);
+                        // Add sub components to the category.
+                        for (ComponentEntity component : components) {
+                            if (component.getComponentCategory().equals(componentCategory)) {
+                                // Map component to availability
+                                ComponentAvailabilityDTO componentAvailability = componentAvailabilityMapper.map(component);
 
-                    // Get numbers of incidents.
-                    componentAvailability.setIncidentsInProgressCount(countIncidentsInProgressPerComponent(incidentComponentsInProgress, component));
+                                // Get numbers of incidents.
+                                componentAvailability.setIncidentsInProgressCount(countIncidentsInProgressPerComponent(incidentComponentsInProgress, component));
 
-                    // Get number of planned maintenances
-                    componentAvailability.setPlannedMaintenancesInProgressCount(countPlannedMaintenancesInProgressPerComponent(plannedMaintenanceComponentsInProgress, component));
+                                // Get number of planned maintenances
+                                componentAvailability.setPlannedMaintenancesInProgressCount(countPlannedMaintenancesInProgressPerComponent(plannedMaintenanceComponentsInProgress, component));
 
-                    // Compute status of the component.
-                    componentAvailability.setAvailabilityStatus(getCurrentComponentStatus(incidentComponentsInProgress, component));
+                                // Compute status of the component.
+                                componentAvailability.setAvailabilityStatus(getCurrentComponentStatus(incidentComponentsInProgress, component));
 
-                    // Add component to category.
-                    componentCategoryAvailability.getComponentsAvailability().add(componentAvailability);
+                                // Add component to category.
+                                componentCategoryAvailability.getComponentsAvailability().add(componentAvailability);
 
-                    // Compute availability status of the category - take the worsest.
-                    categoryAvailability = AvailabilityStatus.worsest(categoryAvailability, componentAvailability.getAvailabilityStatus());
-                }
-            }
+                                // Compute availability status of the category - take the worsest.
+                                categoryAvailability = AvailabilityStatus.worsest(categoryAvailability, componentAvailability.getAvailabilityStatus());
+                            }
+                        }
 
-            // Get numbers of incidents.
-            componentCategoryAvailability.setIncidentsInProgressCount(countIncidentsInProgressPerComponentCategory(incidentComponentsInProgress, componentCategory));
+                        // Get numbers of incidents.
+                        componentCategoryAvailability.setIncidentsInProgressCount(countIncidentsInProgressPerComponentCategory(incidentComponentsInProgress, componentCategory));
 
-            // Get number of planned maintenances
-            componentCategoryAvailability.setPlannedMaintenancesInProgressCount(countPlannedMaintenancesInProgressPerComponentCategory(plannedMaintenanceComponentsInProgress, componentCategory));
+                        // Get number of planned maintenances
+                        componentCategoryAvailability.setPlannedMaintenancesInProgressCount(countPlannedMaintenancesInProgressPerComponentCategory(plannedMaintenanceComponentsInProgress, componentCategory));
 
-            // Set status
-            componentCategoryAvailability.setAvailabilityStatus(categoryAvailability);
+                        // Set status
+                        componentCategoryAvailability.setAvailabilityStatus(categoryAvailability);
 
-            // Add category to the list.
-            availabilityDTO.getComponentCategoriesAvailability().add(componentCategoryAvailability);
-        }
-
-        // availabilityDTO.setGlobalAvailability(globalAvailability);
-        return availabilityDTO;
+                        // Add category to the list.
+                        availabilityDTO.getComponentCategoriesAvailability().add(componentCategoryAvailability);
+                    }
+                    
+                    return availabilityDTO;
+                });
+            });
+        });
     }
 
     /**

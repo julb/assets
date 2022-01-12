@@ -24,9 +24,13 @@
 package me.julb.springbootstarter.googlerecaptcha.configurations;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import me.julb.springbootstarter.consumer.reactive.utility.NettyClientUtility;
 import me.julb.springbootstarter.googlerecaptcha.annotations.ConditionalOnGoogleReCaptchaEnabled;
 import me.julb.springbootstarter.googlerecaptcha.configurations.beans.GoogleReCaptchaProperties;
 
@@ -41,4 +45,15 @@ import me.julb.springbootstarter.googlerecaptcha.configurations.beans.GoogleReCa
 @PropertySource("classpath:/me/julb/springbootstarter/googlerecaptcha/default.properties")
 public class GoogleReCaptchaConfiguration {
 
+    /**
+     * Builds a rest template for Google ReCaptcha.
+     * @return the rest template.
+     */
+    @Bean
+    public WebClient googleReCaptchaV3WebClient(GoogleReCaptchaProperties googleReCaptchaProperties) {
+        return WebClient.builder()
+            .clientConnector(new ReactorClientHttpConnector(NettyClientUtility.build(googleReCaptchaProperties.getEndpoint())))
+            .baseUrl(googleReCaptchaProperties.getEndpoint().getUrl())
+            .build();
+    }
 }

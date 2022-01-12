@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -47,9 +45,11 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeTriggerPincodeResetDTO;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceRefDTO;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelType;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecurePincode;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to reset the pincode of a user.
@@ -87,14 +87,13 @@ public class UserAuthenticationByPincodeResetController {
     @PostMapping(path = "/users/authentications/type/pincode/trigger-reset", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("permitAll()")
-    public void triggerPincodeReset(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("recoveryChannelDeviceType") @NotNull RecoveryChannelType recoveryChannelDeviceType,
+    public Mono<Void> triggerPincodeReset(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("recoveryChannelDeviceType") @NotNull RecoveryChannelType recoveryChannelDeviceType,
         @RequestParam("recoveryChannelDeviceId") @NotNull @NotBlank @Identifier String recoveryChannelDeviceId) {
-        UserDTO user = userMailService.findUserByMailVerified(mail);
-        if (user != null) {
+        return userMailService.findUserByMailVerified(mail).flatMap(user -> {
             UserAuthenticationByPincodeTriggerPincodeResetDTO triggerPincodeResetDTO = new UserAuthenticationByPincodeTriggerPincodeResetDTO();
             triggerPincodeResetDTO.setRecoveryChannelDevice(new RecoveryChannelDeviceRefDTO(recoveryChannelDeviceId, recoveryChannelDeviceType));
-            userAuthenticationByPincodeService.triggerPincodeReset(user.getId(), triggerPincodeResetDTO);
-        }
+            return userAuthenticationByPincodeService.triggerPincodeReset(user.getId(), triggerPincodeResetDTO).then();
+        });
     }
 
     /**
@@ -107,14 +106,13 @@ public class UserAuthenticationByPincodeResetController {
     @PostMapping(path = "/users/authentications/type/pincode/reset-pincode", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("permitAll()")
-    public void resetPincode(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("newPincode") @NotNull @NotBlank @SecurePincode String newPincode, @RequestParam("resetToken") @NotNull @NotBlank String resetToken) {
-        UserDTO user = userMailService.findUserByMailVerified(mail);
-        if (user != null) {
+    public Mono<Void> resetPincode(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("newPincode") @NotNull @NotBlank @SecurePincode String newPincode, @RequestParam("resetToken") @NotNull @NotBlank String resetToken) {
+        return userMailService.findUserByMailVerified(mail).flatMap(user -> {
             UserAuthenticationByPincodePincodeResetDTO pincodeResetDTO = new UserAuthenticationByPincodePincodeResetDTO();
             pincodeResetDTO.setNewPincode(newPincode);
             pincodeResetDTO.setResetToken(resetToken);
-            userAuthenticationByPincodeService.updatePincode(user.getId(), pincodeResetDTO);
-        }
+            return userAuthenticationByPincodeService.updatePincode(user.getId(), pincodeResetDTO).then();
+        });
     }
     // ------------------------------------------ Utility methods.
 

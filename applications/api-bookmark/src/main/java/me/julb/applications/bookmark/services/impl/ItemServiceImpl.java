@@ -25,7 +25,6 @@
 package me.julb.applications.bookmark.services.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -33,7 +32,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -62,7 +60,6 @@ import me.julb.applications.bookmark.services.exceptions.CannotMoveFolderInSubfo
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.dto.simple.identifier.IdentifierDTO;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.dto.simple.value.PositiveIntegerValueDTO;
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Strings;
@@ -71,15 +68,19 @@ import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The item service implementation.
@@ -144,82 +145,84 @@ public class ItemServiceImpl implements ItemService {
      * {@inheritDoc}
      */
     @Override
-    public Page<? extends AbstractItemDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<? extends AbstractItemDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        ISpecification<AbstractItemEntity> spec = new SearchSpecification<AbstractItemEntity>(searchable).and(new TmSpecification<>(tm)).and(new ItemBelongsToUserIdSpecification<>(userId));
-        Page<AbstractItemEntity> result = itemRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            ISpecification<AbstractItemEntity> spec = new SearchSpecification<AbstractItemEntity>(searchable)
+                .and(new TmSpecification<>(tm))
+                .and(new ItemBelongsToUserIdSpecification<>(userId));
+            return itemRepository.findAll(spec, pageable).map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<? extends AbstractItemDTO> findAllByParent(@NotNull @Identifier String userId, @Identifier String parentId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<? extends AbstractItemDTO> findAllByParent(@NotNull @Identifier String userId, @Identifier String parentId) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        List<AbstractItemEntity> items;
-
-        // Get folder parent.
-        if (StringUtils.isNotBlank(parentId)) {
-            FolderEntity folderParent = (FolderEntity) itemRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, ItemType.FOLDER, parentId);
-            if (folderParent == null) {
-                throw new ResourceNotFoundException(AbstractItemEntity.class, parentId);
+            // Get folder parent.
+            if (StringUtils.isNotBlank(parentId)) {
+                return itemRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, ItemType.FOLDER, parentId)
+                    .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractItemEntity.class, parentId)))
+                    .cast(FolderEntity.class)
+                    .flatMapMany(folderParent -> {
+                        return itemRepository.findByTmAndUser_IdAndParentOrderByPositionAsc(tm, userId, folderParent).map(mapper::map);
+                    });
+            } else {
+                return itemRepository.findByTmAndUser_IdAndParentIsNullOrderByPositionAsc(tm, userId).map(mapper::map);
             }
-
-            // Return children.
-            items = itemRepository.findByTmAndUser_IdAndParentOrderByPositionAsc(tm, userId, folderParent);
-        } else {
-            items = itemRepository.findByTmAndUser_IdAndParentIsNullOrderByPositionAsc(tm, userId);
-        }
-        return items.stream().map(mapper::map).toList();
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Page<? extends AbstractItemDTO> findAllByType(@NotNull @Identifier String userId, @NotNull ItemType type, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<? extends AbstractItemDTO> findAllByType(@NotNull @Identifier String userId, @NotNull ItemType type, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        Page<? extends AbstractItemEntity> result;
+            Flux<? extends AbstractItemEntity> result;
 
-        switch (type) {
-            case EXTERNAL_LINK:
-                ISpecification<ExternalLinkEntity> externalLinkSpec =
-                    new SearchSpecification<ExternalLinkEntity>(searchable).and(new ItemOfGivenTypeSpecification<>(type)).and(new TmSpecification<>(tm)).and(new ItemBelongsToUserIdSpecification<>(userId));
-                result = externalLinkRepository.findAll(externalLinkSpec, pageable);
-                break;
-            case FOLDER:
-                ISpecification<FolderEntity> folderSpec = new SearchSpecification<FolderEntity>(searchable).and(new ItemOfGivenTypeSpecification<>(type)).and(new TmSpecification<>(tm)).and(new ItemBelongsToUserIdSpecification<>(userId));
-                result = folderRepository.findAll(folderSpec, pageable);
-                break;
-            case OBJECT_LINK:
-                ISpecification<ObjectLinkEntity> objectEntitySpec =
-                    new SearchSpecification<ObjectLinkEntity>(searchable).and(new ItemOfGivenTypeSpecification<>(type)).and(new TmSpecification<>(tm)).and(new ItemBelongsToUserIdSpecification<>(userId));
-                result = objectLinkRepository.findAll(objectEntitySpec, pageable);
-                break;
-            default:
-                throw new UnsupportedOperationException();
-        }
-        return result.map(mapper::map);
+            switch (type) {
+                case EXTERNAL_LINK:
+                    ISpecification<ExternalLinkEntity> externalLinkSpec =
+                        new SearchSpecification<ExternalLinkEntity>(searchable).and(new ItemOfGivenTypeSpecification<>(type)).and(new TmSpecification<>(tm)).and(new ItemBelongsToUserIdSpecification<>(userId));
+                    result = externalLinkRepository.findAll(externalLinkSpec, pageable);
+                    break;
+                case FOLDER:
+                    ISpecification<FolderEntity> folderSpec = new SearchSpecification<FolderEntity>(searchable).and(new ItemOfGivenTypeSpecification<>(type)).and(new TmSpecification<>(tm)).and(new ItemBelongsToUserIdSpecification<>(userId));
+                    result = folderRepository.findAll(folderSpec, pageable);
+                    break;
+                case OBJECT_LINK:
+                    ISpecification<ObjectLinkEntity> objectEntitySpec =
+                        new SearchSpecification<ObjectLinkEntity>(searchable).and(new ItemOfGivenTypeSpecification<>(type)).and(new TmSpecification<>(tm)).and(new ItemBelongsToUserIdSpecification<>(userId));
+                    result = objectLinkRepository.findAll(objectEntitySpec, pageable);
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+            return result.map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AbstractItemDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AbstractItemDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        AbstractItemEntity result = itemRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(AbstractItemEntity.class, id);
-        }
-
-        return mapper.map(result);
+            // Check that the item exists
+            return itemRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractItemEntity.class, id)))
+                .map(mapper::map);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -229,56 +232,46 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO create(@NotNull @Identifier String userId, @NotNull @Valid AbstractItemCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AbstractItemDTO> create(@NotNull @Identifier String userId, @NotNull @Valid AbstractItemCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check parent folder exists
-        FolderEntity folderParent = null;
-        Integer position = 0;
-        String pathPrefix = Strings.EMPTY;
-        if (creationDTO.getParent() != null && StringUtils.isNotBlank(creationDTO.getParent().getId())) {
-            // Get folder parent.
-            folderParent = (FolderEntity) itemRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, ItemType.FOLDER, creationDTO.getParent().getId());
-            if (folderParent == null) {
-                throw new ResourceNotFoundException(AbstractItemEntity.class, creationDTO.getParent().getId());
+            // Check parent folder exists
+            if (creationDTO.getParent() != null && StringUtils.isNotBlank(creationDTO.getParent().getId())) {
+                return itemRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, ItemType.FOLDER, creationDTO.getParent().getId())
+                    .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractItemEntity.class, creationDTO.getParent().getId())))
+                    .cast(FolderEntity.class)
+                    .flatMap(folderParent -> {
+                        String pathPrefix = StringUtils.join(folderParent.getPath(), Chars.UNDERSCORE);
+
+                        return itemRepository.findTopByTmAndUser_IdAndParentOrderByPositionDesc(tm, userId, folderParent)
+                            .map(itemWithGreatestPosition -> (itemWithGreatestPosition.getPosition() + 1))
+                            .switchIfEmpty(Mono.just(0))
+                            .flatMap(position -> {
+                                // Update the entity
+                                AbstractItemEntity entityToCreate = mapper.map(creationDTO);
+                                entityToCreate.setParent(folderParent);
+                                entityToCreate.setPosition(position);
+                                return this.onPersist(tm, pathPrefix, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                    return itemRepository.save(entityToCreateWithFields).map(mapper::map);
+                                });
+                            });
+                    });
+            } else {
+                return itemRepository.findTopByTmAndUser_IdAndParentIsNullOrderByPositionDesc(tm, userId)
+                    .map(itemWithGreatestPosition -> (itemWithGreatestPosition.getPosition() + 1))
+                    .switchIfEmpty(Mono.just(0))
+                    .flatMap(position -> {
+                        // Update the entity
+                        AbstractItemEntity entityToCreate = mapper.map(creationDTO);
+                        entityToCreate.setParent(null);
+                        entityToCreate.setPosition(position);
+                        return this.onPersist(tm, Strings.EMPTY, entityToCreate).flatMap(entityToCreateWithFields -> {
+                            return itemRepository.save(entityToCreateWithFields).map(mapper::map);
+                        });
+                    });
             }
-
-            // Compute position.
-            Integer greatestPosition = -1;
-            AbstractItemEntity itemWithGreatestPosition = itemRepository.findTopByTmAndUser_IdAndParentOrderByPositionDesc(tm, userId, folderParent);
-            if (itemWithGreatestPosition != null) {
-                greatestPosition = Math.max(greatestPosition, itemWithGreatestPosition.getPosition());
-            }
-
-            // Increment position.
-            position = greatestPosition + 1;
-
-            // Compute path.
-            pathPrefix = StringUtils.join(folderParent.getPath(), Chars.UNDERSCORE);
-        } else {
-            // Compute position.
-            Integer greatestPosition = -1;
-
-            AbstractItemEntity itemWithGreatestPosition = itemRepository.findTopByTmAndUser_IdAndParentIsNullOrderByPositionDesc(tm, userId);
-            if (itemWithGreatestPosition != null) {
-                greatestPosition = Math.max(greatestPosition, itemWithGreatestPosition.getPosition());
-            }
-
-            // Increment position.
-            position = greatestPosition + 1;
-        }
-
-        // Update the entity
-        AbstractItemEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setParent(folderParent);
-        entityToCreate.setPosition(position);
-        this.onPersist(entityToCreate);
-
-        // Set path.
-        entityToCreate.setPath(StringUtils.join(pathPrefix, entityToCreate.getId()));
-
-        AbstractItemEntity result = itemRepository.save(entityToCreate);
-        return mapper.map(result);
+        });
     }
 
     /**
@@ -286,21 +279,22 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid AbstractItemUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AbstractItemDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid AbstractItemUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        AbstractItemEntity existing = itemRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AbstractItemEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        AbstractItemEntity result = itemRepository.save(existing);
-        return mapper.map(result);
+            // Check that the announcement exists
+            return itemRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractItemEntity.class, id)))
+                .flatMap(existing -> {
+                    mapper.map(updateDTO, existing);
+                
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return itemRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+            });
+        });
     }
 
     /**
@@ -308,54 +302,49 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO updatePosition(@NotNull @Identifier String userId, @Identifier String id, @NotNull @Valid PositiveIntegerValueDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AbstractItemDTO> updatePosition(@NotNull @Identifier String userId, @Identifier String id, @NotNull @Valid PositiveIntegerValueDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        AbstractItemEntity existing = itemRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AbstractItemEntity.class, id);
-        }
+            // Check that the announcement exists
+            return itemRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractItemEntity.class, id)))
+                .flatMap(existing -> {
+                    // Finds all items under the same parent.
+                    Flux<AbstractItemEntity> siblings;
+                    if (existing.getParent() == null) {
+                        siblings = itemRepository.findByTmAndUser_IdAndParentIsNullOrderByPositionAsc(tm, userId);
+                    } else {
+                        siblings = itemRepository.findByTmAndUser_IdAndParentOrderByPositionAsc(tm, userId, existing.getParent());
+                    }
 
-        // Finds all items under the same parent.
-        List<AbstractItemEntity> siblings;
-        if (existing.getParent() == null) {
-            siblings = new ArrayList<>(itemRepository.findByTmAndUser_IdAndParentIsNullOrderByPositionAsc(tm, userId));
-        } else {
-            siblings = new ArrayList<>(itemRepository.findByTmAndUser_IdAndParentOrderByPositionAsc(tm, userId, existing.getParent()));
-        }
+                    return siblings.doOnNext(sibling -> {
+                        if (sibling.equals(existing)) {
+                            // Set new position for given element.
+                            sibling.setPosition(updateDTO.getValue());
+                        } else if (sibling.getPosition() >= updateDTO.getValue()) {
+                            // Increment position of all others under this one.
+                            sibling.setPosition(sibling.getPosition() + 1);
+                        }
+                    })
+                    .collectSortedList(new ItemEntityByPositionComparator())
+                    .flatMapMany(sortedSiblings -> {
+                        // Rewrite all the position.
+                        for (int i = 0; i < sortedSiblings.size(); i++) {
+                            AbstractItemEntity sibling = sortedSiblings.get(i);
 
-        // Update position of all elements in the hierarchy.
-        for (AbstractItemEntity sibling : siblings) {
-            if (sibling.equals(existing)) {
-                // Set new position for given element.
-                sibling.setPosition(updateDTO.getValue());
-            } else if (sibling.getPosition() >= updateDTO.getValue()) {
-                // Increment position of all others under this one.
-                sibling.setPosition(sibling.getPosition() + 1);
-            }
-        }
+                            // Update the position.
+                            sibling.setPosition(i);
+                        }
 
-        // Re-sort all items by position..
-        Collections.sort(siblings, new ItemEntityByPositionComparator());
-
-        // Rewrite all the position.
-        for (int i = 0; i < siblings.size(); i++) {
-            AbstractItemEntity sibling = siblings.get(i);
-
-            // Update the position.
-            sibling.setPosition(i);
-
-            // Notify update.
-            this.onUpdate(sibling);
-        }
-
-        // Update in DB.
-        itemRepository.saveAll(siblings);
-
-        // Return updated element.
-        AbstractItemEntity result = itemRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        return mapper.map(result);
+                        return Flux.fromIterable(sortedSiblings)
+                                .flatMap(this::onUpdate)
+                                .collectList()
+                                .flatMapMany(itemRepository::saveAll);
+                    })
+                    .then(itemRepository.findByTmAndUser_IdAndId(tm, userId, id).map(mapper::map));
+                });
+        });
     }
 
     /**
@@ -363,107 +352,109 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO updateParent(@NotNull @Identifier String userId, @Identifier String id, @Valid IdentifierDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AbstractItemDTO> updateParent(@NotNull @Identifier String userId, @Identifier String id, @Valid IdentifierDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            return Mono.empty();
 
-        // Check that the item exists
-        AbstractItemEntity existing = itemRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AbstractItemEntity.class, id);
-        }
+            // Check that the announcement exists
+/*            return itemRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractItemEntity.class, id)))
+                .flatMap(existing -> {
+                    // Check parent folder exists
+                    FolderEntity folderParent = null;
+                    Integer position = 0;
+                    String pathPrefix = Strings.EMPTY;
+                    if (updateDTO != null && StringUtils.isNotBlank(updateDTO.getId())) {
+                        // Get folder parent.
+                        folderParent = (FolderEntity) itemRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, ItemType.FOLDER, updateDTO.getId());
+                        if (folderParent == null) {
+                            throw new ResourceNotFoundException(AbstractItemEntity.class, updateDTO.getId());
+                        }
 
-        // Check parent folder exists
-        FolderEntity folderParent = null;
-        Integer position = 0;
-        String pathPrefix = Strings.EMPTY;
-        if (updateDTO != null && StringUtils.isNotBlank(updateDTO.getId())) {
-            // Get folder parent.
-            folderParent = (FolderEntity) itemRepository.findByTmAndUser_IdAndTypeAndId(tm, userId, ItemType.FOLDER, updateDTO.getId());
-            if (folderParent == null) {
-                throw new ResourceNotFoundException(AbstractItemEntity.class, updateDTO.getId());
-            }
+                        // Compute position.
+                        Integer greatestPosition = -1;
+                        AbstractItemEntity itemWithGreatestPosition = itemRepository.findTopByTmAndUser_IdAndParentOrderByPositionDesc(tm, userId, folderParent);
+                        if (itemWithGreatestPosition != null) {
+                            greatestPosition = Math.max(greatestPosition, itemWithGreatestPosition.getPosition());
+                        }
 
-            // Compute position.
-            Integer greatestPosition = -1;
-            AbstractItemEntity itemWithGreatestPosition = itemRepository.findTopByTmAndUser_IdAndParentOrderByPositionDesc(tm, userId, folderParent);
-            if (itemWithGreatestPosition != null) {
-                greatestPosition = Math.max(greatestPosition, itemWithGreatestPosition.getPosition());
-            }
+                        // Increment position.
+                        position = greatestPosition + 1;
 
-            // Increment position.
-            position = greatestPosition + 1;
+                        // Compute path.
+                        pathPrefix = StringUtils.join(folderParent.getPath(), Chars.UNDERSCORE);
+                    } else {
+                        // Compute position.
+                        Integer greatestPosition = -1;
 
-            // Compute path.
-            pathPrefix = StringUtils.join(folderParent.getPath(), Chars.UNDERSCORE);
-        } else {
-            // Compute position.
-            Integer greatestPosition = -1;
+                        AbstractItemEntity itemWithGreatestPosition = itemRepository.findTopByTmAndUser_IdAndParentIsNullOrderByPositionDesc(tm, userId);
+                        if (itemWithGreatestPosition != null) {
+                            greatestPosition = Math.max(greatestPosition, itemWithGreatestPosition.getPosition());
+                        }
 
-            AbstractItemEntity itemWithGreatestPosition = itemRepository.findTopByTmAndUser_IdAndParentIsNullOrderByPositionDesc(tm, userId);
-            if (itemWithGreatestPosition != null) {
-                greatestPosition = Math.max(greatestPosition, itemWithGreatestPosition.getPosition());
-            }
+                        // Increment position.
+                        position = greatestPosition + 1;
+                    }
 
-            // Increment position.
-            position = greatestPosition + 1;
-        }
+                    // Store old path and children path.
+                    FolderEntity oldFolderParent = existing.getParent();
+                    String oldPath = existing.getPath();
+                    String newPath = StringUtils.join(pathPrefix, existing.getId());
 
-        // Store old path and children path.
-        FolderEntity oldFolderParent = existing.getParent();
-        String oldPath = existing.getPath();
-        String newPath = StringUtils.join(pathPrefix, existing.getId());
+                    // If parent are the same, nothing to do.
+                    if (StringUtils.equals(oldPath, newPath)) {
+                        return mapper.map(existing);
+                    }
 
-        // If parent are the same, nothing to do.
-        if (StringUtils.equals(oldPath, newPath)) {
-            return mapper.map(existing);
-        }
+                    // If new path under old path, it means that we want to put a parent within a child of this parent.
+                    if (newPath.startsWith(oldPath)) {
+                        throw new CannotMoveFolderInSubfolderException();
+                    }
 
-        // If new path under old path, it means that we want to put a parent within a child of this parent.
-        if (newPath.startsWith(oldPath)) {
-            throw new CannotMoveFolderInSubfolderException();
-        }
+                    // Update the entity
+                    existing.setParent(folderParent);
+                    existing.setPosition(position);
+                    existing.setPath(newPath);
+                    this.onUpdate(existing);
 
-        // Update the entity
-        existing.setParent(folderParent);
-        existing.setPosition(position);
-        existing.setPath(newPath);
-        this.onUpdate(existing);
+                    // Update all the children elements if folder
+                    if (ItemType.FOLDER.equals(existing.getType())) {
+                        List<AbstractItemEntity> items = itemRepository.findByTmAndUser_IdAndIdNotAndPathStartsWith(tm, userId, existing.getId(), oldPath);
+                        for (AbstractItemEntity item : items) {
+                            item.setPath(item.getPath().replaceFirst(oldPath, newPath));
+                            itemRepository.save(item);
+                            this.onUpdate(item);
+                        }
+                    }
 
-        // Update all the children elements if folder
-        if (ItemType.FOLDER.equals(existing.getType())) {
-            List<AbstractItemEntity> items = itemRepository.findByTmAndUser_IdAndIdNotAndPathStartsWith(tm, userId, existing.getId(), oldPath);
-            for (AbstractItemEntity item : items) {
-                item.setPath(item.getPath().replaceFirst(oldPath, newPath));
-                itemRepository.save(item);
-                this.onUpdate(item);
-            }
-        }
+                    // Update all the position of the old folder.
+                    List<AbstractItemEntity> oldFolderChildren;
+                    if (oldFolderParent == null) {
+                        oldFolderChildren = new ArrayList<>(itemRepository.findByTmAndUser_IdAndIdNotAndParentIsNullOrderByPositionAsc(tm, userId, id));
+                    } else {
+                        oldFolderChildren = new ArrayList<>(itemRepository.findByTmAndUser_IdAndIdNotAndParentOrderByPositionAsc(tm, userId, id, oldFolderParent));
+                    }
 
-        // Update all the position of the old folder.
-        List<AbstractItemEntity> oldFolderChildren;
-        if (oldFolderParent == null) {
-            oldFolderChildren = new ArrayList<>(itemRepository.findByTmAndUser_IdAndIdNotAndParentIsNullOrderByPositionAsc(tm, userId, id));
-        } else {
-            oldFolderChildren = new ArrayList<>(itemRepository.findByTmAndUser_IdAndIdNotAndParentOrderByPositionAsc(tm, userId, id, oldFolderParent));
-        }
+                    // Rewrite all the position.
+                    for (int i = 0; i < oldFolderChildren.size(); i++) {
+                        AbstractItemEntity oldFolderChild = oldFolderChildren.get(i);
 
-        // Rewrite all the position.
-        for (int i = 0; i < oldFolderChildren.size(); i++) {
-            AbstractItemEntity oldFolderChild = oldFolderChildren.get(i);
+                        // Update the position.
+                        oldFolderChild.setPosition(i);
 
-            // Update the position.
-            oldFolderChild.setPosition(i);
+                        // Notify update.
+                        this.onUpdate(oldFolderChild);
+                    }
 
-            // Notify update.
-            this.onUpdate(oldFolderChild);
-        }
+                    // Update in DB.
+                    itemRepository.saveAll(oldFolderChildren);
 
-        // Update in DB.
-        itemRepository.saveAll(oldFolderChildren);
-
-        // Return the result.
-        AbstractItemEntity result = itemRepository.save(existing);
-        return mapper.map(result);
+                    // Return the result.
+                    return itemRepository.save(existing).map(mapper::map);
+                })
+                .then(itemRepository.save(existing).map(mapper::map));*/
+        });
     }
 
     /**
@@ -471,21 +462,22 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractItemDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid AbstractItemPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AbstractItemDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid AbstractItemPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        AbstractItemEntity existing = itemRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AbstractItemEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        AbstractItemEntity result = itemRepository.save(existing);
-        return mapper.map(result);
+            // Check that the announcement exists
+            return itemRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractItemEntity.class, id)))
+                .flatMap(existing -> {
+                    mapper.map(patchDTO, existing);
+                
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return itemRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+            });
+        });
     }
 
     /**
@@ -493,65 +485,70 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        AbstractItemEntity existing = itemRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AbstractItemEntity.class, id);
-        }
-
-        // Delete entity.
-        itemRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
-
-        // Delete items under this one.
-        if (ItemType.FOLDER.equals(existing.getType())) {
-            List<AbstractItemEntity> items = itemRepository.findByTmAndUser_IdAndIdNotAndPathStartsWith(tm, userId, existing.getId(), existing.getPath());
-            for (AbstractItemEntity item : items) {
-                itemRepository.delete(item);
-                this.onDelete(item);
-            }
-        }
+            // Check that the announcement exists
+            return itemRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractItemEntity.class, id)))
+                .flatMap(existing -> {
+                    // Delete entity.
+                    return itemRepository.delete(existing).then(
+                        this.onDelete(existing)
+                    ).flatMap(deletedElement -> {
+                        // Delete items under this one.
+                        if (ItemType.FOLDER.equals(deletedElement.getType())) {
+                            return itemRepository.findByTmAndUser_IdAndIdNotAndPathStartsWith(tm, userId, existing.getId(), existing.getPath())
+                                .flatMap(childItem -> {
+                                    return itemRepository.delete(childItem).then(this.onDelete(childItem));
+                                }).then();
+                        } else {
+                            return Mono.empty();
+                        }
+                    });
+                });
+        });
     }
 
     // ------------------------------------------ Private methods.
 
     /**
      * Method called when persisting an item.
+     * @param tm the trademark.
+     * @param pathPrefix the path prefix.
      * @param entity the entity.
      */
-    private void onPersist(AbstractItemEntity entity) {
-        entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
-        entity.setCreatedAt(DateUtility.dateTimeNow());
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+    private Mono<AbstractItemEntity> onPersist(String tm, String pathPrefix, AbstractItemEntity entity) {
+        return securityService.getConnectedUserRefIdentity().flatMap(connnectedUser -> {
+            entity.setId(IdentifierUtility.generateId());
+            entity.setTm(tm);
+            entity.setCreatedAt(DateUtility.dateTimeNow());
+            entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+            entity.setPath(StringUtils.join(pathPrefix, entity.getId()));
 
-        // Add author.
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(userRefMapper.map(connnectedUser));
+            // Add author.
+            entity.setUser(userRefMapper.map(connnectedUser));
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+            return postResourceEvent(entity, ResourceEventType.CREATED);
+        });
     }
 
     /**
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(AbstractItemEntity entity) {
+    private Mono<AbstractItemEntity> onUpdate(AbstractItemEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a item.
      * @param entity the entity.
      */
-    private void onDelete(AbstractItemEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<AbstractItemEntity> onDelete(AbstractItemEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -559,15 +556,17 @@ public class ItemServiceImpl implements ItemService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(AbstractItemEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.BOOMARK_ITEM)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<AbstractItemEntity> postResourceEvent(AbstractItemEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.BOOMARK_ITEM)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

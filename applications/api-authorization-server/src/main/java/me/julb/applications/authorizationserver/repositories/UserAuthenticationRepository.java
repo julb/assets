@@ -24,18 +24,20 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.authentication.AbstractUserAuthenticationEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication repository.
  * <br>
  * @author Julb.
  */
-public interface UserAuthenticationRepository extends MongoRepository<AbstractUserAuthenticationEntity, String>, MongoSpecificationExecutor<AbstractUserAuthenticationEntity> {
+public interface UserAuthenticationRepository extends ReactiveMongoRepository<AbstractUserAuthenticationEntity, String>, MongoSpecificationExecutor<AbstractUserAuthenticationEntity> {
 
     /**
      * Checks if an user authentication by trademark and user and type exists.
@@ -44,7 +46,7 @@ public interface UserAuthenticationRepository extends MongoRepository<AbstractUs
      * @param type the type.
      * @return <code>true</code> if the user authentication exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
+    Mono<Boolean> existsByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
 
     /**
      * Finds an user authentication by trademark and id.
@@ -53,7 +55,7 @@ public interface UserAuthenticationRepository extends MongoRepository<AbstractUs
      * @param id the id.
      * @return the user, or <code>null</code> if not exists.
      */
-    AbstractUserAuthenticationEntity findByTmAndUser_IdAndId(String tm, String userId, String id);
+    Mono<AbstractUserAuthenticationEntity> findByTmAndUser_IdAndId(String tm, String userId, String id);
 
     /**
      * Finds an user authentication by trademark and id.
@@ -63,6 +65,6 @@ public interface UserAuthenticationRepository extends MongoRepository<AbstractUs
      * @param id the id.
      * @return the user, or <code>null</code> if not exists.
      */
-    AbstractUserAuthenticationEntity findByTmAndUser_IdAndTypeAndId(String tm, String userId, UserAuthenticationType type, String id);
+    Mono<AbstractUserAuthenticationEntity> findByTmAndUser_IdAndTypeAndId(String tm, String userId, UserAuthenticationType type, String id);
 
 }

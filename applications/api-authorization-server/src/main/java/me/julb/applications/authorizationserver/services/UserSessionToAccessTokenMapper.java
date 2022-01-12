@@ -29,6 +29,8 @@ import javax.validation.constraints.NotNull;
 import me.julb.applications.authorizationserver.entities.session.UserSessionEntity;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The user session to access token mapper.
  * <br>
@@ -45,6 +47,6 @@ public interface UserSessionToAccessTokenMapper {
      * @param userSession the user session.
      * @return the access token.
      */
-    UserSessionAccessTokenDTO map(@NotNull UserSessionEntity userSession);
+    Mono<UserSessionAccessTokenDTO> map(@NotNull UserSessionEntity userSession);
 
 }

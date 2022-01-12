@@ -24,14 +24,12 @@
 
 package me.julb.applications.disclaimer.services.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -55,14 +53,17 @@ import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The disclaimer service implementation.
@@ -104,28 +105,28 @@ public class DisclaimerServiceImpl implements DisclaimerService {
      * {@inheritDoc}
      */
     @Override
-    public Page<DisclaimerDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<DisclaimerDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        ISpecification<DisclaimerEntity> spec = new SearchSpecification<DisclaimerEntity>(searchable).and(new TmSpecification<>(tm));
-        Page<DisclaimerEntity> result = disclaimerRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            ISpecification<DisclaimerEntity> spec = new SearchSpecification<DisclaimerEntity>(searchable).and(new TmSpecification<>(tm));
+            return disclaimerRepository.findAll(spec, pageable).map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DisclaimerDTO findOne(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<DisclaimerDTO> findOne(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the disclaimer exists
-        DisclaimerEntity result = disclaimerRepository.findByTmAndId(tm, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(DisclaimerEntity.class, id);
-        }
-
-        return mapper.map(result);
+            // Check that the disclaimer exists
+            return disclaimerRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(DisclaimerEntity.class, id)))
+                .map(mapper::map);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -135,20 +136,24 @@ public class DisclaimerServiceImpl implements DisclaimerService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public DisclaimerDTO create(@NotNull @Valid DisclaimerCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<DisclaimerDTO> create(@NotNull @Valid DisclaimerCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check if not overlapping another one.
-        if (disclaimerRepository.existsByTmAndCodeIgnoreCaseAndVersion(tm, creationDTO.getCode(), creationDTO.getVersion())) {
-            throw new ResourceAlreadyExistsException(DisclaimerEntity.class, Map.<String, String> of("code", creationDTO.getCode(), "version", creationDTO.getVersion().toString()));
-        }
+            // Check if disclaimer already exists
+            return disclaimerRepository.existsByTmAndCodeIgnoreCaseAndVersion(tm, creationDTO.getCode(), creationDTO.getVersion())
+                .flatMap(alreadyExists -> {
+                    if (alreadyExists.booleanValue()) {
+                        return Mono.error(new ResourceAlreadyExistsException(DisclaimerEntity.class, Map.<String, String> of("code", creationDTO.getCode(), "version", creationDTO.getVersion().toString())));
+                    }
 
-        // Update the entity
-        DisclaimerEntity entityToCreate = mapper.map(creationDTO);
-        this.onPersist(entityToCreate);
-
-        DisclaimerEntity result = disclaimerRepository.save(entityToCreate);
-        return mapper.map(result);
+                    // Update the entity
+                    DisclaimerEntity entityToCreate = mapper.map(creationDTO);
+                    return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                        return disclaimerRepository.save(entityToCreateWithFields).map(mapper::map);
+                    });
+            });
+        });
     }
 
     /**
@@ -156,26 +161,27 @@ public class DisclaimerServiceImpl implements DisclaimerService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public DisclaimerDTO update(@NotNull @Identifier String id, @NotNull @Valid DisclaimerUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<DisclaimerDTO> update(@NotNull @Identifier String id, @NotNull @Valid DisclaimerUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the disclaimer exists
-        DisclaimerEntity existing = disclaimerRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(DisclaimerEntity.class, id);
-        }
+            // Check that the announcement exists
+            return disclaimerRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(DisclaimerEntity.class, id)))
+                .flatMap(existing -> {
+                    if (existing.getFrozen().booleanValue()) {
+                        return Mono.error(new DisclaimerIsFrozenException(id));
+                    }
 
-        // Check if not frozen.
-        if (existing.getFrozen()) {
-            throw new DisclaimerIsFrozenException(id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        DisclaimerEntity result = disclaimerRepository.save(existing);
-        return mapper.map(result);
+                    // Update the entity
+                    mapper.map(updateDTO, existing);
+                
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return disclaimerRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+            });
+        });
     }
 
     /**
@@ -183,32 +189,36 @@ public class DisclaimerServiceImpl implements DisclaimerService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public DisclaimerDTO publish(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<DisclaimerDTO> publish(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the disclaimer exists
-        DisclaimerEntity existing = disclaimerRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(DisclaimerEntity.class, id);
-        }
+            // Check that the announcement exists
+            return disclaimerRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(DisclaimerEntity.class, id)))
+                .flatMap(existing -> {
+                    // Finds the other version to deactivate
+                    Flux<DisclaimerEntity> disclaimersToDeactivate = disclaimerRepository.findByTmAndIdNotAndCodeIgnoreCaseAndActiveIsTrue(tm, id, existing.getCode())
+                        .flatMap(disclaimerToDeactivate -> {
+                            disclaimerToDeactivate.setActive(Boolean.FALSE);
+                            disclaimerToDeactivate.setActivatedAt(null);
+                            return this.onUpdate(disclaimerToDeactivate);
+                        });
+                    return disclaimerRepository.saveAll(disclaimersToDeactivate)
+                        .then()
+                        .flatMap(v -> {
+                        // Update the entity
+                        existing.setActive(true);
+                        existing.setFrozen(Boolean.TRUE);
+                        existing.setActivatedAt(DateUtility.dateTimeNow());
 
-        // Finds the other version to deactivate
-        List<DisclaimerEntity> disclaimersToDeactivate = disclaimerRepository.findByTmAndIdNotAndCodeIgnoreCaseAndActiveIsTrue(tm, id, existing.getCode());
-        for (DisclaimerEntity disclaimerToDeactivate : disclaimersToDeactivate) {
-            disclaimerToDeactivate.setActive(Boolean.FALSE);
-            disclaimerToDeactivate.setActivatedAt(null);
-            this.onUpdate(disclaimerToDeactivate);
-        }
-        disclaimerRepository.saveAll(disclaimersToDeactivate);
-
-        // Update the entity
-        existing.setActive(true);
-        existing.setFrozen(Boolean.TRUE);
-        existing.setActivatedAt(DateUtility.dateTimeNow());
-        this.onUpdate(existing);
-
-        DisclaimerEntity result = disclaimerRepository.save(existing);
-        return mapper.map(result);
+                        // Proceed to the update
+                        return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                            return disclaimerRepository.save(entityToUpdateWithFields).map(mapper::map);
+                        });
+                    });
+            });
+        });
     }
 
     /**
@@ -216,22 +226,24 @@ public class DisclaimerServiceImpl implements DisclaimerService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public DisclaimerDTO unpublish(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<DisclaimerDTO> unpublish(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the disclaimer exists
-        DisclaimerEntity existing = disclaimerRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(DisclaimerEntity.class, id);
-        }
-
-        // Update the entity
-        existing.setActive(false);
-        existing.setActivatedAt(null);
-        this.onUpdate(existing);
-
-        DisclaimerEntity result = disclaimerRepository.save(existing);
-        return mapper.map(result);
+            // Check that the announcement exists
+            return disclaimerRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(DisclaimerEntity.class, id)))
+                .flatMap(existing -> {
+                    // Update the entity
+                    existing.setActive(false);
+                    existing.setActivatedAt(null);
+                
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return disclaimerRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+            });
+        });
     }
 
     /**
@@ -239,26 +251,27 @@ public class DisclaimerServiceImpl implements DisclaimerService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public DisclaimerDTO patch(@NotNull @Identifier String id, @NotNull @Valid DisclaimerPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<DisclaimerDTO> patch(@NotNull @Identifier String id, @NotNull @Valid DisclaimerPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the disclaimer exists
-        DisclaimerEntity existing = disclaimerRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(DisclaimerEntity.class, id);
-        }
+            // Check that the announcement exists
+            return disclaimerRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(DisclaimerEntity.class, id)))
+                .flatMap(existing -> {
+                    if (existing.getFrozen().booleanValue()) {
+                        return Mono.error(new DisclaimerIsFrozenException(id));
+                    }
 
-        // Check if not frozen.
-        if (existing.getFrozen()) {
-            throw new DisclaimerIsFrozenException(id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        DisclaimerEntity result = disclaimerRepository.save(existing);
-        return mapper.map(result);
+                    // Update the entity
+                    mapper.map(patchDTO, existing);
+                
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return disclaimerRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+            });
+        });
     }
 
     /**
@@ -266,60 +279,61 @@ public class DisclaimerServiceImpl implements DisclaimerService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the disclaimer exists
-        DisclaimerEntity existing = disclaimerRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(DisclaimerEntity.class, id);
-        }
+            // Check that the announcement exists
+            return disclaimerRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(DisclaimerEntity.class, id)))
+                .flatMap(existing -> {
+                    // Check if not frozen.
+                    if (existing.getFrozen().booleanValue()) {
+                        return Mono.error(new DisclaimerIsFrozenException(id));
+                    }
 
-        // Check if not frozen.
-        if (existing.getFrozen()) {
-            throw new DisclaimerIsFrozenException(id);
-        }
-
-        // Delete entity.
-        disclaimerRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+                    // Delete entity.
+                    return disclaimerRepository.delete(existing).then(
+                        this.onDelete(existing)
+                    ).then();
+                });
+        });
     }
 
     // ------------------------------------------ Private methods.
 
     /**
      * Method called when persisting a disclaimer.
+     * @param tm the trademark.
      * @param entity the entity.
      */
-    private void onPersist(DisclaimerEntity entity) {
+    private Mono<DisclaimerEntity> onPersist(String tm, DisclaimerEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
         entity.setActive(Boolean.FALSE);
         entity.setActivatedAt(null);
         entity.setFrozen(Boolean.FALSE);
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a disclaimer.
      * @param entity the entity.
      */
-    private void onUpdate(DisclaimerEntity entity) {
+    private Mono<DisclaimerEntity> onUpdate(DisclaimerEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a disclaimer.
      * @param entity the entity.
      */
-    private void onDelete(DisclaimerEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<DisclaimerEntity> onDelete(DisclaimerEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -327,15 +341,17 @@ public class DisclaimerServiceImpl implements DisclaimerService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(DisclaimerEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.DISCLAIMER)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<DisclaimerEntity> postResourceEvent(DisclaimerEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.DISCLAIMER)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

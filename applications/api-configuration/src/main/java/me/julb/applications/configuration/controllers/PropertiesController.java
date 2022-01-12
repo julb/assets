@@ -36,9 +36,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
 
 import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The REST controller to return properties.
@@ -55,7 +57,7 @@ public class PropertiesController {
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     /**
      * This method returns all properties for current trademark.
@@ -64,9 +66,11 @@ public class PropertiesController {
      */
     @Operation(summary = "returns all properties for the current trademark")
     @GetMapping()
-    public Map<String, String> findAll(@RequestParam(name = "prefix", required = false) String prefix) {
-        LOGGER.debug("Returns the properties for the current trademark.");
-        return configSourceService.findAll(prefix, true);
+    public Mono<Map<String, String>> findAll(@RequestParam(name = "prefix", required = false) String prefix) {
+        return Mono.deferContextual(ctx -> {
+            LOGGER.debug("Returns the properties for the current trademark.");
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            return Mono.just(configSourceService.findAll(tm, prefix, true));
+        });
     }
-
 }

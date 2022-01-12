@@ -56,14 +56,9 @@ public class CustomConfiguration {
     private ApplicationProperties applicationProperties;
 
     /**
-     * Builds a list of remote ping feign clients.
-     * @param beanFactory the bean factory.
-     * @param decoder the default feign decoder.
-     * @param encoder the default feign encoder.
-     * @param contract the default feign contract.
-     * @param retryer the retryer.
-     * @param errorDecoder the error decoder.
-     * @return the list of remote ping feign clients.
+     * Builds a list of remote ping web clients.
+     * @param applicationContext the application context.
+     * @return the list of remote ping web clients.
      */
     @Bean
     public Map<String, WebClient> apiPingWebClients(GenericApplicationContext applicationContext) {

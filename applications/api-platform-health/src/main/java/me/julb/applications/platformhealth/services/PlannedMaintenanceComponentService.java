@@ -26,12 +26,14 @@ package me.julb.applications.platformhealth.services;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.platformhealth.services.dto.plannedmaintenancecomponent.PlannedMaintenanceComponentDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The planned maintenance service.
@@ -49,7 +51,7 @@ public interface PlannedMaintenanceComponentService {
      * @param pageable the pageable information.
      * @return a paged list of components.
      */
-    Page<PlannedMaintenanceComponentDTO> findAll(@NotNull @Identifier String plannedMaintenanceId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<PlannedMaintenanceComponentDTO> findAll(@NotNull @Identifier String plannedMaintenanceId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Check if the given component is associated to the given planned maintenance.
@@ -57,7 +59,7 @@ public interface PlannedMaintenanceComponentService {
      * @param componentId the component ID.
      * @return <code>true</code> if the link exists, <code>false</code> otherwise.
      */
-    PlannedMaintenanceComponentDTO findOne(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId);
+    Mono<PlannedMaintenanceComponentDTO> findOne(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId);
 
     // ------------------------------------------ Write methods.
 
@@ -67,19 +69,19 @@ public interface PlannedMaintenanceComponentService {
      * @param componentId the component ID.
      * @return the link between planned maintenance and component created.
      */
-    PlannedMaintenanceComponentDTO create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId);
+    Mono<PlannedMaintenanceComponentDTO> create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId);
 
     /**
      * Remove all links to components for a planned maintenance.
      * @param plannedMaintenanceId the planned maintenance ID.
      */
-    void delete(@NotNull @Identifier String plannedMaintenanceId);
+    Mono<Void> delete(@NotNull @Identifier String plannedMaintenanceId);
 
     /**
      * Deletes a component.
      * @param plannedMaintenanceId the planned maintenance ID.
      * @param componentId the component ID.
      */
-    void delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId);
+    Mono<Void> delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId);
 
 }

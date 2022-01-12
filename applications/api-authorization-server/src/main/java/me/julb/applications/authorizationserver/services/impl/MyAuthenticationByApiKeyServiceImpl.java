@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,7 +43,10 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByApiKeyWithRawKeyDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication service implementation.
@@ -73,18 +75,20 @@ public class MyAuthenticationByApiKeyServiceImpl implements MyAuthenticationByAp
      * {@inheritDoc}
      */
     @Override
-    public Page<UserAuthenticationByApiKeyDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByApiKeyService.findAll(userId, searchable, pageable);
+    public Flux<UserAuthenticationByApiKeyDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return userAuthenticationByApiKeyService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByApiKeyDTO findOne(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByApiKeyService.findOne(userId, id);
+    public Mono<UserAuthenticationByApiKeyDTO> findOne(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByApiKeyService.findOne(userId, id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -94,9 +98,10 @@ public class MyAuthenticationByApiKeyServiceImpl implements MyAuthenticationByAp
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByApiKeyWithRawKeyDTO create(@NotNull @Valid UserAuthenticationByApiKeyCreationDTO creationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByApiKeyService.create(userId, creationDTO);
+    public Mono<UserAuthenticationByApiKeyWithRawKeyDTO> create(@NotNull @Valid UserAuthenticationByApiKeyCreationDTO creationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByApiKeyService.create(userId, creationDTO);
+        });
     }
 
     /**
@@ -104,9 +109,10 @@ public class MyAuthenticationByApiKeyServiceImpl implements MyAuthenticationByAp
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByApiKeyDTO update(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyUpdateDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByApiKeyService.update(userId, id, updateDTO);
+    public Mono<UserAuthenticationByApiKeyDTO> update(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyUpdateDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByApiKeyService.update(userId, id, updateDTO);
+        });
     }
 
     /**
@@ -114,9 +120,10 @@ public class MyAuthenticationByApiKeyServiceImpl implements MyAuthenticationByAp
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByApiKeyDTO patch(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyPatchDTO patchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByApiKeyService.patch(userId, id, patchDTO);
+    public Mono<UserAuthenticationByApiKeyDTO> patch(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyPatchDTO patchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByApiKeyService.patch(userId, id, patchDTO);
+        });
     }
 
     /**
@@ -124,9 +131,10 @@ public class MyAuthenticationByApiKeyServiceImpl implements MyAuthenticationByAp
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        userAuthenticationByApiKeyService.delete(userId, id);
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByApiKeyService.delete(userId, id);
+        });
     }
 
     // ------------------------------------------ Utility methods.

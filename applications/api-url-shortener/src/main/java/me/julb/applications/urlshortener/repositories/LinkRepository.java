@@ -24,17 +24,19 @@
 
 package me.julb.applications.urlshortener.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.urlshortener.entities.LinkEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The link repository.
  * <br>
  * @author Julb.
  */
-public interface LinkRepository extends MongoRepository<LinkEntity, String>, MongoSpecificationExecutor<LinkEntity> {
+public interface LinkRepository extends ReactiveMongoRepository<LinkEntity, String>, MongoSpecificationExecutor<LinkEntity> {
 
     /**
      * Finds a link by trademark and id.
@@ -42,7 +44,7 @@ public interface LinkRepository extends MongoRepository<LinkEntity, String>, Mon
      * @param id the id.
      * @return the link, or <code>null</code> if not exists.
      */
-    LinkEntity findByTmAndId(String tm, String id);
+    Mono<LinkEntity> findByTmAndId(String tm, String id);
 
     /**
      * Finds a link by trademark, host and URI.
@@ -51,7 +53,7 @@ public interface LinkRepository extends MongoRepository<LinkEntity, String>, Mon
      * @param uri the URI.
      * @return the link if found, <code>null</code> otherwise.
      */
-    LinkEntity findByTmAndHostIgnoreCaseAndUriIgnoreCaseAndEnabledIsTrue(String tm, String host, String uri);
+    Mono<LinkEntity> findByTmAndHostIgnoreCaseAndUriIgnoreCaseAndEnabledIsTrue(String tm, String host, String uri);
 
     /**
      * Checks if a link already exists.
@@ -60,7 +62,7 @@ public interface LinkRepository extends MongoRepository<LinkEntity, String>, Mon
      * @param uri the URI.
      * @return <code>true</code> if a link exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndHostIgnoreCaseAndUriIgnoreCase(String tm, String host, String uri);
+    Mono<Boolean> existsByTmAndHostIgnoreCaseAndUriIgnoreCase(String tm, String host, String uri);
 
     /**
      * Checks if a link already exists, excluding the given ID.
@@ -70,6 +72,6 @@ public interface LinkRepository extends MongoRepository<LinkEntity, String>, Mon
      * @param uri the URI.
      * @return <code>true</code> if a link exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndIdNotAndHostIgnoreCaseAndUriIgnoreCase(String tm, String id, String host, String uri);
+    Mono<Boolean> existsByTmAndIdNotAndHostIgnoreCaseAndUriIgnoreCase(String tm, String id, String host, String uri);
 
 }

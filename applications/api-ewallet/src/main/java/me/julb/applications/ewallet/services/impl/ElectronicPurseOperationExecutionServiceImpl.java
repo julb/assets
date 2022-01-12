@@ -49,6 +49,8 @@ import me.julb.applications.ewallet.services.dto.moneyvoucher.MoneyVoucherDTO;
 import me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedCurrencyMismatch;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The electronic purse service implementation.
  * <br>
@@ -86,31 +88,29 @@ public class ElectronicPurseOperationExecutionServiceImpl implements ElectronicP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Identifier String id, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher) {
-        // Check that the item exists
-        ElectronicPurseDTO existing = electronicPurseService.findOne(id);
+    public Mono<ElectronicPurseDTO> redeemMoneyVoucher(@NotNull @Identifier String id, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher) {
+        return Mono.zip(electronicPurseService.findOne(id), moneyVoucherService.findByCode(redeemMoneyVoucher.getCode()))
+            .flatMap(tuple -> {
+                ElectronicPurseDTO existing = tuple.getT1();
+                MoneyVoucherDTO moneyVoucher = tuple.getT2();
 
-        // Finds the money voucher
-        MoneyVoucherDTO moneyVoucher = moneyVoucherService.findByCode(redeemMoneyVoucher.getCode());
+                // The currencies are not matching.
+                if (!Objects.equal(existing.getAmount().getCurrency(), moneyVoucher.getAmount().getCurrency())) {
+                    return Mono.error(new MoneyVoucherCannotBeRedeemedCurrencyMismatch(moneyVoucher.getId(), moneyVoucher.getAmount().getCurrency(), existing.getId(), existing.getAmount().getCurrency()));
+                }
 
-        // The currencies are not matching.
-        if (!Objects.equal(existing.getAmount().getCurrency(), moneyVoucher.getAmount().getCurrency())) {
-            throw new MoneyVoucherCannotBeRedeemedCurrencyMismatch(moneyVoucher.getId(), moneyVoucher.getAmount().getCurrency(), existing.getId(), existing.getAmount().getCurrency());
-        }
-
-        // Everything seems to be fine. Redeem money voucher.
-        MoneyVoucherDTO moneyVoucherRedeemed = moneyVoucherService.redeem(moneyVoucher.getId());
-
-        // Record operation.
-        ElectronicPurseOperationCreationDTO operation = new ElectronicPurseOperationCreationDTO();
-        operation.setAmount(moneyVoucherRedeemed.getAmount());
-        operation.setLocalizedMessage(new HashMap<>());
-        operation.setSendNotification(false);
-        operation.setType(ElectronicPurseOperationType.CREDIT_MONEY_VOUCHER_REDEMPTION);
-        electronicPurseOperationService.create(existing.getId(), operation);
-
-        // Refresh balance and get electronic purse updated.
-        return electronicPurseService.refreshBalance(existing.getId());
+                // Everything seems to be fine. Redeem money voucher.
+                return moneyVoucherService.redeem(moneyVoucher.getId()).flatMap(moneyVoucherRedeemed -> {
+                    // Record operation.
+                    ElectronicPurseOperationCreationDTO operation = new ElectronicPurseOperationCreationDTO();
+                    operation.setAmount(moneyVoucherRedeemed.getAmount());
+                    operation.setLocalizedMessage(new HashMap<>());
+                    operation.setSendNotification(false);
+                    operation.setType(ElectronicPurseOperationType.CREDIT_MONEY_VOUCHER_REDEMPTION);
+                    return electronicPurseOperationService.create(existing.getId(), operation)
+                        .then(electronicPurseService.refreshBalance(existing.getId()));
+                });
+        });
     }
 
     /**
@@ -118,12 +118,10 @@ public class ElectronicPurseOperationExecutionServiceImpl implements ElectronicP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO cancelOperation(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
-        // Cancel operation.
-        electronicPurseOperationService.cancel(electronicPurseId, id);
-
-        // Refresh balance and get electronic purse updated.
-        return electronicPurseService.refreshBalance(electronicPurseId);
+    public Mono<ElectronicPurseDTO> cancelOperation(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
+        // Cancel operation and refresh balance and get electronic purse updated.
+        return electronicPurseOperationService.cancel(electronicPurseId, id)
+            .then(electronicPurseService.refreshBalance(electronicPurseId));
     }
 
     /**
@@ -131,12 +129,10 @@ public class ElectronicPurseOperationExecutionServiceImpl implements ElectronicP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO deleteOperationExecution(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
-        // Delete operation.
-        electronicPurseOperationService.delete(electronicPurseId, id);
-
-        // Refresh balance and get electronic purse updated.
-        return electronicPurseService.refreshBalance(electronicPurseId);
+    public Mono<ElectronicPurseDTO> deleteOperationExecution(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id) {
+        // Delete operation, refresh balance and get electronic purse updated.
+        return electronicPurseOperationService.delete(electronicPurseId, id)
+            .then(electronicPurseService.refreshBalance(electronicPurseId));
     }
 
     // ------------------------------------------ Utility methods.

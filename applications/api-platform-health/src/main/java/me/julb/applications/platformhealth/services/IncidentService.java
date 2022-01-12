@@ -27,7 +27,6 @@ package me.julb.applications.platformhealth.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.platformhealth.services.dto.incident.IncidentCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.platformhealth.services.dto.incident.IncidentPatchDT
 import me.julb.applications.platformhealth.services.dto.incident.IncidentUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident service.
@@ -52,7 +54,7 @@ public interface IncidentService {
      * @param pageable the pageable information.
      * @return a paged list of incidents.
      */
-    Page<IncidentDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<IncidentDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets the incidents linked to given component (paged).
@@ -61,14 +63,14 @@ public interface IncidentService {
      * @param pageable the pageable information.
      * @return a paged list of incidents.
      */
-    Page<IncidentDTO> findAll(@NotNull @Identifier String componentId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<IncidentDTO> findAll(@NotNull @Identifier String componentId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a incident through its ID.
      * @param id the incident identifier.
      * @return the incident.
      */
-    IncidentDTO findOne(@NotNull @Identifier String id);
+    Mono<IncidentDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -77,7 +79,7 @@ public interface IncidentService {
      * @param creationDTO the DTO to create a incident.
      * @return the created incident.
      */
-    IncidentDTO create(@NotNull @Valid IncidentCreationDTO creationDTO);
+    Mono<IncidentDTO> create(@NotNull @Valid IncidentCreationDTO creationDTO);
 
     /**
      * Updates a incident.
@@ -85,7 +87,7 @@ public interface IncidentService {
      * @param updateDTO the DTO to update a incident.
      * @return the updated incident.
      */
-    IncidentDTO update(@NotNull @Identifier String id, @NotNull @Valid IncidentUpdateDTO updateDTO);
+    Mono<IncidentDTO> update(@NotNull @Identifier String id, @NotNull @Valid IncidentUpdateDTO updateDTO);
 
     /**
      * Patches a incident.
@@ -93,12 +95,12 @@ public interface IncidentService {
      * @param patchDTO the DTO to update a incident.
      * @return the updated incident.
      */
-    IncidentDTO patch(@NotNull @Identifier String id, @NotNull @Valid IncidentPatchDTO patchDTO);
+    Mono<IncidentDTO> patch(@NotNull @Identifier String id, @NotNull @Valid IncidentPatchDTO patchDTO);
 
     /**
      * Deletes a incident.
      * @param id the id of the incident to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

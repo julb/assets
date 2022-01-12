@@ -24,8 +24,6 @@
 
 package me.julb.applications.ewallet.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -46,6 +44,9 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPursePatchDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseUpdateDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage my electronic purse.
@@ -72,7 +73,7 @@ public class MyElectronicPurseController {
     @Operation(summary = "gets my electronic purse")
     @GetMapping
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public ElectronicPurseDTO get() {
+    public Mono<ElectronicPurseDTO> get() {
         return myElectronicPurseService.findOne();
     }
 
@@ -86,7 +87,7 @@ public class MyElectronicPurseController {
     @Operation(summary = "redeem a money voucher into my electronic purse")
     @PostMapping(path = "/.redeem", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public ElectronicPurseDTO redeem(@RequestBody @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucherDTO) {
+    public Mono<ElectronicPurseDTO> redeem(@RequestBody @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucherDTO) {
         return myElectronicPurseService.redeemMoneyVoucher(redeemMoneyVoucherDTO);
     }
 
@@ -98,7 +99,7 @@ public class MyElectronicPurseController {
     @Operation(summary = "updates my electronic purse")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public ElectronicPurseDTO update(@RequestBody @NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
+    public Mono<ElectronicPurseDTO> update(@RequestBody @NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
         return myElectronicPurseService.update(updateDTO);
     }
 
@@ -110,7 +111,7 @@ public class MyElectronicPurseController {
     @Operation(summary = "patches my electronic purse")
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public ElectronicPurseDTO patch(@RequestBody @NotNull @Valid ElectronicPursePatchDTO patchDTO) {
+    public Mono<ElectronicPurseDTO> patch(@RequestBody @NotNull @Valid ElectronicPursePatchDTO patchDTO) {
         return myElectronicPurseService.patch(patchDTO);
     }
 

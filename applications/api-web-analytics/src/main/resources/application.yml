@@ -46,8 +46,12 @@ spring:
           main-producer:
             producer:
               routing-key-expression: headers['routingKey']
-server:
-  port: 9090
+
+security:
+  internal-api-key:
+    enabled: true
+    headerName: x-julb-internal-api-key
+    headerValue: hello
 
 management:
   endpoints.web.exposure.include: health,prometheus,info

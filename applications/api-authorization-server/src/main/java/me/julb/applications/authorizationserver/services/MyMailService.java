@@ -27,7 +27,6 @@ package me.julb.applications.authorizationserver.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.authorizationserver.services.dto.mail.UserMailCreationDTO;
@@ -37,6 +36,9 @@ import me.julb.applications.authorizationserver.services.dto.mail.UserMailUpdate
 import me.julb.applications.authorizationserver.services.dto.mail.UserMailVerifyDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user mail service.
@@ -53,14 +55,14 @@ public interface MyMailService {
      * @param pageable the pageable information.
      * @return a paged list of mails.
      */
-    Page<UserMailDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<UserMailDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a mail through its ID.
      * @param id the mail identifier.
      * @return the mail.
      */
-    UserMailDTO findOne(@NotNull @Identifier String id);
+    Mono<UserMailDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -69,7 +71,7 @@ public interface MyMailService {
      * @param mailCreationDTO the DTO to create a mail.
      * @return the created mail.
      */
-    UserMailDTO create(@NotNull @Valid UserMailCreationDTO mailCreationDTO);
+    Mono<UserMailDTO> create(@NotNull @Valid UserMailCreationDTO mailCreationDTO);
 
     /**
      * Updates a mail.
@@ -77,7 +79,7 @@ public interface MyMailService {
      * @param mailUpdateDTO the DTO to update a mail.
      * @return the updated mail.
      */
-    UserMailDTO update(@NotNull @Identifier String id, @NotNull @Valid UserMailUpdateDTO mailUpdateDTO);
+    Mono<UserMailDTO> update(@NotNull @Identifier String id, @NotNull @Valid UserMailUpdateDTO mailUpdateDTO);
 
     /**
      * Patches a mail.
@@ -85,14 +87,14 @@ public interface MyMailService {
      * @param mailPatchDTO the DTO to update a mail.
      * @return the updated mail.
      */
-    UserMailDTO patch(@NotNull @Identifier String id, @NotNull @Valid UserMailPatchDTO mailPatchDTO);
+    Mono<UserMailDTO> patch(@NotNull @Identifier String id, @NotNull @Valid UserMailPatchDTO mailPatchDTO);
 
     /**
      * Triggers a mail verification process.
      * @param id the mail identifier.
      * @return the updated mail.
      */
-    UserMailDTO triggerMailVerify(@NotNull @Identifier String id);
+    Mono<UserMailDTO> triggerMailVerify(@NotNull @Identifier String id);
 
     /**
      * Verify the mail.
@@ -100,12 +102,12 @@ public interface MyMailService {
      * @param verifyDTO the DTO to verify the mail.
      * @return the updated mail.
      */
-    UserMailDTO updateVerify(@NotNull @Identifier String id, @NotNull @Valid UserMailVerifyDTO verifyDTO);
+    Mono<UserMailDTO> updateVerify(@NotNull @Identifier String id, @NotNull @Valid UserMailVerifyDTO verifyDTO);
 
     /**
      * Deletes a mail.
      * @param id the id of the mail to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

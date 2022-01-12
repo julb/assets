@@ -23,28 +23,30 @@
  */
 package me.julb.springbootstarter.googlerecaptcha.services;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 
-import me.julb.library.utility.constants.CustomHttpHeaders;
 import me.julb.springbootstarter.googlerecaptcha.configurations.GoogleReCaptchaConfiguration;
-import me.julb.springbootstarter.googlerecaptcha.consumers.GoogleReCaptchaFeignClient;
-import me.julb.springbootstarter.googlerecaptcha.consumers.GoogleReCaptchaV3ChallengeResponseDTO;
+import me.julb.springbootstarter.googlerecaptcha.repositories.GoogleReCaptchaV3Repository;
+import me.julb.springbootstarter.googlerecaptcha.repositories.impl.GoogleReCaptchaV3ChallengeResponseDTO;
 import me.julb.springbootstarter.googlerecaptcha.services.impl.GoogleReCaptchaV3ServiceImpl;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
+
+import reactor.core.publisher.Mono;
 
 /**
  * Test class for {@link GoogleReCaptchaV3ServiceImpl} class.
  * <br>
  * @author Julb.
  */
-@ContextConfiguration(classes = {GoogleReCaptchaConfiguration.class, GoogleReCaptchaV3ServiceImpl.class})
+@ContextConfiguration(classes = {GoogleReCaptchaConfiguration.class, GoogleReCaptchaV3ServiceImpl.class, ValidationAutoConfiguration.class})
 public class GoogleReCaptchaServiceTest extends AbstractBaseTest {
 
     /**
@@ -57,7 +59,7 @@ public class GoogleReCaptchaServiceTest extends AbstractBaseTest {
      * The captcha aspect to validate.
      */
     @MockBean
-    private GoogleReCaptchaFeignClient googleReCaptchaFeignClient;
+    private GoogleReCaptchaV3Repository googleReCaptchaRepository;
 
     /**
      * Unit test method.
@@ -65,29 +67,28 @@ public class GoogleReCaptchaServiceTest extends AbstractBaseTest {
     @Test
     public void whenCaptchaIsValid_thenReturnTrue()
         throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("HELLO");
+        String captchaToken = "TOKEN";
+        String captchaAction = "HELLO";
+        String ipAddress = "0.0.0.0";
 
         GoogleReCaptchaV3ChallengeResponseDTO response = new GoogleReCaptchaV3ChallengeResponseDTO();
         response.setAction("HELLO");
         response.setHostname("localhost");
         response.setScore(1.0f);
         response.setSuccess(true);
-        Mockito.when(googleReCaptchaFeignClient.verify(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
-
-        Assertions.assertTrue(googleReCaptchaService.validate(request));
+        Mockito.when(googleReCaptchaRepository.verify(Mockito.any(), Mockito.eq(captchaToken), Mockito.eq(ipAddress))).thenReturn(Mono.just(response));
+        
+        Assertions.assertTrue(googleReCaptchaService.validate(captchaToken, captchaAction, ipAddress).block());
     }
 
     /**
      * Unit test method.
      */
     @Test
-    public void whenRequestIsNull_thenThrowNullPointerException()
+    public void whenCaptchaTokenIsNull_thenThrowNullPointerException()
         throws Throwable {
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            googleReCaptchaService.validate(null);
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            googleReCaptchaService.validate(null, "HELLO", "0.0.0.0");
         });
     }
 
@@ -95,65 +96,11 @@ public class GoogleReCaptchaServiceTest extends AbstractBaseTest {
      * Unit test method.
      */
     @Test
-    public void whenNoCaptchaToken_thenReturnFalse()
+    public void whenCaptchaActionIsNull_thenThrowNullPointerException()
         throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn(null);
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("HELLO");
-        Assertions.assertFalse(googleReCaptchaService.validate(request));
-    }
-
-    /**
-     * Unit test method.
-     */
-    @Test
-    public void whenCaptchaTokenHasInvalidFormat_thenReturnFalse()
-        throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("$$$$$");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("HELLO");
-        Assertions.assertFalse(googleReCaptchaService.validate(request));
-    }
-
-    /**
-     * Unit test method.
-     */
-    @Test
-    public void whenNoCaptchaAction_thenReturnFalse()
-        throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn(null);
-        Assertions.assertFalse(googleReCaptchaService.validate(request));
-    }
-
-    /**
-     * Unit test method.
-     */
-    @Test
-    public void whenCaptchaActionHasInvalidFormat_thenReturnFalse()
-        throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("$$$$");
-        Assertions.assertFalse(googleReCaptchaService.validate(request));
-    }
-
-    /**
-     * Unit test method.
-     */
-    @Test
-    public void whenCaptchaActionIsUnknown_thenReturnFalse()
-        throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("UNKNOWN");
-        Assertions.assertFalse(googleReCaptchaService.validate(request));
+        Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            googleReCaptchaService.validate("TOKEN", null, "0.0.0.0");
+        });
     }
 
     /**
@@ -162,19 +109,18 @@ public class GoogleReCaptchaServiceTest extends AbstractBaseTest {
     @Test
     public void whenCaptchaIsValidButActionDoesntMatch_thenReturnFalse()
         throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("HELLO");
+        String captchaToken = "TOKEN";
+        String captchaAction = "HELLO";
+        String ipAddress = "0.0.0.0";
 
         GoogleReCaptchaV3ChallengeResponseDTO response = new GoogleReCaptchaV3ChallengeResponseDTO();
         response.setAction("GOODBYE");
         response.setHostname("localhost");
         response.setScore(1.0f);
         response.setSuccess(true);
-        Mockito.when(googleReCaptchaFeignClient.verify(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
+        Mockito.when(googleReCaptchaRepository.verify(Mockito.any(), Mockito.eq(captchaToken), Mockito.eq(ipAddress))).thenReturn(Mono.just(response));
 
-        Assertions.assertFalse(googleReCaptchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(captchaToken, captchaAction, ipAddress).block());
     }
 
     /**
@@ -183,19 +129,18 @@ public class GoogleReCaptchaServiceTest extends AbstractBaseTest {
     @Test
     public void whenCaptchaIsValidButScoringIsTooBad_thenReturnFalse()
         throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("HELLO");
+        String captchaToken = "TOKEN";
+        String captchaAction = "HELLO";
+        String ipAddress = "0.0.0.0";
 
         GoogleReCaptchaV3ChallengeResponseDTO response = new GoogleReCaptchaV3ChallengeResponseDTO();
         response.setAction("HELLO");
         response.setHostname("localhost");
         response.setScore(0.4f);
         response.setSuccess(true);
-        Mockito.when(googleReCaptchaFeignClient.verify(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
+        Mockito.when(googleReCaptchaRepository.verify(Mockito.any(), Mockito.eq(captchaToken), Mockito.eq(ipAddress))).thenReturn(Mono.just(response));
 
-        Assertions.assertFalse(googleReCaptchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(captchaToken, captchaAction, ipAddress).block());
     }
 
     /**
@@ -204,15 +149,14 @@ public class GoogleReCaptchaServiceTest extends AbstractBaseTest {
     @Test
     public void whenCaptchaIsInvalid_thenReturnFalse()
         throws Throwable {
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getRemoteAddr()).thenReturn("0.0.0.0");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_TOKEN)).thenReturn("TOKEN");
-        Mockito.when(request.getHeader(CustomHttpHeaders.X_GOOGLE_RECAPTCHA_ACTION)).thenReturn("HELLO");
+        String captchaToken = "TOKEN";
+        String captchaAction = "HELLO";
+        String ipAddress = "0.0.0.0";
 
         GoogleReCaptchaV3ChallengeResponseDTO response = new GoogleReCaptchaV3ChallengeResponseDTO();
         response.setSuccess(false);
-        Mockito.when(googleReCaptchaFeignClient.verify(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
+        Mockito.when(googleReCaptchaRepository.verify(Mockito.any(), Mockito.eq(captchaToken), Mockito.eq(ipAddress))).thenReturn(Mono.just(response));
 
-        Assertions.assertFalse(googleReCaptchaService.validate(request));
+        Assertions.assertFalse(googleReCaptchaService.validate(captchaToken, captchaAction, ipAddress).block());
     }
 }

@@ -38,7 +38,9 @@ import me.julb.applications.authorizationserver.services.UserSessionService;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.library.dto.security.AuthenticatedUserDTO;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user session service implementation.
@@ -67,7 +69,7 @@ public class MyCurrentSessionServiceImpl implements MyCurrentSessionService {
      * {@inheritDoc}
      */
     @Override
-    public AuthenticatedUserDTO findCurrent() {
+    public Mono<AuthenticatedUserDTO> findCurrent() {
         return securityService.getConnectedUserIdentity();
     }
 
@@ -78,7 +80,7 @@ public class MyCurrentSessionServiceImpl implements MyCurrentSessionService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserSessionAccessTokenWithIdTokenDTO createAccessToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation) {
+    public Mono<UserSessionAccessTokenWithIdTokenDTO> createAccessToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation) {
         return userSessionService.createAccessTokenFromIdToken(accessTokenCreation);
     }
 
@@ -87,10 +89,10 @@ public class MyCurrentSessionServiceImpl implements MyCurrentSessionService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void deleteCurrent() {
-        String userId = securityService.getConnectedUserId();
-        String id = securityService.getConnectedUserIdentity().getSessionId();
-        userSessionService.delete(userId, id);
+    public Mono<Void> deleteCurrent() {
+        return securityService.getConnectedUserIdentity().flatMap(connectedUser -> {
+            return userSessionService.delete(connectedUser.getUserId(), connectedUser.getSessionId());
+        });
     }
 
     // ------------------------------------------ Utility methods.

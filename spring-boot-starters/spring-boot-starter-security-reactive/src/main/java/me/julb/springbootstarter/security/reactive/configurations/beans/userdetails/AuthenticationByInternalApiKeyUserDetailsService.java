@@ -62,7 +62,7 @@ public class AuthenticationByInternalApiKeyUserDetailsService implements Reactiv
                 return Mono.just(User.builder()
                     .username("system")
                     .password("N/A")
-                    .roles("ADMINISTRATOR", "ACTUATOR")
+                    .roles("ADMINISTRATOR", "ACTUATOR", "FULLY_AUTHENTICATED")
                     .build());
                 //@formatter:on
             } else {

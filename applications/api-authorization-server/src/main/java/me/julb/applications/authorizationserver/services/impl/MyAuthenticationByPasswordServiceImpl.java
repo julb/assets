@@ -40,7 +40,9 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordPasswordChangeDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordUpdateDTO;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication service implementation.
@@ -69,9 +71,10 @@ public class MyAuthenticationByPasswordServiceImpl implements MyAuthenticationBy
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPasswordDTO findOne() {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPasswordService.findOne(userId);
+    public Mono<UserAuthenticationByPasswordDTO> findOne() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPasswordService.findOne(userId);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -81,9 +84,10 @@ public class MyAuthenticationByPasswordServiceImpl implements MyAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPasswordDTO create(@NotNull @Valid UserAuthenticationByPasswordCreationDTO creationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPasswordService.create(userId, creationDTO);
+    public Mono<UserAuthenticationByPasswordDTO> create(@NotNull @Valid UserAuthenticationByPasswordCreationDTO creationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPasswordService.create(userId, creationDTO);
+        });
     }
 
     /**
@@ -91,9 +95,10 @@ public class MyAuthenticationByPasswordServiceImpl implements MyAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPasswordDTO update(@NotNull @Valid UserAuthenticationByPasswordUpdateDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPasswordService.update(userId, updateDTO);
+    public Mono<UserAuthenticationByPasswordDTO> update(@NotNull @Valid UserAuthenticationByPasswordUpdateDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPasswordService.update(userId, updateDTO);
+        });
     }
 
     /**
@@ -101,9 +106,10 @@ public class MyAuthenticationByPasswordServiceImpl implements MyAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPasswordDTO patch(@NotNull @Valid UserAuthenticationByPasswordPatchDTO patchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPasswordService.patch(userId, patchDTO);
+    public Mono<UserAuthenticationByPasswordDTO> patch(@NotNull @Valid UserAuthenticationByPasswordPatchDTO patchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPasswordService.patch(userId, patchDTO);
+        });
     }
 
     /**
@@ -111,9 +117,10 @@ public class MyAuthenticationByPasswordServiceImpl implements MyAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPasswordDTO updatePassword(@NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO changePasswordDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPasswordService.updatePassword(userId, changePasswordDTO);
+    public Mono<UserAuthenticationByPasswordDTO> updatePassword(@NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO changePasswordDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPasswordService.updatePassword(userId, changePasswordDTO);
+        });
     }
 
     /**
@@ -121,9 +128,10 @@ public class MyAuthenticationByPasswordServiceImpl implements MyAuthenticationBy
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete() {
-        String userId = securityService.getConnectedUserId();
-        userAuthenticationByPasswordService.delete(userId);
+    public Mono<Void> delete() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPasswordService.delete(userId);
+        });
     }
 
     // ------------------------------------------ Utility methods.

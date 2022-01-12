@@ -24,41 +24,41 @@
 
 package me.julb.applications.urlshortener.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
+import java.net.URI;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 
 import me.julb.applications.urlshortener.annotations.ShortURLURI;
-import me.julb.applications.urlshortener.entities.LinkEntity;
 import me.julb.applications.urlshortener.repositories.LinkRepository;
 import me.julb.applications.urlshortener.services.HostService;
 import me.julb.applications.urlshortener.services.LinkService;
 import me.julb.applications.urlshortener.services.dto.ShortUrlHitAnalyticsEventDTO;
 import me.julb.library.dto.messaging.events.WebAnalyticsAsyncMessageLevel;
 import me.julb.library.utility.constants.Chars;
-import me.julb.library.utility.exceptions.InternalServerErrorException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
-import me.julb.library.utility.http.HttpServletRequestUtility;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.WebAnalyticsAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.core.localization.CustomLocaleContext;
+import me.julb.springbootstarter.messaging.reactive.builders.WebAnalyticsAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.web.reactive.utility.ServerHttpRequestUtility;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to redirect the user.
@@ -99,57 +99,58 @@ public class RedirectController {
     /**
      * Redirects the user to the target URL.
      * @param uri the URI.
-     * @param httpServletRequest the HTTP servlet request.
-     * @param httpServletResponse the HTTP servlet response.
+     * @param exchange the exchange.
      */
     @Operation(summary = "redirects the request to the target URL")
     @GetMapping
     @PreAuthorize("permitAll()")
-    public void redirect(@RequestParam("uri") @NotNull @NotBlank @ShortURLURI String uri, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        try {
-            String tm = TrademarkContextHolder.getTrademark();
-            String host = httpServletRequest.getServerName();
+    public Mono<Void> redirect(@RequestParam("uri") @NotNull @NotBlank @ShortURLURI String uri, ServerWebExchange exchange) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
+
+            ServerHttpRequest request = exchange.getRequest();
+            ServerHttpResponse response = exchange.getResponse();
+
+            String host = request.getURI().getHost();
 
             // Check if host exists.
-            if (!hostService.exists(host)) {
-                throw new ResourceNotFoundException(String.class, host);
-            }
+            return hostService.exists(host).flatMap(hostExists -> {
+                if (!hostExists) {
+                    return Mono.error(new ResourceNotFoundException(String.class, host));
+                }
 
-            // Finds the link.
-            LinkEntity link = linkRepository.findByTmAndHostIgnoreCaseAndUriIgnoreCaseAndEnabledIsTrue(tm, host, uri);
-            if (link == null) {
-                throw new ResourceNotFoundException(LinkEntity.class, Map.<String, String> of("host", host, "uri", uri));
-            }
+                return  linkRepository.findByTmAndHostIgnoreCaseAndUriIgnoreCaseAndEnabledIsTrue(tm, host, uri)
+                    .switchIfEmpty(Mono.error(new ResourceNotFoundException(String.class, host)))
+                    .flatMap(link -> {
+                        // Collect the analytics.
+                        ShortUrlHitAnalyticsEventDTO event = new ShortUrlHitAnalyticsEventDTO();
+                        event.setDocumentHostname(host);
+                        event.setDocumentLocation(request.getURI().toString());
+                        event.setDocumentPath(request.getURI().getPath() + Chars.QUESTION_MARK + request.getURI().getQuery());
+                        event.setDocumentReferer(request.getHeaders().getFirst(HttpHeaders.REFERER));
+                        event.setLinkId(link.getId());
+                        event.setTm(tm);
+                        event.setUserAgent(request.getHeaders().getFirst(HttpHeaders.USER_AGENT));
+                        event.setUserIpv4Address(ServerHttpRequestUtility.getUserIpAddress(request));
+                        event.setUserLanguage(localeContext.getLocale().toLanguageTag());
 
-            // Collect the analytics.
-            ShortUrlHitAnalyticsEventDTO event = new ShortUrlHitAnalyticsEventDTO();
-            event.setDocumentHostname(host);
-            event.setDocumentLocation(httpServletRequest.getRequestURL().toString() + Chars.QUESTION_MARK + httpServletRequest.getQueryString());
-            event.setDocumentPath(httpServletRequest.getRequestURI() + Chars.QUESTION_MARK + httpServletRequest.getQueryString());
-            event.setDocumentReferer(httpServletRequest.getHeader(HttpHeaders.REFERER));
-            event.setLinkId(link.getId());
-            event.setTm(tm);
-            event.setUserAgent(httpServletRequest.getHeader(HttpHeaders.USER_AGENT));
-            event.setUserIpv4Address(HttpServletRequestUtility.getUserIpv4Address(httpServletRequest));
-            event.setUserLanguage(LocaleContextHolder.getLocale().toLanguageTag());
+                        response.setStatusCode(HttpStatus.PERMANENT_REDIRECT);
+                        response.getHeaders().setLocation(URI.create(link.getTargetUrl()));
 
-            //@formatter:off
-            asyncMessagePosterService.postWebAnalyticsMessage(
-                new WebAnalyticsAsyncMessageBuilder<ShortUrlHitAnalyticsEventDTO>()
-                    .level(WebAnalyticsAsyncMessageLevel.INFO)
-                    .body(event)
-                    .build()
-            );
-            //@formatter:on
-
-            // Increment number of hits.
-            linkService.incrementNumberOfHits(link.getId());
-
-            // Redirect.
-            httpServletResponse.sendRedirect(link.getTargetUrl());
-        } catch (IOException e) {
-            throw new InternalServerErrorException(e);
-        }
+                        //@formatter:off
+                        return asyncMessagePosterService.postWebAnalyticsMessage(
+                            new WebAnalyticsAsyncMessageBuilder<ShortUrlHitAnalyticsEventDTO>()
+                                .level(WebAnalyticsAsyncMessageLevel.INFO)
+                                .body(event)
+                                .build()
+                        )
+                        .then(linkService.incrementNumberOfHits(link.getId()))
+                        .then(response.setComplete());
+                        //@formatter:on
+                    });
+            });
+        });
     }
 
     // ------------------------------------------ Read methods.

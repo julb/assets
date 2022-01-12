@@ -56,6 +56,8 @@ import me.julb.library.utility.josejwt.jwk.impl.ManualJWKSetProvider;
 import me.julb.library.utility.josejwt.jwk.impl.ManualSymmetricJWKProvider;
 import me.julb.library.utility.josejwt.keyloader.PEMKeyLoader;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The service to handle keyset service.
  * <br>
@@ -77,13 +79,13 @@ public class KeyService implements IKeyService {
      * {@inheritDoc}
      */
     @Override
-    public String findAll(@NotNull String keysetName) {
+    public Mono<String> findAll(@NotNull String keysetName) {
         LOGGER.info("Loading keyset <{}>.", keysetName);
 
         // Find the JWK properties.
         JwkProperties jwkProperties = getJwkPropertiesByName(keysetName);
         if (jwkProperties == null) {
-            throw new ResourceNotFoundException(JwkProperties.class, "name", keysetName);
+            return Mono.error(new ResourceNotFoundException(JwkProperties.class, "name", keysetName));
         }
 
         // Build a collection of JWKSet
@@ -99,10 +101,12 @@ public class KeyService implements IKeyService {
         }
 
         //@formatter:off
-        return new ManualJWKSetProvider.Builder()
-            .addAllJWKProviders(jwkProviders)
-            .build()
-            .toJSONString(jwkProperties.getPublicKeysOnly());
+        return Mono.just(
+            new ManualJWKSetProvider.Builder()
+                .addAllJWKProviders(jwkProviders)
+                .build()
+                .toJSONString(jwkProperties.getPublicKeysOnly())
+        );
         //@formatter:on
     }
 
@@ -110,11 +114,11 @@ public class KeyService implements IKeyService {
      * {@inheritDoc}
      */
     @Override
-    public String findByKeyId(@NotNull String keysetName, @NotNull String keyId) {
+    public Mono<String> findByKeyId(@NotNull String keysetName, @NotNull String keyId) {
         // Find the JWK properties.
         JwkProperties jwkProperties = getJwkPropertiesByName(keysetName);
         if (jwkProperties == null) {
-            throw new ResourceNotFoundException(JwkProperties.class, "name", keysetName);
+            return Mono.error(new ResourceNotFoundException(JwkProperties.class, "name", keysetName));
         }
 
         // Find the JWK definition.
@@ -128,17 +132,17 @@ public class KeyService implements IKeyService {
 
         // Key ID not found.
         if (jwkDefinition == null) {
-            throw new ResourceNotFoundException(JwkProperties.class, Map.<String, String> of("name", keysetName, "keyId", keyId, "publicKeysOnly", jwkProperties.getPublicKeysOnly().toString()));
+            return Mono.error(new ResourceNotFoundException(JwkProperties.class, Map.<String, String> of("name", keysetName, "keyId", keyId, "publicKeysOnly", jwkProperties.getPublicKeysOnly().toString())));
         }
 
         // Build a JWK provider.
         IJWKProvider jwkProvider = buildJwkProvider(keysetName, jwkDefinition, jwkProperties.getPublicKeysOnly());
         if (jwkProvider == null) {
-            throw new ResourceNotFoundException(JwkProperties.class, Map.<String, String> of("name", keysetName, "keyId", keyId, "publicKeysOnly", jwkProperties.getPublicKeysOnly().toString()));
+            return Mono.error(new ResourceNotFoundException(JwkProperties.class, Map.<String, String> of("name", keysetName, "keyId", keyId, "publicKeysOnly", jwkProperties.getPublicKeysOnly().toString())));
         }
 
         // Build a JSON string.
-        return jwkProvider.toJSONString();
+        return Mono.just(jwkProvider.toJSONString());
     }
 
     // ------------------------------------------ Private methods.

@@ -27,7 +27,6 @@ package me.julb.applications.urlshortener.services.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -42,7 +41,11 @@ import org.springframework.validation.annotation.Validated;
 import me.julb.applications.urlshortener.services.HostService;
 import me.julb.library.dto.simple.value.ValueDTO;
 import me.julb.library.utility.validator.constraints.DNS;
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The host service implementation.
@@ -58,7 +61,7 @@ public class HostServiceImpl implements HostService {
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     // ------------------------------------------ Read methods.
 
@@ -66,17 +69,24 @@ public class HostServiceImpl implements HostService {
      * {@inheritDoc}
      */
     @Override
-    public List<ValueDTO> findAll() {
-        List<String> availableHosts = getAvailableHosts();
-        return availableHosts.stream().map(ValueDTO::new).collect(Collectors.toList());
+    public Flux<ValueDTO> findAll() {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            List<String> availableHosts = getAvailableHosts(tm);
+            return Flux.fromIterable(availableHosts).map(ValueDTO::new);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean exists(@NotNull @DNS String host) {
-        return getAvailableHosts().contains(host);
+    public Mono<Boolean> exists(@NotNull @DNS String host) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            Boolean exists = getAvailableHosts(tm).contains(host);
+            return Mono.just(exists);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -85,10 +95,11 @@ public class HostServiceImpl implements HostService {
 
     /**
      * Gets the available hosts.
+     * @param tm the trademark.
      * @return the available hosts.
      */
-    private List<String> getAvailableHosts() {
-        String[] hosts = configSourceService.getTypedProperty("url-shortener.hosts", String[].class);
+    private List<String> getAvailableHosts(String tm) {
+        String[] hosts = configSourceService.getTypedProperty(tm, "url-shortener.hosts", String[].class);
         List<String> hostsAsList = new ArrayList<String>();
         if (ArrayUtils.isNotEmpty(hosts)) {
             for (String host : hosts) {

@@ -18,9 +18,9 @@ dependencies {
     implementation project(':libraries:library-utility-identifier')
     implementation project(':libraries:library-utility-moneyamount')
     implementation project(':libraries:library-utility-random')
-    implementation project(':spring-boot-starters:spring-boot-starter-messaging')
-    implementation project(':spring-boot-starters:spring-boot-starter-web-mvc')
-    implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb')
+    implementation project(':spring-boot-starters:spring-boot-starter-messaging-reactive')
+    implementation project(':spring-boot-starters:spring-boot-starter-web-reactive')
+    implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb-reactive')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'commons-codec:commons-codec'
     implementation 'com.google.guava:guava'
@@ -29,7 +29,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok', 'org.projectlombok:lombok-mapstruct-binding', 'org.mapstruct:mapstruct-processor'
 	
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
-    testImplementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb-test')
+    testImplementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb-reactive-test')
     testImplementation project(':spring-boot-starters:spring-boot-starter-messaging-test')
     testImplementation 'org.hamcrest:hamcrest'
 }

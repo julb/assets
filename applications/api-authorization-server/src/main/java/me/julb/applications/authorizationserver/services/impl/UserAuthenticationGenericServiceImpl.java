@@ -44,11 +44,13 @@ import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication generic service implementation.
@@ -99,28 +101,26 @@ public class UserAuthenticationGenericServiceImpl implements UserAuthenticationG
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AbstractUserAuthenticationDTO updateSuccessfulUse(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<AbstractUserAuthenticationDTO> updateSuccessfulUse(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        AbstractUserAuthenticationEntity existing = userAuthenticationRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(AbstractUserAuthenticationEntity.class, id);
-        }
-
-        // Update the entity
-        existing.setLastSuccessfulUseDateTime(DateUtility.dateTimeNow());
-        existing.setFailedAttempts(0);
-        this.onUpdate(existing);
-
-        AbstractUserAuthenticationEntity result = userAuthenticationRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(AbstractUserAuthenticationEntity.class, id)))
+                        .flatMap(existing -> {
+                            existing.setLastSuccessfulUseDateTime(DateUtility.dateTimeNow());
+                            existing.setFailedAttempts(0);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userAuthenticationRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -131,9 +131,9 @@ public class UserAuthenticationGenericServiceImpl implements UserAuthenticationG
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(AbstractUserAuthenticationEntity entity) {
+    private Mono<AbstractUserAuthenticationEntity> onUpdate(AbstractUserAuthenticationEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
@@ -141,15 +141,17 @@ public class UserAuthenticationGenericServiceImpl implements UserAuthenticationG
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(AbstractUserAuthenticationEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_AUTHENTICATION)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<AbstractUserAuthenticationEntity> postResourceEvent(AbstractUserAuthenticationEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_AUTHENTICATION)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

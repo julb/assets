@@ -33,6 +33,8 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The electronic purse service.
  * <br>
@@ -47,7 +49,7 @@ public interface UserElectronicPurseService {
      * @param userId the user identifier.
      * @return the electronic purse.
      */
-    ElectronicPurseDTO findOne(@NotNull @Identifier String userId);
+    Mono<ElectronicPurseDTO> findOne(@NotNull @Identifier String userId);
 
     // ------------------------------------------ Write methods.
 
@@ -57,7 +59,7 @@ public interface UserElectronicPurseService {
      * @param redeemMoneyVoucher the DTO to redeem a money voucher.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Identifier String userId, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher);
+    Mono<ElectronicPurseDTO> redeemMoneyVoucher(@NotNull @Identifier String userId, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher);
 
     /**
      * Updates a electronic purse.
@@ -65,7 +67,7 @@ public interface UserElectronicPurseService {
      * @param electronicPurseUpdateDTO the DTO to update a electronic purse.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO update(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPurseUpdateDTO electronicPurseUpdateDTO);
+    Mono<ElectronicPurseDTO> update(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPurseUpdateDTO electronicPurseUpdateDTO);
 
     /**
      * Patches a electronic purse.
@@ -73,11 +75,11 @@ public interface UserElectronicPurseService {
      * @param electronicPursePatchDTO the DTO to update a electronic purse.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO patch(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPursePatchDTO electronicPursePatchDTO);
+    Mono<ElectronicPurseDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid ElectronicPursePatchDTO electronicPursePatchDTO);
 
     /**
      * Deletes all electronic purses of a user.
      * @param userId the user identifier.
      */
-    void delete(@NotNull @Identifier String userId);
+    Mono<Void> delete(@NotNull @Identifier String userId);
 }

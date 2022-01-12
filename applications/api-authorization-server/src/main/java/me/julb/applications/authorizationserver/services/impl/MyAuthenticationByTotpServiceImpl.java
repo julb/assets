@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,7 +43,10 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpWithRawSecretDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication service implementation.
@@ -73,18 +75,20 @@ public class MyAuthenticationByTotpServiceImpl implements MyAuthenticationByTotp
      * {@inheritDoc}
      */
     @Override
-    public Page<UserAuthenticationByTotpDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByTotpService.findAll(userId, searchable, pageable);
+    public Flux<UserAuthenticationByTotpDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return userAuthenticationByTotpService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByTotpDTO findOne(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByTotpService.findOne(userId, id);
+    public Mono<UserAuthenticationByTotpDTO> findOne(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByTotpService.findOne(userId, id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -94,9 +98,10 @@ public class MyAuthenticationByTotpServiceImpl implements MyAuthenticationByTotp
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByTotpWithRawSecretDTO create(@NotNull @Valid UserAuthenticationByTotpCreationDTO creationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByTotpService.create(userId, creationDTO);
+    public Mono<UserAuthenticationByTotpWithRawSecretDTO> create(@NotNull @Valid UserAuthenticationByTotpCreationDTO creationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByTotpService.create(userId, creationDTO);
+        });
     }
 
     /**
@@ -104,9 +109,10 @@ public class MyAuthenticationByTotpServiceImpl implements MyAuthenticationByTotp
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByTotpDTO update(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpUpdateDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByTotpService.update(userId, id, updateDTO);
+    public Mono<UserAuthenticationByTotpDTO> update(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpUpdateDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByTotpService.update(userId, id, updateDTO);
+        });
     }
 
     /**
@@ -114,9 +120,10 @@ public class MyAuthenticationByTotpServiceImpl implements MyAuthenticationByTotp
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByTotpDTO patch(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpPatchDTO patchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByTotpService.patch(userId, id, patchDTO);
+    public Mono<UserAuthenticationByTotpDTO> patch(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpPatchDTO patchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByTotpService.patch(userId, id, patchDTO);
+        });
     }
 
     /**
@@ -124,9 +131,10 @@ public class MyAuthenticationByTotpServiceImpl implements MyAuthenticationByTotp
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        userAuthenticationByTotpService.delete(userId, id);
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByTotpService.delete(userId, id);
+        });
     }
 
     // ------------------------------------------ Utility methods.

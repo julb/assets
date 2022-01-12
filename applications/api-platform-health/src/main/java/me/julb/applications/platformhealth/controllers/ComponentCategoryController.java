@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage component categories.
@@ -86,7 +87,7 @@ public class ComponentCategoryController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('component-category', 'read')")
-    public Page<ComponentCategoryDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<ComponentCategoryDTO> findAll(Searchable searchable, Pageable pageable) {
         return componentCategoryService.findAll(searchable, pageable);
     }
 
@@ -98,7 +99,7 @@ public class ComponentCategoryController {
     @Operation(summary = "gets a component category")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'component-category', 'read')")
-    public ComponentCategoryDTO get(@PathVariable @Identifier String id) {
+    public Mono<ComponentCategoryDTO> get(@PathVariable @Identifier String id) {
         return componentCategoryService.findOne(id);
     }
 
@@ -113,7 +114,7 @@ public class ComponentCategoryController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('component-category', 'create')")
-    public ComponentCategoryDTO create(@RequestBody @NotNull @Valid ComponentCategoryCreationDTO creationDTO) {
+    public Mono<ComponentCategoryDTO> create(@RequestBody @NotNull @Valid ComponentCategoryCreationDTO creationDTO) {
         return componentCategoryService.create(creationDTO);
     }
 
@@ -126,7 +127,7 @@ public class ComponentCategoryController {
     @Operation(summary = "updates a component category")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'component-category', 'update')")
-    public ComponentCategoryDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ComponentCategoryUpdateDTO updateDTO) {
+    public Mono<ComponentCategoryDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ComponentCategoryUpdateDTO updateDTO) {
         return componentCategoryService.update(id, updateDTO);
     }
 
@@ -139,7 +140,7 @@ public class ComponentCategoryController {
     @Operation(summary = "patches a component category")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'component-category', 'update')")
-    public ComponentCategoryDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ComponentCategoryPatchDTO patchDTO) {
+    public Mono<ComponentCategoryDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ComponentCategoryPatchDTO patchDTO) {
         return componentCategoryService.patch(id, patchDTO);
     }
 
@@ -151,8 +152,8 @@ public class ComponentCategoryController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'component-category', 'delete')")
-    public void delete(@PathVariable String id) {
-        componentCategoryService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return componentCategoryService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

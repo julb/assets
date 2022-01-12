@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -46,6 +44,9 @@ import me.julb.applications.authorizationserver.services.UserMobilePhoneService;
 import me.julb.applications.authorizationserver.services.dto.mobilephone.UserMobilePhoneDTO;
 import me.julb.applications.authorizationserver.services.dto.mobilephone.UserMobilePhoneVerifyDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage mobile phones.
@@ -77,7 +78,7 @@ public class UserMobilePhoneVerifyController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, path = "/users/{userId}/mobile-phones/{userMobilePhoneId}/trigger-verify")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserMobilePhoneDTO triggerVerify(@PathVariable("userId") @Identifier String userId, @PathVariable("userMobilePhoneId") @Identifier String userMobilePhoneId) {
+    public Mono<UserMobilePhoneDTO> triggerVerify(@PathVariable("userId") @Identifier String userId, @PathVariable("userMobilePhoneId") @Identifier String userMobilePhoneId) {
         return userMobilePhoneService.triggerMobilePhoneVerify(userId, userMobilePhoneId);
     }
 
@@ -92,7 +93,7 @@ public class UserMobilePhoneVerifyController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, path = "/users/{userId}/mobile-phones/{userMobilePhoneId}/verify")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserMobilePhoneDTO verify(@PathVariable("userId") @Identifier String userId, @PathVariable("userMobilePhoneId") @Identifier String userMobilePhoneId,
+    public Mono<UserMobilePhoneDTO> verify(@PathVariable("userId") @Identifier String userId, @PathVariable("userMobilePhoneId") @Identifier String userMobilePhoneId,
         @RequestParam("verifyToken") @NotNull @NotBlank @Size(min = 128, max = 128) String verifyToken) {
         UserMobilePhoneVerifyDTO dto = new UserMobilePhoneVerifyDTO();
         dto.setVerifyToken(verifyToken);

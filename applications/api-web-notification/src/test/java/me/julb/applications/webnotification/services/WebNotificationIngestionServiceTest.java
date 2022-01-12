@@ -25,7 +25,6 @@
 package me.julb.applications.webnotification.services;
 
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -56,8 +55,13 @@ import me.julb.library.dto.webnotification.WebNotificationMessageDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.identifier.IdentifierUtility;
-import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBaseTest;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.persistence.mongodb.reactive.test.base.AbstractMongoDbReactiveBaseTest;
 import me.julb.springbootstarter.test.security.annotations.WithMockUser;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 /**
  * Unit test for the {@link CollectController} class.
@@ -67,7 +71,7 @@ import me.julb.springbootstarter.test.security.annotations.WithMockUser;
 @Import(TestChannelBinderConfiguration.class)
 @ContextConfiguration(initializers = WebNotificationIngestionServiceTest.Initializer.class)
 @Testcontainers
-public class WebNotificationIngestionServiceTest extends AbstractMongoDbBaseTest {
+public class WebNotificationIngestionServiceTest extends AbstractMongoDbReactiveBaseTest {
 
     /**
      * The MongoDB container.
@@ -91,15 +95,8 @@ public class WebNotificationIngestionServiceTest extends AbstractMongoDbBaseTest
      * {@inheritDoc}
      */
     @Override
-    public void setupData() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Class<?>[] getEntityClasses() {
-        return new Class<?>[] {WebNotificationEntity.class};
+    public Flux<Class<?>> getEntityClasses() {
+        return Flux.just(WebNotificationEntity.class);
     }
 
     /**
@@ -137,23 +134,25 @@ public class WebNotificationIngestionServiceTest extends AbstractMongoDbBaseTest
         }
 
         // Ingest message.
-        webNotificationIngestionService.ingest(message);
-
-        // Check it has been created.
-        UserRefDTO firstUser = Iterables.getFirst(message.getUsers(), null);
-        List<WebNotificationEntity> userWebNotifications = webNotificationRepository.findByTmAndUserId(TM, firstUser.getId());
-        Assertions.assertEquals(1, userWebNotifications.size());
-        WebNotificationEntity webNotification = userWebNotifications.get(0);
-        Assertions.assertEquals(message.getKind().category(), webNotification.getBusinessCategory());
-        Assertions.assertEquals(message.getKind(), webNotification.getKind());
-        Assertions.assertEquals(message.getPriority(), webNotification.getPriority());
-        Assertions.assertEquals(false, webNotification.getRead());
-        Assertions.assertEquals(message.getParameters().keySet(), webNotification.getParameters().keySet());
-        Assertions.assertEquals(firstUser.getDisplayName(), webNotification.getUser().getDisplayName());
-        Assertions.assertEquals(firstUser.getFirstName(), webNotification.getUser().getFirstName());
-        Assertions.assertEquals(firstUser.getId(), webNotification.getUser().getId());
-        Assertions.assertEquals(firstUser.getLastName(), webNotification.getUser().getLastName());
-        Assertions.assertEquals(firstUser.getMail(), webNotification.getUser().getMail());
+        webNotificationIngestionService.ingest(message).flatMap((x) -> {
+            // Check it has been created.
+            UserRefDTO firstUser = Iterables.getFirst(message.getUsers(), null);
+            return webNotificationRepository.findByTmAndUserId(TM, firstUser.getId()).flatMap(webNotification -> {
+                Assertions.assertEquals(message.getKind().category(), webNotification.getBusinessCategory());
+                Assertions.assertEquals(message.getKind(), webNotification.getKind());
+                Assertions.assertEquals(message.getPriority(), webNotification.getPriority());
+                Assertions.assertEquals(false, webNotification.getRead());
+                Assertions.assertEquals(message.getParameters().keySet(), webNotification.getParameters().keySet());
+                Assertions.assertEquals(firstUser.getDisplayName(), webNotification.getUser().getDisplayName());
+                Assertions.assertEquals(firstUser.getFirstName(), webNotification.getUser().getFirstName());
+                Assertions.assertEquals(firstUser.getId(), webNotification.getUser().getId());
+                Assertions.assertEquals(firstUser.getLastName(), webNotification.getUser().getLastName());
+                Assertions.assertEquals(firstUser.getMail(), webNotification.getUser().getMail());
+                return Mono.empty();
+            }).then();
+        })
+        .contextWrite(Context.of(ContextConstants.TRADEMARK, TM))
+        .block();
     }
 
     /**

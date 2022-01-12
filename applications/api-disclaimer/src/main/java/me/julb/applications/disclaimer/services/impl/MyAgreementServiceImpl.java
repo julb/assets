@@ -30,7 +30,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -49,19 +48,21 @@ import me.julb.applications.disclaimer.services.dto.agreement.AgreementDTO;
 import me.julb.applications.disclaimer.services.exceptions.DisclaimerIsNotActiveException;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The connected user agreement service implementation.
@@ -121,18 +122,20 @@ public class MyAgreementServiceImpl implements MyAgreementService {
      * {@inheritDoc}
      */
     @Override
-    public Page<AgreementDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return userAgreementService.findAll(userId, searchable, pageable);
+    public Flux<AgreementDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return userAgreementService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AgreementDTO findOne(@NotNull @Identifier String disclaimerId) {
-        String userId = securityService.getConnectedUserId();
-        return userAgreementService.findOne(userId, disclaimerId);
+    public Mono<AgreementDTO> findOne(@NotNull @Identifier String disclaimerId) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAgreementService.findOne(userId, disclaimerId);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -142,33 +145,35 @@ public class MyAgreementServiceImpl implements MyAgreementService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public AgreementDTO create(@NotNull @Identifier String disclaimerId, @NotNull @Valid AgreementCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
-        String userId = securityService.getConnectedUserId();
+    public Mono<AgreementDTO> create(@NotNull @Identifier String disclaimerId, @NotNull @Valid AgreementCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the disclaimer exists
-        DisclaimerEntity disclaimer = disclaimerRepository.findByTmAndId(tm, disclaimerId);
-        if (disclaimer == null) {
-            throw new ResourceNotFoundException(DisclaimerEntity.class, disclaimerId);
-        }
+            // Check that the disclaimer exists
+            return disclaimerRepository.findByTmAndId(tm, disclaimerId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(DisclaimerEntity.class, disclaimerId)))
+                .flatMap(disclaimer -> {
+                    // Check if active
+                    if (!disclaimer.getActive().booleanValue()) {
+                        return Mono.error(new DisclaimerIsNotActiveException(disclaimerId));
+                    }
 
-        // Check if not overlapping another one.
-        if (agreementRepository.existsByTmAndDisclaimerIdAndUser_Id(tm, disclaimerId, userId)) {
-            throw new ResourceAlreadyExistsException(AgreementEntity.class, Map.<String, String> of("disclaimer", disclaimerId, "user", userId));
-        }
+                    return securityService.getConnectedUserId().flatMap(userId -> {
+                        return agreementRepository.existsByTmAndDisclaimerIdAndUser_Id(tm, disclaimerId, userId).flatMap(alreadyExists -> {
+                            if(alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(AgreementEntity.class, Map.<String, String> of("disclaimer", disclaimerId, "user", userId)));
+                            }
 
-        // Check if active
-        if (!disclaimer.getActive()) {
-            throw new DisclaimerIsNotActiveException(disclaimerId);
-        }
-
-        // Update the entity
-        AgreementEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setDisclaimer(disclaimer);
-        this.onPersist(entityToCreate);
-
-        AgreementEntity result = agreementRepository.save(entityToCreate);
-        return mapper.map(result);
+                            // Update the entity
+                            AgreementEntity entityToCreate = mapper.map(creationDTO);
+                            entityToCreate.setDisclaimer(disclaimer);
+                            return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                return agreementRepository.save(entityToCreateWithFields).map(mapper::map);
+                            });
+                        });
+                    });
+            });
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -177,18 +182,19 @@ public class MyAgreementServiceImpl implements MyAgreementService {
      * Method called when persisting a disclaimer.
      * @param entity the entity.
      */
-    private void onPersist(AgreementEntity entity) {
-        entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
-        entity.setCreatedAt(DateUtility.dateTimeNow());
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        entity.setAgreedAt(DateUtility.dateTimeNow());
+    private Mono<AgreementEntity> onPersist(String tm, AgreementEntity entity) {
+        return securityService.getConnectedUserRefIdentity().flatMap(connnectedUser -> {
+            entity.setId(IdentifierUtility.generateId());
+            entity.setTm(tm);
+            entity.setCreatedAt(DateUtility.dateTimeNow());
+            entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+            entity.setAgreedAt(DateUtility.dateTimeNow());
 
-        // Add author.
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(userRefMapper.map(connnectedUser));
+            // Add author.
+            entity.setUser(userRefMapper.map(connnectedUser));
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+            return postResourceEvent(entity, ResourceEventType.CREATED);
+        });
     }
 
     /**
@@ -196,15 +202,17 @@ public class MyAgreementServiceImpl implements MyAgreementService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(AgreementEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.AGREEMENT)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<AgreementEntity> postResourceEvent(AgreementEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.AGREEMENT)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

@@ -31,7 +31,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import me.julb.applications.platformhealth.entities.IncidentEntity;
 import me.julb.applications.platformhealth.entities.IncidentHistoryEntity;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
 
 /**
  * Specification on incident history.

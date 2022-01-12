@@ -25,20 +25,22 @@
 package me.julb.applications.platformhealth.repositories;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.platformhealth.entities.IncidentEntity;
 import me.julb.applications.platformhealth.services.dto.incident.IncidentStatus;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident repository.
  * <br>
  * @author Julb.
  */
-public interface IncidentRepository extends MongoRepository<IncidentEntity, String>, MongoSpecificationExecutor<IncidentEntity> {
+public interface IncidentRepository extends ReactiveMongoRepository<IncidentEntity, String>, MongoSpecificationExecutor<IncidentEntity> {
 
     /**
      * Finds an incident by trademark and id.
@@ -46,7 +48,7 @@ public interface IncidentRepository extends MongoRepository<IncidentEntity, Stri
      * @param id the id.
      * @return the incident, or <code>null</code> if not exists.
      */
-    IncidentEntity findByTmAndId(String tm, String id);
+    Mono<IncidentEntity> findByTmAndId(String tm, String id);
 
     /**
      * Finds the incidents having given status.
@@ -54,7 +56,7 @@ public interface IncidentRepository extends MongoRepository<IncidentEntity, Stri
      * @param status the status to filter on.
      * @return the incidents matching the given status.
      */
-    List<IncidentEntity> findByTmAndStatusIn(String tm, Collection<IncidentStatus> status);
+    Flux<IncidentEntity> findByTmAndStatusIn(String tm, Collection<IncidentStatus> status);
 
     /**
      * Finds the incidents created after given date and not having given status.
@@ -63,5 +65,5 @@ public interface IncidentRepository extends MongoRepository<IncidentEntity, Stri
      * @param status the status to exclude.
      * @return the incidents.
      */
-    List<IncidentEntity> findByTmAndLastUpdatedAtGreaterThanEqualAndStatusNotInOrderByLastUpdatedAtDesc(String tm, String dateTimeThreshold, Collection<IncidentStatus> status);
+    Flux<IncidentEntity> findByTmAndLastUpdatedAtGreaterThanEqualAndStatusNotInOrderByLastUpdatedAtDesc(String tm, String dateTimeThreshold, Collection<IncidentStatus> status);
 }

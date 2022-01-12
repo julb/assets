@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -47,9 +45,11 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordTriggerPasswordResetDTO;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceRefDTO;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelType;
-import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecurePassword;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to reset the password of a user.
@@ -87,14 +87,13 @@ public class UserAuthenticationByPasswordResetController {
     @PostMapping(path = "/users/authentications/type/password/trigger-reset", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("permitAll()")
-    public void triggerPasswordReset(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("recoveryChannelDeviceType") @NotNull RecoveryChannelType recoveryChannelDeviceType,
+    public Mono<Void> triggerPasswordReset(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("recoveryChannelDeviceType") @NotNull RecoveryChannelType recoveryChannelDeviceType,
         @RequestParam("recoveryChannelDeviceId") @NotNull @NotBlank @Identifier String recoveryChannelDeviceId) {
-        UserDTO user = userMailService.findUserByMailVerified(mail);
-        if (user != null) {
+        return userMailService.findUserByMailVerified(mail).flatMap(user -> {
             UserAuthenticationByPasswordTriggerPasswordResetDTO triggerPasswordResetDTO = new UserAuthenticationByPasswordTriggerPasswordResetDTO();
             triggerPasswordResetDTO.setRecoveryChannelDevice(new RecoveryChannelDeviceRefDTO(recoveryChannelDeviceId, recoveryChannelDeviceType));
-            userAuthenticationByPasswordService.triggerPasswordReset(user.getId(), triggerPasswordResetDTO);
-        }
+            return userAuthenticationByPasswordService.triggerPasswordReset(user.getId(), triggerPasswordResetDTO).then();
+        });
     }
 
     /**
@@ -107,14 +106,13 @@ public class UserAuthenticationByPasswordResetController {
     @PostMapping(path = "/users/authentications/type/password/reset-password", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("permitAll()")
-    public void resetPassword(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("newPassword") @NotNull @NotBlank @SecurePassword String newPassword, @RequestParam("resetToken") @NotNull @NotBlank String resetToken) {
-        UserDTO user = userMailService.findUserByMailVerified(mail);
-        if (user != null) {
+    public Mono<Void> resetPassword(@RequestParam("mail") @NotNull @NotBlank @Email String mail, @RequestParam("newPassword") @NotNull @NotBlank @SecurePassword String newPassword, @RequestParam("resetToken") @NotNull @NotBlank String resetToken) {
+        return userMailService.findUserByMailVerified(mail).flatMap(user -> {
             UserAuthenticationByPasswordPasswordResetDTO passwordResetDTO = new UserAuthenticationByPasswordPasswordResetDTO();
             passwordResetDTO.setNewPassword(newPassword);
             passwordResetDTO.setResetToken(resetToken);
-            userAuthenticationByPasswordService.updatePassword(user.getId(), passwordResetDTO);
-        }
+            return userAuthenticationByPasswordService.updatePassword(user.getId(), passwordResetDTO).then();
+        });
     }
     // ------------------------------------------ Utility methods.
 

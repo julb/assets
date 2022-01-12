@@ -24,19 +24,20 @@
 
 package me.julb.applications.ewallet.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.ewallet.entities.MoneyVoucherEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The money voucher repository.
  * <br>
  * @author Julb.
  */
-public interface MoneyVoucherRepository extends MongoRepository<MoneyVoucherEntity, String>, MongoSpecificationExecutor<MoneyVoucherEntity> {
+public interface MoneyVoucherRepository extends ReactiveMongoRepository<MoneyVoucherEntity, String>, MongoSpecificationExecutor<MoneyVoucherEntity> {
 
     /**
      * Finds a money voucher by trademark and id.
@@ -44,7 +45,7 @@ public interface MoneyVoucherRepository extends MongoRepository<MoneyVoucherEnti
      * @param id the id.
      * @return the money voucher, or <code>null</code> if not exists.
      */
-    MoneyVoucherEntity findByTmAndId(String tm, String id);
+    Mono<MoneyVoucherEntity> findByTmAndId(String tm, String id);
 
     /**
      * Finds a money voucher by its hash.
@@ -52,7 +53,7 @@ public interface MoneyVoucherRepository extends MongoRepository<MoneyVoucherEnti
      * @param hash the hash.
      * @return the money voucher, or <code>null</code> if not exists.
      */
-    MoneyVoucherEntity findByTmAndHashIgnoreCase(String tm, String hash);
+    Mono<MoneyVoucherEntity> findByTmAndHashIgnoreCase(String tm, String hash);
 
     /**
      * Checks if a money voucher hash already exists.
@@ -60,13 +61,13 @@ public interface MoneyVoucherRepository extends MongoRepository<MoneyVoucherEnti
      * @param hash the hash.
      * @return <code>true</code> if a money voucher exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndHashIgnoreCase(String tm, String hash);
+    Mono<Boolean> existsByTmAndHashIgnoreCase(String tm, String hash);
 
     /**
      * Finds the money vouchers which expiry date is less or equal than the given date.
      * @param dateTime the given date time.
      * @return the money vouchers.
      */
-    List<MoneyVoucherEntity> findByExpiryDateTimeLessThanEqualOrderByTmAsc(String dateTime);
+    Flux<MoneyVoucherEntity> findByExpiryDateTimeLessThanEqualOrderByTmAsc(String dateTime);
 
 }

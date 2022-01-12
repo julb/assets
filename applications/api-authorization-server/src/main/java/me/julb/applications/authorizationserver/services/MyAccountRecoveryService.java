@@ -24,9 +24,9 @@
 
 package me.julb.applications.authorizationserver.services;
 
-import java.util.List;
-
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
+
+import reactor.core.publisher.Flux;
 
 /**
  * The user account recovery service.
@@ -41,7 +41,7 @@ public interface MyAccountRecoveryService {
      * Gets the available recovery channel devices for the connected user.
      * @return a list of recovery channel devices.
      */
-    List<RecoveryChannelDeviceDTO> findAll();
+    Flux<RecoveryChannelDeviceDTO> findAll();
 
     // ------------------------------------------ Write methods.
 

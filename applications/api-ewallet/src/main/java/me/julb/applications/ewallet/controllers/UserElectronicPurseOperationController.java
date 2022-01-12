@@ -24,13 +24,10 @@
 
 package me.julb.applications.ewallet.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,6 +52,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage the operation of an electronic purse.
@@ -86,7 +87,7 @@ public class UserElectronicPurseOperationController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('electronic-purse-operation', 'read')")
-    public Page<ElectronicPurseOperationDTO> findAll(@PathVariable @Identifier String userId, Searchable searchable, Pageable pageable) {
+    public Flux<ElectronicPurseOperationDTO> findAll(@PathVariable @Identifier String userId, Searchable searchable, Pageable pageable) {
         return userElectronicPurseOperationService.findAll(userId, searchable, pageable);
     }
 
@@ -99,7 +100,7 @@ public class UserElectronicPurseOperationController {
     @Operation(summary = "gets an operation of a user electronic purse")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'electronic-purse-operation', 'read')")
-    public ElectronicPurseOperationDTO get(@PathVariable @Identifier String userId, @PathVariable @Identifier String id) {
+    public Mono<ElectronicPurseOperationDTO> get(@PathVariable @Identifier String userId, @PathVariable @Identifier String id) {
         return userElectronicPurseOperationService.findOne(userId, id);
     }
 
@@ -115,7 +116,7 @@ public class UserElectronicPurseOperationController {
     @Operation(summary = "updates an operation of a user electronic purse")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'electronic-purse-operation', 'update')")
-    public ElectronicPurseOperationDTO update(@PathVariable @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
+    public Mono<ElectronicPurseOperationDTO> update(@PathVariable @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
         return userElectronicPurseOperationService.update(userId, id, updateDTO);
     }
 
@@ -129,7 +130,7 @@ public class UserElectronicPurseOperationController {
     @Operation(summary = "patches an operation of a user electronic purse")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'electronic-purse-operation', 'update')")
-    public ElectronicPurseOperationDTO patch(@PathVariable @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
+    public Mono<ElectronicPurseOperationDTO> patch(@PathVariable @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
         return userElectronicPurseOperationService.patch(userId, id, patchDTO);
     }
 
@@ -142,8 +143,8 @@ public class UserElectronicPurseOperationController {
     @PostMapping(path = "/{id}/.cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'electronic-purse-operation', 'cancel')")
-    public void cancel(@PathVariable @Identifier String userId, @PathVariable @Identifier String id) {
-        userElectronicPurseOperationService.cancel(userId, id);
+    public Mono<Void> cancel(@PathVariable @Identifier String userId, @PathVariable @Identifier String id) {
+        return userElectronicPurseOperationService.cancel(userId, id);
     }
 
     /**
@@ -155,8 +156,8 @@ public class UserElectronicPurseOperationController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'electronic-purse-operation', 'delete')")
-    public void delete(@PathVariable @Identifier String userId, @PathVariable @Identifier String id) {
-        userElectronicPurseOperationService.delete(userId, id);
+    public Mono<Void> delete(@PathVariable @Identifier String userId, @PathVariable @Identifier String id) {
+        return userElectronicPurseOperationService.delete(userId, id);
     }
 
     // ------------------------------------------ Utility methods.

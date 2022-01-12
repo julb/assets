@@ -24,13 +24,10 @@
 
 package me.julb.applications.ewallet.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,6 +48,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage the operations of my electronic purse.
@@ -81,7 +82,7 @@ public class MyElectronicPurseOperationController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public Page<ElectronicPurseOperationDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<ElectronicPurseOperationDTO> findAll(Searchable searchable, Pageable pageable) {
         return myElectronicPurseOperationService.findAll(searchable, pageable);
     }
 
@@ -93,7 +94,7 @@ public class MyElectronicPurseOperationController {
     @Operation(summary = "gets an operation of my electronic purse")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public ElectronicPurseOperationDTO get(@PathVariable @Identifier String id) {
+    public Mono<ElectronicPurseOperationDTO> get(@PathVariable @Identifier String id) {
         return myElectronicPurseOperationService.findOne(id);
     }
 
@@ -108,7 +109,7 @@ public class MyElectronicPurseOperationController {
     @Operation(summary = "updates an operation of my electronic purse")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public ElectronicPurseOperationDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
+    public Mono<ElectronicPurseOperationDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
         return myElectronicPurseOperationService.update(id, updateDTO);
     }
 
@@ -121,7 +122,7 @@ public class MyElectronicPurseOperationController {
     @Operation(summary = "patches an operation of my electronic purse")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public ElectronicPurseOperationDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
+    public Mono<ElectronicPurseOperationDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
         return myElectronicPurseOperationService.patch(id, patchDTO);
     }
 

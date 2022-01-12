@@ -24,19 +24,20 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.mobilephone.UserMobilePhoneEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user mobile phone repository.
  * <br>
  * @author Julb.
  */
-public interface UserMobilePhoneRepository extends MongoRepository<UserMobilePhoneEntity, String>, MongoSpecificationExecutor<UserMobilePhoneEntity> {
+public interface UserMobilePhoneRepository extends ReactiveMongoRepository<UserMobilePhoneEntity, String>, MongoSpecificationExecutor<UserMobilePhoneEntity> {
 
     /**
      * Finds an user primary mobile phone by trademark and user ID.
@@ -44,7 +45,7 @@ public interface UserMobilePhoneRepository extends MongoRepository<UserMobilePho
      * @param userId the user ID.
      * @return the user mail, or <code>null</code> if not exists.
      */
-    UserMobilePhoneEntity findByTmAndUser_IdAndPrimaryIsTrue(String tm, String userId);
+    Mono<UserMobilePhoneEntity> findByTmAndUser_IdAndPrimaryIsTrue(String tm, String userId);
 
     /**
      * Finds verified user mobile phones by trademark and id.
@@ -52,7 +53,7 @@ public interface UserMobilePhoneRepository extends MongoRepository<UserMobilePho
      * @param userId the user ID.
      * @return the verified user mobile phones, or <code>null</code> if not exists.
      */
-    List<UserMobilePhoneEntity> findByTmAndUser_IdAndVerifiedIsTrue(String tm, String userId);
+    Flux<UserMobilePhoneEntity> findByTmAndUser_IdAndVerifiedIsTrue(String tm, String userId);
 
     /**
      * Finds an user mobile phone by trademark and id.
@@ -61,7 +62,7 @@ public interface UserMobilePhoneRepository extends MongoRepository<UserMobilePho
      * @param id the id.
      * @return the user mobile phone, or <code>null</code> if not exists.
      */
-    UserMobilePhoneEntity findByTmAndUser_IdAndId(String tm, String userId, String id);
+    Mono<UserMobilePhoneEntity> findByTmAndUser_IdAndId(String tm, String userId, String id);
 
     /**
      * Finds an user mobile phone by trademark, country code and number address.
@@ -71,7 +72,7 @@ public interface UserMobilePhoneRepository extends MongoRepository<UserMobilePho
      * @param number the number.
      * @return <code>true</code> if the mail exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndMobilePhone_CountryCodeIgnoreCaseAndMobilePhone_NumberIgnoreCase(String tm, String userId, String countryCode, String number);
+    Mono<Boolean> existsByTmAndUser_IdAndMobilePhone_CountryCodeIgnoreCaseAndMobilePhone_NumberIgnoreCase(String tm, String userId, String countryCode, String number);
 
     /**
      * Finds an user mobile phone by trademark and id.
@@ -80,5 +81,5 @@ public interface UserMobilePhoneRepository extends MongoRepository<UserMobilePho
      * @param id the id.
      * @return the user mobile phone, or <code>null</code> if not exists.
      */
-    UserMobilePhoneEntity findByTmAndUser_IdAndIdAndVerifiedIsTrue(String tm, String userId, String id);
+    Mono<UserMobilePhoneEntity> findByTmAndUser_IdAndIdAndVerifiedIsTrue(String tm, String userId, String id);
 }

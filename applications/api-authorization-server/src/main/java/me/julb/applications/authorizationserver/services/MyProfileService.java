@@ -32,6 +32,8 @@ import me.julb.applications.authorizationserver.services.dto.profile.UserProfile
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfilePatchDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileUpdateDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The user profile service.
  * <br>
@@ -45,7 +47,7 @@ public interface MyProfileService {
      * Gets a user profile.
      * @return the user profile.
      */
-    UserProfileDTO findOne();
+    Mono<UserProfileDTO> findOne();
 
     // ------------------------------------------ Write methods.
 
@@ -54,19 +56,19 @@ public interface MyProfileService {
      * @param userProfileCreationDTO the DTO to create a user profile.
      * @return the created user profile.
      */
-    UserProfileDTO create(@NotNull @Valid UserProfileCreationDTO userProfileCreationDTO);
+    Mono<UserProfileDTO> create(@NotNull @Valid UserProfileCreationDTO userProfileCreationDTO);
 
     /**
      * Updates a user profile.
      * @param userProfileUpdateDTO the DTO to update a user profile.
      * @return the updated user profile.
      */
-    UserProfileDTO update(@NotNull @Valid UserProfileUpdateDTO userProfileUpdateDTO);
+    Mono<UserProfileDTO> update(@NotNull @Valid UserProfileUpdateDTO userProfileUpdateDTO);
 
     /**
      * Patches a user profile.
      * @param userProfilePatchDTO the DTO to update a user profile.
      * @return the updated user profile.
      */
-    UserProfileDTO patch(@NotNull @Valid UserProfilePatchDTO userProfilePatchDTO);
+    Mono<UserProfileDTO> patch(@NotNull @Valid UserProfilePatchDTO userProfilePatchDTO);
 }

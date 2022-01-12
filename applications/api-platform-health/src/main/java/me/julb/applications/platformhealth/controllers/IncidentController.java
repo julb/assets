@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage incidents.
@@ -86,7 +87,7 @@ public class IncidentController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('incident', 'read')")
-    public Page<IncidentDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<IncidentDTO> findAll(Searchable searchable, Pageable pageable) {
         return incidentService.findAll(searchable, pageable);
     }
 
@@ -98,7 +99,7 @@ public class IncidentController {
     @Operation(summary = "gets a incident")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'incident', 'read')")
-    public IncidentDTO get(@PathVariable @Identifier String id) {
+    public Mono<IncidentDTO> get(@PathVariable @Identifier String id) {
         return incidentService.findOne(id);
     }
 
@@ -113,7 +114,7 @@ public class IncidentController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('incident', 'create')")
-    public IncidentDTO create(@RequestBody @NotNull @Valid IncidentCreationDTO creationDTO) {
+    public Mono<IncidentDTO> create(@RequestBody @NotNull @Valid IncidentCreationDTO creationDTO) {
         return incidentService.create(creationDTO);
     }
 
@@ -126,7 +127,7 @@ public class IncidentController {
     @Operation(summary = "updates a incident")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'incident', 'update')")
-    public IncidentDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid IncidentUpdateDTO updateDTO) {
+    public Mono<IncidentDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid IncidentUpdateDTO updateDTO) {
         return incidentService.update(id, updateDTO);
     }
 
@@ -139,7 +140,7 @@ public class IncidentController {
     @Operation(summary = "patches a incident")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'incident', 'update')")
-    public IncidentDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid IncidentPatchDTO patchDTO) {
+    public Mono<IncidentDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid IncidentPatchDTO patchDTO) {
         return incidentService.patch(id, patchDTO);
     }
 
@@ -151,8 +152,8 @@ public class IncidentController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'incident', 'delete')")
-    public void delete(@PathVariable String id) {
-        incidentService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return incidentService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

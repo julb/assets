@@ -25,27 +25,29 @@
 package me.julb.applications.platformhealth.repositories;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.platformhealth.entities.IncidentHistoryEntity;
 import me.julb.applications.platformhealth.services.dto.incident.IncidentStatus;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident history repository.
  * <br>
  * @author Julb.
  */
-public interface IncidentHistoryRepository extends MongoRepository<IncidentHistoryEntity, String>, MongoSpecificationExecutor<IncidentHistoryEntity> {
+public interface IncidentHistoryRepository extends ReactiveMongoRepository<IncidentHistoryEntity, String>, MongoSpecificationExecutor<IncidentHistoryEntity> {
     /**
      * Finds an incident history by its trademark and incident id.
      * @param tm the trademark.
      * @param incidentId the incident ID.
      * @return the incident history items.
      */
-    List<IncidentHistoryEntity> findByTmAndIncidentId(String tm, String incidentId);
+    Flux<IncidentHistoryEntity> findByTmAndIncidentId(String tm, String incidentId);
 
     /**
      * Finds an incident history by its trademark, incident id and id.
@@ -54,7 +56,7 @@ public interface IncidentHistoryRepository extends MongoRepository<IncidentHisto
      * @param id the id.
      * @return the incident history entiity, <code>null</code> otherwise.
      */
-    IncidentHistoryEntity findByTmAndIncidentIdAndId(String tm, String incidentId, String id);
+    Mono<IncidentHistoryEntity> findByTmAndIncidentIdAndId(String tm, String incidentId, String id);
 
     /**
      * Finds the latest incident history by its trademark and incident id.
@@ -62,7 +64,7 @@ public interface IncidentHistoryRepository extends MongoRepository<IncidentHisto
      * @param incidentId the incident ID.
      * @return the latest incident history.
      */
-    IncidentHistoryEntity findTopByTmAndIncidentIdOrderByCreatedAtDesc(String tm, String incidentId);
+    Mono<IncidentHistoryEntity> findTopByTmAndIncidentIdOrderByCreatedAtDesc(String tm, String incidentId);
 
     /**
      * Finds the incident history by their trademark, incident and with status not set to given ones.
@@ -71,6 +73,6 @@ public interface IncidentHistoryRepository extends MongoRepository<IncidentHisto
      * @param statusToExclude the status to exclude.
      * @return the incident history by their trademark, incident and with status not set to given ones.
      */
-    List<IncidentHistoryEntity> findByTmAndIncidentIdAndStatusNotInOrderByCreatedAtDesc(String tm, String incidentId, Collection<IncidentStatus> statusToExclude);
+    Flux<IncidentHistoryEntity> findByTmAndIncidentIdAndStatusNotInOrderByCreatedAtDesc(String tm, String incidentId, Collection<IncidentStatus> statusToExclude);
 
 }

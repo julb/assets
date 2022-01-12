@@ -30,7 +30,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +49,8 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.mail.UserMailCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.mail.UserMailDTO;
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesCreationDTO;
+import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesDTO;
+import me.julb.applications.authorizationserver.services.dto.profile.UserProfileDTO;
 import me.julb.applications.authorizationserver.services.dto.signup.AbstractSignupCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.signup.SignupWithInviteDTO;
 import me.julb.applications.authorizationserver.services.dto.signup.SignupWithPasswordCreationDTO;
@@ -61,11 +62,14 @@ import me.julb.library.dto.security.UserRole;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.identifier.IdentifierUtility;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.core.localization.CustomLocaleContext;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The sign-up service implementation.
@@ -140,11 +144,8 @@ public class SignupServiceImpl implements SignupService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserDTO signup(@NotNull @Valid SignupWithInviteDTO signupWithInvite) {
-        UserEntity result = signupUser(signupWithInvite);
-
-        // Return user
-        return mapper.map(result);
+    public Mono<UserDTO> signup(@NotNull @Valid SignupWithInviteDTO signupWithInvite) {
+        return signupUser(signupWithInvite).map(mapper::map);
     }
 
     /**
@@ -152,16 +153,13 @@ public class SignupServiceImpl implements SignupService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserDTO signup(@NotNull @Valid SignupWithPasswordCreationDTO signupWithPassword) {
-        UserEntity result = signupUser(signupWithPassword);
-
-        // Save password.
-        UserAuthenticationByPasswordCreationDTO dto = new UserAuthenticationByPasswordCreationDTO();
-        dto.setPassword(signupWithPassword.getPassword());
-        userAuthenticationByPasswordService.create(result.getId(), dto);
-
-        // Return user.
-        return mapper.map(result);
+    public Mono<UserDTO> signup(@NotNull @Valid SignupWithPasswordCreationDTO signupWithPassword) {
+        return signupUser(signupWithPassword).flatMap(result -> {
+            // Save password.
+            UserAuthenticationByPasswordCreationDTO dto = new UserAuthenticationByPasswordCreationDTO();
+            dto.setPassword(signupWithPassword.getPassword());
+            return userAuthenticationByPasswordService.create(result.getId(), dto).thenReturn(mapper.map(result));
+        });
     }
 
     /**
@@ -169,16 +167,13 @@ public class SignupServiceImpl implements SignupService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserDTO signup(@NotNull @Valid SignupWithPincodeCreationDTO signupWithPincode) {
-        UserEntity result = signupUser(signupWithPincode);
-
-        // Save pincode
-        UserAuthenticationByPincodeCreationDTO dto = new UserAuthenticationByPincodeCreationDTO();
-        dto.setPincode(signupWithPincode.getPincode());
-        userAuthenticationByPincodeService.create(result.getId(), dto);
-
-        // Return user.
-        return mapper.map(result);
+    public Mono<UserDTO> signup(@NotNull @Valid SignupWithPincodeCreationDTO signupWithPincode) {
+        return signupUser(signupWithPincode).flatMap(result -> {
+            // Save password.
+            UserAuthenticationByPincodeCreationDTO dto = new UserAuthenticationByPincodeCreationDTO();
+            dto.setPincode(signupWithPincode.getPincode());
+            return userAuthenticationByPincodeService.create(result.getId(), dto).thenReturn(mapper.map(result));
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -188,34 +183,40 @@ public class SignupServiceImpl implements SignupService {
      * @param signup the signup DTO.
      * @return the created user.
      */
-    protected UserEntity signupUser(AbstractSignupCreationDTO signup) {
-        // Check if user exists or not
-        if (userMailService.existsByMail(signup.getMail())) {
-            throw new ResourceAlreadyExistsException(UserEntity.class, "mail", signup.getMail());
-        }
+    protected Mono<UserEntity> signupUser(AbstractSignupCreationDTO signup) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
+            CustomLocaleContext localeContext = ctx.get(ContextConstants.LOCALE);
 
-        // Create the user entity
-        UserEntity entityToCreate = mapper.map(signup);
-        this.onPersist(entityToCreate);
-        UserEntity result = userRepository.save(entityToCreate);
+            return userMailService.existsByMail(signup.getMail()).flatMap(alreadyExists -> {
+                if (alreadyExists.booleanValue()) {
+                    return Mono.error(new ResourceAlreadyExistsException(UserEntity.class, "mail", signup.getMail()));
+                }
 
-        // Create profile settings
-        userProfileService.create(result.getId(), signup.getProfile());
+                UserEntity entityToCreate = mapper.map(signup);
+                return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                    return userRepository.save(entityToCreateWithFields).flatMap(result -> {
+                        // Create profile settings
+                        Mono<UserProfileDTO> userProfile = userProfileService.create(result.getId(), signup.getProfile());
 
-        // Create preferences settings
-        UserPreferencesCreationDTO userPreferencesCreationDTO = new UserPreferencesCreationDTO();
-        userPreferencesCreationDTO.setLanguage(LocaleContextHolder.getLocale());
-        userPreferencesService.create(result.getId(), userPreferencesCreationDTO);
+                        // Create preferences settings
+                        UserPreferencesCreationDTO userPreferencesCreationDTO = new UserPreferencesCreationDTO();
+                        userPreferencesCreationDTO.setLanguage(localeContext.getLocale());
+                        Mono<UserPreferencesDTO> userPreferences = userPreferencesService.create(result.getId(), userPreferencesCreationDTO);
 
-        // Create mail settings.
-        UserMailCreationDTO creationDTO = new UserMailCreationDTO();
-        creationDTO.setMail(signup.getMail());
-        creationDTO.setPrimary(true);
-        UserMailDTO mailCreated = userMailService.create(result.getId(), creationDTO);
-        userMailService.triggerMailVerify(result.getId(), mailCreated.getId());
-
-        // Return result.
-        return result;
+                        // Create mail settings.
+                        UserMailCreationDTO creationDTO = new UserMailCreationDTO();
+                        creationDTO.setMail(signup.getMail());
+                        creationDTO.setPrimary(true);
+                        Mono<UserMailDTO> userMail = userMailService.create(result.getId(), creationDTO).flatMap(mailCreated -> {
+                            return userMailService.triggerMailVerify(result.getId(), mailCreated.getId());
+                        });
+                        
+                        return Mono.zip(userProfile, userPreferences, userMail).thenReturn(result);
+                    });
+                });
+            });
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -224,9 +225,9 @@ public class SignupServiceImpl implements SignupService {
      * Method called when persisting an user.
      * @param entity the entity.
      */
-    private void onPersist(UserEntity entity) {
+    private Mono<UserEntity> onPersist(String tm, UserEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
         entity.setAccountNonLocked(false);
@@ -235,7 +236,7 @@ public class SignupServiceImpl implements SignupService {
         entity.getRoles().add(UserRole.USER);
 
         // Post event
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
@@ -243,15 +244,17 @@ public class SignupServiceImpl implements SignupService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(UserEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<UserEntity> postResourceEvent(UserEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

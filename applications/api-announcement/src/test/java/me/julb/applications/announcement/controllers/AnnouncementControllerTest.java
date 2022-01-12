@@ -24,12 +24,6 @@
 
 package me.julb.applications.announcement.controllers;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Set;
@@ -40,25 +34,21 @@ import javax.validation.constraints.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import me.julb.applications.announcement.entities.AnnouncementEntity;
-import me.julb.applications.announcement.repositories.AnnouncementRepository;
 import me.julb.applications.announcement.services.AnnouncementService;
 import me.julb.applications.announcement.services.dto.AnnouncementCreationDTO;
 import me.julb.applications.announcement.services.dto.AnnouncementLevel;
@@ -128,12 +118,6 @@ public class AnnouncementControllerTest extends AbstractMongoDbReactiveBaseTest 
     public Flux<Class<?>> getEntityClasses() {
         return Flux.fromArray(new Class<?>[] {AnnouncementEntity.class});
     }
-
-    /**
-     * The announcement service.
-     */
-    @Autowired
-    private AnnouncementRepository repository;
 
     /**
      * Unit test method.

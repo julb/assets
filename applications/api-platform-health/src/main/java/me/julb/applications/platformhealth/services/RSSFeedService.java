@@ -26,6 +26,8 @@ package me.julb.applications.platformhealth.services;
 
 import me.julb.library.dto.rssfeed.RSSFeedDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The RSS feed service.
  * <br>
@@ -37,11 +39,11 @@ public interface RSSFeedService {
      * Builds a RSS feed for incidents.
      * @return an RSS feed for incidents.
      */
-    RSSFeedDTO buildIncidentsFeed();
+    Mono<RSSFeedDTO> buildIncidentsFeed();
 
     /**
      * Builds a RSS feed for planned maintenances.
      * @return an RSS feed for planned maintenances
      */
-    RSSFeedDTO buildPlannedMaintenancesFeed();
+    Mono<RSSFeedDTO> buildPlannedMaintenancesFeed();
 }

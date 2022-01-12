@@ -27,7 +27,6 @@ package me.julb.applications.platformhealth.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.platformhealth.services.dto.componentcategory.ComponentCategoryCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.platformhealth.services.dto.componentcategory.Compon
 import me.julb.applications.platformhealth.services.dto.componentcategory.ComponentCategoryUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The component category service.
@@ -52,14 +54,14 @@ public interface ComponentCategoryService {
      * @param pageable the pageable information.
      * @return a paged list of component categories.
      */
-    Page<ComponentCategoryDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<ComponentCategoryDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a component category through its ID.
      * @param id the component category identifier.
      * @return the component category.
      */
-    ComponentCategoryDTO findOne(@NotNull @Identifier String id);
+    Mono<ComponentCategoryDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -68,7 +70,7 @@ public interface ComponentCategoryService {
      * @param creationDTO the DTO to create a component category.
      * @return the created component category.
      */
-    ComponentCategoryDTO create(@NotNull @Valid ComponentCategoryCreationDTO creationDTO);
+    Mono<ComponentCategoryDTO> create(@NotNull @Valid ComponentCategoryCreationDTO creationDTO);
 
     /**
      * Updates a component category.
@@ -76,7 +78,7 @@ public interface ComponentCategoryService {
      * @param updateDTO the DTO to update a component category.
      * @return the updated component category.
      */
-    ComponentCategoryDTO update(@NotNull @Identifier String id, @NotNull @Valid ComponentCategoryUpdateDTO updateDTO);
+    Mono<ComponentCategoryDTO> update(@NotNull @Identifier String id, @NotNull @Valid ComponentCategoryUpdateDTO updateDTO);
 
     /**
      * Patches a component category.
@@ -84,12 +86,12 @@ public interface ComponentCategoryService {
      * @param patchDTO the DTO to update a component category.
      * @return the updated component category.
      */
-    ComponentCategoryDTO patch(@NotNull @Identifier String id, @NotNull @Valid ComponentCategoryPatchDTO patchDTO);
+    Mono<ComponentCategoryDTO> patch(@NotNull @Identifier String id, @NotNull @Valid ComponentCategoryPatchDTO patchDTO);
 
     /**
      * Deletes a component category.
      * @param id the id of the component category to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

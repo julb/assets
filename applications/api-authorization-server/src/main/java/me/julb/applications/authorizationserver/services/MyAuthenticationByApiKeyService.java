@@ -27,7 +27,6 @@ package me.julb.applications.authorizationserver.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByApiKeyCreationDTO;
@@ -37,6 +36,9 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByApiKeyWithRawKeyDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The API Key authentication service.
@@ -53,14 +55,14 @@ public interface MyAuthenticationByApiKeyService {
      * @param pageable the pageable information.
      * @return a paged list of authentications.
      */
-    Page<UserAuthenticationByApiKeyDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<UserAuthenticationByApiKeyDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets an API Key authentication through its ID.
      * @param id the authentication identifier.
      * @return the authentication.
      */
-    UserAuthenticationByApiKeyDTO findOne(@NotNull @Identifier String id);
+    Mono<UserAuthenticationByApiKeyDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -69,7 +71,7 @@ public interface MyAuthenticationByApiKeyService {
      * @param authenticationCreationDTO the DTO to create an API Key authentication.
      * @return the created authentication.
      */
-    UserAuthenticationByApiKeyWithRawKeyDTO create(@NotNull @Valid UserAuthenticationByApiKeyCreationDTO authenticationCreationDTO);
+    Mono<UserAuthenticationByApiKeyWithRawKeyDTO> create(@NotNull @Valid UserAuthenticationByApiKeyCreationDTO authenticationCreationDTO);
 
     /**
      * Updates an API Key authentication.
@@ -77,7 +79,7 @@ public interface MyAuthenticationByApiKeyService {
      * @param authenticationUpdateDTO the DTO to update an API Key authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByApiKeyDTO update(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyUpdateDTO authenticationUpdateDTO);
+    Mono<UserAuthenticationByApiKeyDTO> update(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyUpdateDTO authenticationUpdateDTO);
 
     /**
      * Patches an API Key authentication.
@@ -85,12 +87,12 @@ public interface MyAuthenticationByApiKeyService {
      * @param authenticationPatchDTO the DTO to update an API Key authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByApiKeyDTO patch(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyPatchDTO authenticationPatchDTO);
+    Mono<UserAuthenticationByApiKeyDTO> patch(@NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyPatchDTO authenticationPatchDTO);
 
     /**
      * Deletes an API Key authentication.
      * @param id the id of the authentication to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

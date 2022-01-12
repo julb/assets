@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage the impact on the components of an incident.
@@ -87,7 +88,7 @@ public class IncidentComponentController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'read')")
-    public Page<IncidentComponentDTO> findAll(@PathVariable @Identifier String incidentId, Searchable searchable, Pageable pageable) {
+    public Flux<IncidentComponentDTO> findAll(@PathVariable @Identifier String incidentId, Searchable searchable, Pageable pageable) {
         return incidentComponentService.findAll(incidentId, searchable, pageable);
     }
 
@@ -100,7 +101,7 @@ public class IncidentComponentController {
     @Operation(summary = "gets the component with the impact level")
     @GetMapping(path = "/{componentId}")
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'read')")
-    public IncidentComponentDTO get(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String componentId) {
+    public Mono<IncidentComponentDTO> get(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String componentId) {
         return incidentComponentService.findOne(incidentId, componentId);
     }
 
@@ -117,7 +118,7 @@ public class IncidentComponentController {
     @PostMapping(path = "/{componentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'update')")
-    public IncidentComponentDTO create(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String componentId, @RequestBody @NotNull @Valid IncidentComponentCreationDTO creationDTO) {
+    public Mono<IncidentComponentDTO> create(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String componentId, @RequestBody @NotNull @Valid IncidentComponentCreationDTO creationDTO) {
         return incidentComponentService.create(incidentId, componentId, creationDTO);
     }
 
@@ -131,7 +132,7 @@ public class IncidentComponentController {
     @Operation(summary = "updates the link between the incident and the component")
     @PutMapping(path = "/{componentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'update')")
-    public IncidentComponentDTO update(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String componentId, @RequestBody @NotNull @Valid IncidentComponentUpdateDTO updateDTO) {
+    public Mono<IncidentComponentDTO> update(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String componentId, @RequestBody @NotNull @Valid IncidentComponentUpdateDTO updateDTO) {
         return incidentComponentService.update(incidentId, componentId, updateDTO);
     }
 
@@ -145,7 +146,7 @@ public class IncidentComponentController {
     @Operation(summary = "patches the link between the incident and the component")
     @PatchMapping(path = "/{componentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'update')")
-    public IncidentComponentDTO patch(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String componentId, @RequestBody @NotNull @Valid IncidentComponentPatchDTO patchDTO) {
+    public Mono<IncidentComponentDTO> patch(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String componentId, @RequestBody @NotNull @Valid IncidentComponentPatchDTO patchDTO) {
         return incidentComponentService.patch(incidentId, componentId, patchDTO);
     }
 
@@ -158,8 +159,8 @@ public class IncidentComponentController {
     @DeleteMapping(path = "/{componentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'update')")
-    public void delete(@PathVariable @Identifier String incidentId, @PathVariable String componentId) {
-        incidentComponentService.delete(incidentId, componentId);
+    public Mono<Void> delete(@PathVariable @Identifier String incidentId, @PathVariable String componentId) {
+        return incidentComponentService.delete(incidentId, componentId);
     }
     // ------------------------------------------ Utility methods.
 

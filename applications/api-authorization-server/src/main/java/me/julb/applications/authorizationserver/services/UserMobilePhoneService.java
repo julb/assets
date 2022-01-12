@@ -27,7 +27,6 @@ package me.julb.applications.authorizationserver.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.authorizationserver.services.dto.mobilephone.UserMobilePhoneCreationDTO;
@@ -37,6 +36,9 @@ import me.julb.applications.authorizationserver.services.dto.mobilephone.UserMob
 import me.julb.applications.authorizationserver.services.dto.mobilephone.UserMobilePhoneVerifyDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user mobile phone service.
@@ -54,7 +56,7 @@ public interface UserMobilePhoneService {
      * @param pageable the pageable information.
      * @return a paged list of mobile phones.
      */
-    Page<UserMobilePhoneDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<UserMobilePhoneDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a mobile phone through its ID.
@@ -62,7 +64,7 @@ public interface UserMobilePhoneService {
      * @param id the mobile phone identifier.
      * @return the mobile phone.
      */
-    UserMobilePhoneDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<UserMobilePhoneDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -72,7 +74,7 @@ public interface UserMobilePhoneService {
      * @param mobilePhoneCreationDTO the DTO to create a mobile phone.
      * @return the created mobile phone.
      */
-    UserMobilePhoneDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserMobilePhoneCreationDTO mobilePhoneCreationDTO);
+    Mono<UserMobilePhoneDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserMobilePhoneCreationDTO mobilePhoneCreationDTO);
 
     /**
      * Updates a mobile phone.
@@ -81,7 +83,7 @@ public interface UserMobilePhoneService {
      * @param mobilePhoneUpdateDTO the DTO to update a mobile phone.
      * @return the updated mobile phone.
      */
-    UserMobilePhoneDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneUpdateDTO mobilePhoneUpdateDTO);
+    Mono<UserMobilePhoneDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneUpdateDTO mobilePhoneUpdateDTO);
 
     /**
      * Patches a mobile phone.
@@ -90,7 +92,7 @@ public interface UserMobilePhoneService {
      * @param mobilePhonePatchDTO the DTO to update a mobile phone.
      * @return the updated mobilePhone.
      */
-    UserMobilePhoneDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhonePatchDTO mobilePhonePatchDTO);
+    Mono<UserMobilePhoneDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhonePatchDTO mobilePhonePatchDTO);
 
     /**
      * Triggers a mobile phone verification process.
@@ -98,7 +100,7 @@ public interface UserMobilePhoneService {
      * @param id the mobile phone identifier.
      * @return the updated mobile phone.
      */
-    UserMobilePhoneDTO triggerMobilePhoneVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<UserMobilePhoneDTO> triggerMobilePhoneVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
     /**
      * Verify the mobile phone.
@@ -107,13 +109,13 @@ public interface UserMobilePhoneService {
      * @param verifyDTO the DTO to verify the mobile phone.
      * @return the updated mobile phone.
      */
-    UserMobilePhoneDTO updateVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneVerifyDTO verifyDTO);
+    Mono<UserMobilePhoneDTO> updateVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneVerifyDTO verifyDTO);
 
     /**
      * Deletes a mobile phone.
      * @param userId the user identifier.
      * @param id the id of the mobile phone to delete.
      */
-    void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
 }

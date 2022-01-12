@@ -13,7 +13,7 @@ dependencies {
     annotationProcessor platform(project(':bom'))
 
     implementation project(':libraries:library-utility-jose-jwt')
-    implementation project(':spring-boot-starters:spring-boot-starter-web-mvc')
+    implementation project(':spring-boot-starters:spring-boot-starter-web-reactive')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.apache.commons:commons-collections4'
     implementation 'commons-io:commons-io'

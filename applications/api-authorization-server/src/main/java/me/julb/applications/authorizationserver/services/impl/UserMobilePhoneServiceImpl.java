@@ -37,7 +37,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -71,17 +70,20 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
-import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.NotificationDispatchAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
 import me.julb.springbootstarter.security.services.PasswordEncoderService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user mobile phone service implementation.
@@ -133,7 +135,7 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     /**
      * The password encoder.
@@ -147,40 +149,35 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      * {@inheritDoc}
      */
     @Override
-    public Page<UserMobilePhoneDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<UserMobilePhoneDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        ISpecification<UserMobilePhoneEntity> spec = new SearchSpecification<UserMobilePhoneEntity>(searchable).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
-        Page<UserMobilePhoneEntity> result = userMobilePhoneRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMapMany(user -> {
+                    ISpecification<UserMobilePhoneEntity> spec = new SearchSpecification<UserMobilePhoneEntity>(searchable).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
+                    return userMobilePhoneRepository.findAll(spec, pageable).map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserMobilePhoneDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMobilePhoneDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserMobilePhoneEntity result = userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserMobilePhoneEntity.class, id);
-        }
-
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMobilePhoneEntity.class, id)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -190,42 +187,42 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMobilePhoneDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserMobilePhoneCreationDTO creationDTO) {
-        try {
-            String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMobilePhoneDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserMobilePhoneCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-            // Check that the user exists
-            UserEntity user = userRepository.findByTmAndId(tm, userId);
-            if (user == null) {
-                throw new ResourceNotFoundException(UserEntity.class, userId);
-            }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMobilePhoneRepository.existsByTmAndUser_IdAndMobilePhone_CountryCodeIgnoreCaseAndMobilePhone_NumberIgnoreCase(tm, userId, creationDTO.getMobilePhone().getCountryCode(), creationDTO.getMobilePhone().getNumber())
+                        .flatMap(alreadyExists -> {
+                            if (alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(UserMobilePhoneEntity.class,
+                                    Map.<String, String> of("userId", userId, "mobilePhone.countryCode", creationDTO.getMobilePhone().getCountryCode(), "mobilePhone.number", creationDTO.getMobilePhone().getNumber())));
+                            }
 
-            // Check that the item exists
-            if (userMobilePhoneRepository.existsByTmAndUser_IdAndMobilePhone_CountryCodeIgnoreCaseAndMobilePhone_NumberIgnoreCase(tm, userId, creationDTO.getMobilePhone().getCountryCode(), creationDTO.getMobilePhone().getNumber())) {
-                throw new ResourceAlreadyExistsException(UserMobilePhoneEntity.class,
-                    Map.<String, String> of("userId", userId, "mobilePhone.countryCode", creationDTO.getMobilePhone().getCountryCode(), "mobilePhone.number", creationDTO.getMobilePhone().getNumber()));
-            }
+                            try {
+                                // Check validity of the number.
+                                UserMobilePhoneEntity entityToCreate = mapper.map(creationDTO);
+                                entityToCreate.setUser(user);
+                                entityToCreate.setVerified(false);
 
-            // Check validity of the number.
+                                // Handle phone number.
+                                PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+                                PhoneNumber phoneNumber = phoneUtil.parse(creationDTO.getMobilePhone().getNumber(), creationDTO.getMobilePhone().getCountryCode());
+                                entityToCreate.getMobilePhone().setInternationalNumber(phoneUtil.format(phoneNumber, PhoneNumberFormat.INTERNATIONAL));
+                                entityToCreate.getMobilePhone().setNationalNumber(phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL));
+                                entityToCreate.getMobilePhone().setE164Number(phoneUtil.format(phoneNumber, PhoneNumberFormat.E164));
 
-            UserMobilePhoneEntity entityToCreate = mapper.map(creationDTO);
-            entityToCreate.setUser(user);
-            entityToCreate.setVerified(false);
-
-            // Handle phone number.
-            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-            PhoneNumber phoneNumber = phoneUtil.parse(creationDTO.getMobilePhone().getNumber(), creationDTO.getMobilePhone().getCountryCode());
-            entityToCreate.getMobilePhone().setInternationalNumber(phoneUtil.format(phoneNumber, PhoneNumberFormat.INTERNATIONAL));
-            entityToCreate.getMobilePhone().setNationalNumber(phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL));
-            entityToCreate.getMobilePhone().setE164Number(phoneUtil.format(phoneNumber, PhoneNumberFormat.E164));
-
-            this.onPersist(entityToCreate);
-
-            UserMobilePhoneEntity result = userMobilePhoneRepository.save(entityToCreate);
-            return mapper.map(result);
-        } catch (NumberParseException e) {
-            throw new InternalServerErrorException(e);
-        }
+                                return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                    return userMobilePhoneRepository.save(entityToCreateWithFields).map(mapper::map);
+                                });
+                            } catch (NumberParseException e) {
+                                return Mono.error(new InternalServerErrorException(e));
+                            }
+                        });
+                });
+        });
     }
 
     /**
@@ -233,27 +230,25 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMobilePhoneDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMobilePhoneDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserMobilePhoneEntity existing = userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMobilePhoneEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMobilePhoneEntity.class, id)))
+                        .flatMap(existing -> {
+                            mapper.map(updateDTO, existing);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userMobilePhoneRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -261,135 +256,134 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMobilePhoneDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhonePatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMobilePhoneDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhonePatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserMobilePhoneEntity existing = userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMobilePhoneEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMobilePhoneEntity.class, id)))
+                        .flatMap(existing -> {
+                            mapper.map(patchDTO, existing);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userMobilePhoneRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserMobilePhoneDTO triggerMobilePhoneVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMobilePhoneDTO> triggerMobilePhoneVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
 
-        // Check that the item exists
-        UserMobilePhoneEntity existing = userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMobilePhoneEntity.class, id);
-        }
+                    return userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMobilePhoneEntity.class, id)))
+                        .flatMap(existing -> {
+                            
+                            return userPreferencesRepository.findByTmAndUser_Id(tm, userId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId)))
+                                .flatMap(preferences -> {
+                                    // If emobilePhone is verified, return the result.
+                                    if (!existing.getVerified().booleanValue()) {
+                                        // Trigger verification.
+                                        String verifyToken = RandomUtility.generateRandomTokenForMobilePhonePurpose();
 
-        // Check that the item exists
-        UserPreferencesEntity preferences = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
-        if (preferences == null) {
-            throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
-        }
+                                        // Enable the reset.
+                                        existing.setUser(user);
+                                        existing.setSecuredMobilePhoneVerifyToken(passwordEncoderService.encode(verifyToken));
 
-        if (!existing.getVerified()) {
-            // Trigger verification.
-            String verifyToken = RandomUtility.generateRandomTokenForMobilePhonePurpose();
+                                        // Compute expiry.
+                                        Integer expiryValue = configSourceService.getTypedProperty(tm, "authorization-server.mobile-phone.verify.expiry.value", Integer.class);
+                                        ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty(tm, "authorization-server.mobile-phone.verify.expiry.chrono-unit", ChronoUnit.class);
+                                        existing.setMobilePhoneVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
 
-            // Enable the reset.
-            existing.setUser(user);
-            existing.setSecuredMobilePhoneVerifyToken(passwordEncoderService.encode(verifyToken));
-
-            // Compute expiry.
-            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mobile-phone.verify.expiry.value", Integer.class);
-            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mobile-phone.verify.expiry.chrono-unit", ChronoUnit.class);
-            existing.setMobilePhoneVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
-
-            this.onUpdate(existing);
-
-            //@formatter:off
-            asyncMessagePosterService.postNotificationMessage(
-                new NotificationDispatchAsyncMessageBuilder()
-                    .kind(NotificationKind.TRIGGER_MOBILE_PHONE_VERIFY)
-                    .parameter("userId", existing.getUser().getId())
-                    .parameter("userMobilePhoneId", existing.getId())
-                    .parameter("userMobilePhoneE164Number", existing.getMobilePhone().getE164Number())
-                    .parameter("verifyToken", verifyToken)
-                    .parameter("expiryDateTime", existing.getMobilePhoneVerifyTokenExpiryDateTime())
-                    .sms()
-                        .to(existing.getMobilePhone().getE164Number(), preferences.getLanguage())
-                    .and()
-                .build()
-            );
-            //@formatter:on
-        }
-
-        UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
-        return mapper.map(result);
+                                        //@formatter:off
+                                        return asyncMessagePosterService.postNotificationMessage(
+                                            new NotificationDispatchAsyncMessageBuilder()
+                                                .kind(NotificationKind.TRIGGER_MOBILE_PHONE_VERIFY)
+                                                .parameter("userId", existing.getUser().getId())
+                                                .parameter("userMobilePhoneId", existing.getId())
+                                                .parameter("userMobilePhoneE164Number", existing.getMobilePhone().getE164Number())
+                                                .parameter("verifyToken", verifyToken)
+                                                .parameter("expiryDateTime", existing.getMobilePhoneVerifyTokenExpiryDateTime())
+                                                .sms()
+                                                    .to(existing.getMobilePhone().getE164Number(), preferences.getLanguage())
+                                                .and()
+                                            .build()
+                                        )
+                                        .then(this.onUpdate(existing))
+                                        .flatMap(entityToUpdateWithFields -> {
+                                            return userMobilePhoneRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                        });
+                                        //@formatter:on
+                                    } else {
+                                        return Mono.just(mapper.map(existing));
+                                    }
+                                });
+                        });
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserMobilePhoneDTO updateVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneVerifyDTO verifyDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMobilePhoneDTO> updateVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneVerifyDTO verifyDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMobilePhoneEntity.class, id)))
+                        .flatMap(existing -> {
+                            // If emobilePhone is verified, return the result.
+                            if (!existing.getVerified().booleanValue()) {
+                                // Check token.
+                                if (StringUtils.isBlank(existing.getSecuredMobilePhoneVerifyToken()) || !passwordEncoderService.matches(verifyDTO.getVerifyToken(), existing.getSecuredMobilePhoneVerifyToken())) {
+                                    throw new InvalidMobilePhoneVerifyTokenException();
+                                }
 
-        // Check that the item exists
-        UserMobilePhoneEntity existing = userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMobilePhoneEntity.class, id);
-        }
+                                // Check if token is not expired
+                                if (DateUtility.dateTimeNow().compareTo(existing.getMobilePhoneVerifyTokenExpiryDateTime()) > 0) {
+                                    throw new MobilePhoneVerifyTokenExpiredException();
+                                }
 
-        // If mobile phone is verified, return the result.
-        if (!existing.getVerified()) {
-            // Check token.
-            if (StringUtils.isBlank(existing.getSecuredMobilePhoneVerifyToken()) || !passwordEncoderService.matches(verifyDTO.getVerifyToken(), existing.getSecuredMobilePhoneVerifyToken())) {
-                throw new InvalidMobilePhoneVerifyTokenException();
-            }
+                                // Update verified status.
+                                existing.setMobilePhoneVerifyTokenExpiryDateTime(null);
+                                existing.setVerified(true);
+                                existing.setSecuredMobilePhoneVerifyToken(null);
 
-            // Check if token is not expired
-            if (DateUtility.dateTimeNow().compareTo(existing.getMobilePhoneVerifyTokenExpiryDateTime()) > 0) {
-                throw new MobilePhoneVerifyTokenExpiredException();
-            }
-
-            // Update verified status.
-            existing.setMobilePhoneVerifyTokenExpiryDateTime(null);
-            existing.setVerified(true);
-            existing.setSecuredMobilePhoneVerifyToken(null);
-
-            // If phone is primary, unlock user account.
-            if (existing.getPrimary() && !existing.getUser().getAccountNonLocked()) {
-                existing.getUser().setAccountNonLocked(true);
-                userRepository.save(existing.getUser());
-            }
-        }
-
-        UserMobilePhoneEntity result = userMobilePhoneRepository.save(existing);
-        return mapper.map(result);
+                                // If mobilePhone is primary, unlock user account.
+                                if (existing.getPrimary().booleanValue() && !existing.getUser().getAccountNonLocked().booleanValue()) {
+                                    existing.getUser().setAccountNonLocked(true);
+                                    return userRepository.save(existing.getUser()).flatMap(updatedUser -> {
+                                        return userMobilePhoneRepository.save(existing).map(mapper::map);
+                                    });
+                                } else {
+                                    return userMobilePhoneRepository.save(existing).map(mapper::map);
+                                }
+                            } else {
+                                return Mono.just(mapper.map(existing));
+                            }
+                        });
+                });
+        });
     }
 
     /**
@@ -397,26 +391,23 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserMobilePhoneEntity existing = userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMobilePhoneEntity.class, id);
-        }
-
-        // Delete entity.
-        userMobilePhoneRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMobilePhoneRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMobilePhoneEntity.class, id)))
+                        .flatMap(existing -> {
+                            // Delete entity.
+                            return userMobilePhoneRepository.delete(existing).then(
+                                this.onDelete(existing)
+                            ).then();
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -427,30 +418,30 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      * Method called when persisting an item.
      * @param entity the entity.
      */
-    private void onPersist(UserMobilePhoneEntity entity) {
+    private Mono<UserMobilePhoneEntity> onPersist(String tm, UserMobilePhoneEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(UserMobilePhoneEntity entity) {
+    private Mono<UserMobilePhoneEntity> onUpdate(UserMobilePhoneEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a item.
      * @param entity the entity.
      */
-    private void onDelete(UserMobilePhoneEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<UserMobilePhoneEntity> onDelete(UserMobilePhoneEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -458,15 +449,17 @@ public class UserMobilePhoneServiceImpl implements UserMobilePhoneService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(UserMobilePhoneEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_MOBILE_PHONE)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<UserMobilePhoneEntity> postResourceEvent(UserMobilePhoneEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_MOBILE_PHONE)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

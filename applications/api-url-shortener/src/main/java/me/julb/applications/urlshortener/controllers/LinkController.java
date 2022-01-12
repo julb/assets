@@ -24,13 +24,10 @@
 
 package me.julb.applications.urlshortener.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage links.
@@ -86,7 +87,7 @@ public class LinkController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('link', 'read')")
-    public Page<LinkDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<LinkDTO> findAll(Searchable searchable, Pageable pageable) {
         return linkService.findAll(searchable, pageable);
     }
 
@@ -98,7 +99,7 @@ public class LinkController {
     @Operation(summary = "gets a link")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'link', 'read')")
-    public LinkDTO get(@PathVariable @Identifier String id) {
+    public Mono<LinkDTO> get(@PathVariable @Identifier String id) {
         return linkService.findOne(id);
     }
 
@@ -113,7 +114,7 @@ public class LinkController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('link', 'create')")
-    public LinkDTO create(@RequestBody @NotNull @Valid LinkCreationDTO creationDTO) {
+    public Mono<LinkDTO> create(@RequestBody @NotNull @Valid LinkCreationDTO creationDTO) {
         return linkService.create(creationDTO);
     }
 
@@ -126,7 +127,7 @@ public class LinkController {
     @Operation(summary = "updates a link")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'link', 'update')")
-    public LinkDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid LinkUpdateDTO updateDTO) {
+    public Mono<LinkDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid LinkUpdateDTO updateDTO) {
         return linkService.update(id, updateDTO);
     }
 
@@ -139,7 +140,7 @@ public class LinkController {
     @Operation(summary = "patches a link")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'link', 'update')")
-    public LinkDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid LinkPatchDTO patchDTO) {
+    public Mono<LinkDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid LinkPatchDTO patchDTO) {
         return linkService.patch(id, patchDTO);
     }
 
@@ -151,8 +152,8 @@ public class LinkController {
     @DeleteMapping(path = "/{id}/hits")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'link', 'update')")
-    public void resetNumberOfHits(@PathVariable String id) {
-        linkService.resetNumberOfHits(id);
+    public Mono<Void> resetNumberOfHits(@PathVariable String id) {
+        return linkService.resetNumberOfHits(id).then();
     }
 
     /**
@@ -163,8 +164,8 @@ public class LinkController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'link', 'delete')")
-    public void delete(@PathVariable String id) {
-        linkService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return linkService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

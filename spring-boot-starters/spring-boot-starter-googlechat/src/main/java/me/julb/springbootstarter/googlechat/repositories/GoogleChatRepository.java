@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 
 /**
- * description goes here.
+ * The Google chat repository.
  * <br>
  *
  * @author Julb.

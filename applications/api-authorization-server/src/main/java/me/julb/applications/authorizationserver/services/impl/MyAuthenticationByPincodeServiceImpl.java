@@ -40,7 +40,9 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodePatchDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodePincodeChangeDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPincodeUpdateDTO;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication service implementation.
@@ -69,9 +71,10 @@ public class MyAuthenticationByPincodeServiceImpl implements MyAuthenticationByP
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPincodeDTO findOne() {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPincodeService.findOne(userId);
+    public Mono<UserAuthenticationByPincodeDTO> findOne() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPincodeService.findOne(userId);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -81,9 +84,10 @@ public class MyAuthenticationByPincodeServiceImpl implements MyAuthenticationByP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPincodeDTO create(@NotNull @Valid UserAuthenticationByPincodeCreationDTO creationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPincodeService.create(userId, creationDTO);
+    public Mono<UserAuthenticationByPincodeDTO> create(@NotNull @Valid UserAuthenticationByPincodeCreationDTO creationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPincodeService.create(userId, creationDTO);
+        });
     }
 
     /**
@@ -91,9 +95,10 @@ public class MyAuthenticationByPincodeServiceImpl implements MyAuthenticationByP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPincodeDTO update(@NotNull @Valid UserAuthenticationByPincodeUpdateDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPincodeService.update(userId, updateDTO);
+    public Mono<UserAuthenticationByPincodeDTO> update(@NotNull @Valid UserAuthenticationByPincodeUpdateDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPincodeService.update(userId, updateDTO);
+        });
     }
 
     /**
@@ -101,9 +106,10 @@ public class MyAuthenticationByPincodeServiceImpl implements MyAuthenticationByP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPincodeDTO patch(@NotNull @Valid UserAuthenticationByPincodePatchDTO patchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPincodeService.patch(userId, patchDTO);
+    public Mono<UserAuthenticationByPincodeDTO> patch(@NotNull @Valid UserAuthenticationByPincodePatchDTO patchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPincodeService.patch(userId, patchDTO);
+        });
     }
 
     /**
@@ -111,9 +117,10 @@ public class MyAuthenticationByPincodeServiceImpl implements MyAuthenticationByP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPincodeDTO updatePincode(@NotNull @Valid UserAuthenticationByPincodePincodeChangeDTO changePincodeDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userAuthenticationByPincodeService.updatePincode(userId, changePincodeDTO);
+    public Mono<UserAuthenticationByPincodeDTO> updatePincode(@NotNull @Valid UserAuthenticationByPincodePincodeChangeDTO changePincodeDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPincodeService.updatePincode(userId, changePincodeDTO);
+        });
     }
 
     /**
@@ -121,9 +128,10 @@ public class MyAuthenticationByPincodeServiceImpl implements MyAuthenticationByP
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete() {
-        String userId = securityService.getConnectedUserId();
-        userAuthenticationByPincodeService.delete(userId);
+    public Mono<Void> delete() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userAuthenticationByPincodeService.delete(userId);
+        });
     }
 
     // ------------------------------------------ Utility methods.

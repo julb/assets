@@ -24,19 +24,20 @@
 
 package me.julb.applications.disclaimer.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.disclaimer.entities.DisclaimerEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The disclaimer repository.
  * <br>
  * @author Julb.
  */
-public interface DisclaimerRepository extends MongoRepository<DisclaimerEntity, String>, MongoSpecificationExecutor<DisclaimerEntity> {
+public interface DisclaimerRepository extends ReactiveMongoRepository<DisclaimerEntity, String>, MongoSpecificationExecutor<DisclaimerEntity> {
 
     /**
      * Finds a disclaimer by trademark and id.
@@ -44,7 +45,7 @@ public interface DisclaimerRepository extends MongoRepository<DisclaimerEntity, 
      * @param id the id.
      * @return the disclaimer, or <code>null</code> if not exists.
      */
-    DisclaimerEntity findByTmAndId(String tm, String id);
+    Mono<DisclaimerEntity> findByTmAndId(String tm, String id);
 
     /**
      * Checks if a disclaimer exists with given code and version.
@@ -53,7 +54,7 @@ public interface DisclaimerRepository extends MongoRepository<DisclaimerEntity, 
      * @param version the version.
      * @return <code>true</code> if a disclaimer exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndCodeIgnoreCaseAndVersion(String tm, String code, Integer version);
+    Mono<Boolean> existsByTmAndCodeIgnoreCaseAndVersion(String tm, String code, Integer version);
 
     /**
      * Checks if a disclaimer not having given id exists with given code and version.
@@ -63,7 +64,7 @@ public interface DisclaimerRepository extends MongoRepository<DisclaimerEntity, 
      * @param version the version.
      * @return <code>true</code> if a disclaimer exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndIdNotAndCodeIgnoreCaseAndVersion(String tm, String id, String code, Integer version);
+    Mono<Boolean> existsByTmAndIdNotAndCodeIgnoreCaseAndVersion(String tm, String id, String code, Integer version);
 
     /**
      * Finds all disclaimers with given code excluding given ID that are active.
@@ -72,6 +73,6 @@ public interface DisclaimerRepository extends MongoRepository<DisclaimerEntity, 
      * @param code the code.
      * @return the disclaimers.
      */
-    List<DisclaimerEntity> findByTmAndIdNotAndCodeIgnoreCaseAndActiveIsTrue(String tm, String id, String code);
+    Flux<DisclaimerEntity> findByTmAndIdNotAndCodeIgnoreCaseAndActiveIsTrue(String tm, String id, String code);
 
 }

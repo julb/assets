@@ -25,6 +25,8 @@ package me.julb.applications.platformhealth.services;
 
 import me.julb.applications.platformhealth.services.dto.availability.PlatformAvailabilityDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The availability service.
  * <br>
@@ -36,6 +38,6 @@ public interface PlatformAvailabilityService {
      * Gets the availability of the platform.
      * @return the availability of the platform.
      */
-    PlatformAvailabilityDTO getPlatformAvailability();
+    Mono<PlatformAvailabilityDTO> getPlatformAvailability();
 
 }

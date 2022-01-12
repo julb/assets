@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,12 +38,14 @@ import me.julb.applications.ewallet.services.ElectronicPurseOperationExecutionSe
 import me.julb.applications.ewallet.services.ElectronicPurseOperationService;
 import me.julb.applications.ewallet.services.ElectronicPurseService;
 import me.julb.applications.ewallet.services.UserElectronicPurseOperationService;
-import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationPatchDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The electronic purse service implementation.
@@ -80,18 +81,20 @@ public class UserElectronicPurseOperationServiceImpl implements UserElectronicPu
      * {@inheritDoc}
      */
     @Override
-    public Page<ElectronicPurseOperationDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseOperationService.findAll(electronicPurse.getId(), searchable, pageable);
+    public Flux<ElectronicPurseOperationDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return electronicPurseService.findByUserId(userId).flatMapMany(electronicPurse -> {
+            return electronicPurseOperationService.findAll(electronicPurse.getId(), searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ElectronicPurseOperationDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseOperationService.findOne(electronicPurse.getId(), id);
+    public Mono<ElectronicPurseOperationDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseOperationService.findOne(electronicPurse.getId(), id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -101,9 +104,10 @@ public class UserElectronicPurseOperationServiceImpl implements UserElectronicPu
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseOperationDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseOperationService.update(electronicPurse.getId(), id, updateDTO);
+    public Mono<ElectronicPurseOperationDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO updateDTO) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseOperationService.update(electronicPurse.getId(), id, updateDTO);
+        });
     }
 
     /**
@@ -111,9 +115,10 @@ public class UserElectronicPurseOperationServiceImpl implements UserElectronicPu
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseOperationDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        return electronicPurseOperationService.patch(electronicPurse.getId(), id, patchDTO);
+    public Mono<ElectronicPurseOperationDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO patchDTO) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseOperationService.patch(electronicPurse.getId(), id, patchDTO);
+        });
     }
 
     /**
@@ -121,9 +126,10 @@ public class UserElectronicPurseOperationServiceImpl implements UserElectronicPu
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void cancel(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        electronicPurseOperationExecutionService.cancelOperation(electronicPurse.getId(), id);
+    public Mono<Void> cancel(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseOperationExecutionService.cancelOperation(electronicPurse.getId(), id).then();
+        });
     }
 
     /**
@@ -131,9 +137,10 @@ public class UserElectronicPurseOperationServiceImpl implements UserElectronicPu
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        ElectronicPurseDTO electronicPurse = electronicPurseService.findByUserId(userId);
-        electronicPurseOperationExecutionService.deleteOperationExecution(electronicPurse.getId(), id);
+    public Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return electronicPurseService.findByUserId(userId).flatMap(electronicPurse -> {
+            return electronicPurseOperationExecutionService.deleteOperationExecution(electronicPurse.getId(), id).then();
+        });
     }
 
     // ------------------------------------------ Utility methods.

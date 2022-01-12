@@ -31,7 +31,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceEntity;
 import me.julb.applications.platformhealth.entities.PlannedMaintenanceHistoryEntity;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
 
 /**
  * Specification on planned maintenance history.

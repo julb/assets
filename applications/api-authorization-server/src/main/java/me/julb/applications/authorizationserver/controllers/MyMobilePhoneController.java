@@ -24,15 +24,12 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -61,6 +58,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage my mobile phones.
@@ -91,7 +92,7 @@ public class MyMobilePhoneController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public Page<UserMobilePhoneDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<UserMobilePhoneDTO> findAll(Searchable searchable, Pageable pageable) {
         return myMobilePhoneService.findAll(searchable, pageable);
     }
 
@@ -103,7 +104,7 @@ public class MyMobilePhoneController {
     @Operation(summary = "gets my mobile phones")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserMobilePhoneDTO get(@PathVariable @Identifier String id) {
+    public Mono<UserMobilePhoneDTO> get(@PathVariable @Identifier String id) {
         return myMobilePhoneService.findOne(id);
     }
 
@@ -118,7 +119,7 @@ public class MyMobilePhoneController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserMobilePhoneDTO create(@RequestBody @NotNull @Valid UserMobilePhoneCreationDTO creationDTO) {
+    public Mono<UserMobilePhoneDTO> create(@RequestBody @NotNull @Valid UserMobilePhoneCreationDTO creationDTO) {
         return myMobilePhoneService.create(creationDTO);
     }
 
@@ -131,7 +132,7 @@ public class MyMobilePhoneController {
     @Operation(summary = "updates my mobile phones")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserMobilePhoneDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserMobilePhoneUpdateDTO updateDTO) {
+    public Mono<UserMobilePhoneDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserMobilePhoneUpdateDTO updateDTO) {
         return myMobilePhoneService.update(id, updateDTO);
     }
 
@@ -144,7 +145,7 @@ public class MyMobilePhoneController {
     @Operation(summary = "patches my mobile phones")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserMobilePhoneDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserMobilePhonePatchDTO patchDTO) {
+    public Mono<UserMobilePhoneDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserMobilePhonePatchDTO patchDTO) {
         return myMobilePhoneService.patch(id, patchDTO);
     }
 
@@ -157,7 +158,7 @@ public class MyMobilePhoneController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, path = "/{id}/trigger-verify")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserMobilePhoneDTO triggerVerify(@PathVariable("id") @Identifier String id) {
+    public Mono<UserMobilePhoneDTO> triggerVerify(@PathVariable("id") @Identifier String id) {
         return myMobilePhoneService.triggerMobilePhoneVerify(id);
     }
 
@@ -171,7 +172,7 @@ public class MyMobilePhoneController {
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, path = "/{id}/verify")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    public UserMobilePhoneDTO verify(@PathVariable("id") @Identifier String id, @RequestParam("verifyToken") @NotNull @NotBlank @Size(min = 128, max = 128) String verifyToken) {
+    public Mono<UserMobilePhoneDTO> verify(@PathVariable("id") @Identifier String id, @RequestParam("verifyToken") @NotNull @NotBlank @Size(min = 128, max = 128) String verifyToken) {
         UserMobilePhoneVerifyDTO dto = new UserMobilePhoneVerifyDTO();
         dto.setVerifyToken(verifyToken);
         return myMobilePhoneService.updateVerify(id, dto);
@@ -185,8 +186,8 @@ public class MyMobilePhoneController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete(@PathVariable String id) {
-        myMobilePhoneService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return myMobilePhoneService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

@@ -33,7 +33,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -68,17 +67,20 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
-import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.NotificationDispatchAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
 import me.julb.springbootstarter.security.services.PasswordEncoderService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user mail service implementation.
@@ -136,7 +138,7 @@ public class UserMailServiceImpl implements UserMailService {
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     /**
      * The password encoder.
@@ -150,99 +152,90 @@ public class UserMailServiceImpl implements UserMailService {
      * {@inheritDoc}
      */
     @Override
-    public Page<UserMailDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<UserMailDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        ISpecification<UserMailEntity> spec = new SearchSpecification<UserMailEntity>(searchable).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
-        Page<UserMailEntity> result = userMailRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMapMany(user -> {
+                    ISpecification<UserMailEntity> spec = new SearchSpecification<UserMailEntity>(searchable).and(new TmSpecification<>(tm)).and(new ObjectBelongsToUserIdSpecification<>(userId));
+                    return userMailRepository.findAll(spec, pageable).map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserMailDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserMailEntity result = userMailRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, id);
-        }
-
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMailRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, id)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean existsByMail(@NotNull @NotBlank @Email String mail) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Boolean> existsByMail(@NotNull @NotBlank @Email String mail) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        return userMailRepository.existsByTmAndMailIgnoreCase(tm, mail);
+            return userMailRepository.existsByTmAndMailIgnoreCase(tm, mail);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserMailDTO findByMail(@NotNull @NotBlank @Email String mail) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> findByMail(@NotNull @NotBlank @Email String mail) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserMailEntity result = userMailRepository.findByTmAndMailIgnoreCase(tm, mail);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, "mail", mail);
-        }
-
-        return mapper.map(result);
+            return userMailRepository.findByTmAndMailIgnoreCase(tm, mail)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, "mail", mail)))
+                .map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserMailDTO findByMailVerified(@NotNull @NotBlank @Email String mail) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> findByMailVerified(@NotNull @NotBlank @Email String mail) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserMailEntity result = userMailRepository.findByTmAndMailIgnoreCaseAndVerifiedIsTrue(tm, mail);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, "mail", mail);
-        }
-
-        return mapper.map(result);
+            return userMailRepository.findByTmAndMailIgnoreCaseAndVerifiedIsTrue(tm, mail)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, "mail", mail)))
+                .map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserDTO findUserByMailVerified(@NotNull @NotBlank @Email String mail) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserDTO> findUserByMailVerified(@NotNull @NotBlank @Email String mail) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserMailEntity result = userMailRepository.findByTmAndMailIgnoreCaseAndVerifiedIsTrue(tm, mail);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, "mail", mail);
-        }
-
-        return userMapper.map(result.getUser());
+            return userMailRepository.findByTmAndMailIgnoreCaseAndVerifiedIsTrue(tm, mail)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, "mail", mail)))
+                .map(UserMailEntity::getUser)
+                .map(userMapper::map);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -252,27 +245,28 @@ public class UserMailServiceImpl implements UserMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserMailCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserMailCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMailRepository.existsByTmAndMailIgnoreCase(tm, creationDTO.getMail())
+                        .flatMap(alreadyExists -> {
+                            if (alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(UserMailEntity.class, "mail", creationDTO.getMail()));
+                            }
 
-        // Check that the item exists
-        if (userMailRepository.existsByTmAndMailIgnoreCase(tm, creationDTO.getMail())) {
-            throw new ResourceAlreadyExistsException(UserMailEntity.class, "mail", creationDTO.getMail());
-        }
-
-        UserMailEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setUser(user);
-        entityToCreate.setVerified(false);
-        this.onPersist(entityToCreate);
-
-        UserMailEntity result = userMailRepository.save(entityToCreate);
-        return mapper.map(result);
+                            UserMailEntity entityToCreate = mapper.map(creationDTO);
+                            entityToCreate.setUser(user);
+                            entityToCreate.setVerified(false);
+                            return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                return userMailRepository.save(entityToCreateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -280,27 +274,25 @@ public class UserMailServiceImpl implements UserMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMailUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMailUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserMailEntity existing = userMailRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        UserMailEntity result = userMailRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMailRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, id)))
+                        .flatMap(existing -> {
+                            mapper.map(updateDTO, existing);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userMailRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -308,27 +300,25 @@ public class UserMailServiceImpl implements UserMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMailPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMailPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserMailEntity existing = userMailRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        UserMailEntity result = userMailRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMailRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, id)))
+                        .flatMap(existing -> {
+                            mapper.map(patchDTO, existing);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userMailRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -336,61 +326,61 @@ public class UserMailServiceImpl implements UserMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO triggerMailVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> triggerMailVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
 
-        // Check that the item exists
-        UserMailEntity existing = userMailRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, id);
-        }
+                    return userMailRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, id)))
+                        .flatMap(existing -> {
+                            
+                            return userPreferencesRepository.findByTmAndUser_Id(tm, userId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId)))
+                                .flatMap(preferences -> {
+                                    // If email is verified, return the result.
+                                    if (!existing.getVerified().booleanValue()) {
+                                        // Trigger verification.
+                                        String verifyToken = RandomUtility.generateRandomTokenForMailPurpose();
 
-        // Check that the item exists
-        UserPreferencesEntity preferences = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
-        if (preferences == null) {
-            throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
-        }
+                                        // Enable the reset.
+                                        existing.setUser(user);
+                                        existing.setSecuredMailVerifyToken(passwordEncoderService.encode(verifyToken));
 
-        if (!existing.getVerified()) {
-            // Trigger verification.
-            String verifyToken = RandomUtility.generateRandomTokenForMailPurpose();
+                                        // Compute expiry.
+                                        Integer expiryValue = configSourceService.getTypedProperty(tm, "authorization-server.mail.verify.expiry.value", Integer.class);
+                                        ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty(tm, "authorization-server.mail.verify.expiry.chrono-unit", ChronoUnit.class);
+                                        existing.setMailVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
 
-            // Enable the reset.
-            existing.setUser(user);
-            existing.setSecuredMailVerifyToken(passwordEncoderService.encode(verifyToken));
-
-            // Compute expiry.
-            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mail.verify.expiry.value", Integer.class);
-            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mail.verify.expiry.chrono-unit", ChronoUnit.class);
-            existing.setMailVerifyTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
-
-            this.onUpdate(existing);
-
-            //@formatter:off
-            asyncMessagePosterService.postNotificationMessage(
-                new NotificationDispatchAsyncMessageBuilder()
-                    .kind(NotificationKind.TRIGGER_MAIL_VERIFY)
-                    .parameter("userId", existing.getUser().getId())
-                    .parameter("userMailId", existing.getId())
-                    .parameter("userMail", existing.getMail())
-                    .parameter("verifyToken", verifyToken)
-                    .parameter("expiryDateTime", existing.getMailVerifyTokenExpiryDateTime())
-                    .mail()
-                        .to(existing.getMail(), preferences.getLanguage())
-                    .and()
-                .build()
-            );
-            //@formatter:on
-        }
-
-        UserMailEntity result = userMailRepository.save(existing);
-        return mapper.map(result);
+                                        //@formatter:off
+                                        return asyncMessagePosterService.postNotificationMessage(
+                                            new NotificationDispatchAsyncMessageBuilder()
+                                                .kind(NotificationKind.TRIGGER_MAIL_VERIFY)
+                                                .parameter("userId", existing.getUser().getId())
+                                                .parameter("userMailId", existing.getId())
+                                                .parameter("userMail", existing.getMail())
+                                                .parameter("verifyToken", verifyToken)
+                                                .parameter("expiryDateTime", existing.getMailVerifyTokenExpiryDateTime())
+                                                .mail()
+                                                    .to(existing.getMail(), preferences.getLanguage())
+                                                .and()
+                                            .build()
+                                        )
+                                        .then(this.onUpdate(existing))
+                                        .flatMap(entityToUpdateWithFields -> {
+                                            return userMailRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                        });
+                                        //@formatter:on
+                                    } else {
+                                        return Mono.just(mapper.map(existing));
+                                    }
+                                });
+                        });
+                });
+        });
     }
 
     /**
@@ -398,47 +388,48 @@ public class UserMailServiceImpl implements UserMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO updateVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMailVerifyDTO verifyDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> updateVerify(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserMailVerifyDTO verifyDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMailRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, id)))
+                        .flatMap(existing -> {
+                            // If email is verified, return the result.
+                            if (!existing.getVerified().booleanValue()) {
+                                // Check token.
+                                if (StringUtils.isBlank(existing.getSecuredMailVerifyToken()) || !passwordEncoderService.matches(verifyDTO.getVerifyToken(), existing.getSecuredMailVerifyToken())) {
+                                    return Mono.error(new InvalidMailVerifyTokenException());
+                                }
+                    
+                                // Check if token is not expired
+                                if (DateUtility.dateTimeNow().compareTo(existing.getMailVerifyTokenExpiryDateTime()) > 0) {
+                                    return Mono.error(new MailVerifyTokenExpiredException());
+                                }
 
-        // Check that the item exists
-        UserMailEntity existing = userMailRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, id);
-        }
+                                // Update verified status.
+                                existing.setMailVerifyTokenExpiryDateTime(null);
+                                existing.setVerified(true);
+                                existing.setSecuredMailVerifyToken(null);
 
-        // If email is verified, return the result.
-        if (!existing.getVerified()) {
-            // Check token.
-            if (StringUtils.isBlank(existing.getSecuredMailVerifyToken()) || !passwordEncoderService.matches(verifyDTO.getVerifyToken(), existing.getSecuredMailVerifyToken())) {
-                throw new InvalidMailVerifyTokenException();
-            }
-
-            // Check if token is not expired
-            if (DateUtility.dateTimeNow().compareTo(existing.getMailVerifyTokenExpiryDateTime()) > 0) {
-                throw new MailVerifyTokenExpiredException();
-            }
-
-            // Update verified status.
-            existing.setMailVerifyTokenExpiryDateTime(null);
-            existing.setVerified(true);
-            existing.setSecuredMailVerifyToken(null);
-
-            // If mail is primary, unlock user account.
-            if (existing.getPrimary() && !existing.getUser().getAccountNonLocked()) {
-                existing.getUser().setAccountNonLocked(true);
-                userRepository.save(existing.getUser());
-            }
-        }
-
-        UserMailEntity result = userMailRepository.save(existing);
-        return mapper.map(result);
+                                // If mail is primary, unlock user account.
+                                if (existing.getPrimary().booleanValue() && !existing.getUser().getAccountNonLocked().booleanValue()) {
+                                    existing.getUser().setAccountNonLocked(true);
+                                    return userRepository.save(existing.getUser()).flatMap(updatedUser -> {
+                                        return userMailRepository.save(existing).map(mapper::map);
+                                    });
+                                } else {
+                                    return userMailRepository.save(existing).map(mapper::map);
+                                }
+                            } else {
+                                return Mono.just(mapper.map(existing));
+                            }
+                        });
+                });
+        });
     }
 
     /**
@@ -446,37 +437,38 @@ public class UserMailServiceImpl implements UserMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO updateVerifyWithoutToken(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserMailDTO> updateVerifyWithoutToken(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMailRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, id)))
+                        .flatMap(existing -> {
+                            // If email is verified, return the result.
+                            if (!existing.getVerified().booleanValue()) {
+                                // Update verified status.
+                                existing.setMailVerifyTokenExpiryDateTime(null);
+                                existing.setVerified(true);
+                                existing.setSecuredMailVerifyToken(null);
 
-        // Check that the item exists
-        UserMailEntity existing = userMailRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, id);
-        }
-
-        // If email is verified, return the result.
-        if (!existing.getVerified()) {
-            // Update verified status.
-            existing.setMailVerifyTokenExpiryDateTime(null);
-            existing.setVerified(true);
-            existing.setSecuredMailVerifyToken(null);
-
-            // If mail is primary, unlock user account.
-            if (existing.getPrimary() && !existing.getUser().getAccountNonLocked()) {
-                existing.getUser().setAccountNonLocked(true);
-                userRepository.save(existing.getUser());
-            }
-        }
-
-        UserMailEntity result = userMailRepository.save(existing);
-        return mapper.map(result);
+                                // If mail is primary, unlock user account.
+                                if (existing.getPrimary().booleanValue() && !existing.getUser().getAccountNonLocked().booleanValue()) {
+                                    existing.getUser().setAccountNonLocked(true);
+                                    return userRepository.save(existing.getUser()).flatMap(updatedUser -> {
+                                        return userMailRepository.save(existing).map(mapper::map);
+                                    });
+                                } else {
+                                    return userMailRepository.save(existing).map(mapper::map);
+                                }
+                            } else {
+                                return Mono.just(mapper.map(existing));
+                            }
+                        });
+                });
+        });
     }
 
     /**
@@ -484,26 +476,23 @@ public class UserMailServiceImpl implements UserMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserMailEntity existing = userMailRepository.findByTmAndUser_IdAndId(tm, userId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserMailEntity.class, id);
-        }
-
-        // Delete entity.
-        userMailRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userMailRepository.findByTmAndUser_IdAndId(tm, userId, id)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, id)))
+                        .flatMap(existing -> {
+                            // Delete entity.
+                            return userMailRepository.delete(existing).then(
+                                this.onDelete(existing)
+                            ).then();
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -514,30 +503,30 @@ public class UserMailServiceImpl implements UserMailService {
      * Method called when persisting an item.
      * @param entity the entity.
      */
-    private void onPersist(UserMailEntity entity) {
+    private Mono<UserMailEntity> onPersist(String tm, UserMailEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(UserMailEntity entity) {
+    private Mono<UserMailEntity> onUpdate(UserMailEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a item.
      * @param entity the entity.
      */
-    private void onDelete(UserMailEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<UserMailEntity> onDelete(UserMailEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -545,15 +534,17 @@ public class UserMailServiceImpl implements UserMailService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(UserMailEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_MAIL)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<UserMailEntity> postResourceEvent(UserMailEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_MAIL)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

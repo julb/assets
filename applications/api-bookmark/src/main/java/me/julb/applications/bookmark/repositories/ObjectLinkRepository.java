@@ -24,15 +24,16 @@
 
 package me.julb.applications.bookmark.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.bookmark.entities.ObjectLinkEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
 
 /**
  * The object link repository.
  * <br>
  * @author Julb.
  */
-public interface ObjectLinkRepository extends MongoRepository<ObjectLinkEntity, String>, MongoSpecificationExecutor<ObjectLinkEntity> {
+public interface ObjectLinkRepository extends ReactiveMongoRepository<ObjectLinkEntity, String>, MongoSpecificationExecutor<ObjectLinkEntity> {
 }

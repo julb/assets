@@ -24,11 +24,12 @@
 
 package me.julb.applications.barcode.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
+import javax.imageio.ImageIO;
 import javax.validation.constraints.Min;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,10 @@ import org.springframework.web.bind.annotation.RestController;
 import me.julb.library.utility.barcode.ean13.EAN13Utility;
 import me.julb.library.utility.barcode.pdf417.PDF417Utility;
 import me.julb.library.utility.barcode.qrcode.QRCodeUtility;
+import me.julb.library.utility.exceptions.InternalServerErrorException;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The REST controller to handle barcodes generation.
@@ -66,10 +71,11 @@ public class BarcodeController {
      */
     @Operation(summary = "generates an EAN13 code")
     @GetMapping(path = "/ean13", produces = MediaType.IMAGE_PNG_VALUE)
-    public BufferedImage generateEAN13Code(@RequestParam("value") String value, @RequestParam("width") @Min(1) int width, @RequestParam("height") @Min(1) int height)
+    public Mono<ByteBuffer> generateEAN13Code(@RequestParam("value") String value, @RequestParam("width") @Min(1) int width, @RequestParam("height") @Min(1) int height)
         throws IOException {
         LOGGER.info("Generating EAN13 barcode for value={sha256}{}, w={}, h={}.", DigestUtils.sha256Hex(value), width, height);
-        return EAN13Utility.generate(value, width, height);
+        BufferedImage image = EAN13Utility.generate(value, width, height);
+        return writeInternal(image, MediaType.IMAGE_PNG);
     }
 
     /**
@@ -82,10 +88,11 @@ public class BarcodeController {
      */
     @Operation(summary = "generates an QR code")
     @GetMapping(path = "/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
-    public BufferedImage generateQRCode(@RequestParam("value") String value, @RequestParam("width") @Min(1) int width, @RequestParam("height") @Min(1) int height)
+    public Mono<ByteBuffer> generateQRCode(@RequestParam("value") String value, @RequestParam("width") @Min(1) int width, @RequestParam("height") @Min(1) int height)
         throws IOException {
         LOGGER.info("Generating QR code for value={sha256}{}, w={}, h={}", DigestUtils.sha256Hex(value), width, height);
-        return QRCodeUtility.generate(value, width, height);
+        BufferedImage image = QRCodeUtility.generate(value, width, height);
+        return writeInternal(image, MediaType.IMAGE_PNG);
     }
 
     /**
@@ -98,9 +105,25 @@ public class BarcodeController {
      */
     @Operation(summary = "generates an PDF417 code")
     @GetMapping(path = "/pdf417", produces = MediaType.IMAGE_PNG_VALUE)
-    public BufferedImage generatePDF417Code(@RequestParam("value") String value, @RequestParam("width") @Min(1) int width, @RequestParam("height") @Min(1) int height)
+    public Mono<ByteBuffer> generatePDF417Code(@RequestParam("value") String value, @RequestParam("width") @Min(1) int width, @RequestParam("height") @Min(1) int height)
         throws IOException {
         LOGGER.info("Generating PDF417 code for value={sha256}{}, w={}, h={}", DigestUtils.sha256Hex(value), width, height);
-        return PDF417Utility.generate(value, width, height);
+        BufferedImage image = PDF417Utility.generate(value, width, height);
+        return writeInternal(image, MediaType.IMAGE_PNG);
+    }
+
+    /**
+     * Writes a buffered image as a Mono.
+     * @param image the image.
+     * @param mediaType the media type.
+     * @return the byte buffer.
+     */
+    private Mono<ByteBuffer> writeInternal(BufferedImage image, MediaType mediaType) {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            ImageIO.write(image,mediaType.getSubtype(), os);
+            return Mono.just(ByteBuffer.wrap(os.toByteArray()));
+        } catch(IOException e) {
+            throw new InternalServerErrorException(e);
+        }
     }
 }

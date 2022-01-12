@@ -55,8 +55,7 @@ public class SecurityAuthenticationByInternalApiKeyConfiguration {
     private SecurityInternalApiKeyProperties securityInternalApiKeyProperties;
 
     /**
-     * Filters the request to get the JWT.
-     * @param authenticationManager the Spring authentication manager.
+     * Filters the request to get the API key.
      * @return the request header authentication filter.
      * @throws Exception if an error occurs.
      */

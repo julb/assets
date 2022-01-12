@@ -24,12 +24,9 @@
 
 package me.julb.applications.bookmark.services;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.bookmark.services.dto.ItemType;
@@ -41,6 +38,9 @@ import me.julb.library.dto.simple.identifier.IdentifierDTO;
 import me.julb.library.dto.simple.value.PositiveIntegerValueDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The item service.
@@ -57,7 +57,7 @@ public interface MyItemService {
      * @param pageable the pageable information.
      * @return a paged list of items.
      */
-    Page<? extends AbstractItemDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<? extends AbstractItemDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets the available folders (paged).
@@ -66,21 +66,21 @@ public interface MyItemService {
      * @param pageable the pageable information.
      * @return a paged list of items.
      */
-    Page<? extends AbstractItemDTO> findAllByType(@NotNull ItemType type, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<? extends AbstractItemDTO> findAllByType(@NotNull ItemType type, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Lists all child items by parent folder.
      * @param parentId the parent ID, or <code>null</code> if we need to list at root.
      * @return the children.
      */
-    List<? extends AbstractItemDTO> findAllByParent(@Identifier String parentId);
+    Flux<? extends AbstractItemDTO> findAllByParent(@Identifier String parentId);
 
     /**
      * Gets a item through its ID.
      * @param id the item identifier.
      * @return the item.
      */
-    AbstractItemDTO findOne(@NotNull @Identifier String id);
+    Mono<AbstractItemDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -89,7 +89,7 @@ public interface MyItemService {
      * @param creationDTO the DTO to create a item.
      * @return the created item.
      */
-    AbstractItemDTO create(@NotNull @Valid AbstractItemCreationDTO creationDTO);
+    Mono<AbstractItemDTO> create(@NotNull @Valid AbstractItemCreationDTO creationDTO);
 
     /**
      * Updates a item.
@@ -97,7 +97,7 @@ public interface MyItemService {
      * @param updateDTO the DTO to update a item.
      * @return the updated item.
      */
-    AbstractItemDTO update(@NotNull @Identifier String id, @NotNull @Valid AbstractItemUpdateDTO updateDTO);
+    Mono<AbstractItemDTO> update(@NotNull @Identifier String id, @NotNull @Valid AbstractItemUpdateDTO updateDTO);
 
     /**
      * Patches a item.
@@ -105,7 +105,7 @@ public interface MyItemService {
      * @param patchDTO the DTO to update a item.
      * @return the updated item.
      */
-    AbstractItemDTO patch(@NotNull @Identifier String id, @NotNull @Valid AbstractItemPatchDTO patchDTO);
+    Mono<AbstractItemDTO> patch(@NotNull @Identifier String id, @NotNull @Valid AbstractItemPatchDTO patchDTO);
 
     /**
      * Updates the position of an item.
@@ -113,7 +113,7 @@ public interface MyItemService {
      * @param updateDTO the position to set.
      * @return the item updated.
      */
-    AbstractItemDTO updatePosition(@Identifier String id, @NotNull @Valid PositiveIntegerValueDTO updateDTO);
+    Mono<AbstractItemDTO> updatePosition(@Identifier String id, @NotNull @Valid PositiveIntegerValueDTO updateDTO);
 
     /**
      * Updates the parent of an item.
@@ -121,11 +121,11 @@ public interface MyItemService {
      * @param updateDTO the parent folder to set.
      * @return the item updated.
      */
-    AbstractItemDTO updateParent(@Identifier String id, @Valid IdentifierDTO updateDTO);
+    Mono<AbstractItemDTO> updateParent(@Identifier String id, @Valid IdentifierDTO updateDTO);
 
     /**
      * Deletes a item.
      * @param id the id of the item to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 }

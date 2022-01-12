@@ -24,18 +24,20 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByTotpEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication by TOTP repository.
  * <br>
  * @author Julb.
  */
-public interface UserAuthenticationByTotpRepository extends MongoRepository<UserAuthenticationByTotpEntity, String>, MongoSpecificationExecutor<UserAuthenticationByTotpEntity> {
+public interface UserAuthenticationByTotpRepository extends ReactiveMongoRepository<UserAuthenticationByTotpEntity, String>, MongoSpecificationExecutor<UserAuthenticationByTotpEntity> {
 
     /**
      * Counts the user authentication by trademark and user and type.
@@ -44,7 +46,7 @@ public interface UserAuthenticationByTotpRepository extends MongoRepository<User
      * @param type the type.
      * @return the number of authentication by TOTP registered.
      */
-    Long countByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
+    Mono<Long> countByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
 
     /**
      * Checks if an user authentication by trademark and user and type exists.
@@ -53,7 +55,7 @@ public interface UserAuthenticationByTotpRepository extends MongoRepository<User
      * @param type the type.
      * @return <code>true</code> if the user authentication exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
+    Mono<Boolean> existsByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
 
     /**
      * Checks if an user authentication by trademark and user and type exists.
@@ -63,7 +65,7 @@ public interface UserAuthenticationByTotpRepository extends MongoRepository<User
      * @param name the name.
      * @return <code>true</code> if the user authentication exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndTypeAndNameIgnoreCase(String tm, String userId, UserAuthenticationType type, String name);
+    Mono<Boolean> existsByTmAndUser_IdAndTypeAndNameIgnoreCase(String tm, String userId, UserAuthenticationType type, String name);
 
     /**
      * Checks if an user authentication by trademark and user and type exists.
@@ -74,7 +76,7 @@ public interface UserAuthenticationByTotpRepository extends MongoRepository<User
      * @param name the name.
      * @return <code>true</code> if the user authentication exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndTypeAndIdNotAndNameIgnoreCase(String tm, String userId, UserAuthenticationType type, String id, String name);
+    Mono<Boolean> existsByTmAndUser_IdAndTypeAndIdNotAndNameIgnoreCase(String tm, String userId, UserAuthenticationType type, String id, String name);
 
     /**
      * Finds an user authentication by trademark and id.
@@ -84,5 +86,5 @@ public interface UserAuthenticationByTotpRepository extends MongoRepository<User
      * @param id the ID.
      * @return the user, or <code>null</code> if not exists.
      */
-    UserAuthenticationByTotpEntity findByTmAndUser_IdAndTypeAndId(String tm, String userId, UserAuthenticationType type, String id);
+    Mono<UserAuthenticationByTotpEntity> findByTmAndUser_IdAndTypeAndId(String tm, String userId, UserAuthenticationType type, String id);
 }

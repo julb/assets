@@ -32,6 +32,8 @@ import me.julb.applications.authorizationserver.services.dto.signup.SignupWithPa
 import me.julb.applications.authorizationserver.services.dto.signup.SignupWithPincodeCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The signup service.
  * <br>
@@ -48,20 +50,20 @@ public interface SignupService {
      * @param signupWithInvite the DTO to invite a user.
      * @return the created user.
      */
-    UserDTO signup(@NotNull @Valid SignupWithInviteDTO signupWithInvite);
+    Mono<UserDTO> signup(@NotNull @Valid SignupWithInviteDTO signupWithInvite);
 
     /**
      * Sign-up the user with password data.
      * @param signupWithPassword the DTO to sign-up a user.
      * @return the created user.
      */
-    UserDTO signup(@NotNull @Valid SignupWithPasswordCreationDTO signupWithPassword);
+    Mono<UserDTO> signup(@NotNull @Valid SignupWithPasswordCreationDTO signupWithPassword);
 
     /**
      * Sign-up the user with pincode data.
      * @param signupWithPincode the DTO to sign-up a user.
      * @return the created user.
      */
-    UserDTO signup(@NotNull @Valid SignupWithPincodeCreationDTO signupWithPincode);
+    Mono<UserDTO> signup(@NotNull @Valid SignupWithPincodeCreationDTO signupWithPincode);
 
 }

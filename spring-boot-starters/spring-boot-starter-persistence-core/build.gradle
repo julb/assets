@@ -9,6 +9,8 @@ dependencies {
 	api platform(project(':bom'))
     annotationProcessor platform(project(':bom'))
 	
+    implementation 'org.apache.commons:commons-lang3'
+	
 	implementation project(':libraries:library-utility-data')
 }
 

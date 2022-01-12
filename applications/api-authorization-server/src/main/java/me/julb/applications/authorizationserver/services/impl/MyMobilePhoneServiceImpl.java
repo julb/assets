@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,7 +43,10 @@ import me.julb.applications.authorizationserver.services.dto.mobilephone.UserMob
 import me.julb.applications.authorizationserver.services.dto.mobilephone.UserMobilePhoneVerifyDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The mobile phone service implementation.
@@ -73,18 +75,20 @@ public class MyMobilePhoneServiceImpl implements MyMobilePhoneService {
      * {@inheritDoc}
      */
     @Override
-    public Page<UserMobilePhoneDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return userMobilePhoneService.findAll(userId, searchable, pageable);
+    public Flux<UserMobilePhoneDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return userMobilePhoneService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserMobilePhoneDTO findOne(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return userMobilePhoneService.findOne(userId, id);
+    public Mono<UserMobilePhoneDTO> findOne(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMobilePhoneService.findOne(userId, id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -94,9 +98,10 @@ public class MyMobilePhoneServiceImpl implements MyMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMobilePhoneDTO create(@NotNull @Valid UserMobilePhoneCreationDTO mailCreationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userMobilePhoneService.create(userId, mailCreationDTO);
+    public Mono<UserMobilePhoneDTO> create(@NotNull @Valid UserMobilePhoneCreationDTO mailCreationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMobilePhoneService.create(userId, mailCreationDTO);
+        });
     }
 
     /**
@@ -104,9 +109,10 @@ public class MyMobilePhoneServiceImpl implements MyMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMobilePhoneDTO update(@NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneUpdateDTO mailUpdateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userMobilePhoneService.update(userId, id, mailUpdateDTO);
+    public Mono<UserMobilePhoneDTO> update(@NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneUpdateDTO mailUpdateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMobilePhoneService.update(userId, id, mailUpdateDTO);
+        });
     }
 
     /**
@@ -114,9 +120,10 @@ public class MyMobilePhoneServiceImpl implements MyMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMobilePhoneDTO patch(@NotNull @Identifier String id, @NotNull @Valid UserMobilePhonePatchDTO mailPatchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userMobilePhoneService.patch(userId, id, mailPatchDTO);
+    public Mono<UserMobilePhoneDTO> patch(@NotNull @Identifier String id, @NotNull @Valid UserMobilePhonePatchDTO mailPatchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMobilePhoneService.patch(userId, id, mailPatchDTO);
+        });
     }
 
     /**
@@ -124,9 +131,10 @@ public class MyMobilePhoneServiceImpl implements MyMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMobilePhoneDTO triggerMobilePhoneVerify(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return userMobilePhoneService.triggerMobilePhoneVerify(userId, id);
+    public Mono<UserMobilePhoneDTO> triggerMobilePhoneVerify(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMobilePhoneService.triggerMobilePhoneVerify(userId, id);
+        });
     }
 
     /**
@@ -134,9 +142,10 @@ public class MyMobilePhoneServiceImpl implements MyMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMobilePhoneDTO updateVerify(@NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneVerifyDTO verifyDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userMobilePhoneService.updateVerify(userId, id, verifyDTO);
+    public Mono<UserMobilePhoneDTO> updateVerify(@NotNull @Identifier String id, @NotNull @Valid UserMobilePhoneVerifyDTO verifyDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMobilePhoneService.updateVerify(userId, id, verifyDTO);
+        });
     }
 
     /**
@@ -144,9 +153,10 @@ public class MyMobilePhoneServiceImpl implements MyMobilePhoneService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        userMobilePhoneService.delete(userId, id);
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMobilePhoneService.delete(userId, id);
+        });
     }
 
 }

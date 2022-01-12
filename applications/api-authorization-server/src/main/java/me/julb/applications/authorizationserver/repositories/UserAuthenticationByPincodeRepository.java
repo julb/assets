@@ -24,18 +24,20 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByPincodeEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication by pincode repository.
  * <br>
  * @author Julb.
  */
-public interface UserAuthenticationByPincodeRepository extends MongoRepository<UserAuthenticationByPincodeEntity, String>, MongoSpecificationExecutor<UserAuthenticationByPincodeEntity> {
+public interface UserAuthenticationByPincodeRepository extends ReactiveMongoRepository<UserAuthenticationByPincodeEntity, String>, MongoSpecificationExecutor<UserAuthenticationByPincodeEntity> {
 
     /**
      * Checks if an user authentication by trademark and user and type exists.
@@ -44,7 +46,7 @@ public interface UserAuthenticationByPincodeRepository extends MongoRepository<U
      * @param type the type.
      * @return <code>true</code> if the user authentication exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
+    Mono<Boolean> existsByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
 
     /**
      * Checks if an user authentication by trademark and user and type exists with MFA enabled.
@@ -53,7 +55,7 @@ public interface UserAuthenticationByPincodeRepository extends MongoRepository<U
      * @param type the type.
      * @return <code>true</code> if the user authentication exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndTypeAndMfaEnabledIsTrue(String tm, String userId, UserAuthenticationType type);
+    Mono<Boolean> existsByTmAndUser_IdAndTypeAndMfaEnabledIsTrue(String tm, String userId, UserAuthenticationType type);
 
     /**
      * Finds an user authentication by trademark and id.
@@ -62,5 +64,5 @@ public interface UserAuthenticationByPincodeRepository extends MongoRepository<U
      * @param type the type.
      * @return the user, or <code>null</code> if not exists.
      */
-    UserAuthenticationByPincodeEntity findByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
+    Mono<UserAuthenticationByPincodeEntity> findByTmAndUser_IdAndType(String tm, String userId, UserAuthenticationType type);
 }

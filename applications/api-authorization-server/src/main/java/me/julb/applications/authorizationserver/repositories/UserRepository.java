@@ -24,17 +24,19 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.UserEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user repository.
  * <br>
  * @author Julb.
  */
-public interface UserRepository extends MongoRepository<UserEntity, String>, MongoSpecificationExecutor<UserEntity> {
+public interface UserRepository extends ReactiveMongoRepository<UserEntity, String>, MongoSpecificationExecutor<UserEntity> {
 
     /**
      * Finds an user by trademark and id.
@@ -42,6 +44,6 @@ public interface UserRepository extends MongoRepository<UserEntity, String>, Mon
      * @param id the id.
      * @return the user, or <code>null</code> if not exists.
      */
-    UserEntity findByTmAndId(String tm, String id);
+    Mono<UserEntity> findByTmAndId(String tm, String id);
 
 }

@@ -12,7 +12,7 @@ dependencies {
     api platform(project(':bom'))
     annotationProcessor platform(project(':bom'))
 
-    implementation project(':spring-boot-starters:spring-boot-starter-web-mvc')
+    implementation project(':spring-boot-starters:spring-boot-starter-web-reactive')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.apache.commons:commons-collections4'
 	

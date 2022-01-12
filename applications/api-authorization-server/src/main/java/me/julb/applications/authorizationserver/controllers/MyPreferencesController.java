@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -48,6 +46,9 @@ import me.julb.applications.authorizationserver.services.dto.preferences.UserPre
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesDTO;
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesUpdateDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage my preferences.
@@ -74,7 +75,7 @@ public class MyPreferencesController {
     @Operation(summary = "gets my preferences")
     @GetMapping()
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserPreferencesDTO get() {
+    public Mono<UserPreferencesDTO> get() {
         return myPreferencesService.findOne();
     }
 
@@ -89,7 +90,7 @@ public class MyPreferencesController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserPreferencesDTO create(@RequestBody @NotNull @Valid UserPreferencesCreationDTO creationDTO) {
+    public Mono<UserPreferencesDTO> create(@RequestBody @NotNull @Valid UserPreferencesCreationDTO creationDTO) {
         return myPreferencesService.create(creationDTO);
     }
 
@@ -101,7 +102,7 @@ public class MyPreferencesController {
     @Operation(summary = "updates my preferences")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserPreferencesDTO update(@RequestBody @NotNull @Valid UserPreferencesUpdateDTO updateDTO) {
+    public Mono<UserPreferencesDTO> update(@RequestBody @NotNull @Valid UserPreferencesUpdateDTO updateDTO) {
         return myPreferencesService.update(updateDTO);
     }
 
@@ -113,7 +114,7 @@ public class MyPreferencesController {
     @Operation(summary = "patches my preferences")
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserPreferencesDTO patch(@RequestBody @NotNull @Valid UserPreferencesPatchDTO updateDTO) {
+    public Mono<UserPreferencesDTO> patch(@RequestBody @NotNull @Valid UserPreferencesPatchDTO updateDTO) {
         return myPreferencesService.patch(updateDTO);
     }
 

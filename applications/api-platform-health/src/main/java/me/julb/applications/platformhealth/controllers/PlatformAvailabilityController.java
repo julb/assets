@@ -24,8 +24,6 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import me.julb.applications.platformhealth.services.PlatformAvailabilityService;
 import me.julb.applications.platformhealth.services.dto.availability.PlatformAvailabilityDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The REST controller to get the platform availability.
@@ -58,7 +59,7 @@ public class PlatformAvailabilityController {
      */
     @Operation(summary = "get the availability of the platform")
     @GetMapping()
-    public PlatformAvailabilityDTO getPlatformAvailability() {
+    public Mono<PlatformAvailabilityDTO> getPlatformAvailability() {
         return availabilityService.getPlatformAvailability();
     }
 

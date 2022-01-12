@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,7 +43,10 @@ import me.julb.applications.authorizationserver.services.dto.mail.UserMailUpdate
 import me.julb.applications.authorizationserver.services.dto.mail.UserMailVerifyDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The mail service implementation.
@@ -73,18 +75,20 @@ public class MyMailServiceImpl implements MyMailService {
      * {@inheritDoc}
      */
     @Override
-    public Page<UserMailDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String userId = securityService.getConnectedUserId();
-        return userMailService.findAll(userId, searchable, pageable);
+    public Flux<UserMailDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return userMailService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserMailDTO findOne(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return userMailService.findOne(userId, id);
+    public Mono<UserMailDTO> findOne(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMailService.findOne(userId, id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -94,9 +98,10 @@ public class MyMailServiceImpl implements MyMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO create(@NotNull @Valid UserMailCreationDTO mailCreationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userMailService.create(userId, mailCreationDTO);
+    public Mono<UserMailDTO> create(@NotNull @Valid UserMailCreationDTO mailCreationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMailService.create(userId, mailCreationDTO);
+        });
     }
 
     /**
@@ -104,9 +109,10 @@ public class MyMailServiceImpl implements MyMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO update(@NotNull @Identifier String id, @NotNull @Valid UserMailUpdateDTO mailUpdateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userMailService.update(userId, id, mailUpdateDTO);
+    public Mono<UserMailDTO> update(@NotNull @Identifier String id, @NotNull @Valid UserMailUpdateDTO mailUpdateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMailService.update(userId, id, mailUpdateDTO);
+        });
     }
 
     /**
@@ -114,9 +120,10 @@ public class MyMailServiceImpl implements MyMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO patch(@NotNull @Identifier String id, @NotNull @Valid UserMailPatchDTO mailPatchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userMailService.patch(userId, id, mailPatchDTO);
+    public Mono<UserMailDTO> patch(@NotNull @Identifier String id, @NotNull @Valid UserMailPatchDTO mailPatchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMailService.patch(userId, id, mailPatchDTO);
+        });
     }
 
     /**
@@ -124,9 +131,10 @@ public class MyMailServiceImpl implements MyMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO triggerMailVerify(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        return userMailService.triggerMailVerify(userId, id);
+    public Mono<UserMailDTO> triggerMailVerify(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMailService.triggerMailVerify(userId, id);
+        });
     }
 
     /**
@@ -134,9 +142,10 @@ public class MyMailServiceImpl implements MyMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserMailDTO updateVerify(@NotNull @Identifier String id, @NotNull @Valid UserMailVerifyDTO verifyDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userMailService.updateVerify(userId, id, verifyDTO);
+    public Mono<UserMailDTO> updateVerify(@NotNull @Identifier String id, @NotNull @Valid UserMailVerifyDTO verifyDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMailService.updateVerify(userId, id, verifyDTO);
+        });
     }
 
     /**
@@ -144,9 +153,9 @@ public class MyMailServiceImpl implements MyMailService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String userId = securityService.getConnectedUserId();
-        userMailService.delete(userId, id);
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userMailService.delete(userId, id);
+        });
     }
-
 }

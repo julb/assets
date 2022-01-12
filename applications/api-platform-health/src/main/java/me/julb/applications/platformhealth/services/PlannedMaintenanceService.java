@@ -27,7 +27,6 @@ package me.julb.applications.platformhealth.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.platformhealth.services.dto.plannedmaintenance.Plann
 import me.julb.applications.platformhealth.services.dto.plannedmaintenance.PlannedMaintenanceUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The planned maintenance service.
@@ -52,7 +54,7 @@ public interface PlannedMaintenanceService {
      * @param pageable the pageable information.
      * @return a paged list of planned maintenances.
      */
-    Page<PlannedMaintenanceDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<PlannedMaintenanceDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets the planned maintenances linked to given component (paged).
@@ -61,14 +63,14 @@ public interface PlannedMaintenanceService {
      * @param pageable the pageable information.
      * @return a paged list of planned maintenances.
      */
-    Page<PlannedMaintenanceDTO> findAll(@NotNull @Identifier String componentId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<PlannedMaintenanceDTO> findAll(@NotNull @Identifier String componentId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a planned maintenance through its ID.
      * @param id the planned maintenance identifier.
      * @return the planned maintenance.
      */
-    PlannedMaintenanceDTO findOne(@NotNull @Identifier String id);
+    Mono<PlannedMaintenanceDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -77,7 +79,7 @@ public interface PlannedMaintenanceService {
      * @param creationDTO the DTO to create a planned maintenance.
      * @return the created planned maintenance.
      */
-    PlannedMaintenanceDTO create(@NotNull @Valid PlannedMaintenanceCreationDTO creationDTO);
+    Mono<PlannedMaintenanceDTO> create(@NotNull @Valid PlannedMaintenanceCreationDTO creationDTO);
 
     /**
      * Updates a planned maintenance.
@@ -85,7 +87,7 @@ public interface PlannedMaintenanceService {
      * @param updateDTO the DTO to update a planned maintenance.
      * @return the updated planned maintenance.
      */
-    PlannedMaintenanceDTO update(@NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceUpdateDTO updateDTO);
+    Mono<PlannedMaintenanceDTO> update(@NotNull @Identifier String id, @NotNull @Valid PlannedMaintenanceUpdateDTO updateDTO);
 
     /**
      * Patches a planned maintenance.
@@ -93,12 +95,12 @@ public interface PlannedMaintenanceService {
      * @param patchDTO the DTO to update a planned maintenance.
      * @return the updated planned maintenance.
      */
-    PlannedMaintenanceDTO patch(@NotNull @Identifier String id, @NotNull @Valid PlannedMaintenancePatchDTO patchDTO);
+    Mono<PlannedMaintenanceDTO> patch(@NotNull @Identifier String id, @NotNull @Valid PlannedMaintenancePatchDTO patchDTO);
 
     /**
      * Deletes a planned maintenance.
      * @param id the id of the planned maintenance to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

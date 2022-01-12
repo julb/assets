@@ -27,7 +27,6 @@ package me.julb.applications.ewallet.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationDTO;
@@ -35,6 +34,9 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The my electronic purse operation service.
@@ -51,14 +53,14 @@ public interface MyElectronicPurseOperationService {
      * @param pageable the pageable information.
      * @return the electronic purse operations paged list.
      */
-    Page<ElectronicPurseOperationDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<ElectronicPurseOperationDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a electronic purse operation through its ID.
      * @param id the electronic purse operation ID.
      * @return the electronic purse operation.
      */
-    ElectronicPurseOperationDTO findOne(@NotNull @Identifier String id);
+    Mono<ElectronicPurseOperationDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -68,7 +70,7 @@ public interface MyElectronicPurseOperationService {
      * @param electronicPurseOperationUpdateDTO the DTO to update a electronic purse operation.
      * @return the updated electronic purse operation.
      */
-    ElectronicPurseOperationDTO update(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO electronicPurseOperationUpdateDTO);
+    Mono<ElectronicPurseOperationDTO> update(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationUpdateDTO electronicPurseOperationUpdateDTO);
 
     /**
      * Patches a electronic purse operation.
@@ -76,5 +78,5 @@ public interface MyElectronicPurseOperationService {
      * @param electronicPurseOperationPatchDTO the DTO to update a electronic purse operation.
      * @return the updated electronic purse operation.
      */
-    ElectronicPurseOperationDTO patch(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO electronicPurseOperationPatchDTO);
+    Mono<ElectronicPurseOperationDTO> patch(@NotNull @Identifier String id, @NotNull @Valid ElectronicPurseOperationPatchDTO electronicPurseOperationPatchDTO);
 }

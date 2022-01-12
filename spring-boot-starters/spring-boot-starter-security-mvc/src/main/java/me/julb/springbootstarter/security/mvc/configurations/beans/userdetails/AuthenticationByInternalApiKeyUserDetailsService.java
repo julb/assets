@@ -59,11 +59,13 @@ public class AuthenticationByInternalApiKeyUserDetailsService implements Authent
         String apiKey = (String) preAuthenticatedAuthenticationToken.getPrincipal();
         if (apiKey != null) {
             if (StringUtils.equalsIgnoreCase(apiKey, securityInternalApiKeyProperties.getHeaderValue())) {
+                LOGGER.debug("Authentication by internal api key successful");
+
                 //@formatter:off
                 return User.builder()
                     .username("system")
                     .password("N/A")
-                    .roles("ADMINISTRATOR", "ACTUATOR")
+                    .roles("ADMINISTRATOR", "ACTUATOR", "FULLY_AUTHENTICATED")
                     .build();
                 //@formatter:on
             } else {

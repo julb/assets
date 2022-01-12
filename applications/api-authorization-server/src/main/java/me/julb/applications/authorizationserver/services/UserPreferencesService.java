@@ -33,6 +33,8 @@ import me.julb.applications.authorizationserver.services.dto.preferences.UserPre
 import me.julb.applications.authorizationserver.services.dto.preferences.UserPreferencesUpdateDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The user preferences service.
  * <br>
@@ -47,7 +49,7 @@ public interface UserPreferencesService {
      * @param userId the user identifier.
      * @return the user preferences.
      */
-    UserPreferencesDTO findOne(@NotNull @Identifier String userId);
+    Mono<UserPreferencesDTO> findOne(@NotNull @Identifier String userId);
 
     // ------------------------------------------ Write methods.
 
@@ -57,7 +59,7 @@ public interface UserPreferencesService {
      * @param userPreferencesCreationDTO the DTO to create a user preferences.
      * @return the created user preferences.
      */
-    UserPreferencesDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesCreationDTO userPreferencesCreationDTO);
+    Mono<UserPreferencesDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesCreationDTO userPreferencesCreationDTO);
 
     /**
      * Updates a user preferences.
@@ -65,7 +67,7 @@ public interface UserPreferencesService {
      * @param userPreferencesUpdateDTO the DTO to update a user preferences.
      * @return the updated user preferences.
      */
-    UserPreferencesDTO update(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesUpdateDTO userPreferencesUpdateDTO);
+    Mono<UserPreferencesDTO> update(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesUpdateDTO userPreferencesUpdateDTO);
 
     /**
      * Patches a user preferences.
@@ -73,11 +75,11 @@ public interface UserPreferencesService {
      * @param userPreferencesPatchDTO the DTO to update a user preferences.
      * @return the updated user preferences.
      */
-    UserPreferencesDTO patch(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesPatchDTO userPreferencesPatchDTO);
+    Mono<UserPreferencesDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid UserPreferencesPatchDTO userPreferencesPatchDTO);
 
     /**
      * Deletes a user preferences.
      * @param userId the user identifier.
      */
-    void delete(@NotNull @Identifier String userId);
+    Mono<Void> delete(@NotNull @Identifier String userId);
 }

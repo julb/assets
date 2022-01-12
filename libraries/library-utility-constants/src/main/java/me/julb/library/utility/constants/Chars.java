@@ -24,11 +24,15 @@
 
 package me.julb.library.utility.constants;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
 /**
  * A class to list constants in Chars format.
  * <br>
  * @author Julb.
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Chars {
 
     /**

@@ -24,9 +24,7 @@
 
 package me.julb.applications.urlshortener.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
-import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
@@ -40,15 +38,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import me.julb.applications.urlshortener.entities.LinkEntity;
 import me.julb.applications.urlshortener.repositories.LinkRepository;
 import me.julb.applications.urlshortener.services.HostService;
 import me.julb.library.dto.simple.value.ValueDTO;
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Integers;
+import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.exceptions.ServiceUnavailableException;
 import me.julb.library.utility.validator.constraints.DNS;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 /**
  * The rest controller to return hosts.
@@ -81,7 +86,7 @@ public class HostController {
     @Operation(summary = "list hosts eligible to URL shorten")
     @GetMapping
     @PreAuthorize("hasPermission('host', 'read')")
-    public List<ValueDTO> findAll() {
+    public Flux<ValueDTO> findAll() {
         return hostService.findAll();
     }
 
@@ -93,30 +98,33 @@ public class HostController {
     @Operation(summary = "generates a random uri for the given host")
     @PostMapping("/{host}/.random-uri")
     @PreAuthorize("hasPermission('host', 'read')")
-    public ValueDTO generateRandomUri(@PathVariable("host") @DNS String host) {
-        // Check if host exists.
-        if (!hostService.exists(host)) {
-            throw new ResourceNotFoundException(String.class, host);
-        }
+    public Mono<ValueDTO> generateRandomUri(@PathVariable("host") @DNS String host) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Generate a random URI.
-        String tm = TrademarkContextHolder.getTrademark();
+            // Check if host exists.
+            return hostService.exists(host).flatMap(hostExists -> {
+                if (!hostExists) {
+                    return Mono.error(new ResourceNotFoundException(String.class, host));
+                }
 
-        int currentTry = 0;
-        while (currentTry < Integers.EIGHT) {
-            // Generate random URI.
-            String randomUri = generateRandomUri();
-
-            // Check it.
-            if (!linkRepository.existsByTmAndHostIgnoreCaseAndUriIgnoreCase(tm, host, randomUri)) {
-                return new ValueDTO(randomUri);
-            }
-
-            currentTry++;
-        }
-
-        // Return unavailable.
-        throw new ServiceUnavailableException();
+                return Mono.defer(() -> {
+                    String randomUri = generateRandomUri();
+                    return linkRepository.existsByTmAndHostIgnoreCaseAndUriIgnoreCase(tm, host, randomUri)
+                        .flatMap(alreadyExists -> {
+                            if (alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(LinkEntity.class, Map.<String, String> of("host", host, "uri", randomUri)));
+                            } else {
+                                return Mono.just(new ValueDTO(randomUri));
+                            }
+                        });
+                }).retryWhen(
+                    Retry.max(Integers.EIGHT)
+                        .filter(exception -> exception instanceof ResourceAlreadyExistsException)
+                        .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new ServiceUnavailableException())
+                );
+            });
+        });
     }
 
     // ------------------------------------------ Write methods.

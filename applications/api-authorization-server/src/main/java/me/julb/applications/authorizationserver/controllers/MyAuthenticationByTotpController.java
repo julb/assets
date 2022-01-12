@@ -24,13 +24,10 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,6 +54,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage my authentication by totp.
@@ -87,7 +88,7 @@ public class MyAuthenticationByTotpController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED') or hasRole('MFA_REQUIRED')")
-    public Page<UserAuthenticationByTotpDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<UserAuthenticationByTotpDTO> findAll(Searchable searchable, Pageable pageable) {
         return myAuthenticationByTotpService.findAll(searchable, pageable);
     }
 
@@ -99,7 +100,7 @@ public class MyAuthenticationByTotpController {
     @Operation(summary = "gets my authentication by totp")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED') or hasRole('MFA_REQUIRED')")
-    public UserAuthenticationByTotpDTO get(@PathVariable @Identifier String id) {
+    public Mono<UserAuthenticationByTotpDTO> get(@PathVariable @Identifier String id) {
         return myAuthenticationByTotpService.findOne(id);
     }
 
@@ -114,7 +115,7 @@ public class MyAuthenticationByTotpController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByTotpWithRawSecretDTO create(@RequestBody @NotNull @Valid UserAuthenticationByTotpCreationDTO creationDTO) {
+    public Mono<UserAuthenticationByTotpWithRawSecretDTO> create(@RequestBody @NotNull @Valid UserAuthenticationByTotpCreationDTO creationDTO) {
         return myAuthenticationByTotpService.create(creationDTO);
     }
 
@@ -127,7 +128,7 @@ public class MyAuthenticationByTotpController {
     @Operation(summary = "updates my authentication by totp")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByTotpDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserAuthenticationByTotpUpdateDTO updateDTO) {
+    public Mono<UserAuthenticationByTotpDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserAuthenticationByTotpUpdateDTO updateDTO) {
         return myAuthenticationByTotpService.update(id, updateDTO);
     }
 
@@ -140,7 +141,7 @@ public class MyAuthenticationByTotpController {
     @Operation(summary = "patches my authentication by totp")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserAuthenticationByTotpDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserAuthenticationByTotpPatchDTO patchDTO) {
+    public Mono<UserAuthenticationByTotpDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid UserAuthenticationByTotpPatchDTO patchDTO) {
         return myAuthenticationByTotpService.patch(id, patchDTO);
     }
 
@@ -152,8 +153,8 @@ public class MyAuthenticationByTotpController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete(@PathVariable String id) {
-        myAuthenticationByTotpService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return myAuthenticationByTotpService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

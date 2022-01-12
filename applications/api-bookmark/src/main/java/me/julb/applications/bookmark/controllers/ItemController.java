@@ -24,15 +24,10 @@
 
 package me.julb.applications.bookmark.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -71,6 +66,10 @@ import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
 
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 /**
  * The rest controller to manage items of a user.
  * <br>
@@ -101,7 +100,7 @@ public class ItemController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('bookmark-item', 'read')")
-    public Page<? extends AbstractItemDTO> findAll(@PathVariable("userId") @Identifier String userId, Searchable searchable, Pageable pageable) {
+    public Flux<? extends AbstractItemDTO> findAll(@PathVariable("userId") @Identifier String userId, Searchable searchable, Pageable pageable) {
         return itemService.findAll(userId, searchable, pageable);
     }
 
@@ -113,7 +112,7 @@ public class ItemController {
     @Operation(summary = "list the root items of the user")
     @GetMapping("/root/children")
     @PreAuthorize("hasPermission('bookmark-item', 'read')")
-    public List<? extends AbstractItemDTO> findAll(@PathVariable("userId") @Identifier String userId) {
+    public Flux<? extends AbstractItemDTO> findAll(@PathVariable("userId") @Identifier String userId) {
         return itemService.findAllByParent(userId, null);
     }
 
@@ -126,7 +125,7 @@ public class ItemController {
     @Operation(summary = "list the children of an item of the user")
     @GetMapping("/{itemId}/children")
     @PreAuthorize("hasPermission('bookmark-item', 'read')")
-    public List<? extends AbstractItemDTO> findChildren(@PathVariable("userId") @Identifier String userId, @PathVariable("itemId") @Identifier String itemId) {
+    public Flux<? extends AbstractItemDTO> findChildren(@PathVariable("userId") @Identifier String userId, @PathVariable("itemId") @Identifier String itemId) {
         return itemService.findAllByParent(userId, itemId);
     }
 
@@ -142,7 +141,7 @@ public class ItemController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('bookmark-item', 'read')")
-    public Page<? extends AbstractItemDTO> findAllFolders(@PathVariable("userId") @Identifier String userId, Searchable searchable, Pageable pageable) {
+    public Flux<? extends AbstractItemDTO> findAllFolders(@PathVariable("userId") @Identifier String userId, Searchable searchable, Pageable pageable) {
         return itemService.findAllByType(userId, ItemType.FOLDER, searchable, pageable);
     }
 
@@ -158,7 +157,7 @@ public class ItemController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('bookmark-item', 'read')")
-    public Page<? extends AbstractItemDTO> findAllExternalLinks(@PathVariable("userId") @Identifier String userId, Searchable searchable, Pageable pageable) {
+    public Flux<? extends AbstractItemDTO> findAllExternalLinks(@PathVariable("userId") @Identifier String userId, Searchable searchable, Pageable pageable) {
         return itemService.findAllByType(userId, ItemType.EXTERNAL_LINK, searchable, pageable);
     }
 
@@ -174,7 +173,7 @@ public class ItemController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('bookmark-item', 'read')")
-    public Page<? extends AbstractItemDTO> findAllObjectLinks(@PathVariable("userId") @Identifier String userId, Searchable searchable, Pageable pageable) {
+    public Flux<? extends AbstractItemDTO> findAllObjectLinks(@PathVariable("userId") @Identifier String userId, Searchable searchable, Pageable pageable) {
         return itemService.findAllByType(userId, ItemType.OBJECT_LINK, searchable, pageable);
     }
 
@@ -187,7 +186,7 @@ public class ItemController {
     @Operation(summary = "gets the item of the user")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'read')")
-    public AbstractItemDTO get(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id) {
+    public Mono<AbstractItemDTO> get(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id) {
         return itemService.findOne(userId, id);
     }
 
@@ -203,8 +202,8 @@ public class ItemController {
     @PostMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_FOLDER_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('bookmark-item', 'create')")
-    public FolderDTO create(@PathVariable("userId") @Identifier String userId, @RequestBody @NotNull @Valid FolderCreationDTO creationDTO) {
-        return (FolderDTO) itemService.create(userId, creationDTO);
+    public Mono<FolderDTO> create(@PathVariable("userId") @Identifier String userId, @RequestBody @NotNull @Valid FolderCreationDTO creationDTO) {
+        return itemService.create(userId, creationDTO).cast(FolderDTO.class);
     }
 
     /**
@@ -217,8 +216,8 @@ public class ItemController {
     @PostMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_EXTERNAL_LINK_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('bookmark-item', 'create')")
-    public ExternalLinkDTO create(@PathVariable("userId") @Identifier String userId, @RequestBody @NotNull @Valid ExternalLinkCreationDTO creationDTO) {
-        return (ExternalLinkDTO) itemService.create(userId, creationDTO);
+    public Mono<ExternalLinkDTO> create(@PathVariable("userId") @Identifier String userId, @RequestBody @NotNull @Valid ExternalLinkCreationDTO creationDTO) {
+        return itemService.create(userId, creationDTO).cast(ExternalLinkDTO.class);
     }
 
     /**
@@ -231,8 +230,8 @@ public class ItemController {
     @PostMapping(consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_OBJECT_LINK_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('bookmark-item', 'create')")
-    public ObjectLinkDTO create(@PathVariable("userId") @Identifier String userId, @RequestBody @NotNull @Valid ObjectLinkCreationDTO creationDTO) {
-        return (ObjectLinkDTO) itemService.create(userId, creationDTO);
+    public Mono<ObjectLinkDTO> create(@PathVariable("userId") @Identifier String userId, @RequestBody @NotNull @Valid ObjectLinkCreationDTO creationDTO) {
+        return itemService.create(userId, creationDTO).cast(ObjectLinkDTO.class);
     }
 
     /**
@@ -245,8 +244,8 @@ public class ItemController {
     @Operation(summary = "updates a folder for the user")
     @PutMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_FOLDER_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'update')")
-    public FolderDTO update(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid FolderUpdateDTO updateDTO) {
-        return (FolderDTO) itemService.update(userId, id, updateDTO);
+    public Mono<FolderDTO> update(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid FolderUpdateDTO updateDTO) {
+        return itemService.update(userId, id, updateDTO).cast(FolderDTO.class);
     }
 
     /**
@@ -259,8 +258,8 @@ public class ItemController {
     @Operation(summary = "updates an external link for the user")
     @PutMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_EXTERNAL_LINK_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'update')")
-    public ExternalLinkDTO update(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ExternalLinkUpdateDTO updateDTO) {
-        return (ExternalLinkDTO) itemService.update(userId, id, updateDTO);
+    public Mono<ExternalLinkDTO> update(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ExternalLinkUpdateDTO updateDTO) {
+        return itemService.update(userId, id, updateDTO).cast(ExternalLinkDTO.class);
     }
 
     /**
@@ -273,8 +272,8 @@ public class ItemController {
     @Operation(summary = "updates an object link for the user")
     @PutMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_OBJECT_LINK_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'update')")
-    public ObjectLinkDTO update(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ObjectLinkUpdateDTO updateDTO) {
-        return (ObjectLinkDTO) itemService.update(userId, id, updateDTO);
+    public Mono<ObjectLinkDTO> update(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ObjectLinkUpdateDTO updateDTO) {
+        return itemService.update(userId, id, updateDTO).cast(ObjectLinkDTO.class);
     }
 
     /**
@@ -287,8 +286,8 @@ public class ItemController {
     @Operation(summary = "patches a folder for the user")
     @PatchMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_FOLDER_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'update')")
-    public FolderDTO patch(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid FolderPatchDTO patchDTO) {
-        return (FolderDTO) itemService.patch(userId, id, patchDTO);
+    public Mono<FolderDTO> patch(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid FolderPatchDTO patchDTO) {
+        return itemService.patch(userId, id, patchDTO).cast(FolderDTO.class);
     }
 
     /**
@@ -301,8 +300,8 @@ public class ItemController {
     @Operation(summary = "patches an external link for the user")
     @PatchMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_EXTERNAL_LINK_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'update')")
-    public ExternalLinkDTO patch(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ExternalLinkPatchDTO patchDTO) {
-        return (ExternalLinkDTO) itemService.patch(userId, id, patchDTO);
+    public Mono<ExternalLinkDTO> patch(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ExternalLinkPatchDTO patchDTO) {
+        return itemService.patch(userId, id, patchDTO).cast(ExternalLinkDTO.class);
     }
 
     /**
@@ -315,8 +314,8 @@ public class ItemController {
     @Operation(summary = "patches an object link for the user")
     @PatchMapping(path = "/{id}", consumes = CustomMediaType.APPLICATION_VND_BOOKMARK_OBJECT_LINK_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'update')")
-    public ObjectLinkDTO patch(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ObjectLinkPatchDTO patchDTO) {
-        return (ObjectLinkDTO) itemService.patch(userId, id, patchDTO);
+    public Mono<ObjectLinkDTO> patch(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid ObjectLinkPatchDTO patchDTO) {
+        return itemService.patch(userId, id, patchDTO).cast(ObjectLinkDTO.class);
     }
 
     /**
@@ -329,7 +328,7 @@ public class ItemController {
     @Operation(summary = "updates the position of the item for the user")
     @PutMapping(path = "/{id}/position", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'update')")
-    public AbstractItemDTO updatePosition(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid PositiveIntegerValueDTO updateDTO) {
+    public Mono<AbstractItemDTO> updatePosition(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid PositiveIntegerValueDTO updateDTO) {
         return itemService.updatePosition(userId, id, updateDTO);
     }
 
@@ -343,7 +342,7 @@ public class ItemController {
     @Operation(summary = "updates the paarent of the item for the user")
     @PutMapping(path = "/{id}/parent", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'update')")
-    public AbstractItemDTO updateParent(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @Valid IdentifierDTO updateDTO) {
+    public Mono<AbstractItemDTO> updateParent(@PathVariable("userId") @Identifier String userId, @PathVariable @Identifier String id, @RequestBody @Valid IdentifierDTO updateDTO) {
         return itemService.updateParent(userId, id, updateDTO);
     }
 
@@ -356,8 +355,8 @@ public class ItemController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'bookmark-item', 'delete')")
-    public void delete(@PathVariable("userId") @Identifier String userId, @PathVariable String id) {
-        itemService.delete(userId, id);
+    public Mono<Void> delete(@PathVariable("userId") @Identifier String userId, @PathVariable String id) {
+        return itemService.delete(userId, id);
     }
     // ------------------------------------------ Utility methods.
 

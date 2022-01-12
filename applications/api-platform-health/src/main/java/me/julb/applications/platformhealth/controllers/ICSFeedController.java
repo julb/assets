@@ -24,9 +24,7 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
-import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,10 +36,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import me.julb.applications.platformhealth.services.ICSFeedService;
-import me.julb.library.dto.icsfeed.ICSFeedDTO;
 import me.julb.library.utility.constants.MediaType;
-import me.julb.library.utility.exceptions.InternalServerErrorException;
 import me.julb.springbootstarter.ics.service.ICSFeedWriterService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The REST controller to serve ICS feeds.
@@ -70,19 +69,14 @@ public class ICSFeedController {
      * @param httpServletResponse the HTTP servlet response
      */
     @Operation(summary = "get the ICS feed to have updates of the platform planned maintenances")
-    @GetMapping("/planned-maintenances")
+    @GetMapping(value = "/planned-maintenances", produces = MediaType.TEXT_CALENDAR)
     @PreAuthorize("permitAll()")
-    public void writePlannedMaintenancesFeed(HttpServletResponse httpServletResponse) {
-        try {
-            // ICS Feed.
-            ICSFeedDTO icsFeed = icsFeedService.buildPlannedMaintenancesFeed();
-
-            // Write feed content.
-            httpServletResponse.setContentType(MediaType.TEXT_CALENDAR);
-            icsFeedWriterService.write(icsFeed, httpServletResponse.getOutputStream());
-            httpServletResponse.flushBuffer();
-        } catch (IOException e) {
-            throw new InternalServerErrorException(e);
-        }
+    public Mono<String> writePlannedMaintenancesFeed(HttpServletResponse httpServletResponse) {
+        // ICS Feed.
+        return icsFeedService.buildPlannedMaintenancesFeed().map(dto -> {
+            StringWriter writer = new StringWriter();
+            icsFeedWriterService.write(dto, writer);
+            return writer.toString();
+        });
     }
 }

@@ -117,7 +117,6 @@ public class SecurityAuthenticationByJwtConfiguration {
 
     /**
      * Filters the request to get the JWT.
-     * @param authenticationManager the Spring authentication manager.
      * @return the request header authentication filter.
      */
     @Bean

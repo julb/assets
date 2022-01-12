@@ -63,7 +63,6 @@ public class SecurityAuthenticationByTotpConfiguration {
 
     /**
      * Builds a filter to authenticate by user and totp.
-     * @param authenticationManager the authentication manager.
      * @return the filter.
      * @throws Exception if an error occurs.
      */

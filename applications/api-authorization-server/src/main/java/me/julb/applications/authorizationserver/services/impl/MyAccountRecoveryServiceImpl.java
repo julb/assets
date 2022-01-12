@@ -24,8 +24,6 @@
 
 package me.julb.applications.authorizationserver.services.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,7 +33,8 @@ import org.springframework.validation.annotation.Validated;
 import me.julb.applications.authorizationserver.services.MyAccountRecoveryService;
 import me.julb.applications.authorizationserver.services.UserAccountRecoveryService;
 import me.julb.applications.authorizationserver.services.dto.recovery.RecoveryChannelDeviceDTO;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
 
 /**
  * The account recovery service implementation for the connected user.
@@ -57,7 +56,7 @@ public class MyAccountRecoveryServiceImpl implements MyAccountRecoveryService {
      * The security service.
      */
     @Autowired
-    private ISecurityService securityService;
+    private me.julb.springbootstarter.security.reactive.services.ISecurityService securityService;
 
     // ------------------------------------------ Read methods.
 
@@ -65,9 +64,10 @@ public class MyAccountRecoveryServiceImpl implements MyAccountRecoveryService {
      * {@inheritDoc}
      */
     @Override
-    public List<RecoveryChannelDeviceDTO> findAll() {
-        String userId = securityService.getConnectedUserId();
-        return userAccountRecoveryService.findAll(userId);
+    public Flux<RecoveryChannelDeviceDTO> findAll() {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return userAccountRecoveryService.findAll(userId);
+        });
     }
 
     // ------------------------------------------ Write methods.

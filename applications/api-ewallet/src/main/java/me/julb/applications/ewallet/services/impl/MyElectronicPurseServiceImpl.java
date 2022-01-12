@@ -39,7 +39,9 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPursePatchDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseUpdateDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The electronic purse service implementation.
@@ -69,9 +71,10 @@ public class MyElectronicPurseServiceImpl implements MyElectronicPurseService {
      * {@inheritDoc}
      */
     @Override
-    public ElectronicPurseDTO findOne() {
-        String userId = securityService.getConnectedUserId();
-        return userElectronicPurseService.findOne(userId);
+    public Mono<ElectronicPurseDTO> findOne() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userElectronicPurseService.findOne(userId);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -81,9 +84,10 @@ public class MyElectronicPurseServiceImpl implements MyElectronicPurseService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher) {
-        String userId = securityService.getConnectedUserId();
-        return userElectronicPurseService.redeemMoneyVoucher(userId, redeemMoneyVoucher);
+    public Mono<ElectronicPurseDTO> redeemMoneyVoucher(@NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userElectronicPurseService.redeemMoneyVoucher(userId, redeemMoneyVoucher);
+        });
     }
 
     /**
@@ -91,9 +95,10 @@ public class MyElectronicPurseServiceImpl implements MyElectronicPurseService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO update(@NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userElectronicPurseService.update(userId, updateDTO);
+    public Mono<ElectronicPurseDTO> update(@NotNull @Valid ElectronicPurseUpdateDTO updateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userElectronicPurseService.update(userId, updateDTO);
+        });
     }
 
     /**
@@ -101,9 +106,10 @@ public class MyElectronicPurseServiceImpl implements MyElectronicPurseService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public ElectronicPurseDTO patch(@NotNull @Valid ElectronicPursePatchDTO patchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userElectronicPurseService.patch(userId, patchDTO);
+    public Mono<ElectronicPurseDTO> patch(@NotNull @Valid ElectronicPursePatchDTO patchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userElectronicPurseService.patch(userId, patchDTO);
+        });
     }
 
     // ------------------------------------------ Utility methods.

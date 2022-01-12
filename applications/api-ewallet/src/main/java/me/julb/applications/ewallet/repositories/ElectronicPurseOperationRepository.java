@@ -24,27 +24,28 @@
 
 package me.julb.applications.ewallet.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.ewallet.entities.ElectronicPurseOperationEntity;
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseOperationType;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The electronic purse operation repository.
  * <br>
  * @author Julb.
  */
-public interface ElectronicPurseOperationRepository extends MongoRepository<ElectronicPurseOperationEntity, String>, MongoSpecificationExecutor<ElectronicPurseOperationEntity> {
+public interface ElectronicPurseOperationRepository extends ReactiveMongoRepository<ElectronicPurseOperationEntity, String>, MongoSpecificationExecutor<ElectronicPurseOperationEntity> {
     /**
      * Finds electronic purse operations by its trademark and electronic purse id.
      * @param tm the trademark.
      * @param electronicPurseId the electronic purse ID.
      * @return the electronic purse operation items.
      */
-    List<ElectronicPurseOperationEntity> findByTmAndElectronicPurseId(String tm, String electronicPurseId);
+    Flux<ElectronicPurseOperationEntity> findByTmAndElectronicPurseId(String tm, String electronicPurseId);
 
     /**
      * Finds an electronic purse operation by its trademark, electronic purse id and id.
@@ -53,7 +54,7 @@ public interface ElectronicPurseOperationRepository extends MongoRepository<Elec
      * @param id the id.
      * @return the electronic purse operation entity, <code>null</code> otherwise.
      */
-    ElectronicPurseOperationEntity findByTmAndElectronicPurseIdAndId(String tm, String electronicPurseId, String id);
+    Mono<ElectronicPurseOperationEntity> findByTmAndElectronicPurseIdAndId(String tm, String electronicPurseId, String id);
 
     /**
      * Finds an electronic purse operation by its trademark, electronic purse, type and original operation id.
@@ -63,5 +64,5 @@ public interface ElectronicPurseOperationRepository extends MongoRepository<Elec
      * @param originalOperation the original operation.
      * @return the electronic purse operation entity, <code>null</code> otherwise.
      */
-    ElectronicPurseOperationEntity findByTmAndElectronicPurseIdAndTypeAndOriginalOperation(String tm, String electronicPurseId, ElectronicPurseOperationType operationType, ElectronicPurseOperationEntity originalOperation);
+    Mono<ElectronicPurseOperationEntity> findByTmAndElectronicPurseIdAndTypeAndOriginalOperation(String tm, String electronicPurseId, ElectronicPurseOperationType operationType, ElectronicPurseOperationEntity originalOperation);
 }

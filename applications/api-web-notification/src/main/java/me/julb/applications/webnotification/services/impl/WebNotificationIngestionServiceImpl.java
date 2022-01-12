@@ -24,9 +24,6 @@
 
 package me.julb.applications.webnotification.services.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,16 +35,18 @@ import me.julb.applications.webnotification.repositories.WebNotificationReposito
 import me.julb.applications.webnotification.services.WebNotificationIngestionService;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.dto.webnotification.WebNotificationMessageDTO;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.identifier.IdentifierUtility;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The web notification service implementation.
@@ -92,25 +91,25 @@ public class WebNotificationIngestionServiceImpl implements WebNotificationInges
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void ingest(WebNotificationMessageDTO webNotificationMessage) {
-        Collection<WebNotificationEntity> webNotifications = new ArrayList<>();
+    public Mono<Void> ingest(WebNotificationMessageDTO webNotificationMessage) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Create a notification for all users.
-        for (UserRefDTO user : webNotificationMessage.getUsers()) {
-            WebNotificationEntity webNotificationEntity = new WebNotificationEntity();
-            webNotificationEntity.setBusinessCategory(webNotificationMessage.getKind().category());
-            webNotificationEntity.setExpiryDateTime(webNotificationMessage.getExpiryDateTime());
-            webNotificationEntity.setKind(webNotificationMessage.getKind());
-            webNotificationEntity.setParameters(webNotificationMessage.getParameters());
-            webNotificationEntity.setPriority(webNotificationMessage.getPriority());
-            webNotificationEntity.setRead(Boolean.FALSE);
-            webNotificationEntity.setUser(userRefMapper.map(user));
-            this.onPersist(webNotificationEntity);
-            webNotifications.add(webNotificationEntity);
-        }
+            Flux<WebNotificationEntity> webNotifications = Flux.fromIterable(webNotificationMessage.getUsers()).flatMap(user -> {
+                WebNotificationEntity webNotificationEntity = new WebNotificationEntity();
+                webNotificationEntity.setBusinessCategory(webNotificationMessage.getKind().category());
+                webNotificationEntity.setExpiryDateTime(webNotificationMessage.getExpiryDateTime());
+                webNotificationEntity.setKind(webNotificationMessage.getKind());
+                webNotificationEntity.setParameters(webNotificationMessage.getParameters());
+                webNotificationEntity.setPriority(webNotificationMessage.getPriority());
+                webNotificationEntity.setRead(Boolean.FALSE);
+                webNotificationEntity.setUser(userRefMapper.map(user));
+                return this.onPersist(tm, webNotificationEntity);
+            });
 
-        // Save all notifications.
-        webNotificationRepository.saveAll(webNotifications);
+            // Save all notifications.
+            return webNotificationRepository.saveAll(webNotifications).then();
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -118,14 +117,15 @@ public class WebNotificationIngestionServiceImpl implements WebNotificationInges
     /**
      * Method called when persisting a web notification.
      * @param entity the entity.
+     * @param tm the trademark.
      */
-    private void onPersist(WebNotificationEntity entity) {
+    private Mono<WebNotificationEntity> onPersist(String tm, WebNotificationEntity entity) {
         entity.setId(IdentifierUtility.generateId());
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
@@ -133,15 +133,17 @@ public class WebNotificationIngestionServiceImpl implements WebNotificationInges
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(WebNotificationEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.WEB_NOTIFICATION)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<WebNotificationEntity> postResourceEvent(WebNotificationEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.WEB_NOTIFICATION)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

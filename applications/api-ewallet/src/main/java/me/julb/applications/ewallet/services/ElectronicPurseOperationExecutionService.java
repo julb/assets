@@ -31,6 +31,8 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The electronic purse operation execution service.
  * <br>
@@ -48,7 +50,7 @@ public interface ElectronicPurseOperationExecutionService {
      * @param redeemMoneyVoucher the DTO to redeem a money voucher.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Identifier String electronicPurseId, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher);
+    Mono<ElectronicPurseDTO> redeemMoneyVoucher(@NotNull @Identifier String electronicPurseId, @NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher);
 
     /**
      * Cancels the operation by doing the opposite action.
@@ -56,7 +58,7 @@ public interface ElectronicPurseOperationExecutionService {
      * @param id the operation id.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO cancelOperation(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id);
+    Mono<ElectronicPurseDTO> cancelOperation(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id);
 
     /**
      * Delete any traces of an operation to the electronic purse.
@@ -64,5 +66,5 @@ public interface ElectronicPurseOperationExecutionService {
      * @param id the operation id.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO deleteOperationExecution(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id);
+    Mono<ElectronicPurseDTO> deleteOperationExecution(@NotNull @Identifier String electronicPurseId, @NotNull @Identifier String id);
 }

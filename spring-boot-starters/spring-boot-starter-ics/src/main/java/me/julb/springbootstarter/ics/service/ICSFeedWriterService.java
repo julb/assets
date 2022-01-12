@@ -25,6 +25,7 @@
 package me.julb.springbootstarter.ics.service;
 
 import java.io.OutputStream;
+import java.io.Writer;
 
 import me.julb.library.dto.icsfeed.ICSFeedDTO;
 
@@ -41,5 +42,12 @@ public interface ICSFeedWriterService {
      * @param outputStream the output stream.
      */
     void write(ICSFeedDTO icsFeed, OutputStream outputStream);
+
+    /**
+     * Writes the ICS feed to the writer.
+     * @param icsFeed the ICS feed.
+     * @param writer the writer.
+     */
+    void write(ICSFeedDTO icsFeed, Writer writer);
 
 }

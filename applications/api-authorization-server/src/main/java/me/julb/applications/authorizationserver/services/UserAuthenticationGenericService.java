@@ -29,6 +29,8 @@ import javax.validation.constraints.NotNull;
 import me.julb.applications.authorizationserver.services.dto.authentication.AbstractUserAuthenticationDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The generic use for user authentication.
  * <br>
@@ -42,6 +44,6 @@ public interface UserAuthenticationGenericService {
      * @param id the ID.
      * @return the user authentication updated.
      */
-    AbstractUserAuthenticationDTO updateSuccessfulUse(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<AbstractUserAuthenticationDTO> updateSuccessfulUse(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
 }

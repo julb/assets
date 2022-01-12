@@ -33,6 +33,8 @@ import me.julb.applications.authorizationserver.services.dto.profile.UserProfile
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileUpdateDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The user profile service.
  * <br>
@@ -47,7 +49,7 @@ public interface UserProfileService {
      * @param userId the user identifier.
      * @return the user profile.
      */
-    UserProfileDTO findOne(@NotNull @Identifier String userId);
+    Mono<UserProfileDTO> findOne(@NotNull @Identifier String userId);
 
     // ------------------------------------------ Write methods.
 
@@ -57,7 +59,7 @@ public interface UserProfileService {
      * @param userProfileCreationDTO the DTO to create a user profile.
      * @return the created user profile.
      */
-    UserProfileDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserProfileCreationDTO userProfileCreationDTO);
+    Mono<UserProfileDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserProfileCreationDTO userProfileCreationDTO);
 
     /**
      * Updates a user profile.
@@ -65,7 +67,7 @@ public interface UserProfileService {
      * @param userProfileUpdateDTO the DTO to update a user profile.
      * @return the updated user profile.
      */
-    UserProfileDTO update(@NotNull @Identifier String userId, @NotNull @Valid UserProfileUpdateDTO userProfileUpdateDTO);
+    Mono<UserProfileDTO> update(@NotNull @Identifier String userId, @NotNull @Valid UserProfileUpdateDTO userProfileUpdateDTO);
 
     /**
      * Patches a user profile.
@@ -73,11 +75,11 @@ public interface UserProfileService {
      * @param userProfilePatchDTO the DTO to update a user profile.
      * @return the updated user profile.
      */
-    UserProfileDTO patch(@NotNull @Identifier String userId, @NotNull @Valid UserProfilePatchDTO userProfilePatchDTO);
+    Mono<UserProfileDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid UserProfilePatchDTO userProfilePatchDTO);
 
     /**
      * Deletes a user profile.
      * @param userId the user identifier.
      */
-    void delete(@NotNull @Identifier String userId);
+    Mono<Void> delete(@NotNull @Identifier String userId);
 }

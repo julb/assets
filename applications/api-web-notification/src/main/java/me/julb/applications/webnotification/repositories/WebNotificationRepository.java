@@ -24,19 +24,20 @@
 
 package me.julb.applications.webnotification.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.webnotification.entities.WebNotificationEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The web notification repository.
  * <br>
  * @author Julb.
  */
-public interface WebNotificationRepository extends MongoRepository<WebNotificationEntity, String>, MongoSpecificationExecutor<WebNotificationEntity> {
+public interface WebNotificationRepository extends ReactiveMongoRepository<WebNotificationEntity, String>, MongoSpecificationExecutor<WebNotificationEntity> {
 
     /**
      * Finds a web notification by trademark and user id
@@ -44,7 +45,7 @@ public interface WebNotificationRepository extends MongoRepository<WebNotificati
      * @param userId the user ID.
      * @return the web notifications, or <code>null</code> if not exists.
      */
-    List<WebNotificationEntity> findByTmAndUserId(String tm, String userId);
+    Flux<WebNotificationEntity> findByTmAndUserId(String tm, String userId);
 
     /**
      * Finds a web notification by trademark, user id and id.
@@ -53,13 +54,13 @@ public interface WebNotificationRepository extends MongoRepository<WebNotificati
      * @param id the id.
      * @return the web notification, or <code>null</code> if not exists.
      */
-    WebNotificationEntity findByTmAndUserIdAndId(String tm, String userId, String id);
+    Mono<WebNotificationEntity> findByTmAndUserIdAndId(String tm, String userId, String id);
 
     /**
      * Finds the web notification which expiry date time is less or equal than the given date.
      * @param dateTime the given date time.
      * @return the web notifications.
      */
-    List<WebNotificationEntity> findByExpiryDateTimeLessThanEqualOrderByTmAsc(String dateTime);
+    Flux<WebNotificationEntity> findByExpiryDateTimeLessThanEqualOrderByTmAsc(String dateTime);
 
 }

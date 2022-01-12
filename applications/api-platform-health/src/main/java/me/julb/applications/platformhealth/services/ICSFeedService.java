@@ -26,6 +26,8 @@ package me.julb.applications.platformhealth.services;
 
 import me.julb.library.dto.icsfeed.ICSFeedDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The ICS feed service.
  * <br>
@@ -37,5 +39,5 @@ public interface ICSFeedService {
      * Builds a ICS feed for planned maintenances.
      * @return an ICS feed for planned maintenances
      */
-    ICSFeedDTO buildPlannedMaintenancesFeed();
+    Mono<ICSFeedDTO> buildPlannedMaintenancesFeed();
 }

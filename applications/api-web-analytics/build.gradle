@@ -12,8 +12,8 @@ dependencies {
     api platform(project(':bom'))
     annotationProcessor platform(project(':bom'))
 
-    implementation project(':spring-boot-starters:spring-boot-starter-web-mvc')
-    implementation project(':spring-boot-starters:spring-boot-starter-messaging')
+    implementation project(':spring-boot-starters:spring-boot-starter-web-reactive')
+    implementation project(':spring-boot-starters:spring-boot-starter-messaging-reactive')
     implementation 'org.apache.commons:commons-lang3'
 	
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')

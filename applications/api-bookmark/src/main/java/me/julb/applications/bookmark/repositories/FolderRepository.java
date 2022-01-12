@@ -24,15 +24,15 @@
 
 package me.julb.applications.bookmark.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.bookmark.entities.FolderEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
 
 /**
  * The folder repository.
  * <br>
  * @author Julb.
  */
-public interface FolderRepository extends MongoRepository<FolderEntity, String>, MongoSpecificationExecutor<FolderEntity> {
+public interface FolderRepository extends ReactiveMongoRepository<FolderEntity, String>, MongoSpecificationExecutor<FolderEntity> {
 }

@@ -8,8 +8,6 @@ plugins {
 dependencies {
 	api platform(project(':bom'))
     annotationProcessor platform(project(':bom'))
-	
-    api project(':libraries:library-dto-googlechat')
     
     implementation 'org.apache.commons:commons-lang3'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
@@ -17,12 +15,11 @@ dependencies {
     implementation project(':libraries:library-utility-constants')
     implementation project(':libraries:library-utility-exception')
     implementation project(':libraries:library-utility-http')
-    implementation project(':spring-boot-starters:spring-boot-starter-consumer-feign')
+    implementation project(':spring-boot-starters:spring-boot-starter-consumer-reactive')
 	implementation project(':spring-boot-starters:spring-boot-starter-logging')
     implementation project(':spring-boot-starters:spring-boot-starter-validation')
     
     testImplementation project(':spring-boot-starters:spring-boot-starter-test')
-    testImplementation 'javax.servlet:javax.servlet-api'
 }
 
 

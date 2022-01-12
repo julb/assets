@@ -34,7 +34,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -55,7 +54,6 @@ import me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRede
 import me.julb.applications.ewallet.services.exceptions.MoneyVoucherCannotBeRedeemedVoucherExpired;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
 import me.julb.library.dto.messaging.events.ResourceEventType;
-import me.julb.library.dto.simple.user.UserRefDTO;
 import me.julb.library.utility.constants.Chars;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.data.search.Searchable;
@@ -68,17 +66,19 @@ import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.MoneyVoucherCode;
 import me.julb.springbootstarter.core.configs.ConfigSourceService;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.mapping.entities.user.mappers.UserRefEntityMapper;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
 import me.julb.springbootstarter.security.services.PasswordEncoderService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The money voucher service implementation.
@@ -130,7 +130,7 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     // ------------------------------------------ Read methods.
 
@@ -138,47 +138,45 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      * {@inheritDoc}
      */
     @Override
-    public Page<MoneyVoucherDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<MoneyVoucherDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        ISpecification<MoneyVoucherEntity> spec = new SearchSpecification<MoneyVoucherEntity>(searchable).and(new TmSpecification<>(tm));
-        Page<MoneyVoucherEntity> result = moneyVoucherRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            ISpecification<MoneyVoucherEntity> spec = new SearchSpecification<MoneyVoucherEntity>(searchable).and(new TmSpecification<>(tm));
+            return moneyVoucherRepository.findAll(spec, pageable).map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MoneyVoucherDTO findByCode(@NotNull @NotBlank @MoneyVoucherCode String code) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<MoneyVoucherDTO> findByCode(@NotNull @NotBlank @MoneyVoucherCode String code) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Get hash
-        String voucherCodeHash = hash(code);
+            String voucherCodeHash = hash(code);
 
-        // Finds money voucher by code.
-        MoneyVoucherEntity result = moneyVoucherRepository.findByTmAndHashIgnoreCase(tm, voucherCodeHash);
-        if (result == null) {
-            throw new ResourceNotFoundException(MoneyVoucherEntity.class, "code", code);
-        }
-
-        return mapper.map(result);
+            // Check that the announcement exists
+            return moneyVoucherRepository.findByTmAndHashIgnoreCase(tm, voucherCodeHash)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MoneyVoucherEntity.class, "code", code)))
+                .map(mapper::map);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MoneyVoucherDTO findOne(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<MoneyVoucherDTO> findOne(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the money voucher exists
-        MoneyVoucherEntity result = moneyVoucherRepository.findByTmAndId(tm, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
-        }
-
-        return mapper.map(result);
+            // Check that the announcement exists
+            return moneyVoucherRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MoneyVoucherEntity.class, id)))
+                .map(mapper::map);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -188,38 +186,40 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public MoneyVoucherWithRawCodeDTO create(@NotNull @Valid MoneyVoucherCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<MoneyVoucherWithRawCodeDTO> create(@NotNull @Valid MoneyVoucherCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Gets the currency of the current setup
-        ISO4217Currency currency = configSourceService.getTypedProperty("ewallet.currency", ISO4217Currency.class);
+            // Gets the currency of the current setup
+            ISO4217Currency currency = configSourceService.getTypedProperty(tm, "ewallet.currency", ISO4217Currency.class);
 
-        // Generate voucher code
-        String rawVoucherCode = buildVoucherCode();
-        String voucherCodeHash = hash(rawVoucherCode);
+            // Generate voucher code
+            String rawVoucherCode = buildVoucherCode();
+            String voucherCodeHash = hash(rawVoucherCode);
 
-        // Check if the code hasn't already used.
-        if (moneyVoucherRepository.existsByTmAndHashIgnoreCase(tm, voucherCodeHash)) {
-            throw new ResourceAlreadyExistsException(MoneyVoucherEntity.class, "hash", voucherCodeHash);
-        }
+            // Check if the code hasn't already used.
+            return moneyVoucherRepository.existsByTmAndHashIgnoreCase(tm, voucherCodeHash)
+                .flatMap(alreadyExists -> {
+                    if(alreadyExists.booleanValue()) {
+                        return Mono.error(new ResourceAlreadyExistsException(MoneyVoucherEntity.class, "hash", voucherCodeHash));
+                    }
 
-        // Create the voucher code
-        MoneyVoucherEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.getAmount().setCurrency(currency);
-        entityToCreate.setEnabled(false);
-        entityToCreate.setHash(voucherCodeHash);
-        entityToCreate.setRedeemed(false);
-        entityToCreate.setSecuredCode(passwordEncoderService.encode(rawVoucherCode));
-        this.onPersist(entityToCreate);
-
-        MoneyVoucherEntity result = moneyVoucherRepository.save(entityToCreate);
-        MoneyVoucherWithRawCodeDTO moneyVoucherWithRawCode = mapper.mapWithRawCode(result);
-
-        // Add code to the return value.
-        moneyVoucherWithRawCode.setRawCode(rawVoucherCode);
-
-        // Return value.
-        return moneyVoucherWithRawCode;
+                    // Create the voucher code
+                    MoneyVoucherEntity entityToCreate = mapper.map(creationDTO);
+                    entityToCreate.getAmount().setCurrency(currency);
+                    entityToCreate.setEnabled(false);
+                    entityToCreate.setHash(voucherCodeHash);
+                    entityToCreate.setRedeemed(false);
+                    entityToCreate.setSecuredCode(passwordEncoderService.encode(rawVoucherCode));
+                    return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                        return moneyVoucherRepository.save(entityToCreateWithFields).map(result -> {
+                            MoneyVoucherWithRawCodeDTO moneyVoucherWithRawCode = mapper.mapWithRawCode(result);
+                            moneyVoucherWithRawCode.setRawCode(rawVoucherCode);
+                            return moneyVoucherWithRawCode;
+                        });
+                    });
+                });
+        });
     }
 
     /**
@@ -227,41 +227,41 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public MoneyVoucherDTO redeem(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<MoneyVoucherDTO> redeem(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the money voucher exists
-        MoneyVoucherEntity existing = moneyVoucherRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
-        }
+            return moneyVoucherRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MoneyVoucherEntity.class, id)))
+                .flatMap(existing -> {
+                    // Check if money voucher is already redeemed
+                    if (BooleanUtils.isTrue(existing.getRedeemed())) {
+                        return Mono.error(new MoneyVoucherCannotBeRedeemedAlreadyRedeemed(existing.getId(), existing.getRedemptionDateTime()));
+                    }
 
-        // Check if money voucher is already redeemed
-        if (BooleanUtils.isTrue(existing.getRedeemed())) {
-            throw new MoneyVoucherCannotBeRedeemedAlreadyRedeemed(existing.getId(), existing.getRedemptionDateTime());
-        }
+                    // Check if money voucher is enabled
+                    if (BooleanUtils.isFalse(existing.getEnabled())) {
+                        return Mono.error(new MoneyVoucherCannotBeRedeemedVoucherDisabled(existing.getId()));
+                    }
 
-        // Check if money voucher is enabled
-        if (BooleanUtils.isFalse(existing.getEnabled())) {
-            throw new MoneyVoucherCannotBeRedeemedVoucherDisabled(existing.getId());
-        }
+                    // Check if money voucher is expired
+                    if (existing.getExpiryDateTime() != null && DateUtility.dateTimeBeforeNow(existing.getExpiryDateTime())) {
+                        return Mono.error(new MoneyVoucherCannotBeRedeemedVoucherExpired(existing.getId(), existing.getExpiryDateTime()));
+                    }
 
-        // Check if money voucher is expired
-        if (existing.getExpiryDateTime() != null && DateUtility.dateTimeBeforeNow(existing.getExpiryDateTime())) {
-            throw new MoneyVoucherCannotBeRedeemedVoucherExpired(existing.getId(), existing.getExpiryDateTime());
-        }
-
-        // Redeem
-        existing.setRedeemed(true);
-        existing.setRedemptionDateTime(DateUtility.dateTimeNow());
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        existing.setRedeemedBy(userRefMapper.map(connnectedUser));
-
-        // Update
-        this.onUpdate(existing);
-
-        MoneyVoucherEntity result = moneyVoucherRepository.save(existing);
-        return mapper.map(result);
+                    return securityService.getConnectedUserRefIdentity().flatMap(connectedUser -> {
+                        // Redeem
+                        existing.setRedeemed(true);
+                        existing.setRedemptionDateTime(DateUtility.dateTimeNow());
+                        existing.setRedeemedBy(userRefMapper.map(connectedUser));
+                        
+                        // Proceed to the update
+                        return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                            return moneyVoucherRepository.save(entityToUpdateWithFields).map(mapper::map);
+                        });
+                    });
+                });
+        });
     }
 
     /**
@@ -269,21 +269,22 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public MoneyVoucherDTO update(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<MoneyVoucherDTO> update(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the money voucher exists
-        MoneyVoucherEntity existing = moneyVoucherRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        MoneyVoucherEntity result = moneyVoucherRepository.save(existing);
-        return mapper.map(result);
+            return moneyVoucherRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MoneyVoucherEntity.class, id)))
+                .flatMap(existing -> {
+                    // Update the entity
+                    mapper.map(updateDTO, existing);
+                    
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return moneyVoucherRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+                });
+        });
     }
 
     /**
@@ -291,21 +292,22 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public MoneyVoucherDTO patch(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<MoneyVoucherDTO> patch(@NotNull @Identifier String id, @NotNull @Valid MoneyVoucherPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the money voucher exists
-        MoneyVoucherEntity existing = moneyVoucherRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        MoneyVoucherEntity result = moneyVoucherRepository.save(existing);
-        return mapper.map(result);
+            return moneyVoucherRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MoneyVoucherEntity.class, id)))
+                .flatMap(existing -> {
+                    // Update the entity
+                    mapper.map(patchDTO, existing);
+                    
+                    // Proceed to the update
+                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                        return moneyVoucherRepository.save(entityToUpdateWithFields).map(mapper::map);
+                    });
+                });
+        });
     }
 
     /**
@@ -313,20 +315,19 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the money voucher exists
-        MoneyVoucherEntity existing = moneyVoucherRepository.findByTmAndId(tm, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(MoneyVoucherEntity.class, id);
-        }
-
-        // Delete entity.
-        moneyVoucherRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return moneyVoucherRepository.findByTmAndId(tm, id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(MoneyVoucherEntity.class, id)))
+                .flatMap(existing -> {
+                    // Delete entity.
+                    return moneyVoucherRepository.delete(existing).then(
+                        this.onDelete(existing)
+                    ).then();
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -354,36 +355,38 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
 
     /**
      * Method called when persisting a money voucher.
+     * @param tm the trademark.
      * @param entity the entity.
      */
-    private void onPersist(MoneyVoucherEntity entity) {
-        entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
-        entity.setCreatedAt(DateUtility.dateTimeNow());
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
+    private Mono<MoneyVoucherEntity> onPersist(String tm, MoneyVoucherEntity entity) {
+        return securityService.getConnectedUserRefIdentity().flatMap(connnectedUser -> {
+            entity.setId(IdentifierUtility.generateId());
+            entity.setTm(tm);
+            entity.setCreatedAt(DateUtility.dateTimeNow());
+            entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        // Add author.
-        UserRefDTO connnectedUser = securityService.getConnectedUserRefIdentity();
-        entity.setUser(userRefMapper.map(connnectedUser));
+            // Add author.
+            entity.setUser(userRefMapper.map(connnectedUser));
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+            return postResourceEvent(entity, ResourceEventType.CREATED);
+        });
     }
 
     /**
      * Method called when updating a money voucher.
      * @param entity the entity.
      */
-    private void onUpdate(MoneyVoucherEntity entity) {
+    private Mono<MoneyVoucherEntity> onUpdate(MoneyVoucherEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a money voucher.
      * @param entity the entity.
      */
-    private void onDelete(MoneyVoucherEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<MoneyVoucherEntity> onDelete(MoneyVoucherEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -391,15 +394,17 @@ public class MoneyVoucherServiceImpl implements MoneyVoucherService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(MoneyVoucherEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.MONEY_VOUCHER)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<MoneyVoucherEntity> postResourceEvent(MoneyVoucherEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.MONEY_VOUCHER)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

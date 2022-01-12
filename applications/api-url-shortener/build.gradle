@@ -16,9 +16,9 @@ dependencies {
     implementation project(':libraries:library-dto-security')
     implementation project(':libraries:library-utility-date')
     implementation project(':libraries:library-utility-identifier')
-    implementation project(':spring-boot-starters:spring-boot-starter-messaging')
-    implementation project(':spring-boot-starters:spring-boot-starter-web-mvc')
-    implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb')
+    implementation project(':spring-boot-starters:spring-boot-starter-messaging-reactive')
+    implementation project(':spring-boot-starters:spring-boot-starter-web-reactive')
+    implementation project(':spring-boot-starters:spring-boot-starter-persistence-mongodb-reactive')
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.apache.commons:commons-text'
 

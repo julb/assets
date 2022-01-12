@@ -26,12 +26,14 @@ package me.julb.applications.authorizationserver.services;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The my session service.
@@ -48,25 +50,25 @@ public interface MySessionService {
      * @param pageable the pageable information.
      * @return a paged list of sessions.
      */
-    Page<UserSessionDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<UserSessionDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a session through its ID.
      * @param id the session identifier.
      * @return the session.
      */
-    UserSessionDTO findOne(@NotNull @Identifier String id);
+    Mono<UserSessionDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
     /**
      * Deletes all sessions of the user.
      */
-    void delete();
+    Mono<Void> delete();
 
     /**
      * Deletes a session.
      * @param id the id of the session to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 }

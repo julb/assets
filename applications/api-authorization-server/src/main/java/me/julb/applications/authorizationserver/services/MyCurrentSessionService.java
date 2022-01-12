@@ -31,6 +31,8 @@ import me.julb.applications.authorizationserver.services.dto.session.UserSession
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.library.dto.security.AuthenticatedUserDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The my session service.
  * <br>
@@ -44,19 +46,19 @@ public interface MyCurrentSessionService {
      * Finds the current session.
      * @return the session.
      */
-    AuthenticatedUserDTO findCurrent();
+    Mono<AuthenticatedUserDTO> findCurrent();
 
     /**
      * Generates an access token from an id token.
      * @param accessTokenCreation the access token creation.
      * @return the ID token.
      */
-    UserSessionAccessTokenWithIdTokenDTO createAccessToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation);
+    Mono<UserSessionAccessTokenWithIdTokenDTO> createAccessToken(@NotNull @Valid UserSessionAccessTokenFromIdTokenCreationDTO accessTokenCreation);
 
     // ------------------------------------------ Write methods.
 
     /**
      * Deletes the current session.
      */
-    void deleteCurrent();
+    Mono<Void> deleteCurrent();
 }

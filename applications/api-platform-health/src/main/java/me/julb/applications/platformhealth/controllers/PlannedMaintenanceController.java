@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage planned maintenances.
@@ -86,7 +87,7 @@ public class PlannedMaintenanceController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission('planned-maintenance', 'read')")
-    public Page<PlannedMaintenanceDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<PlannedMaintenanceDTO> findAll(Searchable searchable, Pageable pageable) {
         return plannedMaintenanceService.findAll(searchable, pageable);
     }
 
@@ -98,7 +99,7 @@ public class PlannedMaintenanceController {
     @Operation(summary = "gets a planned maintenance")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#id, 'planned-maintenance', 'read')")
-    public PlannedMaintenanceDTO get(@PathVariable @Identifier String id) {
+    public Mono<PlannedMaintenanceDTO> get(@PathVariable @Identifier String id) {
         return plannedMaintenanceService.findOne(id);
     }
 
@@ -113,7 +114,7 @@ public class PlannedMaintenanceController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('planned-maintenance', 'create')")
-    public PlannedMaintenanceDTO create(@RequestBody @NotNull @Valid PlannedMaintenanceCreationDTO creationDTO) {
+    public Mono<PlannedMaintenanceDTO> create(@RequestBody @NotNull @Valid PlannedMaintenanceCreationDTO creationDTO) {
         return plannedMaintenanceService.create(creationDTO);
     }
 
@@ -126,7 +127,7 @@ public class PlannedMaintenanceController {
     @Operation(summary = "updates a planned maintenance")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'planned-maintenance', 'update')")
-    public PlannedMaintenanceDTO update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid PlannedMaintenanceUpdateDTO updateDTO) {
+    public Mono<PlannedMaintenanceDTO> update(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid PlannedMaintenanceUpdateDTO updateDTO) {
         return plannedMaintenanceService.update(id, updateDTO);
     }
 
@@ -139,7 +140,7 @@ public class PlannedMaintenanceController {
     @Operation(summary = "patches a planned maintenance")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#id, 'planned-maintenance', 'update')")
-    public PlannedMaintenanceDTO patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid PlannedMaintenancePatchDTO patchDTO) {
+    public Mono<PlannedMaintenanceDTO> patch(@PathVariable @Identifier String id, @RequestBody @NotNull @Valid PlannedMaintenancePatchDTO patchDTO) {
         return plannedMaintenanceService.patch(id, patchDTO);
     }
 
@@ -151,8 +152,8 @@ public class PlannedMaintenanceController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#id, 'planned-maintenance', 'delete')")
-    public void delete(@PathVariable String id) {
-        plannedMaintenanceService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return plannedMaintenanceService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

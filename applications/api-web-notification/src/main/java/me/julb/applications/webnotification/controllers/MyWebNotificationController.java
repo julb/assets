@@ -24,10 +24,7 @@
 
 package me.julb.applications.webnotification.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,6 +44,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage web notifications.
@@ -77,7 +78,7 @@ public class MyWebNotificationController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public Page<WebNotificationDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<WebNotificationDTO> findAll(Searchable searchable, Pageable pageable) {
         return myWebNotificationService.findAll(searchable, pageable);
     }
 
@@ -89,7 +90,7 @@ public class MyWebNotificationController {
     @Operation(summary = "gets one of my web notifications")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public WebNotificationDTO get(@PathVariable @Identifier String id) {
+    public Mono<WebNotificationDTO> get(@PathVariable @Identifier String id) {
         return myWebNotificationService.findOne(id);
     }
 
@@ -101,8 +102,8 @@ public class MyWebNotificationController {
     @Operation(summary = "mark all my web notifications as read")
     @PutMapping(path = "/attributes/read")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void markAllAsRead() {
-        myWebNotificationService.markAllAsRead();
+    public Mono<Void> markAllAsRead() {
+        return myWebNotificationService.markAllAsRead();
     }
 
     /**
@@ -113,7 +114,7 @@ public class MyWebNotificationController {
     @Operation(summary = "mark one of my web notifications as read")
     @PutMapping(path = "/{id}/attributes/read")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public WebNotificationDTO markAsRead(@PathVariable @Identifier String id) {
+    public Mono<WebNotificationDTO> markAsRead(@PathVariable @Identifier String id) {
         return myWebNotificationService.markAsRead(id);
     }
 
@@ -124,8 +125,8 @@ public class MyWebNotificationController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete() {
-        myWebNotificationService.deleteAll();
+    public Mono<Void> delete() {
+        return myWebNotificationService.deleteAll();
     }
 
     /**
@@ -136,8 +137,8 @@ public class MyWebNotificationController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete(@PathVariable String id) {
-        myWebNotificationService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return myWebNotificationService.delete(id);
     }
     // ------------------------------------------ Utility methods.
 

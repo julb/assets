@@ -24,17 +24,13 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -45,15 +41,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 
 import me.julb.applications.authorizationserver.services.MyCurrentSessionService;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.library.dto.security.AuthenticatedUserDTO;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.BadRequestException;
-import me.julb.library.utility.http.HttpServletRequestUtility;
 import me.julb.library.utility.validator.constraints.SecureIdToken;
+import me.julb.springbootstarter.web.reactive.utility.ServerHttpRequestUtility;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to return current session.
@@ -86,7 +85,7 @@ public class MyCurrentSessionController {
     @Operation(summary = "get the current session")
     @GetMapping
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public AuthenticatedUserDTO findMySession() {
+    public Mono<AuthenticatedUserDTO> findMySession() {
         return myCurrentSessionService.findCurrent();
     }
 
@@ -96,14 +95,12 @@ public class MyCurrentSessionController {
      * Returns the access token.
      * @param idTokenFromParam the ID token from param.
      * @param idTokenFromCookie the ID token from cookie.
-     * @param request the HTTP request.
-     * @param response the HTTP response.
+     * @param exchange the exchange.
      */
     @Operation(summary = "gets an access token")
     @PostMapping(path = "/refresh")
     @PreAuthorize("permitAll()")
-    public void refreshAccessToken(@RequestParam(value = "idToken", required = false) @SecureIdToken String idTokenFromParam, @CookieValue(value = "idToken", required = false) @SecureIdToken String idTokenFromCookie, HttpServletRequest request,
-        HttpServletResponse response) {
+    public Mono<Void> refreshAccessToken(@RequestParam(value = "idToken", required = false) @SecureIdToken String idTokenFromParam, @CookieValue(value = "idToken", required = false) @SecureIdToken String idTokenFromCookie, ServerWebExchange exchange) {
         // Extract ID Token: param has precedence over cookie.
         String idToken;
         if (StringUtils.isNotBlank(idTokenFromParam)) {
@@ -115,17 +112,20 @@ public class MyCurrentSessionController {
             throw new BadRequestException();
         }
 
+        //
+        ServerHttpRequest request = exchange.getRequest();
+
         // Generate access token
         UserSessionAccessTokenFromIdTokenCreationDTO creationDTO = new UserSessionAccessTokenFromIdTokenCreationDTO();
-        creationDTO.setBrowser(Objects.toString(HttpServletRequestUtility.getBrowser(request)));
-        creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
+        creationDTO.setBrowser(Objects.toString(ServerHttpRequestUtility.getBrowser(request)));
+        creationDTO.setIpv4Address(ServerHttpRequestUtility.getUserIpAddress(request));
         creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
-        creationDTO.setOperatingSystem(Objects.toString(HttpServletRequestUtility.getOperatingSystem(request)));
+        creationDTO.setOperatingSystem(Objects.toString(ServerHttpRequestUtility.getOperatingSystem(request)));
         creationDTO.setRawIdToken(idToken);
-        UserSessionAccessTokenWithIdTokenDTO createAccessToken = myCurrentSessionService.createAccessToken(creationDTO);
-
-        // Write response.
-        httpUserAccessTokenService.writeResponseWithIdToken(createAccessToken, response);
+        return myCurrentSessionService.createAccessToken(creationDTO).flatMap(createAccessToken -> {
+            // Write response.
+            return httpUserAccessTokenService.writeResponseWithIdToken(createAccessToken, exchange.getResponse());
+        });        
     }
 
     /**
@@ -135,8 +135,8 @@ public class MyCurrentSessionController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void deleteMySession() {
-        myCurrentSessionService.deleteCurrent();
+    public Mono<Void> deleteMySession() {
+        return myCurrentSessionService.deleteCurrent();
     }
 
     // ------------------------------------------ Utility methods.

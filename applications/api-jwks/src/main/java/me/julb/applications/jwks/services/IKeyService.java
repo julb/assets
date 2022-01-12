@@ -31,6 +31,8 @@ import me.julb.applications.jwks.configurations.caching.CacheConstants;
 import me.julb.library.utility.validator.constraints.JSONWebKeyId;
 import me.julb.library.utility.validator.constraints.JSONWebKeysetName;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The keyset service.
  * <br>
@@ -44,7 +46,7 @@ public interface IKeyService {
      * @return the JSON representation of this keyset.
      */
     @Cacheable(value = CacheConstants.KEYSET_KEYS_CACHE_KEY, unless = "#result == null")
-    String findAll(@NotNull @JSONWebKeysetName String keysetName);
+    Mono<String> findAll(@NotNull @JSONWebKeysetName String keysetName);
 
     /**
      * Finds the keys by keyset name and key ID.
@@ -53,5 +55,5 @@ public interface IKeyService {
      * @return the JSON representation of this key.
      */
     @Cacheable(value = CacheConstants.KEYSET_KEY_CACHE_KEY, unless = "#result == null")
-    String findByKeyId(@NotNull @JSONWebKeysetName String keysetName, @NotNull @JSONWebKeyId String keyId);
+    Mono<String> findByKeyId(@NotNull @JSONWebKeysetName String keysetName, @NotNull @JSONWebKeyId String keyId);
 }

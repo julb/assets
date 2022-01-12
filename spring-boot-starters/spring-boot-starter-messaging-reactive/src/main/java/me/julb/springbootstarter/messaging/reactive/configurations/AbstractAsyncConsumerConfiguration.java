@@ -24,49 +24,44 @@
 
 package me.julb.springbootstarter.messaging.reactive.configurations;
 
+
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
 
 import me.julb.library.dto.messaging.message.AsyncMessageDTO;
 import me.julb.library.utility.constants.CustomMessagingHeaders;
+import me.julb.springbootstarter.core.context.ContextConstants;
 import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+
+import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 /**
  * The local async configuration.
  * <br>
  * @author Julb.
  */
+@Slf4j
 public abstract class AbstractAsyncConsumerConfiguration {
 
     /**
-     * The logger.
+     * Processes a message.
+     * @param <T> the message type.
+     * @param message the message to process.
+     * @param handler the handler to process the message.
      */
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    /**
-     * Method to invoke when receiving a async message.
-     * @param message the message.
-     */
-    protected void onReceiveStart(Message<? extends AsyncMessageDTO<?>> message) {
-        // Trace input.
-        LOGGER.debug("Receiving message <{}>.", message.getPayload().getId());
-
-        // Set trademark.
-        //FIXME use context
-        TrademarkContextHolder.setTrademark(message.getHeaders().get(CustomMessagingHeaders.X_JULB_TM, String.class));
-    }
-
-    /**
-     * Method to invoke when processed a async message.
-     * @param message the message.
-     */
-    protected void onReceiveEnd(Message<? extends AsyncMessageDTO<?>> message) {
-        // Clear trademark.
-        TrademarkContextHolder.unsetTrademark();
-
-        // Trace finished.
-        //FIXME use context
-        LOGGER.debug("Message <{}> processed successfully.", message.getPayload().getId());
+    protected <T extends Message<? extends AsyncMessageDTO<?>>> void onReceive(T message, Function<T, Mono<Void>> handler) {
+        handler.apply(message)
+            .contextWrite(Context.of(ContextConstants.TRADEMARK, message.getHeaders().get(CustomMessagingHeaders.X_JULB_TM, String.class)))
+            .doFirst(() -> LOGGER.debug("Receiving message <{}>.", message.getPayload().getId()))
+            .doOnTerminate(() -> LOGGER.debug("Message <{}> processed successfully.", message.getPayload().getId()))
+            .block();
     }
 }

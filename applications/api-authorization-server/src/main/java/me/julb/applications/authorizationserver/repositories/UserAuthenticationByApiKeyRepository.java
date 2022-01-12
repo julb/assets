@@ -24,18 +24,20 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationByApiKeyEntity;
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication by api key repository.
  * <br>
  * @author Julb.
  */
-public interface UserAuthenticationByApiKeyRepository extends MongoRepository<UserAuthenticationByApiKeyEntity, String>, MongoSpecificationExecutor<UserAuthenticationByApiKeyEntity> {
+public interface UserAuthenticationByApiKeyRepository extends ReactiveMongoRepository<UserAuthenticationByApiKeyEntity, String>, MongoSpecificationExecutor<UserAuthenticationByApiKeyEntity> {
 
     /**
      * Checks if an user authentication by trademark and user and type exists.
@@ -45,7 +47,7 @@ public interface UserAuthenticationByApiKeyRepository extends MongoRepository<Us
      * @param name the name.
      * @return <code>true</code> if the user authentication exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndTypeAndNameIgnoreCase(String tm, String userId, UserAuthenticationType type, String name);
+    Mono<Boolean> existsByTmAndUser_IdAndTypeAndNameIgnoreCase(String tm, String userId, UserAuthenticationType type, String name);
 
     /**
      * Checks if an user authentication by trademark and user and type exists.
@@ -56,7 +58,7 @@ public interface UserAuthenticationByApiKeyRepository extends MongoRepository<Us
      * @param name the name.
      * @return <code>true</code> if the user authentication exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_IdAndTypeAndIdNotAndNameIgnoreCase(String tm, String userId, UserAuthenticationType type, String id, String name);
+    Mono<Boolean> existsByTmAndUser_IdAndTypeAndIdNotAndNameIgnoreCase(String tm, String userId, UserAuthenticationType type, String id, String name);
 
     /**
      * Finds an user authentication by trademark and id.
@@ -66,5 +68,5 @@ public interface UserAuthenticationByApiKeyRepository extends MongoRepository<Us
      * @param id the ID.
      * @return the user, or <code>null</code> if not exists.
      */
-    UserAuthenticationByApiKeyEntity findByTmAndUser_IdAndTypeAndId(String tm, String userId, UserAuthenticationType type, String id);
+    Mono<UserAuthenticationByApiKeyEntity> findByTmAndUser_IdAndTypeAndId(String tm, String userId, UserAuthenticationType type, String id);
 }

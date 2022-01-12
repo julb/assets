@@ -24,18 +24,13 @@
 
 package me.julb.applications.jwks.controllers;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
+import me.julb.library.utility.constants.CustomHttpHeaders;
 import me.julb.springbootstarter.test.base.AbstractBaseTest;
 
 /**
@@ -43,14 +38,14 @@ import me.julb.springbootstarter.test.base.AbstractBaseTest;
  * <br>
  * @author Julb.
  */
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 public class KeyControllerTest extends AbstractBaseTest {
 
     /**
      * The mock MVC.
      */
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     /**
      * Unit test method.
@@ -59,17 +54,29 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingKeysOfKeysetAsymmetric_thenReturnValidKeyset()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/asymmetric-key").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("keys", hasSize(2)));
+        webTestClient
+            .get()
+            .uri("/keysets/asymmetric-key")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.keys.length()").isEqualTo(2);
         //@formatter:on
 
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/asymmetric-key/keys").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("keys", hasSize(2)));
+        webTestClient
+            .get()
+            .uri("/keysets/asymmetric-key/keys")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.keys.length()").isEqualTo(2);
         //@formatter:on
     }
 
@@ -80,22 +87,34 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingKeysOfKeysetAsymmetric_thenReturnValidKey()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/asymmetric-key/keys/first-key").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("kty", is("RSA")))
-            .andExpect(jsonPath("use", is("sig")))
-            .andExpect(jsonPath("kid", is("first-key")))
-            .andExpect(jsonPath("alg", is("RS384")));
+        webTestClient
+            .get()
+            .uri("/keysets/asymmetric-key/keys/first-key")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.kty").isEqualTo("RSA")
+                .jsonPath("$.use").isEqualTo("sig")
+                .jsonPath("$.kid").isEqualTo("first-key")
+                .jsonPath("$.alg").isEqualTo("RS384");
         //@formatter:on
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/asymmetric-key/keys/second-key").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("kty", is("EC")))
-            .andExpect(jsonPath("use", is("sig")))
-            .andExpect(jsonPath("kid", is("second-key")))
-            .andExpect(jsonPath("alg", is("ES384")));
+        webTestClient
+            .get()
+            .uri("/keysets/asymmetric-key/keys/second-key")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.kty").isEqualTo("EC")
+                .jsonPath("$.use").isEqualTo("sig")
+                .jsonPath("$.kid").isEqualTo("second-key")
+                .jsonPath("$.alg").isEqualTo("ES384");
         //@formatter:on
     }
 
@@ -106,10 +125,15 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingUnknownKeyOfKeysetAsymmetric_thenReturnNotFound()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/asymmetric-key/keys/unknown-key").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isNotFound());
-        //@formatter:on
+        webTestClient
+            .get()
+            .uri("/keysets/asymmetric-key/keys/unknown-key")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isNotFound();
+        //  @formatter:on
     }
 
     /**
@@ -119,17 +143,29 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingKeysOfKeysetSymmetricPublicOnly_thenReturnEmptyKeyset()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/symmetric-key-pub").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("keys", hasSize(0)));
+        webTestClient
+            .get()
+            .uri("/keysets/symmetric-key-pub")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.keys.length()").isEqualTo(0);
         //@formatter:on
 
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/symmetric-key-pub/keys").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("keys", hasSize(0)));
+        webTestClient
+            .get()
+            .uri("/keysets/symmetric-key-pub/keys")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.keys.length()").isEqualTo(0);
         //@formatter:on
     }
 
@@ -140,10 +176,15 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingKeyOfKeysetSymmetricPublicOnly_thenReturnNotFound()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/symmetric-key-pub/keys/first-key").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isNotFound());
-        //@formatter:on
+        webTestClient
+            .get()
+            .uri("/keysets/symmetric-key-pub/keys/first-key")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isNotFound();
+        //  @formatter:on
     }
 
     /**
@@ -153,17 +194,29 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingKeysOfKeysetSymmetric_thenReturnValidKeyset()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/symmetric-key-prv").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("keys", hasSize(1)));
+        webTestClient
+            .get()
+            .uri("/keysets/symmetric-key-prv")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.keys.length()").isEqualTo(1);
         //@formatter:on
 
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/symmetric-key-prv/keys").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("keys", hasSize(1)));
+        webTestClient
+            .get()
+            .uri("/keysets/symmetric-key-prv/keys")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.keys.length()").isEqualTo(1);
         //@formatter:on
     }
 
@@ -174,13 +227,19 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingKeysOfKeysetSymmetric_thenReturnValidKey()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/symmetric-key-prv/keys/first-key").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("kty", is("oct")))
-            .andExpect(jsonPath("use", is("enc")))
-            .andExpect(jsonPath("kid", is("first-key")))
-            .andExpect(jsonPath("alg", is("DIR")));;
+        webTestClient
+            .get()
+            .uri("/keysets/symmetric-key-prv/keys/first-key")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isOk()
+            .expectBody()
+                .jsonPath("$.kty").isEqualTo("oct")
+                .jsonPath("$.use").isEqualTo("enc")
+                .jsonPath("$.kid").isEqualTo("first-key")
+                .jsonPath("$.alg").isEqualTo("DIR");
         //@formatter:on
     }
 
@@ -191,10 +250,15 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingUnknownKeyOfKeysetSymmetric_thenReturnNotFound()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/symmetric-key-prv/keys/unknown-key").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isNotFound());
-        //@formatter:on
+        webTestClient
+            .get()
+            .uri("/keysets/symmetric-key-prv/keys/unknown-key")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isNotFound();
+        //  @formatter:on
     }
 
     /**
@@ -204,10 +268,15 @@ public class KeyControllerTest extends AbstractBaseTest {
     public void whenGettingKeysOfUnknownKeyset_thenReturnNotFound()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(get("/keysets/unknown-key").contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isNotFound());
-        //@formatter:on
+        webTestClient
+            .get()
+            .uri("/keysets/unknown-key")
+            .accept(MediaType.APPLICATION_JSON)
+            .header(CustomHttpHeaders.X_JULB_TM, TM)
+            .exchange()
+            .expectStatus()
+                .isNotFound();
+        //  @formatter:on
     }
 
 }

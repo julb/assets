@@ -51,11 +51,13 @@ import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user profile service implementation.
@@ -103,22 +105,18 @@ public class UserProfileServiceImpl implements UserProfileService {
      * {@inheritDoc}
      */
     @Override
-    public UserProfileDTO findOne(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserProfileDTO> findOne(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserProfileEntity result = userProfileRepository.findByTmAndUser_Id(tm, userId);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserProfileEntity.class, userId);
-        }
-
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userProfileRepository.findByTmAndUser_Id(tm, userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserProfileEntity.class, userId)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -128,26 +126,27 @@ public class UserProfileServiceImpl implements UserProfileService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserProfileDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserProfileCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserProfileDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserProfileCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userProfileRepository.existsByTmAndUser_Id(tm, userId)
+                        .flatMap(alreadyExists -> {
+                            if (alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(UserProfileEntity.class, "user", userId));
+                            }
 
-        // Check that the item exists
-        if (userProfileRepository.existsByTmAndUser_Id(tm, userId)) {
-            throw new ResourceAlreadyExistsException(UserProfileEntity.class, "user", userId);
-        }
-
-        UserProfileEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setUser(user);
-        this.onPersist(entityToCreate);
-
-        UserProfileEntity result = userProfileRepository.save(entityToCreate);
-        return mapper.map(result);
+                            UserProfileEntity entityToCreate = mapper.map(creationDTO);
+                            entityToCreate.setUser(user);
+                            return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                return userProfileRepository.save(entityToCreateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -155,27 +154,26 @@ public class UserProfileServiceImpl implements UserProfileService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserProfileDTO update(@NotNull @Identifier String userId, @NotNull @Valid UserProfileUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserProfileDTO> update(@NotNull @Identifier String userId, @NotNull @Valid UserProfileUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserProfileEntity existing = userProfileRepository.findByTmAndUser_Id(tm, userId);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserProfileEntity.class, userId);
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        UserProfileEntity result = userProfileRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userProfileRepository.findByTmAndUser_Id(tm, userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserProfileEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Update the entity
+                            mapper.map(updateDTO, existing);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userProfileRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -183,27 +181,26 @@ public class UserProfileServiceImpl implements UserProfileService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserProfileDTO patch(@NotNull @Identifier String userId, @NotNull @Valid UserProfilePatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserProfileDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid UserProfilePatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserProfileEntity existing = userProfileRepository.findByTmAndUser_Id(tm, userId);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserProfileEntity.class, userId);
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        UserProfileEntity result = userProfileRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userProfileRepository.findByTmAndUser_Id(tm, userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserProfileEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Update the entity
+                            mapper.map(patchDTO, existing);
+                
+                            // Proceed to the update
+                            return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                return userProfileRepository.save(entityToUpdateWithFields).map(mapper::map);
+                            });
+                        });
+                });
+        });
     }
 
     /**
@@ -211,26 +208,24 @@ public class UserProfileServiceImpl implements UserProfileService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the item exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserProfileEntity existing = userProfileRepository.findByTmAndUser_Id(tm, userId);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserProfileEntity.class, userId);
-        }
-
-        // Delete entity.
-        userProfileRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userProfileRepository.findByTmAndUser_Id(tm, userId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserProfileEntity.class, userId)))
+                        .flatMap(existing -> {
+                            
+                            // Delete entity.
+                            return userProfileRepository.delete(existing).then(
+                                this.onDelete(existing)
+                            ).then();
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -241,37 +236,37 @@ public class UserProfileServiceImpl implements UserProfileService {
      * Method called when persisting an item.
      * @param entity the entity.
      */
-    private void onPersist(UserProfileEntity entity) {
+    private Mono<UserProfileEntity> onPersist(String tm, UserProfileEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
         entity.setFirstName(StringUtils.capitalize(entity.getFirstName()));
         entity.setLastName(StringUtils.upperCase(entity.getLastName()));
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(UserProfileEntity entity) {
+    private Mono<UserProfileEntity> onUpdate(UserProfileEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
         entity.setFirstName(StringUtils.capitalize(entity.getFirstName()));
         entity.setLastName(StringUtils.upperCase(entity.getLastName()));
 
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a item.
      * @param entity the entity.
      */
-    private void onDelete(UserProfileEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<UserProfileEntity> onDelete(UserProfileEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -279,15 +274,17 @@ public class UserProfileServiceImpl implements UserProfileService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(UserProfileEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_PROFILE)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<UserProfileEntity> postResourceEvent(UserProfileEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_PROFILE)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

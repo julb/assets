@@ -26,6 +26,7 @@ package me.julb.springbootstarter.ics.service.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ import me.julb.library.dto.icsfeed.ICSFeedEventDTO;
 import me.julb.library.utility.date.DateUtility;
 import me.julb.library.utility.exceptions.InternalServerErrorException;
 import me.julb.springbootstarter.ics.service.ICSFeedWriterService;
+
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.TimeZone;
@@ -62,34 +64,8 @@ public class ICSFeedWriterServiceImpl implements ICSFeedWriterService {
      */
     @Override
     public void write(ICSFeedDTO icsFeed, OutputStream outputStream) {
-        // Set property.
-        System.setProperty("net.fortuna.ical4j.timezone.cache.impl", MapTimeZoneCache.class.getName());
-
         try {
-            // Create a calendar
-            net.fortuna.ical4j.model.Calendar icsCalendar = new net.fortuna.ical4j.model.Calendar();
-            icsCalendar.getProperties().add(new ProdId(String.format("-//%s//iCal4j 1.0//%s", icsFeed.getTitle(), LocaleContextHolder.getLocale().toLanguageTag().toUpperCase())));
-            icsCalendar.getProperties().add(CalScale.GREGORIAN);
-            icsCalendar.getProperties().add(Version.VERSION_2_0);
-
-            // Create a TimeZone
-            TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-            TimeZone timezone = registry.getTimeZone(LocaleContextHolder.getTimeZone().getID());
-            VTimeZone tz = timezone.getVTimeZone();
-
-            for (ICSFeedEventDTO icsFeedEvent : icsFeed.getEvents()) {
-                // Create the event
-                DateTime start = new DateTime(DateUtility.parseDateTime(icsFeedEvent.getDateTimeInterval().getFrom()), timezone);
-                DateTime end = new DateTime(DateUtility.parseDateTime(icsFeedEvent.getDateTimeInterval().getTo()), timezone);
-
-                VEvent meeting = new VEvent(start, end, icsFeedEvent.getTitle());
-                meeting.getProperties().add(tz.getTimeZoneId());
-                meeting.getProperties().add(new Uid(icsFeedEvent.getId()));
-                meeting.getProperties().add(new Description(icsFeedEvent.getDescription()));
-
-                // Add the event to the calendar.
-                icsCalendar.getComponents().add(meeting);
-            }
+            net.fortuna.ical4j.model.Calendar icsCalendar = toIcsCalendar(icsFeed);
 
             // Output calendar
             CalendarOutputter outputter = new CalendarOutputter();
@@ -98,5 +74,59 @@ public class ICSFeedWriterServiceImpl implements ICSFeedWriterService {
         } catch (IOException e) {
             throw new InternalServerErrorException(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(ICSFeedDTO icsFeed, Writer writer) {
+        try {
+            net.fortuna.ical4j.model.Calendar icsCalendar = toIcsCalendar(icsFeed);
+
+            // Output calendar
+            CalendarOutputter outputter = new CalendarOutputter();
+            outputter.output(icsCalendar, writer);
+            writer.flush();
+        } catch (IOException e) {
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    /**
+     * Converts an ICS feed to a iCal.
+     * @param icsFeed the ICS feed.
+     * @return the iCal.
+     */
+    private net.fortuna.ical4j.model.Calendar toIcsCalendar(ICSFeedDTO icsFeed) {
+        // Set property.
+        System.setProperty("net.fortuna.ical4j.timezone.cache.impl", MapTimeZoneCache.class.getName());
+
+        // Create a calendar
+        net.fortuna.ical4j.model.Calendar icsCalendar = new net.fortuna.ical4j.model.Calendar();
+        icsCalendar.getProperties().add(new ProdId(String.format("-//%s//iCal4j 1.0//%s", icsFeed.getTitle(), LocaleContextHolder.getLocale().toLanguageTag().toUpperCase())));
+        icsCalendar.getProperties().add(CalScale.GREGORIAN);
+        icsCalendar.getProperties().add(Version.VERSION_2_0);
+
+        // Create a TimeZone
+        TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
+        TimeZone timezone = registry.getTimeZone(LocaleContextHolder.getTimeZone().getID());
+        VTimeZone tz = timezone.getVTimeZone();
+
+        for (ICSFeedEventDTO icsFeedEvent : icsFeed.getEvents()) {
+            // Create the event
+            DateTime start = new DateTime(DateUtility.parseDateTime(icsFeedEvent.getDateTimeInterval().getFrom()), timezone);
+            DateTime end = new DateTime(DateUtility.parseDateTime(icsFeedEvent.getDateTimeInterval().getTo()), timezone);
+
+            VEvent meeting = new VEvent(start, end, icsFeedEvent.getTitle());
+            meeting.getProperties().add(tz.getTimeZoneId());
+            meeting.getProperties().add(new Uid(icsFeedEvent.getId()));
+            meeting.getProperties().add(new Description(icsFeedEvent.getDescription()));
+
+            // Add the event to the calendar.
+            icsCalendar.getComponents().add(meeting);
+        }
+
+        return icsCalendar;
     }
 }

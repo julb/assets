@@ -24,40 +24,27 @@
 
 package me.julb.applications.webnotification.services.impl;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import me.julb.applications.webnotification.entities.WebNotificationEntity;
-import me.julb.applications.webnotification.entities.mappers.WebNotificationEntityMapper;
-import me.julb.applications.webnotification.repositories.WebNotificationRepository;
 import me.julb.applications.webnotification.services.MyWebNotificationService;
+import me.julb.applications.webnotification.services.WebNotificationService;
 import me.julb.applications.webnotification.services.dto.WebNotificationDTO;
-import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
-import me.julb.library.dto.messaging.events.ResourceEventType;
 import me.julb.library.utility.data.search.Searchable;
-import me.julb.library.utility.date.DateUtility;
-import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
-import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
- * The web notification service implementation.
+ * The my web notification service implementation.
  * <br>
  * @author Julb.
  */
@@ -67,16 +54,10 @@ import me.julb.springbootstarter.security.mvc.services.ISecurityService;
 public class MyWebNotificationServiceImpl implements MyWebNotificationService {
 
     /**
-     * The web notification repository.
+     * The web notification service.
      */
     @Autowired
-    private WebNotificationRepository webNotificationRepository;
-
-    /**
-     * The mapper.
-     */
-    @Autowired
-    private WebNotificationEntityMapper mapper;
+    private WebNotificationService webNotificationService;
 
     /**
      * The security service.
@@ -84,43 +65,26 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
     @Autowired
     private ISecurityService securityService;
 
-    /**
-     * The async message poster service.
-     */
-    @Autowired
-    private AsyncMessagePosterService asyncMessagePosterService;
-
     // ------------------------------------------ Read methods.
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Page<WebNotificationDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
-
-        ISpecification<WebNotificationEntity> spec = new SearchSpecification<WebNotificationEntity>(searchable).and(new TmSpecification<>(tm));
-        Page<WebNotificationEntity> result = webNotificationRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+    public Flux<WebNotificationDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return securityService.getConnectedUserId().flatMapMany(userId -> {
+            return webNotificationService.findAll(userId, searchable, pageable);
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public WebNotificationDTO findOne(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
-
-        // Get user ID.
-        String connectedUserId = securityService.getConnectedUserId();
-
-        // Check that the web notification exists
-        WebNotificationEntity result = webNotificationRepository.findByTmAndUserIdAndId(tm, connectedUserId, id);
-        if (result == null) {
-            throw new ResourceNotFoundException(WebNotificationEntity.class, id);
-        }
-
-        return mapper.map(result);
+    public Mono<WebNotificationDTO> findOne(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return webNotificationService.findOne(userId, id);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -130,22 +94,10 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void markAllAsRead() {
-        String tm = TrademarkContextHolder.getTrademark();
-
-        // Get user ID.
-        String connectedUserId = securityService.getConnectedUserId();
-
-        // Check that the web notification exists
-        List<WebNotificationEntity> existing = webNotificationRepository.findByTmAndUserId(tm, connectedUserId);
-        for (WebNotificationEntity webNotification : existing) {
-            // Update.
-            webNotification.setRead(true);
-
-            // Handle deletion.
-            this.onUpdate(webNotification);
-        }
-        webNotificationRepository.saveAll(existing);
+    public Mono<Void> markAllAsRead() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return webNotificationService.markAllAsRead(userId);
+        });
     }
 
     /**
@@ -153,25 +105,10 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public WebNotificationDTO markAsRead(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
-
-        // Get user ID.
-        String connectedUserId = securityService.getConnectedUserId();
-
-        // Check that the web notification exists
-        WebNotificationEntity existing = webNotificationRepository.findByTmAndUserIdAndId(tm, connectedUserId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(WebNotificationEntity.class, id);
-        }
-
-        // Update flag.
-        existing.setRead(Boolean.TRUE);
-        this.onUpdate(existing);
-
-        // Return update
-        WebNotificationEntity result = webNotificationRepository.save(existing);
-        return mapper.map(result);
+    public Mono<WebNotificationDTO> markAsRead(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return webNotificationService.markAsRead(userId, id);
+        });
     }
 
     /**
@@ -179,19 +116,10 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void deleteAll() {
-        String tm = TrademarkContextHolder.getTrademark();
-
-        // Get user ID.
-        String connectedUserId = securityService.getConnectedUserId();
-
-        // Check that the web notification exists
-        List<WebNotificationEntity> existing = webNotificationRepository.findByTmAndUserId(tm, connectedUserId);
-        for (WebNotificationEntity webNotification : existing) {
-            // Handle deletion.
-            this.onDelete(webNotification);
-        }
-        webNotificationRepository.deleteAll(existing);
+    public Mono<Void> deleteAll() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return webNotificationService.deleteAll(userId);
+        });
     }
 
     /**
@@ -199,59 +127,9 @@ public class MyWebNotificationServiceImpl implements MyWebNotificationService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String id) {
-        String tm = TrademarkContextHolder.getTrademark();
-
-        // Get user ID.
-        String connectedUserId = securityService.getConnectedUserId();
-
-        // Check that the web notification exists
-        WebNotificationEntity existing = webNotificationRepository.findByTmAndUserIdAndId(tm, connectedUserId, id);
-        if (existing == null) {
-            throw new ResourceNotFoundException(WebNotificationEntity.class, id);
-        }
-
-        // Delete entity.
-        webNotificationRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
-    }
-
-    // ------------------------------------------ Private methods.
-
-    /**
-     * Method called when updating a web notification.
-     * @param entity the entity.
-     */
-    private void onUpdate(WebNotificationEntity entity) {
-        entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        entity.setBusinessCategory(entity.getKind().category());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
-    }
-
-    /**
-     * Method called when deleting a web notification.
-     * @param entity the entity.
-     */
-    private void onDelete(WebNotificationEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
-    }
-
-    /**
-     * Post a resource event.
-     * @param entity the entity.
-     * @param resourceEventType the resource event type.
-     */
-    private void postResourceEvent(WebNotificationEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.WEB_NOTIFICATION)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
-
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+    public Mono<Void> delete(@NotNull @Identifier String id) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return webNotificationService.delete(userId, id);
+        });
     }
 }

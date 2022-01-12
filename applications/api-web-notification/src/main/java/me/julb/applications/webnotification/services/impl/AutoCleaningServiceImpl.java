@@ -25,7 +25,7 @@
 package me.julb.applications.webnotification.services.impl;
 
 import java.time.temporal.ChronoUnit;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,11 +34,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import me.julb.applications.webnotification.configurations.properties.ApplicationProperties;
-import me.julb.applications.webnotification.entities.WebNotificationEntity;
 import me.julb.applications.webnotification.repositories.WebNotificationRepository;
-import me.julb.applications.webnotification.services.MyWebNotificationService;
+import me.julb.applications.webnotification.services.WebNotificationService;
 import me.julb.library.utility.date.DateUtility;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
+import me.julb.springbootstarter.core.context.ContextConstants;
+
+import reactor.util.context.Context;
 
 /**
  * The auto-cleaning service implementation.
@@ -65,7 +66,7 @@ public class AutoCleaningServiceImpl {
      * The web notification service.
      */
     @Autowired
-    private MyWebNotificationService webNotificationService;
+    private WebNotificationService webNotificationService;
 
     /**
      * Launch the automatic cleaning of the web notifications.
@@ -81,29 +82,28 @@ public class AutoCleaningServiceImpl {
             // Get the date time threshold.
             String dateTimeThresold = DateUtility.dateTimeMinus(thresholdInDays.intValue(), ChronoUnit.DAYS);
 
-            // Find web notifications.
-            List<WebNotificationEntity> expiredWebNotifications = webNotificationRepository.findByExpiryDateTimeLessThanEqualOrderByTmAsc(dateTimeThresold);
+            AtomicLong count = new AtomicLong();
 
-            if (expiredWebNotifications.isEmpty()) {
-                LOGGER.info("No web notifications to delete.");
-
-            } else {
-                LOGGER.info("There are <{}> web notifications to delete.", expiredWebNotifications.size());
-
-                // Cleaning
-                for (WebNotificationEntity webNotification : expiredWebNotifications) {
-                    TrademarkContextHolder.setTrademark(webNotification.getTm());
-                    webNotificationService.delete(webNotification.getId());
+            // Find announcements.
+            webNotificationRepository.findByExpiryDateTimeLessThanEqualOrderByTmAsc(dateTimeThresold).flatMap(expiredWebNotification -> {
+                return webNotificationService.delete(expiredWebNotification.getUser().getId(), expiredWebNotification.getId())
+                    .doOnTerminate(count::incrementAndGet)
+                    .contextWrite(Context.of(ContextConstants.TRADEMARK, expiredWebNotification.getTm()));
+            })
+            .doOnComplete(() -> {
+                long numberOfElements = count.get();
+                if (numberOfElements > 0) {
+                    LOGGER.info("{} expired web notifications have been successfully deleted.", count.get());
+                } else {
+                    LOGGER.info("No expired web notifications to delete.");
                 }
-                TrademarkContextHolder.unsetTrademark();
-
-                LOGGER.info("The web notifications have been successfully deleted.");
-            }
-
+                LOGGER.info("END - Operation completed.");
+            })
+            .subscribe();
         } else {
             LOGGER.info("The cleaning threshold is set to <{}> so skipping the autoclean.", thresholdInDays);
-        }
 
-        LOGGER.info("END - Operation completed.");
+            LOGGER.info("END - Operation completed.");
+        }
     }
 }

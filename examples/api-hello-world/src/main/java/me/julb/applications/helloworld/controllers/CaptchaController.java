@@ -1,7 +1,5 @@
 package me.julb.applications.helloworld.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.MediaType;
@@ -10,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import me.julb.springbootstarter.googlerecaptcha.annotations.GoogleReCaptchaValid;
+import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * The captcha controller.
@@ -30,7 +28,6 @@ public class CaptchaController {
      */
     @GetMapping
     @Operation(summary = "Captcha call")
-    @GoogleReCaptchaValid
     public void test() {
         LOGGER.info("Receiving captcha call.");
     }

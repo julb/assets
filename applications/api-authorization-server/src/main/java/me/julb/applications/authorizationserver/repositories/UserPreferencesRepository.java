@@ -24,17 +24,19 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.preferences.UserPreferencesEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user preferences repository.
  * <br>
  * @author Julb.
  */
-public interface UserPreferencesRepository extends MongoRepository<UserPreferencesEntity, String>, MongoSpecificationExecutor<UserPreferencesEntity> {
+public interface UserPreferencesRepository extends ReactiveMongoRepository<UserPreferencesEntity, String>, MongoSpecificationExecutor<UserPreferencesEntity> {
 
     /**
      * Checks if an user preferences by trademark and user exists.
@@ -42,7 +44,7 @@ public interface UserPreferencesRepository extends MongoRepository<UserPreferenc
      * @param userId the user ID.
      * @return <code>true</code> if the user preferences exists, <code>false</code> otherwise.
      */
-    boolean existsByTmAndUser_Id(String tm, String userId);
+    Mono<Boolean> existsByTmAndUser_Id(String tm, String userId);
 
     /**
      * Finds an user preferences by trademark and user.
@@ -50,6 +52,6 @@ public interface UserPreferencesRepository extends MongoRepository<UserPreferenc
      * @param userId the user ID.
      * @return the user preferences, or <code>null</code> if not exists.
      */
-    UserPreferencesEntity findByTmAndUser_Id(String tm, String userId);
+    Mono<UserPreferencesEntity> findByTmAndUser_Id(String tm, String userId);
 
 }

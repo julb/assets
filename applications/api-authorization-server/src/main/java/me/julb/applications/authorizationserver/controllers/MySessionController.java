@@ -24,10 +24,7 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,6 +43,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage my sessions.
@@ -76,7 +77,7 @@ public class MySessionController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public Page<UserSessionDTO> findAll(Searchable searchable, Pageable pageable) {
+    public Flux<UserSessionDTO> findAll(Searchable searchable, Pageable pageable) {
         return mySessionService.findAll(searchable, pageable);
     }
 
@@ -88,7 +89,7 @@ public class MySessionController {
     @Operation(summary = "gets a session")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public UserSessionDTO get(@PathVariable @Identifier String id) {
+    public Mono<UserSessionDTO> get(@PathVariable @Identifier String id) {
         return mySessionService.findOne(id);
     }
 
@@ -101,8 +102,8 @@ public class MySessionController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete() {
-        mySessionService.delete();
+    public Mono<Void> delete() {
+        return mySessionService.delete();
     }
 
     /**
@@ -113,8 +114,8 @@ public class MySessionController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('FULLY_AUTHENTICATED')")
-    public void delete(@PathVariable String id) {
-        mySessionService.delete(id);
+    public Mono<Void> delete(@PathVariable String id) {
+        return mySessionService.delete(id);
     }
 
     // ------------------------------------------ Utility methods.

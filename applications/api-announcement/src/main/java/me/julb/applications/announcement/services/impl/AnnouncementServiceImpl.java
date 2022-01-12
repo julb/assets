@@ -263,6 +263,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     /**
      * Method called when persisting an announcement.
+     * @param tm the trademark.
      * @param entity the entity.
      */
     private Mono<AnnouncementEntity> onPersist(String tm, AnnouncementEntity entity) {

@@ -37,6 +37,8 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The password user authentication service.
  * <br>
@@ -51,14 +53,14 @@ public interface UserAuthenticationByPasswordService {
      * @param userId the user identifier.
      * @return the authentication.
      */
-    UserAuthenticationByPasswordDTO findOne(@NotNull @Identifier String userId);
+    Mono<UserAuthenticationByPasswordDTO> findOne(@NotNull @Identifier String userId);
 
     /**
      * Gets the credentials of the user.
      * @param userId the user ID.
      * @return the DTO holding the credentials.
      */
-    UserAuthenticationCredentialsDTO findOneCredentials(@NotNull @Identifier String userId);
+    Mono<UserAuthenticationCredentialsDTO> findOneCredentials(@NotNull @Identifier String userId);
 
     // ------------------------------------------ Write methods.
 
@@ -68,7 +70,7 @@ public interface UserAuthenticationByPasswordService {
      * @param authenticationCreationDTO the DTO to create a password authentication.
      * @return the created authentication.
      */
-    UserAuthenticationByPasswordDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordCreationDTO authenticationCreationDTO);
+    Mono<UserAuthenticationByPasswordDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordCreationDTO authenticationCreationDTO);
 
     /**
      * Updates a password authentication.
@@ -76,7 +78,7 @@ public interface UserAuthenticationByPasswordService {
      * @param authenticationUpdateDTO the DTO to update a password authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByPasswordDTO update(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordUpdateDTO authenticationUpdateDTO);
+    Mono<UserAuthenticationByPasswordDTO> update(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordUpdateDTO authenticationUpdateDTO);
 
     /**
      * Patches a password authentication.
@@ -84,7 +86,7 @@ public interface UserAuthenticationByPasswordService {
      * @param authenticationPatchDTO the DTO to update a password authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByPasswordDTO patch(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPatchDTO authenticationPatchDTO);
+    Mono<UserAuthenticationByPasswordDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPatchDTO authenticationPatchDTO);
 
     /**
      * Triggers a password reset.
@@ -92,7 +94,7 @@ public interface UserAuthenticationByPasswordService {
      * @param triggerPasswordResetDTO the DTO to trigger a password reset.
      * @return the updated authentication.
      */
-    UserAuthenticationByPasswordDTO triggerPasswordReset(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordTriggerPasswordResetDTO triggerPasswordResetDTO);
+    Mono<UserAuthenticationByPasswordDTO> triggerPasswordReset(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordTriggerPasswordResetDTO triggerPasswordResetDTO);
 
     /**
      * Changes the password.
@@ -100,7 +102,7 @@ public interface UserAuthenticationByPasswordService {
      * @param changePasswordDTO the change password.
      * @return the updated authentication.
      */
-    UserAuthenticationByPasswordDTO updatePassword(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO changePasswordDTO);
+    Mono<UserAuthenticationByPasswordDTO> updatePassword(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO changePasswordDTO);
 
     /**
      * Changes the password with reset token.
@@ -108,12 +110,12 @@ public interface UserAuthenticationByPasswordService {
      * @param changePasswordDTO the change password.
      * @return the updated authentication.
      */
-    UserAuthenticationByPasswordDTO updatePassword(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPasswordResetDTO changePasswordDTO);
+    Mono<UserAuthenticationByPasswordDTO> updatePassword(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPasswordResetDTO changePasswordDTO);
 
     /**
      * Deletes a password authentication.
      * @param userId the user identifier.
      */
-    void delete(@NotNull @Identifier String userId);
+    Mono<Void> delete(@NotNull @Identifier String userId);
 
 }

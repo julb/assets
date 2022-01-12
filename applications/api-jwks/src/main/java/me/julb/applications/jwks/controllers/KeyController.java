@@ -24,6 +24,7 @@
 package me.julb.applications.jwks.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.NotNull;
 
@@ -66,7 +67,7 @@ public class KeyController {
     @Operation(summary = "gets the jwks representation of this keyset")
     @GetMapping(path = {"", "/keys"})
     @ResponseBody
-    public String findKeysetByName(@NotNull @JSONWebKeysetName @PathVariable String keysetName) {
+    public Mono<String> findKeysetByName(@NotNull @JSONWebKeysetName @PathVariable String keysetName) {
         return keyService.findAll(keysetName);
     }
 
@@ -79,7 +80,7 @@ public class KeyController {
     @Operation(summary = "gets the jwk representation of this key")
     @GetMapping(path = "/keys/{keyId:.+}")
     @ResponseBody
-    public String findKeyById(@NotNull @JSONWebKeysetName @PathVariable String keysetName, @NotNull @JSONWebKeyId @PathVariable String keyId) {
+    public Mono<String> findKeyById(@NotNull @JSONWebKeysetName @PathVariable String keysetName, @NotNull @JSONWebKeyId @PathVariable String keyId) {
         return keyService.findByKeyId(keysetName, keyId);
     }
 

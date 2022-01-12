@@ -33,6 +33,8 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordPatchDTO;
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByPasswordUpdateDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The password user authentication service.
  * <br>
@@ -46,7 +48,7 @@ public interface MyAuthenticationByPasswordService {
      * Gets a password authentication through the user ID.
      * @return the authentication.
      */
-    UserAuthenticationByPasswordDTO findOne();
+    Mono<UserAuthenticationByPasswordDTO> findOne();
 
     // ------------------------------------------ Write methods.
 
@@ -55,32 +57,32 @@ public interface MyAuthenticationByPasswordService {
      * @param authenticationCreationDTO the DTO to create a password authentication.
      * @return the created authentication.
      */
-    UserAuthenticationByPasswordDTO create(@NotNull @Valid UserAuthenticationByPasswordCreationDTO authenticationCreationDTO);
+    Mono<UserAuthenticationByPasswordDTO> create(@NotNull @Valid UserAuthenticationByPasswordCreationDTO authenticationCreationDTO);
 
     /**
      * Updates a password authentication.
      * @param authenticationUpdateDTO the DTO to update a password authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByPasswordDTO update(@NotNull @Valid UserAuthenticationByPasswordUpdateDTO authenticationUpdateDTO);
+    Mono<UserAuthenticationByPasswordDTO> update(@NotNull @Valid UserAuthenticationByPasswordUpdateDTO authenticationUpdateDTO);
 
     /**
      * Patches a password authentication.
      * @param authenticationPatchDTO the DTO to update a password authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByPasswordDTO patch(@NotNull @Valid UserAuthenticationByPasswordPatchDTO authenticationPatchDTO);
+    Mono<UserAuthenticationByPasswordDTO> patch(@NotNull @Valid UserAuthenticationByPasswordPatchDTO authenticationPatchDTO);
 
     /**
      * Changes the password.
      * @param changePasswordDTO the change password.
      * @return the updated authentication.
      */
-    UserAuthenticationByPasswordDTO updatePassword(@NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO changePasswordDTO);
+    Mono<UserAuthenticationByPasswordDTO> updatePassword(@NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO changePasswordDTO);
 
     /**
      * Deletes a password authentication.
      */
-    void delete();
+    Mono<Void> delete();
 
 }

@@ -27,31 +27,28 @@ package me.julb.applications.authorizationserver.controllers;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.stereotype.Service;
 
 import me.julb.applications.authorizationserver.entities.authentication.UserAuthenticationType;
 import me.julb.applications.authorizationserver.services.UserAuthenticationGenericService;
 import me.julb.applications.authorizationserver.services.UserSessionService;
 import me.julb.applications.authorizationserver.services.dto.security.UserAuthenticationUserDetailsDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFirstCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenFromIdTokenCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionCreationDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
-import me.julb.applications.authorizationserver.services.dto.session.UserSessionWithRawIdTokenDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.date.DateUtility;
-import me.julb.library.utility.http.HttpServletRequestUtility;
-import me.julb.springbootstarter.security.mvc.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsHandlerDelegate;
+import me.julb.springbootstarter.security.reactive.configurations.beans.userdetails.delegates.IAuthenticationUserDetailsHandlerDelegate;
+import me.julb.springbootstarter.web.reactive.utility.ServerHttpRequestUtility;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The delegate service implementation for user authentication details.
@@ -89,73 +86,71 @@ public class UserAuthenticationUserDetailsHandlerDelegateController implements I
      * /** {@inheritDoc}
      */
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
         LOGGER.info("Authentication successful.");
+        ServerHttpRequest request = webFilterExchange.getExchange().getRequest();
+        ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
 
         Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAuthenticationUserDetailsDTO) {
-            UserAuthenticationUserDetailsDTO dto = (UserAuthenticationUserDetailsDTO) principal;
+        if (principal instanceof UserAuthenticationUserDetailsDTO dto) {
             String userId = dto.getCredentials().getUser().getId();
             String id = dto.getCredentials().getUserAuthentication().getId();
 
             // Update successful.
-            userAuthenticationGenericService.updateSuccessfulUse(userId, id);
+            return userAuthenticationGenericService.updateSuccessfulUse(userId, id).flatMap(authenticationUpdated -> {
+                // Generate session.
+                UserAuthenticationType type = dto.getCredentials().getUserAuthentication().getType();
+                if (UserAuthenticationType.PASSWORD.equals(type) || UserAuthenticationType.PINCODE.equals(type) || UserAuthenticationType.API_KEY.equals(type)) {
+                    // Remember me ?
+                    Boolean rememberMe = obtainRememberMe(request);
 
-            // Generate session.
-            UserAuthenticationType type = dto.getCredentials().getUserAuthentication().getType();
-            if (UserAuthenticationType.PASSWORD.equals(type) || UserAuthenticationType.PINCODE.equals(type) || UserAuthenticationType.API_KEY.equals(type)) {
-                // Remember me ?
-                Boolean rememberMe = obtainRememberMe(request);
+                    // Prepare user session creation.
+                    UserSessionCreationDTO userSessionCreationDTO = new UserSessionCreationDTO();
+                    if (dto.getMfaEnabled().booleanValue()) {
+                        userSessionCreationDTO.setMfaVerified(Boolean.FALSE);
+                    }
 
-                // Prepare user session creation.
-                UserSessionCreationDTO userSessionCreationDTO = new UserSessionCreationDTO();
-                if (dto.getMfaEnabled()) {
-                    userSessionCreationDTO.setMfaVerified(Boolean.FALSE);
-                }
+                    if (rememberMe.booleanValue()) {
+                        userSessionCreationDTO.setDurationInSeconds(TimeUnit.DAYS.toSeconds(Integers.THIRTY));
+                    } else {
+                        userSessionCreationDTO.setDurationInSeconds(TimeUnit.HOURS.toSeconds(Integers.TWO));
+                    }
 
-                if (rememberMe) {
-                    userSessionCreationDTO.setDurationInSeconds(TimeUnit.DAYS.toSeconds(Integers.THIRTY));
+                    // Generate session
+                    return userSessionService.create(userId, userSessionCreationDTO).flatMap(session -> {
+                        // Generate access token
+                        UserSessionAccessTokenFromIdTokenCreationDTO creationDTO = new UserSessionAccessTokenFromIdTokenCreationDTO();
+                        creationDTO.setBrowser(Objects.toString(ServerHttpRequestUtility.getBrowser(request), null));
+                        creationDTO.setIpv4Address(ServerHttpRequestUtility.getUserIpAddress(request));
+                        creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
+                        creationDTO.setOperatingSystem(Objects.toString(ServerHttpRequestUtility.getOperatingSystem(request)));
+                        creationDTO.setRawIdToken(session.getRawIdToken());
+                        return userSessionService.createAccessTokenFromIdToken(creationDTO).flatMap(sessionToken -> {
+                            // Write JSON response to body.
+                            return httpUserAccessTokenService.writeResponseWithIdToken(sessionToken, response);
+                        });
+                    });
+                } else if (UserAuthenticationType.TOTP.equals(type)) {
+                    // Get MFA session ID.
+                    return userSessionService.markMfaAsVerified(userId, dto.getMfaSessionId()).flatMap(userSession -> {
+                        // Regenerate an access token.
+                        UserSessionAccessTokenFirstCreationDTO creationDTO = new UserSessionAccessTokenFirstCreationDTO();
+                        creationDTO.setBrowser(Objects.toString(ServerHttpRequestUtility.getBrowser(request)));
+                        creationDTO.setIpv4Address(ServerHttpRequestUtility.getUserIpAddress(request));
+                        creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
+                        creationDTO.setOperatingSystem(Objects.toString(ServerHttpRequestUtility.getOperatingSystem(request)));
+                        return userSessionService.createAccessTokenFirst(userId, userSession.getId(), creationDTO).flatMap(sessionToken -> {
+                            // Write JSON response to body.
+                            return httpUserAccessTokenService.writeResponseWithoutIdToken(sessionToken, response);
+                        });
+                    });
                 } else {
-                    userSessionCreationDTO.setDurationInSeconds(TimeUnit.HOURS.toSeconds(Integers.TWO));
+                    return Mono.empty();
                 }
-
-                // Generate session
-                UserSessionWithRawIdTokenDTO session = userSessionService.create(userId, userSessionCreationDTO);
-
-                // Generate access token
-                UserSessionAccessTokenFromIdTokenCreationDTO creationDTO = new UserSessionAccessTokenFromIdTokenCreationDTO();
-                creationDTO.setBrowser(Objects.toString(HttpServletRequestUtility.getBrowser(request), null));
-                creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
-                creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
-                creationDTO.setOperatingSystem(Objects.toString(HttpServletRequestUtility.getOperatingSystem(request)));
-                creationDTO.setRawIdToken(session.getRawIdToken());
-                UserSessionAccessTokenWithIdTokenDTO sessionToken = userSessionService.createAccessTokenFromIdToken(creationDTO);
-
-                // Write JSON response to body.
-                httpUserAccessTokenService.writeResponseWithIdToken(sessionToken, response);
-            } else if (UserAuthenticationType.TOTP.equals(type)) {
-                // Get MFA session ID.
-                UserSessionDTO userSession = userSessionService.markMfaAsVerified(userId, dto.getMfaSessionId());
-
-                // Regenerate an access token.
-                UserSessionAccessTokenFirstCreationDTO creationDTO = new UserSessionAccessTokenFirstCreationDTO();
-                creationDTO.setBrowser(Objects.toString(HttpServletRequestUtility.getBrowser(request)));
-                creationDTO.setIpv4Address(HttpServletRequestUtility.getUserIpv4Address(request));
-                creationDTO.setLastUseDateTime(DateUtility.dateTimeNow());
-                creationDTO.setOperatingSystem(Objects.toString(HttpServletRequestUtility.getOperatingSystem(request)));
-                UserSessionAccessTokenDTO sessionToken = userSessionService.createAccessTokenFirst(userId, userSession.getId(), creationDTO);
-
-                // Write JSON response to body.
-                httpUserAccessTokenService.writeResponseWithoutIdToken(sessionToken, response);
-            }
+            });            
+        } else {
+            return Mono.empty();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
     }
 
     /**
@@ -163,7 +158,7 @@ public class UserAuthenticationUserDetailsHandlerDelegateController implements I
      * @param request so that request attributes can be retrieved
      * @return the rememberMe attribute.
      */
-    protected Boolean obtainRememberMe(HttpServletRequest request) {
-        return Boolean.parseBoolean(request.getParameter(REMEMBERME_PARAMETER));
+    protected Boolean obtainRememberMe(ServerHttpRequest request) {
+        return Boolean.parseBoolean(request.getQueryParams().getFirst(REMEMBERME_PARAMETER));
     }
 }

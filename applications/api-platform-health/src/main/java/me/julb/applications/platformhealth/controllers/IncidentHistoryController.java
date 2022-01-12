@@ -24,13 +24,10 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +53,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage history of an incident.
@@ -87,7 +88,7 @@ public class IncidentHistoryController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'read')")
-    public Page<IncidentHistoryDTO> findAll(@PathVariable @Identifier String incidentId, Searchable searchable, Pageable pageable) {
+    public Flux<IncidentHistoryDTO> findAll(@PathVariable @Identifier String incidentId, Searchable searchable, Pageable pageable) {
         return incidentHistoryService.findAll(incidentId, searchable, pageable);
     }
 
@@ -100,7 +101,7 @@ public class IncidentHistoryController {
     @Operation(summary = "gets an history of an incident")
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'read')")
-    public IncidentHistoryDTO get(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String id) {
+    public Mono<IncidentHistoryDTO> get(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String id) {
         return incidentHistoryService.findOne(incidentId, id);
     }
 
@@ -116,7 +117,7 @@ public class IncidentHistoryController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'update')")
-    public IncidentHistoryDTO create(@PathVariable @Identifier String incidentId, @RequestBody @NotNull @Valid IncidentHistoryCreationDTO creationDTO) {
+    public Mono<IncidentHistoryDTO> create(@PathVariable @Identifier String incidentId, @RequestBody @NotNull @Valid IncidentHistoryCreationDTO creationDTO) {
         return incidentHistoryService.create(incidentId, creationDTO);
     }
 
@@ -130,7 +131,7 @@ public class IncidentHistoryController {
     @Operation(summary = "updates a incident history")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'update')")
-    public IncidentHistoryDTO update(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid IncidentHistoryUpdateDTO updateDTO) {
+    public Mono<IncidentHistoryDTO> update(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid IncidentHistoryUpdateDTO updateDTO) {
         return incidentHistoryService.update(incidentId, id, updateDTO);
     }
 
@@ -144,7 +145,7 @@ public class IncidentHistoryController {
     @Operation(summary = "patches a incident history")
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'update')")
-    public IncidentHistoryDTO patch(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid IncidentHistoryPatchDTO patchDTO) {
+    public Mono<IncidentHistoryDTO> patch(@PathVariable @Identifier String incidentId, @PathVariable @Identifier String id, @RequestBody @NotNull @Valid IncidentHistoryPatchDTO patchDTO) {
         return incidentHistoryService.patch(incidentId, id, patchDTO);
     }
 
@@ -157,8 +158,8 @@ public class IncidentHistoryController {
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#incidentId, 'incident', 'update')")
-    public void delete(@PathVariable @Identifier String incidentId, @PathVariable String id) {
-        incidentHistoryService.delete(incidentId, id);
+    public Mono<Void> delete(@PathVariable @Identifier String incidentId, @PathVariable String id) {
+        return incidentHistoryService.delete(incidentId, id);
     }
     // ------------------------------------------ Utility methods.
 

@@ -24,26 +24,36 @@
 
 package me.julb.applications.platformhealth.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.platformhealth.entities.IncidentComponentEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident component repository.
  * <br>
  * @author Julb.
  */
-public interface IncidentComponentRepository extends MongoRepository<IncidentComponentEntity, String>, MongoSpecificationExecutor<IncidentComponentEntity> {
+public interface IncidentComponentRepository extends ReactiveMongoRepository<IncidentComponentEntity, String>, MongoSpecificationExecutor<IncidentComponentEntity> {
     /**
      * Finds the components linked to incident by its trademark and incident id.
      * @param tm the trademark.
      * @param incidentId the incident ID.
      * @return the incident component items.
      */
-    List<IncidentComponentEntity> findByTmAndIncidentId(String tm, String incidentId);
+    Flux<IncidentComponentEntity> findByTmAndIncidentId(String tm, String incidentId);
+
+    /**
+     * Checks if the component is linked to incident by its trademark, incident id and id.
+     * @param tm the trademark.
+     * @param incidentId the incident ID.
+     * @param componentId the component ID.
+     * @return <code>true</code> if a link exists, <code>false</code> otherwise.
+     */
+    Mono<Boolean> existsByTmAndIncidentIdAndComponentId(String tm, String incidentId, String componentId);
 
     /**
      * Finds the component linked to incident by its trademark, incident id and id.
@@ -52,7 +62,7 @@ public interface IncidentComponentRepository extends MongoRepository<IncidentCom
      * @param componentId the component ID.
      * @return the incident component entity, <code>null</code> otherwise.
      */
-    IncidentComponentEntity findByTmAndIncidentIdAndComponentId(String tm, String incidentId, String componentId);
+    Mono<IncidentComponentEntity> findByTmAndIncidentIdAndComponentId(String tm, String incidentId, String componentId);
 
     /**
      * Finds the components linked to incident by its trademark and component id.
@@ -60,13 +70,13 @@ public interface IncidentComponentRepository extends MongoRepository<IncidentCom
      * @param componentId the component ID.
      * @return the incident component items.
      */
-    List<IncidentComponentEntity> findByTmAndComponentId(String tm, String componentId);
+    Flux<IncidentComponentEntity> findByTmAndComponentId(String tm, String componentId);
 
     /**
      * Checks if any incident is linked to the given component.
      * @param componentId the component ID.
      * @return <code>true</code> if it is linked to this component, <code>false</code> otherwise.
      */
-    boolean existsByComponentId(String componentId);
+    Mono<Boolean> existsByComponentId(String componentId);
 
 }

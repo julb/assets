@@ -67,7 +67,7 @@ public class SpecificationMongoRepository<T, ID extends Serializable> extends Si
     /**
      * Creates a new {@link SimpleMongoRepository} for the given {@link MongoEntityInformation} and {@link MongoTemplate}.
      * @param metadata must not be {@literal null}.
-     * @param mongoOperations must not be {@literal null}.
+     * @param reactiveMongoOperations must not be {@literal null}.
      */
     public SpecificationMongoRepository(MongoEntityInformation<T, ID> metadata, ReactiveMongoOperations reactiveMongoOperations) {
         super(metadata, reactiveMongoOperations);

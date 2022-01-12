@@ -24,13 +24,6 @@
 
 package me.julb.applications.authorizationserver.controllers;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.NotNull;
@@ -38,7 +31,7 @@ import javax.validation.constraints.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
@@ -47,7 +40,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -63,7 +56,6 @@ import me.julb.applications.authorizationserver.entities.session.UserSessionEnti
 import me.julb.applications.authorizationserver.services.SignupService;
 import me.julb.applications.authorizationserver.services.UserMailService;
 import me.julb.applications.authorizationserver.services.UserSessionService;
-import me.julb.applications.authorizationserver.services.dto.mail.UserMailDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileCreationDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionDTO;
 import me.julb.applications.authorizationserver.services.dto.signup.SignupWithPincodeCreationDTO;
@@ -71,7 +63,10 @@ import me.julb.applications.authorizationserver.services.dto.user.UserDTO;
 import me.julb.library.utility.constants.Integers;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.http.HttpHeaderUtility;
-import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBaseTest;
+import me.julb.springbootstarter.persistence.mongodb.reactive.test.base.AbstractMongoDbReactiveBaseTest;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Unit test for the authentication by pincode class.
@@ -79,10 +74,10 @@ import me.julb.springbootstarter.persistence.mongodb.test.base.AbstractMongoDbBa
  * @author Julb.
  */
 @Import(TestChannelBinderConfiguration.class)
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @ContextConfiguration(initializers = AuthenticationByPincodeControllerTest.Initializer.class)
 @Testcontainers
-public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTest {
+public class AuthenticationByPincodeControllerTest extends AbstractMongoDbReactiveBaseTest {
 
     /**
      * The MongoDB container.
@@ -91,10 +86,10 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
     private static final MongoDBContainer MONGODB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo").withTag("4.4"));
 
     /**
-     * The mock MVC.
+     * The web test client.
      */
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     /**
      * The signup service.
@@ -130,15 +125,10 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
     private SignupWithPincodeCreationDTO userNotVerifiedSignupWithPincode;
 
     /**
-     * The user verified.
-     */
-    private UserDTO userNotVerified;
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public void setupData() {
+    public Mono<Void> setupData() {
         // Create user with verified email.
         userVerifiedSignupWithPincode = new SignupWithPincodeCreationDTO();
         userVerifiedSignupWithPincode.setMail("user-verified-with-pincode@julb.io");
@@ -146,10 +136,6 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
         userVerifiedSignupWithPincode.setProfile(new UserProfileCreationDTO());
         userVerifiedSignupWithPincode.getProfile().setFirstName("UserVerified");
         userVerifiedSignupWithPincode.getProfile().setLastName("WithPincode");
-        userVerified = this.signupService.signup(userVerifiedSignupWithPincode);
-
-        UserMailDTO userVerifiedMail = userMailService.findByMail(userVerified.getMail());
-        this.userMailService.updateVerifyWithoutToken(userVerified.getId(), userVerifiedMail.getId());
 
         // Create user with non-verified email.
         userNotVerifiedSignupWithPincode = new SignupWithPincodeCreationDTO();
@@ -158,15 +144,26 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
         userNotVerifiedSignupWithPincode.setProfile(new UserProfileCreationDTO());
         userNotVerifiedSignupWithPincode.getProfile().setFirstName("UserNotVerified");
         userNotVerifiedSignupWithPincode.getProfile().setLastName("WithPincode");
-        userNotVerified = this.signupService.signup(userNotVerifiedSignupWithPincode);
+
+        Mono<Void> userVerifiedMono = this.signupService.signup(userVerifiedSignupWithPincode).flatMap(userVerified -> {
+            this.userVerified = userVerified;
+            return userMailService.findByMail(userVerified.getMail()).flatMap(userVerifiedMail -> {
+                return this.userMailService.updateVerifyWithoutToken(userVerified.getId(), userVerifiedMail.getId()).then();
+            });
+        });
+
+        
+        Mono<Void> userNotVerifiedMono = this.signupService.signup(userNotVerifiedSignupWithPincode).then();
+
+        return Mono.zip(userVerifiedMono, userNotVerifiedMono).then();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<?>[] getEntityClasses() {
-        return new Class<?>[] {UserEntity.class, UserAuthenticationByPincodeEntity.class, UserMailEntity.class, UserProfileEntity.class, UserPreferencesEntity.class, UserSessionEntity.class};
+    public Flux<Class<?>> getEntityClasses() {
+        return Flux.just(UserEntity.class, UserAuthenticationByPincodeEntity.class, UserMailEntity.class, UserProfileEntity.class, UserPreferencesEntity.class, UserSessionEntity.class);
     }
 
     /**
@@ -177,29 +174,37 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
         throws Exception {
 
         //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/pincode")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("mail", userVerifiedSignupWithPincode.getMail())
-                    .param("pincode", userVerifiedSignupWithPincode.getPincode())
-                    .param("rememberMe", "true")
-            )
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
-            .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.idToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
-            .andDo((result) -> {
-                // Ensure session is created.
-                List<UserSessionDTO> allUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                Assertions.assertEquals(1, allUserSessions.size());
-                
-                UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
+        webTestClient
+            .post()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/login/pincode")
+                    .queryParam("mail", userVerifiedSignupWithPincode.getMail())
+                    .queryParam("pincode", userVerifiedSignupWithPincode.getPincode())
+                    .queryParam("rememberMe", "true")
+                    .build()
+                )
+                .accept(MediaType.APPLICATION_FORM_URLENCODED)
+                .exchange()
+                .expectStatus()
+                    .isOk()
+                .expectBody()
+                    .jsonPath("$.type").isEqualTo(HttpHeaderUtility.BEARER)
+                    .jsonPath("$.accessToken").isNotEmpty()
+                    .jsonPath("$.idToken").isNotEmpty()
+                    .jsonPath("$.expiresIn").isNotEmpty()
+                    .consumeWith(consumer -> {
+                        // Ensure session is created.
+                        userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).collectList().flatMap(allUserSessions -> {
+                            Assertions.assertEquals(1, allUserSessions.size());
+                        
+                            UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
+                            
+                            Assertions.assertTrue(userSession.getMfaVerified());
+                            Assertions.assertEquals(TimeUnit.DAYS.toSeconds(Integers.THIRTY), userSession.getDurationInSeconds());
 
-                Assertions.assertTrue(userSession.getMfaVerified());
-                Assertions.assertEquals(TimeUnit.DAYS.toSeconds(Integers.THIRTY), userSession.getDurationInSeconds());
-            });
+                            return Mono.empty();
+                        }).block();
+                    });
         //@formatter:on
     }
 
@@ -211,28 +216,36 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
         throws Exception {
 
         //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/pincode")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("mail", userVerifiedSignupWithPincode.getMail())
-                    .param("pincode", userVerifiedSignupWithPincode.getPincode())
-            )
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.type", is(HttpHeaderUtility.BEARER)))
-            .andExpect(jsonPath("$.accessToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.idToken", notNullValue(String.class)))
-            .andExpect(jsonPath("$.expiresIn", notNullValue(Integer.class)))
-            .andDo((result) -> {
-                // Ensure session is created.
-                List<UserSessionDTO> allUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                Assertions.assertEquals(1, allUserSessions.size());
-                
-                UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
+        webTestClient
+            .post()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/login/pincode")
+                    .queryParam("mail", userVerifiedSignupWithPincode.getMail())
+                    .queryParam("pincode", userVerifiedSignupWithPincode.getPincode())
+                    .build()
+                )
+                .accept(MediaType.APPLICATION_FORM_URLENCODED)
+                .exchange()
+                .expectStatus()
+                    .isOk()
+                .expectBody()
+                    .jsonPath("$.type").isEqualTo(HttpHeaderUtility.BEARER)
+                    .jsonPath("$.accessToken").isNotEmpty()
+                    .jsonPath("$.idToken").isNotEmpty()
+                    .jsonPath("$.expiresIn").isNotEmpty()
+                    .consumeWith(consumer -> {
+                        // Ensure session is created.
+                        userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).collectList().flatMap(allUserSessions -> {
+                            Assertions.assertEquals(1, allUserSessions.size());
+                        
+                            UserSessionDTO userSession = Iterables.getOnlyElement(allUserSessions);
+                            
+                            Assertions.assertTrue(userSession.getMfaVerified());
+                            Assertions.assertEquals(TimeUnit.HOURS.toSeconds(Integers.TWO), userSession.getDurationInSeconds());
 
-                Assertions.assertTrue(userSession.getMfaVerified());
-                Assertions.assertEquals(TimeUnit.HOURS.toSeconds(Integers.TWO), userSession.getDurationInSeconds());
-            });
+                            return Mono.empty();
+                        }).block();
+                    });
         //@formatter:on
     }
 
@@ -244,19 +257,27 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
         throws Exception {
 
         //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/pincode")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("mail", userVerifiedSignupWithPincode.getMail())
-                    .param("pincode", "99999999")
-            )
-            .andExpect(status().isUnauthorized())
-            .andDo((result) -> {
-                // Ensure session is created.
-                List<UserSessionDTO> allUserSessions = userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                Assertions.assertEquals(0, allUserSessions.size());
-            });
+        webTestClient
+            .post()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/login/pincode")
+                    .queryParam("mail", userVerifiedSignupWithPincode.getMail())
+                    .queryParam("pincode", "99999999")
+                    .build()
+                )
+                .accept(MediaType.APPLICATION_FORM_URLENCODED)
+                .exchange()
+                .expectStatus()
+                    .isUnauthorized()
+                .expectBody()
+                    .consumeWith(consumer -> {
+                        // Ensure session is created.
+                        userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).collectList().flatMap(allUserSessions -> {
+                            Assertions.assertEquals(0, allUserSessions.size());
+
+                            return Mono.empty();
+                        }).block();
+                    });
         //@formatter:on
     }
 
@@ -267,19 +288,27 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
     public void whenAuthenticateByPincodeWithUserEmailNotConfirmed_thenReturn401()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/pincode")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("mail", userNotVerifiedSignupWithPincode.getMail())
-                    .param("pincode", userNotVerifiedSignupWithPincode.getPincode())
-            )
-            .andExpect(status().isUnauthorized())
-            .andDo((result) -> {
-                // Ensure session is created.
-                List<UserSessionDTO> allUserSessions = userSessionService.findAll(userNotVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                Assertions.assertEquals(0, allUserSessions.size());
-            });
+        webTestClient
+            .post()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/login/pincode")
+                    .queryParam("mail", userNotVerifiedSignupWithPincode.getMail())
+                    .queryParam("pincode", userNotVerifiedSignupWithPincode.getPincode())
+                    .build()
+                )
+                .accept(MediaType.APPLICATION_FORM_URLENCODED)
+                .exchange()
+                .expectStatus()
+                    .isUnauthorized()
+                .expectBody()
+                    .consumeWith(consumer -> {
+                        // Ensure session is created.
+                        userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).collectList().flatMap(allUserSessions -> {
+                            Assertions.assertEquals(0, allUserSessions.size());
+
+                            return Mono.empty();
+                        }).block();
+                    });
         //@formatter:on
     }
 
@@ -290,19 +319,27 @@ public class AuthenticationByPincodeControllerTest extends AbstractMongoDbBaseTe
     public void whenAuthenticateByPincodeWithUnknownUser_thenReturn401()
         throws Exception {
         //@formatter:off
-        mockMvc
-            .perform(
-                post("/login/pincode")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .param("mail", "unknown@julb.io")
-                    .param("pincode", "00000000")
-            )
-            .andExpect(status().isUnauthorized())
-            .andDo((result) -> {
-                // Ensure session is created.
-                List<UserSessionDTO> allUserSessions = userSessionService.findAll(userNotVerified.getId(), Searchable.empty(), Pageable.unpaged()).getContent();
-                Assertions.assertEquals(0, allUserSessions.size());
-            });;
+        webTestClient
+            .post()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/login/pincode")
+                    .queryParam("mail", "unknown@julb.io")
+                    .queryParam("pincode", "99999999")
+                    .build()
+                )
+                .accept(MediaType.APPLICATION_FORM_URLENCODED)
+                .exchange()
+                .expectStatus()
+                    .isUnauthorized()
+                .expectBody()
+                    .consumeWith(consumer -> {
+                        // Ensure session is created.
+                        userSessionService.findAll(userVerified.getId(), Searchable.empty(), Pageable.unpaged()).collectList().flatMap(allUserSessions -> {
+                            Assertions.assertEquals(0, allUserSessions.size());
+
+                            return Mono.empty();
+                        }).block();
+                    });
         //@formatter:on
     }
 

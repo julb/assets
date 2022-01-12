@@ -27,7 +27,6 @@ package me.julb.applications.platformhealth.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.platformhealth.services.dto.incident.IncidentHistoryCreationDTO;
@@ -36,6 +35,9 @@ import me.julb.applications.platformhealth.services.dto.incident.IncidentHistory
 import me.julb.applications.platformhealth.services.dto.incident.IncidentHistoryUpdateDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident service.
@@ -53,7 +55,7 @@ public interface IncidentHistoryService {
      * @param pageable the pageable information.
      * @return a paged list of incidents.
      */
-    Page<IncidentHistoryDTO> findAll(@NotNull @Identifier String incidentId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<IncidentHistoryDTO> findAll(@NotNull @Identifier String incidentId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a incident history through its ID.
@@ -61,7 +63,7 @@ public interface IncidentHistoryService {
      * @param id the incident history identifier.
      * @return the incident history.
      */
-    IncidentHistoryDTO findOne(@NotNull @Identifier String incidentId, @NotNull @Identifier String id);
+    Mono<IncidentHistoryDTO> findOne(@NotNull @Identifier String incidentId, @NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -71,7 +73,7 @@ public interface IncidentHistoryService {
      * @param creationDTO the DTO to create a incident history.
      * @return the created incident history.
      */
-    IncidentHistoryDTO create(@NotNull @Identifier String incidentId, @NotNull @Valid IncidentHistoryCreationDTO creationDTO);
+    Mono<IncidentHistoryDTO> create(@NotNull @Identifier String incidentId, @NotNull @Valid IncidentHistoryCreationDTO creationDTO);
 
     /**
      * Updates a incident history.
@@ -80,7 +82,7 @@ public interface IncidentHistoryService {
      * @param updateDTO the DTO to update a incident history.
      * @return the updated incident history.
      */
-    IncidentHistoryDTO update(@NotNull @Identifier String incidentId, @NotNull @Identifier String id, @NotNull @Valid IncidentHistoryUpdateDTO updateDTO);
+    Mono<IncidentHistoryDTO> update(@NotNull @Identifier String incidentId, @NotNull @Identifier String id, @NotNull @Valid IncidentHistoryUpdateDTO updateDTO);
 
     /**
      * Patches a incident history.
@@ -89,19 +91,19 @@ public interface IncidentHistoryService {
      * @param patchDTO the DTO to update a incident history.
      * @return the updated incident history.
      */
-    IncidentHistoryDTO patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String id, @NotNull @Valid IncidentHistoryPatchDTO patchDTO);
+    Mono<IncidentHistoryDTO> patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String id, @NotNull @Valid IncidentHistoryPatchDTO patchDTO);
 
     /**
      * Deletes all incident history.
      * @param incidentId the incident ID.
      */
-    void delete(@NotNull @Identifier String incidentId);
+    Mono<Void> delete(@NotNull @Identifier String incidentId);
 
     /**
      * Deletes a incident history.
      * @param incidentId the incident ID.
      * @param id the id of the incident history to delete.
      */
-    void delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String id);
 
 }

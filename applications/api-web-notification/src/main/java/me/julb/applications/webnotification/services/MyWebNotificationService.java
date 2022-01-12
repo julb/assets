@@ -26,12 +26,14 @@ package me.julb.applications.webnotification.services;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.webnotification.services.dto.WebNotificationDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The web notification service.
@@ -48,38 +50,38 @@ public interface MyWebNotificationService {
      * @param pageable the pageable information.
      * @return a paged list of web notifications.
      */
-    Page<WebNotificationDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<WebNotificationDTO> findAll(@NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a web notification through its ID.
      * @param id the web notification identifier.
      * @return the web notification.
      */
-    WebNotificationDTO findOne(@NotNull @Identifier String id);
+    Mono<WebNotificationDTO> findOne(@NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
     /**
      * Mark all connected user notifications as read.
      */
-    void markAllAsRead();
+    Mono<Void> markAllAsRead();
 
     /**
      * Marks a connected user web notification as read.
      * @param id the web notification identifier.
      * @return the updated web notification.
      */
-    WebNotificationDTO markAsRead(@NotNull @Identifier String id);
+    Mono<WebNotificationDTO> markAsRead(@NotNull @Identifier String id);
 
     /**
      * Deletes all user web notifications.
      */
-    void deleteAll();
+    Mono<Void> deleteAll();
 
     /**
      * Deletes a web notification.
      * @param id the id of the web notification to delete.
      */
-    void delete(@NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String id);
 
 }

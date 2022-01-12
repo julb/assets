@@ -37,6 +37,8 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
 import me.julb.library.utility.validator.constraints.Identifier;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The pincode user authentication service.
  * <br>
@@ -51,14 +53,14 @@ public interface UserAuthenticationByPincodeService {
      * @param userId the user identifier.
      * @return the authentication.
      */
-    UserAuthenticationByPincodeDTO findOne(@NotNull @Identifier String userId);
+    Mono<UserAuthenticationByPincodeDTO> findOne(@NotNull @Identifier String userId);
 
     /**
      * Gets the credentials of the user.
      * @param userId the user ID.
      * @return the DTO holding the credentials.
      */
-    UserAuthenticationCredentialsDTO findOneCredentials(@NotNull @Identifier String userId);
+    Mono<UserAuthenticationCredentialsDTO> findOneCredentials(@NotNull @Identifier String userId);
 
     // ------------------------------------------ Write methods.
 
@@ -68,7 +70,7 @@ public interface UserAuthenticationByPincodeService {
      * @param authenticationCreationDTO the DTO to create a pincode authentication.
      * @return the created authentication.
      */
-    UserAuthenticationByPincodeDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeCreationDTO authenticationCreationDTO);
+    Mono<UserAuthenticationByPincodeDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeCreationDTO authenticationCreationDTO);
 
     /**
      * Updates a pincode authentication.
@@ -76,7 +78,7 @@ public interface UserAuthenticationByPincodeService {
      * @param authenticationUpdateDTO the DTO to update a pincode authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByPincodeDTO update(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeUpdateDTO authenticationUpdateDTO);
+    Mono<UserAuthenticationByPincodeDTO> update(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeUpdateDTO authenticationUpdateDTO);
 
     /**
      * Patches a pincode authentication.
@@ -84,7 +86,7 @@ public interface UserAuthenticationByPincodeService {
      * @param authenticationPatchDTO the DTO to update a pincode authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByPincodeDTO patch(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePatchDTO authenticationPatchDTO);
+    Mono<UserAuthenticationByPincodeDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePatchDTO authenticationPatchDTO);
 
     /**
      * Triggers a pincode reset.
@@ -92,7 +94,7 @@ public interface UserAuthenticationByPincodeService {
      * @param triggerPincodeResetDTO the DTO to trigger a pincode reset.
      * @return the updated authentication.
      */
-    UserAuthenticationByPincodeDTO triggerPincodeReset(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeTriggerPincodeResetDTO triggerPincodeResetDTO);
+    Mono<UserAuthenticationByPincodeDTO> triggerPincodeReset(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodeTriggerPincodeResetDTO triggerPincodeResetDTO);
 
     /**
      * Changes the pincode.
@@ -100,7 +102,7 @@ public interface UserAuthenticationByPincodeService {
      * @param changePincodeDTO the change pincode.
      * @return the updated authentication.
      */
-    UserAuthenticationByPincodeDTO updatePincode(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePincodeChangeDTO changePincodeDTO);
+    Mono<UserAuthenticationByPincodeDTO> updatePincode(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePincodeChangeDTO changePincodeDTO);
 
     /**
      * Changes the pincode with reset token.
@@ -108,12 +110,12 @@ public interface UserAuthenticationByPincodeService {
      * @param changePincodeDTO the change pincode.
      * @return the updated authentication.
      */
-    UserAuthenticationByPincodeDTO updatePincode(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePincodeResetDTO changePincodeDTO);
+    Mono<UserAuthenticationByPincodeDTO> updatePincode(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPincodePincodeResetDTO changePincodeDTO);
 
     /**
      * Deletes a pincode authentication.
      * @param userId the user identifier.
      */
-    void delete(@NotNull @Identifier String userId);
+    Mono<Void> delete(@NotNull @Identifier String userId);
 
 }

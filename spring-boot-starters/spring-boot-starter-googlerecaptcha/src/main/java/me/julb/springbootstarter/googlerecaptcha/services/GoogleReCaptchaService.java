@@ -24,10 +24,13 @@
 
 package me.julb.springbootstarter.googlerecaptcha.services;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
-import lombok.NonNull;
+import me.julb.library.utility.validator.constraints.GoogleReCaptchaAction;
+import me.julb.library.utility.validator.constraints.GoogleReCaptchaToken;
+import me.julb.library.utility.validator.constraints.IPAddress;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The google re-captcha service.
@@ -38,9 +41,11 @@ public interface GoogleReCaptchaService {
 
     /**
      * Validates the given captcha.
-     * @param httpServletRequest the servlet request.
+     * @param captchaToken the received captcha token.
+     * @param captchaAction the received captcha action.
+     * @param ipAddress the client ip address.
      * @return <code>true</code> if the captcha is valid, <code>false</code> otherwise.
      */
-    Boolean validate(@NotNull @NonNull HttpServletRequest httpServletRequest);
+    Mono<Boolean> validate(@NotNull @GoogleReCaptchaToken String captchaToken, @NotNull @GoogleReCaptchaAction String captchaAction, @IPAddress String ipAddress);
 
 }

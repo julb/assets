@@ -28,15 +28,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
-
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Service;
 
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenDTO;
 import me.julb.applications.authorizationserver.services.dto.session.UserSessionAccessTokenWithIdTokenDTO;
 import me.julb.library.utility.exceptions.InternalServerErrorException;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The access token utility.
@@ -56,15 +59,13 @@ public class HttpUserAccessTokenService {
      * @param accessToken the access token.
      * @param response the response.
      */
-    public void writeResponseWithIdToken(UserSessionAccessTokenWithIdTokenDTO accessToken, HttpServletResponse response) {
+    public Mono<Void> writeResponseWithIdToken(UserSessionAccessTokenWithIdTokenDTO accessToken, ServerHttpResponse response) {
         try {
             // Write JSON response to body.
-            response.setStatus(HttpStatus.OK.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            objectMapper.writeValue(response.getOutputStream(), accessToken);
-
-            // Flush response.
-            response.flushBuffer();
+            response.setStatusCode(HttpStatus.OK);
+            response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+            DataBuffer buffer = response.bufferFactory().wrap(objectMapper.writeValueAsBytes(accessToken));
+            return response.writeWith(Flux.just(buffer));
         } catch (IOException e) {
             throw new InternalServerErrorException(e);
         }
@@ -75,15 +76,13 @@ public class HttpUserAccessTokenService {
      * @param accessToken the access token.
      * @param response the response.
      */
-    public void writeResponseWithoutIdToken(UserSessionAccessTokenDTO accessToken, HttpServletResponse response) {
+    public Mono<Void> writeResponseWithoutIdToken(UserSessionAccessTokenDTO accessToken, ServerHttpResponse response) {
         try {
             // Write JSON response to body.
-            response.setStatus(HttpStatus.OK.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            objectMapper.writeValue(response.getOutputStream(), accessToken);
-
-            // Flush response.
-            response.flushBuffer();
+            response.setStatusCode(HttpStatus.OK);
+            response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+            DataBuffer buffer = response.bufferFactory().wrap(objectMapper.writeValueAsBytes(accessToken));
+            return response.writeWith(Flux.just(buffer));
         } catch (IOException e) {
             throw new InternalServerErrorException(e);
         }

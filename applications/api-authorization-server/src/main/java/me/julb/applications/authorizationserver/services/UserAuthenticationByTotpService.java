@@ -27,7 +27,6 @@ package me.julb.applications.authorizationserver.services;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByTotpCreationDTO;
@@ -38,6 +37,9 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationCredentialsDTO;
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The TOTP authentication service.
@@ -55,7 +57,7 @@ public interface UserAuthenticationByTotpService {
      * @param pageable the pageable information.
      * @return a paged list of authentications.
      */
-    Page<UserAuthenticationByTotpDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<UserAuthenticationByTotpDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets a totp authentication through its ID.
@@ -63,7 +65,7 @@ public interface UserAuthenticationByTotpService {
      * @param id the authentication identifier.
      * @return the authentication.
      */
-    UserAuthenticationByTotpDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<UserAuthenticationByTotpDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
     /**
      * Gets the credentials of the user.
@@ -71,7 +73,7 @@ public interface UserAuthenticationByTotpService {
      * @param id the authentication identifier.
      * @return the DTO holding the credentials.
      */
-    UserAuthenticationCredentialsDTO findOneCredentials(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<UserAuthenticationCredentialsDTO> findOneCredentials(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
     // ------------------------------------------ Write methods.
 
@@ -81,7 +83,7 @@ public interface UserAuthenticationByTotpService {
      * @param authenticationCreationDTO the DTO to create a totp authentication.
      * @return the created authentication.
      */
-    UserAuthenticationByTotpWithRawSecretDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByTotpCreationDTO authenticationCreationDTO);
+    Mono<UserAuthenticationByTotpWithRawSecretDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByTotpCreationDTO authenticationCreationDTO);
 
     /**
      * Updates a totp authentication.
@@ -90,7 +92,7 @@ public interface UserAuthenticationByTotpService {
      * @param authenticationUpdateDTO the DTO to update a totp authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByTotpDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpUpdateDTO authenticationUpdateDTO);
+    Mono<UserAuthenticationByTotpDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpUpdateDTO authenticationUpdateDTO);
 
     /**
      * Patches a totp authentication.
@@ -99,13 +101,13 @@ public interface UserAuthenticationByTotpService {
      * @param authenticationPatchDTO the DTO to update a totp authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByTotpDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpPatchDTO authenticationPatchDTO);
+    Mono<UserAuthenticationByTotpDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByTotpPatchDTO authenticationPatchDTO);
 
     /**
      * Deletes a totp authentication.
      * @param userId the user identifier.
      * @param id the id of the authentication to delete.
      */
-    void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
 }

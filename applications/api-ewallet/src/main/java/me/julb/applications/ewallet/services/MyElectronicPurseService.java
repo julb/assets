@@ -32,6 +32,8 @@ import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurse
 import me.julb.applications.ewallet.services.dto.electronicpurse.ElectronicPurseUpdateDTO;
 import me.julb.applications.ewallet.services.dto.electronicpurse.RedeemMoneyVoucherDTO;
 
+import reactor.core.publisher.Mono;
+
 /**
  * The user electronic purse service.
  * <br>
@@ -45,7 +47,7 @@ public interface MyElectronicPurseService {
      * Gets my electronic purse.
      * @return the electronic purse.
      */
-    ElectronicPurseDTO findOne();
+    Mono<ElectronicPurseDTO> findOne();
 
     // ------------------------------------------ Write methods.
 
@@ -54,20 +56,20 @@ public interface MyElectronicPurseService {
      * @param redeemMoneyVoucher the DTO to redeem a money voucher.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO redeemMoneyVoucher(@NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher);
+    Mono<ElectronicPurseDTO> redeemMoneyVoucher(@NotNull @Valid RedeemMoneyVoucherDTO redeemMoneyVoucher);
 
     /**
      * Updates my electronic purse.
      * @param electronicPurseUpdateDTO the DTO to update a electronic purse.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO update(@NotNull @Valid ElectronicPurseUpdateDTO electronicPurseUpdateDTO);
+    Mono<ElectronicPurseDTO> update(@NotNull @Valid ElectronicPurseUpdateDTO electronicPurseUpdateDTO);
 
     /**
      * Patches my electronic purse.
      * @param electronicPursePatchDTO the DTO to update a electronic purse.
      * @return the updated electronic purse.
      */
-    ElectronicPurseDTO patch(@NotNull @Valid ElectronicPursePatchDTO electronicPursePatchDTO);
+    Mono<ElectronicPurseDTO> patch(@NotNull @Valid ElectronicPursePatchDTO electronicPursePatchDTO);
 
 }

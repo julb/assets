@@ -10,6 +10,7 @@ dependencies {
     annotationProcessor platform(project(':bom'))
 
     api project(':libraries:library-utility-interface')
+    api project(':spring-boot-starters:spring-boot-starter-security')
 
     api 'org.springframework.boot:spring-boot-starter-security'
 
@@ -24,7 +25,6 @@ dependencies {
     implementation project(':libraries:library-utility-validator')
     implementation project(':spring-boot-starters:spring-boot-starter-core')
     implementation project(':spring-boot-starters:spring-boot-starter-resource-types')
-    implementation project(':spring-boot-starters:spring-boot-starter-security')
     
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

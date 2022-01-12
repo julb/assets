@@ -39,7 +39,9 @@ import me.julb.applications.authorizationserver.services.dto.profile.UserProfile
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfilePatchDTO;
 import me.julb.applications.authorizationserver.services.dto.profile.UserProfileUpdateDTO;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The profile service implementation.
@@ -68,9 +70,10 @@ public class MyProfileServiceImpl implements MyProfileService {
      * {@inheritDoc}
      */
     @Override
-    public UserProfileDTO findOne() {
-        String userId = securityService.getConnectedUserId();
-        return userProfileService.findOne(userId);
+    public Mono<UserProfileDTO> findOne() {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userProfileService.findOne(userId);
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -80,9 +83,10 @@ public class MyProfileServiceImpl implements MyProfileService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserProfileDTO create(@NotNull @Valid UserProfileCreationDTO userProfileCreationDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userProfileService.create(userId, userProfileCreationDTO);
+    public Mono<UserProfileDTO> create(@NotNull @Valid UserProfileCreationDTO userProfileCreationDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userProfileService.create(userId, userProfileCreationDTO);
+        });
     }
 
     /**
@@ -90,9 +94,10 @@ public class MyProfileServiceImpl implements MyProfileService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserProfileDTO update(@NotNull @Valid UserProfileUpdateDTO userProfileUpdateDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userProfileService.update(userId, userProfileUpdateDTO);
+    public Mono<UserProfileDTO> update(@NotNull @Valid UserProfileUpdateDTO userProfileUpdateDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userProfileService.update(userId, userProfileUpdateDTO);
+        });
     }
 
     /**
@@ -100,9 +105,10 @@ public class MyProfileServiceImpl implements MyProfileService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserProfileDTO patch(@NotNull @Valid UserProfilePatchDTO userProfilePatchDTO) {
-        String userId = securityService.getConnectedUserId();
-        return userProfileService.patch(userId, userProfilePatchDTO);
+    public Mono<UserProfileDTO> patch(@NotNull @Valid UserProfilePatchDTO userProfilePatchDTO) {
+        return securityService.getConnectedUserId().flatMap(userId -> {
+            return userProfileService.patch(userId, userProfilePatchDTO);
+        });
     }
 
     // ------------------------------------------ Utility methods.

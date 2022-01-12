@@ -24,14 +24,12 @@
 
 package me.julb.applications.platformhealth.services.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,6 +43,7 @@ import me.julb.applications.platformhealth.entities.mappers.IncidentComponentEnt
 import me.julb.applications.platformhealth.repositories.ComponentRepository;
 import me.julb.applications.platformhealth.repositories.IncidentComponentRepository;
 import me.julb.applications.platformhealth.repositories.IncidentRepository;
+import me.julb.applications.platformhealth.repositories.specifications.IncidentComponentByIncidentSpecification;
 import me.julb.applications.platformhealth.services.IncidentComponentService;
 import me.julb.applications.platformhealth.services.dto.incidentcomponent.IncidentComponentCreationDTO;
 import me.julb.applications.platformhealth.services.dto.incidentcomponent.IncidentComponentDTO;
@@ -58,14 +57,17 @@ import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The incident service implementation.
@@ -119,47 +121,41 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * {@inheritDoc}
      */
     @Override
-    public Page<IncidentComponentDTO> findAll(@NotNull @Identifier String incidentId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<IncidentComponentDTO> findAll(@NotNull @Identifier String incidentId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Try to search within the link.
-        ISpecification<IncidentComponentEntity> spec = new SearchSpecification<IncidentComponentEntity>(searchable).and(new TmSpecification<>(tm));
-        Page<IncidentComponentEntity> result = incidentComponentRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            // Check that the announcement exists
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMapMany(incident -> {
+                    ISpecification<IncidentComponentEntity> spec = new SearchSpecification<IncidentComponentEntity>(searchable)
+                        .and(new TmSpecification<>(tm)).and(new IncidentComponentByIncidentSpecification(incident));
+                    return incidentComponentRepository.findAll(spec, pageable).map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IncidentComponentDTO findOne(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentComponentDTO> findOne(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the component exists
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
-
-        // Check that the incident component exists
-        IncidentComponentEntity result = incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId);
-        if (result == null) {
-            throw new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId));
-        }
-
-        return mapper.map(result);
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMap(component -> {
+                            return incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId))))
+                                .map(mapper::map);
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -169,35 +165,33 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentComponentDTO create(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentComponentDTO> create(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMap(component -> {
+                            return incidentComponentRepository.existsByTmAndIncidentIdAndComponentId(tm, incidentId, componentId)
+                                .flatMap(alreadyExists -> {
+                                    if (alreadyExists.booleanValue()) {
+                                        return Mono.error(new ResourceAlreadyExistsException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId)));
+                                    }
 
-        // Check that the component exists
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
-
-        // Check that the incident component exists
-        IncidentComponentEntity existing = incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId);
-        if (existing != null) {
-            throw new ResourceAlreadyExistsException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId));
-        }
-
-        // Add component item.
-        IncidentComponentEntity incidentComponentToCreate = mapper.map(creationDTO);
-        incidentComponentToCreate.setIncident(incident);
-        incidentComponentToCreate.setComponent(component);
-        this.onPersist(incidentComponentToCreate);
-
-        IncidentComponentEntity result = incidentComponentRepository.save(incidentComponentToCreate);
-        return mapper.map(result);
+                                    // Update the entity
+                                    IncidentComponentEntity entityToCreate = mapper.map(creationDTO);
+                                    entityToCreate.setIncident(incident);
+                                    entityToCreate.setComponent(component);
+                                    return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                        return incidentComponentRepository.save(entityToCreateWithFields).map(mapper::map);
+                                    });
+                                });
+                        });
+                });
+        });
     }
 
     /**
@@ -205,33 +199,30 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentComponentDTO update(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentComponentDTO> update(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the component exists
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
-
-        // Check that the incident component exists
-        IncidentComponentEntity exising = incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId);
-        if (exising == null) {
-            throw new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId));
-        }
-
-        // Add component item.
-        mapper.map(updateDTO, exising);
-        this.onUpdate(exising);
-
-        IncidentComponentEntity result = incidentComponentRepository.save(exising);
-        return mapper.map(result);
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMap(component -> {
+                            return incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId))))
+                                .flatMap(existing -> {
+                                    // Update the entity
+                                    mapper.map(updateDTO, existing);
+                        
+                                    // Proceed to the update
+                                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                        return incidentComponentRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                    });
+                                });
+                        });
+                });
+        });
     }
 
     /**
@@ -239,33 +230,30 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public IncidentComponentDTO patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<IncidentComponentDTO> patch(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId, @NotNull @Valid IncidentComponentPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the component exists
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
-
-        // Check that the incident component exists
-        IncidentComponentEntity exising = incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId);
-        if (exising == null) {
-            throw new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId));
-        }
-
-        // Add component item.
-        mapper.map(patchDTO, exising);
-        this.onUpdate(exising);
-
-        IncidentComponentEntity result = incidentComponentRepository.save(exising);
-        return mapper.map(result);
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMap(component -> {
+                            return incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId))))
+                                .flatMap(existing -> {
+                                    // Update the entity
+                                    mapper.map(patchDTO, existing);
+                        
+                                    // Proceed to the update
+                                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                        return incidentComponentRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                    });
+                                });
+                        });
+                });
+        });
     }
 
     /**
@@ -273,24 +261,21 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String incidentId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String incidentId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the incident component exists
-        List<IncidentComponentEntity> existings = incidentComponentRepository.findByTmAndIncidentId(tm, incidentId);
-        for (IncidentComponentEntity existing : existings) {
-            // Delete entity.
-            incidentComponentRepository.delete(existing);
-
-            // Handle deletion.
-            this.onDelete(existing);
-        }
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return incidentComponentRepository.findByTmAndIncidentId(tm, incidentId)
+                        .flatMap(existing -> {
+                            return incidentComponentRepository.delete(existing)
+                                .then(this.onDelete(existing))
+                                .then();
+                        }).then();
+                });
+        });
     }
 
     /**
@@ -298,33 +283,26 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String incidentId, @NotNull @Identifier String componentId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the incident exists
-        IncidentEntity incident = incidentRepository.findByTmAndId(tm, incidentId);
-        if (incident == null) {
-            throw new ResourceNotFoundException(IncidentEntity.class, incidentId);
-        }
-
-        // Check that the component exists
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
-
-        // Check that the incident component exists
-        IncidentComponentEntity result = incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId);
-        if (result == null) {
-            throw new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId));
-        }
-
-        // Delete entity.
-        incidentComponentRepository.delete(result);
-
-        // Handle deletion.
-        this.onDelete(result);
-
+            return incidentRepository.findByTmAndId(tm, incidentId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentEntity.class, incidentId)))
+                .flatMap(incident -> {
+                    return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMap(component -> {
+                            return incidentComponentRepository.findByTmAndIncidentIdAndComponentId(tm, incidentId, componentId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(IncidentComponentEntity.class, Map.<String, String> of("incident", incidentId, "component", componentId))))
+                                .flatMap(existing -> {
+                                    return incidentComponentRepository.delete(existing)
+                                        .then(this.onDelete(existing))
+                                        .then();
+                                });
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -333,30 +311,30 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * Method called when persisting an incident component.
      * @param entity the entity.
      */
-    private void onPersist(IncidentComponentEntity entity) {
+    private Mono<IncidentComponentEntity> onPersist(String tm, IncidentComponentEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a incident history.
      * @param entity the entity.
      */
-    private void onUpdate(IncidentComponentEntity entity) {
+    private Mono<IncidentComponentEntity> onUpdate(IncidentComponentEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a incident component.
      * @param entity the entity.
      */
-    private void onDelete(IncidentComponentEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<IncidentComponentEntity> onDelete(IncidentComponentEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -364,15 +342,17 @@ public class IncidentComponentServiceImpl implements IncidentComponentService {
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(IncidentComponentEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.INCIDENT_COMPONENT)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<IncidentComponentEntity> postResourceEvent(IncidentComponentEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.INCIDENT_COMPONENT)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

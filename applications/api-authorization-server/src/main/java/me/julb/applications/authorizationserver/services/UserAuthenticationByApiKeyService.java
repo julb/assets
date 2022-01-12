@@ -28,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import me.julb.applications.authorizationserver.services.dto.authentication.UserAuthenticationByApiKeyCreationDTO;
@@ -40,6 +39,9 @@ import me.julb.applications.authorizationserver.services.dto.authentication.User
 import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.library.utility.validator.constraints.SecureApiKey;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The API Key authentication service.
@@ -57,7 +59,7 @@ public interface UserAuthenticationByApiKeyService {
      * @param pageable the pageable information.
      * @return a paged list of authentications.
      */
-    Page<UserAuthenticationByApiKeyDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable);
+    Flux<UserAuthenticationByApiKeyDTO> findAll(@NotNull @Identifier String userId, @NotNull Searchable searchable, @NotNull Pageable pageable);
 
     /**
      * Gets an API Key authentication through its ID.
@@ -65,14 +67,14 @@ public interface UserAuthenticationByApiKeyService {
      * @param id the authentication identifier.
      * @return the authentication.
      */
-    UserAuthenticationByApiKeyDTO findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<UserAuthenticationByApiKeyDTO> findOne(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
     /**
      * Gets the credentials of the user.
      * @param apiKey the API key.
      * @return the DTO holding the credentials.
      */
-    UserAuthenticationCredentialsDTO findOneCredentials(@NotNull @NotBlank @SecureApiKey String apiKey);
+    Mono<UserAuthenticationCredentialsDTO> findOneCredentials(@NotNull @NotBlank @SecureApiKey String apiKey);
 
     // ------------------------------------------ Write methods.
 
@@ -82,7 +84,7 @@ public interface UserAuthenticationByApiKeyService {
      * @param authenticationCreationDTO the DTO to create an API Key authentication.
      * @return the created authentication.
      */
-    UserAuthenticationByApiKeyWithRawKeyDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByApiKeyCreationDTO authenticationCreationDTO);
+    Mono<UserAuthenticationByApiKeyWithRawKeyDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByApiKeyCreationDTO authenticationCreationDTO);
 
     /**
      * Updates an API Key authentication.
@@ -91,7 +93,7 @@ public interface UserAuthenticationByApiKeyService {
      * @param authenticationUpdateDTO the DTO to update an API Key authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByApiKeyDTO update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyUpdateDTO authenticationUpdateDTO);
+    Mono<UserAuthenticationByApiKeyDTO> update(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyUpdateDTO authenticationUpdateDTO);
 
     /**
      * Patches an API Key authentication.
@@ -100,13 +102,13 @@ public interface UserAuthenticationByApiKeyService {
      * @param authenticationPatchDTO the DTO to update an API Key authentication.
      * @return the updated authentication.
      */
-    UserAuthenticationByApiKeyDTO patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyPatchDTO authenticationPatchDTO);
+    Mono<UserAuthenticationByApiKeyDTO> patch(@NotNull @Identifier String userId, @NotNull @Identifier String id, @NotNull @Valid UserAuthenticationByApiKeyPatchDTO authenticationPatchDTO);
 
     /**
      * Deletes an API Key authentication.
      * @param userId the user identifier.
      * @param id the id of the authentication to delete.
      */
-    void delete(@NotNull @Identifier String userId, @NotNull @Identifier String id);
+    Mono<Void> delete(@NotNull @Identifier String userId, @NotNull @Identifier String id);
 
 }

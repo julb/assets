@@ -24,19 +24,20 @@
 
 package me.julb.applications.authorizationserver.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.authorizationserver.entities.session.UserSessionEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The user session repository.
  * <br>
  * @author Julb.
  */
-public interface UserSessionRepository extends MongoRepository<UserSessionEntity, String>, MongoSpecificationExecutor<UserSessionEntity> {
+public interface UserSessionRepository extends ReactiveMongoRepository<UserSessionEntity, String>, MongoSpecificationExecutor<UserSessionEntity> {
 
     /**
      * Finds an user session by trademark and id.
@@ -45,7 +46,7 @@ public interface UserSessionRepository extends MongoRepository<UserSessionEntity
      * @param id the id.
      * @return the user session, or <code>null</code> if not exists.
      */
-    UserSessionEntity findByTmAndUser_IdAndId(String tm, String userId, String id);
+    Mono<UserSessionEntity> findByTmAndUser_IdAndId(String tm, String userId, String id);
 
     /**
      * Finds all user sessions by trademark and user id.
@@ -53,6 +54,6 @@ public interface UserSessionRepository extends MongoRepository<UserSessionEntity
      * @param userId the user ID.
      * @return all user sessions.
      */
-    List<UserSessionEntity> findByTmAndUser_Id(String tm, String userId);
+    Flux<UserSessionEntity> findByTmAndUser_Id(String tm, String userId);
 
 }

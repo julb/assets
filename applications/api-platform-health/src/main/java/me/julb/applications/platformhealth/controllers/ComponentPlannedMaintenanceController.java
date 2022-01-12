@@ -23,10 +23,7 @@
  */
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -41,6 +38,9 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
 
 /**
  * The rest controller to return the planned maintenances linked to a component.
@@ -69,7 +69,7 @@ public class ComponentPlannedMaintenanceController {
     @OpenApiSearchable
     @OpenApiPageable
     @GetMapping
-    public Page<PlannedMaintenanceDTO> listPlannedMaintenances(@PathVariable("componentId") @Identifier String componentId, Searchable searchable, Pageable pageable) {
+    public Flux<PlannedMaintenanceDTO> listPlannedMaintenances(@PathVariable("componentId") @Identifier String componentId, Searchable searchable, Pageable pageable) {
         return plannedMaintenanceService.findAll(componentId, searchable, pageable);
     }
 }

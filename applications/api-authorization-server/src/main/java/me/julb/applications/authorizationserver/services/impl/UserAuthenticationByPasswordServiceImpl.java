@@ -78,14 +78,16 @@ import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.random.RandomUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.core.context.configs.ContextConfigSourceService;
-import me.julb.springbootstarter.messaging.builders.NotificationDispatchAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.core.configs.ConfigSourceService;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.NotificationDispatchAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
 import me.julb.springbootstarter.security.services.PasswordEncoderService;
+
+import reactor.core.publisher.Mono;
 
 /**
  * The user authentication by password service implementation.
@@ -161,7 +163,7 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      * The config source service.
      */
     @Autowired
-    private ContextConfigSourceService configSourceService;
+    private ConfigSourceService configSourceService;
 
     /**
      * The password encoder.
@@ -175,55 +177,49 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPasswordDTO findOne(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPasswordDTO> findOne(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByPasswordEntity result = userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId);
-        }
-
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId)))
+                        .map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationCredentialsDTO findOneCredentials(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationCredentialsDTO> findOneCredentials(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId)))
+                        .map(result -> {
+                            // Get credentials
+                            UserAuthenticationCredentialsDTO credentials = new UserAuthenticationCredentialsDTO();
+                            credentials.setUniqueCredentials(result.getSecuredPassword());
+                            if (StringUtils.isNotBlank(result.getPasswordExpiryDateTime())) {
+                                credentials.setCredentialsNonExpired(DateUtility.dateTimeNow().compareTo(result.getPasswordExpiryDateTime()) <= 0);
+                            } else {
+                                credentials.setCredentialsNonExpired(true);
+                            }
+                            credentials.setUserAuthentication(mapper.map(result));
+                            credentials.setUser(userMapper.map(result.getUser()));
 
-        // Check that the item exists
-        UserAuthenticationByPasswordEntity result = userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (result == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId);
-        }
-
-        // Get credentials
-        UserAuthenticationCredentialsDTO credentials = new UserAuthenticationCredentialsDTO();
-        credentials.setUniqueCredentials(result.getSecuredPassword());
-        if (StringUtils.isNotBlank(result.getPasswordExpiryDateTime())) {
-            credentials.setCredentialsNonExpired(DateUtility.dateTimeNow().compareTo(result.getPasswordExpiryDateTime()) <= 0);
-        } else {
-            credentials.setCredentialsNonExpired(true);
-        }
-        credentials.setUserAuthentication(mapper.map(result));
-        credentials.setUser(userMapper.map(result.getUser()));
-
-        return credentials;
+                            return credentials;
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -233,27 +229,27 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPasswordDTO create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordCreationDTO creationDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPasswordDTO> create(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordCreationDTO creationDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .flatMap(alreadyExists -> {
+                            if (alreadyExists.booleanValue()) {
+                                return Mono.error(new ResourceAlreadyExistsException(UserAuthenticationByPasswordEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.PASSWORD.toString())));
+                            }
 
-        // Check that the item exists
-        if (userAuthenticationByPasswordRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)) {
-            throw new ResourceAlreadyExistsException(UserAuthenticationByPasswordEntity.class, Map.<String, String> of("user", userId, "type", UserAuthenticationType.PASSWORD.toString()));
-        }
-
-        UserAuthenticationByPasswordEntity entityToCreate = mapper.map(creationDTO);
-        entityToCreate.setUser(user);
-        entityToCreate.setMfaEnabled(Boolean.FALSE);
-        this.onPersist(entityToCreate);
-
-        // Update password.
-        return updatePassword(entityToCreate, creationDTO.getPassword());
+                            UserAuthenticationByPasswordEntity entityToCreate = mapper.map(creationDTO);
+                            entityToCreate.setUser(user);
+                            entityToCreate.setMfaEnabled(Boolean.FALSE);
+                            return this.onPersist(tm, entityToCreate)
+                                .flatMap(entityToCreateWithFields -> updatePassword(entityToCreateWithFields, creationDTO.getPassword()));
+                        });
+                });
+        });
     }
 
     /**
@@ -261,34 +257,42 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPasswordDTO update(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordUpdateDTO updateDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPasswordDTO> update(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordUpdateDTO updateDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByPasswordEntity existing = userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId);
-        }
-
-        // Ensure device are registered for user for MFA
-        if (updateDTO.getMfaEnabled() && !existing.getMfaEnabled()) {
-            if (!userAuthenticationByTotpRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP)) {
-                throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, Map.of("userId", userId));
-            }
-        }
-
-        // Update the entity
-        mapper.map(updateDTO, existing);
-        this.onUpdate(existing);
-
-        UserAuthenticationByPasswordEntity result = userAuthenticationByPasswordRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId)))
+                        .flatMap(existing -> {
+                            if (updateDTO.getMfaEnabled().booleanValue() && !existing.getMfaEnabled().booleanValue()) {
+                                return userAuthenticationByTotpRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP)
+                                    .flatMap(deviceExists -> {
+                                        if (!deviceExists.booleanValue()) {
+                                            return Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, Map.of("userId", userId)));
+                                        }
+                                        // Update the entity
+                                        mapper.map(updateDTO, existing);
+                            
+                                        // Proceed to the update
+                                        return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                            return userAuthenticationByPasswordRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                        });
+                                    });
+                            } else {
+                                // Update the entity
+                                mapper.map(updateDTO, existing);
+                    
+                                // Proceed to the update
+                                return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return userAuthenticationByPasswordRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                });
+                            }
+                        });
+                });
+        });
     }
 
     /**
@@ -296,198 +300,202 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public UserAuthenticationByPasswordDTO patch(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPatchDTO patchDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPasswordDTO> patch(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPatchDTO patchDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByPasswordEntity existing = userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId);
-        }
-
-        // Ensure device are registered for user for MFA
-        if (patchDTO.getMfaEnabled() != null && patchDTO.getMfaEnabled() && !existing.getMfaEnabled()) {
-            if (!userAuthenticationByTotpRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP)) {
-                throw new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, Map.of("userId", userId));
-            }
-        }
-
-        // Update the entity
-        mapper.map(patchDTO, existing);
-        this.onUpdate(existing);
-
-        UserAuthenticationByPasswordEntity result = userAuthenticationByPasswordRepository.save(existing);
-        return mapper.map(result);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId)))
+                        .flatMap(existing -> {
+                            if (patchDTO.getMfaEnabled() != null && patchDTO.getMfaEnabled().booleanValue() && !existing.getMfaEnabled().booleanValue()) {
+                                return userAuthenticationByTotpRepository.existsByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.TOTP)
+                                    .flatMap(deviceExists -> {
+                                        if (!deviceExists.booleanValue()) {
+                                            return Mono.error(new ResourceNotFoundException(UserAuthenticationByTotpEntity.class, Map.of("userId", userId)));
+                                        }
+                                        // Update the entity
+                                        mapper.map(patchDTO, existing);
+                            
+                                        // Proceed to the update
+                                        return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                            return userAuthenticationByPasswordRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                        });
+                                    });
+                            } else {
+                                // Update the entity
+                                mapper.map(patchDTO, existing);
+                    
+                                // Proceed to the update
+                                return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                    return userAuthenticationByPasswordRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                });
+                            }
+                        });
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPasswordDTO triggerPasswordReset(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordTriggerPasswordResetDTO triggerPasswordResetDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPasswordDTO> triggerPasswordReset(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordTriggerPasswordResetDTO triggerPasswordResetDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId)))
+                        .flatMap(existing -> {
+                            return userPreferencesRepository.findByTmAndUser_Id(tm, userId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId)))
+                                .flatMap(preferences -> {
+                                    // Assert the recovery channel is supported.
+                                    RecoveryChannelType[] supportedRecoveryChannelTypes = configSourceService.getTypedProperty(tm, "authorization-server.account-recovery.channel-types", RecoveryChannelType[].class);
+                                    if (!ArrayUtils.contains(supportedRecoveryChannelTypes, triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
+                                        return Mono.error(new BadRequestException());
+                                    }
 
-        // Check that the item exists
-        UserAuthenticationByPasswordEntity existing = userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId);
-        }
+                                    // Generate a password reset token
+                                    if (RecoveryChannelType.MAIL.equals(triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
+                                        // Find the mail.
+                                        return userMailRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPasswordResetDTO.getRecoveryChannelDevice().getId())
+                                            .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMailEntity.class, triggerPasswordResetDTO.getRecoveryChannelDevice().getId())))
+                                            .flatMap(userMailEntity -> {
+                                                // Generate token for mail purpose.
+                                                String passwordResetToken = RandomUtility.generateRandomTokenForMailPurpose();
 
-        // Check that the item exists
-        UserPreferencesEntity preferences = userPreferencesRepository.findByTmAndUser_Id(tm, userId);
-        if (preferences == null) {
-            throw new ResourceNotFoundException(UserPreferencesEntity.class, "user", userId);
-        }
+                                                // Update entity.
+                                                existing.setSecuredPasswordResetToken(passwordEncoderService.encode(passwordResetToken));
 
-        // Assert the recovery channel is supported.
-        RecoveryChannelType[] supportedRecoveryChannelTypes = configSourceService.getTypedProperty("authorization-server.account-recovery.channel-types", RecoveryChannelType[].class);
-        if (!ArrayUtils.contains(supportedRecoveryChannelTypes, triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
-            throw new BadRequestException();
-        }
+                                                // Compute expiry.
+                                                Integer expiryValue = configSourceService.getTypedProperty(tm, "authorization-server.mail.password-reset.expiry.value", Integer.class);
+                                                ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty(tm, "authorization-server.mail.password-reset.expiry.chrono-unit", ChronoUnit.class);
+                                                existing.setPasswordResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
+                                                
+                                                // Proceed to the update
+                                                //@formatter:off
+                                                return asyncMessagePosterService.postNotificationMessage(
+                                                    new NotificationDispatchAsyncMessageBuilder()
+                                                        .kind(NotificationKind.TRIGGER_PASSWORD_RESET_WITH_MAIL)
+                                                        .parameter("userMail", userMailEntity.getMail())
+                                                        .parameter("resetToken", passwordResetToken)
+                                                        .parameter("expiryDateTime", existing.getPasswordResetTokenExpiryDateTime())
+                                                        .sms()
+                                                            .to(userMailEntity.getMail(), preferences.getLanguage())
+                                                        .and()
+                                                    .build()
+                                                ).flatMap(message -> {
+                                                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                                        return userAuthenticationByPasswordRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                                    });
+                                                });
+                                                //@formatter:on
+                                            });
+                                    } else if (RecoveryChannelType.MOBILE_PHONE.equals(triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
+                                        // Find the mail.
+                                        return userMobilePhoneRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPasswordResetDTO.getRecoveryChannelDevice().getId())
+                                            .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserMobilePhoneEntity.class, triggerPasswordResetDTO.getRecoveryChannelDevice().getId())))
+                                            .flatMap(userMobilePhoneEntity -> {
+                                                // Generate token for mobilePhone purpose.
+                                                String passwordResetToken = RandomUtility.generateRandomTokenForMobilePhonePurpose();
 
-        // Generate a password reset token
-        if (RecoveryChannelType.MAIL.equals(triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
-            // Find the mail.
-            UserMailEntity userMailEntity = userMailRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPasswordResetDTO.getRecoveryChannelDevice().getId());
-            if (userMailEntity == null) {
-                throw new ResourceNotFoundException(UserMailEntity.class, triggerPasswordResetDTO.getRecoveryChannelDevice().getId());
-            }
+                                                // Update entity.
+                                                existing.setSecuredPasswordResetToken(passwordEncoderService.encode(passwordResetToken));
 
-            // Generate token for mail purpose.
-            String passwordResetToken = RandomUtility.generateRandomTokenForMailPurpose();
-
-            // Update entity.
-            existing.setSecuredPasswordResetToken(passwordEncoderService.encode(passwordResetToken));
-
-            // Compute expiry.
-            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mail.password-reset.expiry.value", Integer.class);
-            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mail.password-reset.expiry.chrono-unit", ChronoUnit.class);
-            existing.setPasswordResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
-
-            this.onUpdate(existing);
-
-            //@formatter:off
-            asyncMessagePosterService.postNotificationMessage(
-                new NotificationDispatchAsyncMessageBuilder()
-                    .kind(NotificationKind.TRIGGER_PASSWORD_RESET_WITH_MAIL)
-                    .parameter("userMail", userMailEntity.getMail())
-                    .parameter("resetToken", passwordResetToken)
-                    .parameter("expiryDateTime", existing.getPasswordResetTokenExpiryDateTime())
-                    .sms()
-                        .to(userMailEntity.getMail(), preferences.getLanguage())
-                    .and()
-                .build()
-            );
-            //@formatter:on
-        } else if (RecoveryChannelType.MOBILE_PHONE.equals(triggerPasswordResetDTO.getRecoveryChannelDevice().getType())) {
-            // Find the mail.
-            UserMobilePhoneEntity userMobilePhoneEntity = userMobilePhoneRepository.findByTmAndUser_IdAndIdAndVerifiedIsTrue(tm, userId, triggerPasswordResetDTO.getRecoveryChannelDevice().getId());
-            if (userMobilePhoneEntity == null) {
-                throw new ResourceNotFoundException(UserMobilePhoneEntity.class, triggerPasswordResetDTO.getRecoveryChannelDevice().getId());
-            }
-
-            // Generate token for mobilePhone purpose.
-            String passwordResetToken = RandomUtility.generateRandomTokenForMobilePhonePurpose();
-
-            // Update entity.
-            existing.setSecuredPasswordResetToken(passwordEncoderService.encode(passwordResetToken));
-
-            // Manage expiry
-            Integer expiryValue = configSourceService.getTypedProperty("authorization-server.mobile-phone.password-reset.expiry.value", Integer.class);
-            ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty("authorization-server.mobile-phone.password-reset.expiry.chrono-unit", ChronoUnit.class);
-            existing.setPasswordResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
-
-            this.onUpdate(existing);
-
-            //@formatter:off
-            asyncMessagePosterService.postNotificationMessage(
-                new NotificationDispatchAsyncMessageBuilder()
-                    .kind(NotificationKind.TRIGGER_PASSWORD_RESET_WITH_MOBILE_PHONE)
-                    .parameter("userMobilePhoneE164Number", userMobilePhoneEntity.getMobilePhone().getE164Number())
-                    .parameter("resetToken", passwordResetToken)
-                    .parameter("expiryDateTime", existing.getPasswordResetTokenExpiryDateTime())
-                    .sms()
-                        .to(userMobilePhoneEntity.getMobilePhone().getE164Number(), preferences.getLanguage())
-                    .and()
-                .build()
-            );
-            //@formatter:on
-        }
-
-        UserAuthenticationByPasswordEntity result = userAuthenticationByPasswordRepository.save(existing);
-        return mapper.map(result);
+                                                // Manage expiry
+                                                Integer expiryValue = configSourceService.getTypedProperty(tm, "authorization-server.mobile-phone.password-reset.expiry.value", Integer.class);
+                                                ChronoUnit expiryChronoUnit = configSourceService.getTypedProperty(tm, "authorization-server.mobile-phone.password-reset.expiry.chrono-unit", ChronoUnit.class);
+                                                existing.setPasswordResetTokenExpiryDateTime(DateUtility.dateTimePlus(expiryValue, expiryChronoUnit));
+                                                
+                                                // Proceed to the update
+                                                //@formatter:off
+                                                return asyncMessagePosterService.postNotificationMessage(
+                                                    new NotificationDispatchAsyncMessageBuilder()
+                                                        .kind(NotificationKind.TRIGGER_PASSWORD_RESET_WITH_MOBILE_PHONE)
+                                                        .parameter("userMobilePhoneE164Number", userMobilePhoneEntity.getMobilePhone().getE164Number())
+                                                        .parameter("resetToken", passwordResetToken)
+                                                        .parameter("expiryDateTime", existing.getPasswordResetTokenExpiryDateTime())
+                                                        .sms()
+                                                            .to(userMobilePhoneEntity.getMobilePhone().getE164Number(), preferences.getLanguage())
+                                                        .and()
+                                                    .build()
+                                                ).flatMap(message -> {
+                                                    return this.onUpdate(existing).flatMap(entityToUpdateWithFields -> {
+                                                        return userAuthenticationByPasswordRepository.save(entityToUpdateWithFields).map(mapper::map);
+                                                    });
+                                                });
+                                                //@formatter:on
+                                            });
+                                    } else {
+                                        return Mono.error(new BadRequestException());
+                                    }
+                                });
+                        });
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPasswordDTO updatePassword(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO changePasswordDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPasswordDTO> updatePassword(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPasswordChangeDTO changePasswordDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Check if old password match
+                            if (!passwordEncoderService.matches(changePasswordDTO.getOldPassword(), existing.getSecuredPassword())) {
+                                return Mono.error(new InvalidPasswordException());
+                            }
 
-        // Check that the item exists
-        UserAuthenticationByPasswordEntity existing = userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId);
-        }
-
-        // Check if old password match
-        if (!passwordEncoderService.matches(changePasswordDTO.getOldPassword(), existing.getSecuredPassword())) {
-            throw new InvalidPasswordException();
-        }
-
-        // Update password.
-        return updatePassword(existing, changePasswordDTO.getNewPassword());
+                            // Update password.
+                            return updatePassword(existing, changePasswordDTO.getNewPassword());
+                        });
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UserAuthenticationByPasswordDTO updatePassword(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPasswordResetDTO changePasswordDTO) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<UserAuthenticationByPasswordDTO> updatePassword(@NotNull @Identifier String userId, @NotNull @Valid UserAuthenticationByPasswordPasswordResetDTO changePasswordDTO) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Check if token match
+                            if (StringUtils.isBlank(existing.getSecuredPasswordResetToken()) || !passwordEncoderService.matches(changePasswordDTO.getResetToken(), existing.getSecuredPasswordResetToken())) {
+                                return Mono.error(new InvalidPasswordResetTokenException());
+                            }
 
-        // Check that the item exists
-        UserAuthenticationByPasswordEntity existing = userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId);
-        }
+                            // Check if token is not expired
+                            if (DateUtility.dateTimeNow().compareTo(existing.getPasswordResetTokenExpiryDateTime()) > 0) {
+                                return Mono.error(new PasswordResetTokenExpiredException());
+                            }
 
-        // Check if token match
-        if (StringUtils.isBlank(existing.getSecuredPasswordResetToken()) || !passwordEncoderService.matches(changePasswordDTO.getResetToken(), existing.getSecuredPasswordResetToken())) {
-            throw new InvalidPasswordResetTokenException();
-        }
-
-        // Check if token is not expired
-        if (DateUtility.dateTimeNow().compareTo(existing.getPasswordResetTokenExpiryDateTime()) > 0) {
-            throw new PasswordResetTokenExpiredException();
-        }
-
-        return updatePassword(existing, changePasswordDTO.getNewPassword());
+                            // Update password.
+                            return updatePassword(existing, changePasswordDTO.getNewPassword());
+                        });
+                });
+        });
     }
 
     /**
@@ -495,26 +503,23 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String userId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String userId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the user exists
-        UserEntity user = userRepository.findByTmAndId(tm, userId);
-        if (user == null) {
-            throw new ResourceNotFoundException(UserEntity.class, userId);
-        }
-
-        // Check that the item exists
-        UserAuthenticationByPasswordEntity existing = userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD);
-        if (existing == null) {
-            throw new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId);
-        }
-
-        // Delete entity.
-        userAuthenticationByPasswordRepository.delete(existing);
-
-        // Handle deletion.
-        this.onDelete(existing);
+            return userRepository.findByTmAndId(tm, userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserEntity.class, userId)))
+                .flatMap(user -> {
+                    return userAuthenticationByPasswordRepository.findByTmAndUser_IdAndType(tm, userId, UserAuthenticationType.PASSWORD)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(UserAuthenticationByPasswordEntity.class, userId)))
+                        .flatMap(existing -> {
+                            // Delete entity.
+                            return userAuthenticationByPasswordRepository.delete(existing).then(
+                                this.onDelete(existing)
+                            ).then();
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Utility methods.
@@ -525,7 +530,7 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      * @param newPassword the new password.
      * @return the DTO.
      */
-    private UserAuthenticationByPasswordDTO updatePassword(UserAuthenticationByPasswordEntity userAuthentication, String newPassword) {
+    private Mono<UserAuthenticationByPasswordDTO> updatePassword(UserAuthenticationByPasswordEntity userAuthentication, String newPassword) {
         if (StringUtils.isNotBlank(userAuthentication.getSecuredPassword())) {
             // Register last used password.
             if (userAuthentication.getLastUsedSecuredPasswords() == null) {
@@ -542,11 +547,11 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
         userAuthentication.setPasswordResetTokenExpiryDateTime(null);
         userAuthentication.setSecuredPassword(passwordEncoderService.encode(newPassword));
         userAuthentication.setSecuredPasswordResetToken(null);
-
-        this.onUpdate(userAuthentication);
-
-        UserAuthenticationByPasswordEntity result = userAuthenticationByPasswordRepository.save(userAuthentication);
-        return mapper.map(result);
+        
+        // Proceed to the update
+        return this.onUpdate(userAuthentication).flatMap(entityToUpdateWithFields -> {
+            return userAuthenticationByPasswordRepository.save(entityToUpdateWithFields).map(mapper::map);
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -555,30 +560,30 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      * Method called when persisting an item.
      * @param entity the entity.
      */
-    private void onPersist(UserAuthenticationByPasswordEntity entity) {
+    private Mono<UserAuthenticationByPasswordEntity> onPersist(String tm, UserAuthenticationByPasswordEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when updating a item.
      * @param entity the entity.
      */
-    private void onUpdate(UserAuthenticationByPasswordEntity entity) {
+    private Mono<UserAuthenticationByPasswordEntity> onUpdate(UserAuthenticationByPasswordEntity entity) {
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
-        postResourceEvent(entity, ResourceEventType.UPDATED);
+        return postResourceEvent(entity, ResourceEventType.UPDATED);
     }
 
     /**
      * Method called when deleting a item.
      * @param entity the entity.
      */
-    private void onDelete(UserAuthenticationByPasswordEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<UserAuthenticationByPasswordEntity> onDelete(UserAuthenticationByPasswordEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -586,15 +591,17 @@ public class UserAuthenticationByPasswordServiceImpl implements UserAuthenticati
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(UserAuthenticationByPasswordEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_AUTHENTICATION)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<UserAuthenticationByPasswordEntity> postResourceEvent(UserAuthenticationByPasswordEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.USER_AUTHENTICATION)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

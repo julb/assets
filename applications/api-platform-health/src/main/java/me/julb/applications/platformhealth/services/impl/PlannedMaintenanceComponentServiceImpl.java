@@ -24,13 +24,11 @@
 
 package me.julb.applications.platformhealth.services.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,6 +42,7 @@ import me.julb.applications.platformhealth.entities.mappers.PlannedMaintenanceCo
 import me.julb.applications.platformhealth.repositories.ComponentRepository;
 import me.julb.applications.platformhealth.repositories.PlannedMaintenanceComponentRepository;
 import me.julb.applications.platformhealth.repositories.PlannedMaintenanceRepository;
+import me.julb.applications.platformhealth.repositories.specifications.PlannedMaintenanceComponentByPlannedMaintenanceSpecification;
 import me.julb.applications.platformhealth.services.PlannedMaintenanceComponentService;
 import me.julb.applications.platformhealth.services.dto.plannedmaintenancecomponent.PlannedMaintenanceComponentDTO;
 import me.julb.library.dto.messaging.events.ResourceEventAsyncMessageDTO;
@@ -54,14 +53,17 @@ import me.julb.library.utility.exceptions.ResourceAlreadyExistsException;
 import me.julb.library.utility.exceptions.ResourceNotFoundException;
 import me.julb.library.utility.identifier.IdentifierUtility;
 import me.julb.library.utility.validator.constraints.Identifier;
-import me.julb.springbootstarter.core.context.TrademarkContextHolder;
-import me.julb.springbootstarter.messaging.builders.ResourceEventAsyncMessageBuilder;
-import me.julb.springbootstarter.messaging.services.AsyncMessagePosterService;
-import me.julb.springbootstarter.persistence.mongodb.specifications.ISpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.SearchSpecification;
-import me.julb.springbootstarter.persistence.mongodb.specifications.TmSpecification;
+import me.julb.springbootstarter.core.context.ContextConstants;
+import me.julb.springbootstarter.messaging.reactive.builders.ResourceEventAsyncMessageBuilder;
+import me.julb.springbootstarter.messaging.reactive.services.AsyncMessagePosterService;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.ISpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.SearchSpecification;
+import me.julb.springbootstarter.persistence.mongodb.reactive.specifications.TmSpecification;
 import me.julb.springbootstarter.resourcetypes.ResourceTypes;
-import me.julb.springbootstarter.security.mvc.services.ISecurityService;
+import me.julb.springbootstarter.security.reactive.services.ISecurityService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The planned maintenance service implementation.
@@ -115,47 +117,41 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      * {@inheritDoc}
      */
     @Override
-    public Page<PlannedMaintenanceComponentDTO> findAll(@NotNull @Identifier String plannedMaintenanceId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Flux<PlannedMaintenanceComponentDTO> findAll(@NotNull @Identifier String plannedMaintenanceId, @NotNull Searchable searchable, @NotNull Pageable pageable) {
+        return Flux.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Try to search within the link.
-        ISpecification<PlannedMaintenanceComponentEntity> spec = new SearchSpecification<PlannedMaintenanceComponentEntity>(searchable).and(new TmSpecification<>(tm));
-        Page<PlannedMaintenanceComponentEntity> result = plannedMaintenanceComponentRepository.findAll(spec, pageable);
-        return result.map(mapper::map);
+            // Check that the announcement exists
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMapMany(plannedMaintenance -> {
+                    ISpecification<PlannedMaintenanceComponentEntity> spec = new SearchSpecification<PlannedMaintenanceComponentEntity>(searchable)
+                        .and(new TmSpecification<>(tm)).and(new PlannedMaintenanceComponentByPlannedMaintenanceSpecification(plannedMaintenance));
+                    return plannedMaintenanceComponentRepository.findAll(spec, pageable).map(mapper::map);
+                });
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PlannedMaintenanceComponentDTO findOne(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<PlannedMaintenanceComponentDTO> findOne(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Check that the component exists
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
-
-        // Check that the planned maintenance component exists
-        PlannedMaintenanceComponentEntity result = plannedMaintenanceComponentRepository.findByTmAndPlannedMaintenanceIdAndComponentId(tm, plannedMaintenanceId, componentId);
-        if (result == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceComponentEntity.class, Map.<String, String> of("plannedMaintenance", plannedMaintenanceId, "component", componentId));
-        }
-
-        return mapper.map(result);
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMap(component -> {
+                            return plannedMaintenanceComponentRepository.findByTmAndPlannedMaintenanceIdAndComponentId(tm, plannedMaintenanceId, componentId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceComponentEntity.class, Map.<String, String> of("plannedMaintenance", plannedMaintenanceId, "component", componentId))))
+                                .map(mapper::map);
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Write methods.
@@ -165,35 +161,33 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public PlannedMaintenanceComponentDTO create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<PlannedMaintenanceComponentDTO> create(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMap(component -> {
+                            return plannedMaintenanceComponentRepository.existsByTmAndPlannedMaintenanceIdAndComponentId(tm, plannedMaintenanceId, componentId)
+                                .flatMap(alreadyExists -> {
+                                    if (alreadyExists.booleanValue()) {
+                                        return Mono.error(new ResourceAlreadyExistsException(PlannedMaintenanceComponentEntity.class, Map.<String, String> of("plannedMaintenance", plannedMaintenanceId, "component", componentId)));
+                                    }
 
-        // Check that the component exists
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
-
-        // Check that the planned maintenance component exists
-        PlannedMaintenanceComponentEntity existing = plannedMaintenanceComponentRepository.findByTmAndPlannedMaintenanceIdAndComponentId(tm, plannedMaintenanceId, componentId);
-        if (existing != null) {
-            throw new ResourceAlreadyExistsException(PlannedMaintenanceComponentEntity.class, Map.<String, String> of("plannedMaintenance", plannedMaintenanceId, "component", componentId));
-        }
-
-        // Add component item.
-        PlannedMaintenanceComponentEntity plannedMaintenanceComponentToCreate = new PlannedMaintenanceComponentEntity();
-        plannedMaintenanceComponentToCreate.setPlannedMaintenance(plannedMaintenance);
-        plannedMaintenanceComponentToCreate.setComponent(component);
-        this.onPersist(plannedMaintenanceComponentToCreate);
-
-        PlannedMaintenanceComponentEntity result = plannedMaintenanceComponentRepository.save(plannedMaintenanceComponentToCreate);
-        return mapper.map(result);
+                                    // Update the entity
+                                    PlannedMaintenanceComponentEntity entityToCreate = new PlannedMaintenanceComponentEntity();
+                                    entityToCreate.setPlannedMaintenance(plannedMaintenance);
+                                    entityToCreate.setComponent(component);
+                                    return this.onPersist(tm, entityToCreate).flatMap(entityToCreateWithFields -> {
+                                        return plannedMaintenanceComponentRepository.save(entityToCreateWithFields).map(mapper::map);
+                                    });
+                                });
+                        });
+                });
+        });
     }
 
     /**
@@ -201,24 +195,21 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String plannedMaintenanceId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String plannedMaintenanceId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Check that the planned maintenance component exists
-        List<PlannedMaintenanceComponentEntity> existings = plannedMaintenanceComponentRepository.findByTmAndPlannedMaintenanceId(tm, plannedMaintenanceId);
-        for (PlannedMaintenanceComponentEntity existing : existings) {
-            // Delete entity.
-            plannedMaintenanceComponentRepository.delete(existing);
-
-            // Handle deletion.
-            this.onDelete(existing);
-        }
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return plannedMaintenanceComponentRepository.findByTmAndPlannedMaintenanceId(tm, plannedMaintenanceId)
+                        .flatMap(existing -> {
+                            return plannedMaintenanceComponentRepository.delete(existing)
+                                .then(this.onDelete(existing))
+                                .then();
+                        }).then();
+                });
+        });
     }
 
     /**
@@ -226,33 +217,26 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      */
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId) {
-        String tm = TrademarkContextHolder.getTrademark();
+    public Mono<Void> delete(@NotNull @Identifier String plannedMaintenanceId, @NotNull @Identifier String componentId) {
+        return Mono.deferContextual(ctx -> {
+            String tm = ctx.get(ContextConstants.TRADEMARK);
 
-        // Check that the planned maintenance exists
-        PlannedMaintenanceEntity plannedMaintenance = plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId);
-        if (plannedMaintenance == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId);
-        }
-
-        // Check that the component exists
-        ComponentEntity component = componentRepository.findByTmAndId(tm, componentId);
-        if (component == null) {
-            throw new ResourceNotFoundException(ComponentEntity.class, componentId);
-        }
-
-        // Check that the planned maintenance component exists
-        PlannedMaintenanceComponentEntity result = plannedMaintenanceComponentRepository.findByTmAndPlannedMaintenanceIdAndComponentId(tm, plannedMaintenanceId, componentId);
-        if (result == null) {
-            throw new ResourceNotFoundException(PlannedMaintenanceComponentEntity.class, Map.<String, String> of("plannedMaintenance", plannedMaintenanceId, "component", componentId));
-        }
-
-        // Delete entity.
-        plannedMaintenanceComponentRepository.delete(result);
-
-        // Handle deletion.
-        this.onDelete(result);
-
+            return plannedMaintenanceRepository.findByTmAndId(tm, plannedMaintenanceId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceEntity.class, plannedMaintenanceId)))
+                .flatMap(plannedMaintenance -> {
+                    return componentRepository.findByTmAndId(tm, componentId)
+                        .switchIfEmpty(Mono.error(new ResourceNotFoundException(ComponentEntity.class, componentId)))
+                        .flatMap(component -> {
+                            return plannedMaintenanceComponentRepository.findByTmAndPlannedMaintenanceIdAndComponentId(tm, plannedMaintenanceId, componentId)
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException(PlannedMaintenanceComponentEntity.class, Map.<String, String> of("plannedMaintenance", plannedMaintenanceId, "component", componentId))))
+                                .flatMap(existing -> {
+                                    return plannedMaintenanceComponentRepository.delete(existing)
+                                        .then(this.onDelete(existing))
+                                        .then();
+                                });
+                        });
+                });
+        });
     }
 
     // ------------------------------------------ Private methods.
@@ -261,21 +245,21 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      * Method called when persisting an planned maintenance component.
      * @param entity the entity.
      */
-    private void onPersist(PlannedMaintenanceComponentEntity entity) {
+    private Mono<PlannedMaintenanceComponentEntity> onPersist(String tm, PlannedMaintenanceComponentEntity entity) {
         entity.setId(IdentifierUtility.generateId());
-        entity.setTm(TrademarkContextHolder.getTrademark());
+        entity.setTm(tm);
         entity.setCreatedAt(DateUtility.dateTimeNow());
         entity.setLastUpdatedAt(DateUtility.dateTimeNow());
 
-        postResourceEvent(entity, ResourceEventType.CREATED);
+        return postResourceEvent(entity, ResourceEventType.CREATED);
     }
 
     /**
      * Method called when deleting a planned maintenance component.
      * @param entity the entity.
      */
-    private void onDelete(PlannedMaintenanceComponentEntity entity) {
-        postResourceEvent(entity, ResourceEventType.DELETED);
+    private Mono<PlannedMaintenanceComponentEntity> onDelete(PlannedMaintenanceComponentEntity entity) {
+        return postResourceEvent(entity, ResourceEventType.DELETED);
     }
 
     /**
@@ -283,15 +267,17 @@ public class PlannedMaintenanceComponentServiceImpl implements PlannedMaintenanc
      * @param entity the entity.
      * @param resourceEventType the resource event type.
      */
-    private void postResourceEvent(PlannedMaintenanceComponentEntity entity, ResourceEventType resourceEventType) {
-        //@formatter:off
-        ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
-            .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.PLANNED_MAINTENANCE_COMPONENT)
-            .eventType(resourceEventType)
-            .user(securityService.getConnectedUserName())
-            .build();
-        //@formatter:on
+    private Mono<PlannedMaintenanceComponentEntity> postResourceEvent(PlannedMaintenanceComponentEntity entity, ResourceEventType resourceEventType) {
+        return securityService.getConnectedUserName().flatMap(userName -> {
+            //@formatter:off
+            ResourceEventAsyncMessageDTO resourceEvent = new ResourceEventAsyncMessageBuilder()
+                .withObject(entity.getClass(), entity.getTm(), entity.getId(), entity.getId(), ResourceTypes.PLANNED_MAINTENANCE_COMPONENT)
+                .eventType(resourceEventType)
+                .user(userName)
+                .build();
+            //@formatter:on
 
-        this.asyncMessagePosterService.postResourceEventMessage(resourceEvent);
+            return this.asyncMessagePosterService.postResourceEventMessage(resourceEvent).then(Mono.just(entity));
+        });
     }
 }

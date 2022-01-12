@@ -24,26 +24,27 @@
 
 package me.julb.applications.platformhealth.repositories;
 
-import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import me.julb.applications.platformhealth.entities.ComponentEntity;
-import me.julb.springbootstarter.persistence.mongodb.repositories.MongoSpecificationExecutor;
+import me.julb.springbootstarter.persistence.mongodb.reactive.repositories.MongoSpecificationExecutor;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The component repository.
  * <br>
  * @author Julb.
  */
-public interface ComponentRepository extends MongoRepository<ComponentEntity, String>, MongoSpecificationExecutor<ComponentEntity> {
+public interface ComponentRepository extends ReactiveMongoRepository<ComponentEntity, String>, MongoSpecificationExecutor<ComponentEntity> {
     /**
      * Finds an component by its trademark and component category id.
      * @param tm the trademark.
      * @param componentCategoryId the component category ID.
      * @return the component items.
      */
-    List<ComponentEntity> findByTmAndComponentCategoryId(String tm, String componentCategoryId);
+    Flux<ComponentEntity> findByTmAndComponentCategoryId(String tm, String componentCategoryId);
 
     /**
      * Finds an component by its trademark, component category id and id.
@@ -52,7 +53,7 @@ public interface ComponentRepository extends MongoRepository<ComponentEntity, St
      * @param id the id.
      * @return the component entity, <code>null</code> otherwise.
      */
-    ComponentEntity findByTmAndComponentCategoryIdAndId(String tm, String componentCategoryId, String id);
+    Mono<ComponentEntity> findByTmAndComponentCategoryIdAndId(String tm, String componentCategoryId, String id);
 
     /**
      * Finds a component by its trademark and its ID.
@@ -60,13 +61,13 @@ public interface ComponentRepository extends MongoRepository<ComponentEntity, St
      * @param id the id.
      * @return the component entity, or <code>null</code> if not exists.
      */
-    ComponentEntity findByTmAndId(String tm, String id);
+    Mono<ComponentEntity> findByTmAndId(String tm, String id);
 
     /**
      * Finds all the components by their trademark ordered by position.
      * @param tm the trademark.
      * @return the components.
      */
-    List<ComponentEntity> findByTmOrderByPositionAsc(String tm);
+    Flux<ComponentEntity> findByTmOrderByPositionAsc(String tm);
 
 }

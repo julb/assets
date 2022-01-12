@@ -24,10 +24,7 @@
 
 package me.julb.applications.platformhealth.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,6 +44,10 @@ import me.julb.library.utility.data.search.Searchable;
 import me.julb.library.utility.validator.constraints.Identifier;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiPageable;
 import me.julb.springbootstarter.web.annotations.openapi.OpenApiSearchable;
+
+import io.swagger.v3.oas.annotations.Operation;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * The rest controller to manage components of an planned maintenance.
@@ -78,7 +79,7 @@ public class PlannedMaintenanceComponentController {
     @OpenApiPageable
     @OpenApiSearchable
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'read')")
-    public Page<PlannedMaintenanceComponentDTO> findAll(@PathVariable @Identifier String plannedMaintenanceId, Searchable searchable, Pageable pageable) {
+    public Flux<PlannedMaintenanceComponentDTO> findAll(@PathVariable @Identifier String plannedMaintenanceId, Searchable searchable, Pageable pageable) {
         return plannedMaintenanceComponentService.findAll(plannedMaintenanceId, searchable, pageable);
     }
 
@@ -91,7 +92,7 @@ public class PlannedMaintenanceComponentController {
     @Operation(summary = "verify if a component is linked to a planned maintenance")
     @GetMapping(path = "/{componentId}")
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'read')")
-    public PlannedMaintenanceComponentDTO get(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String componentId) {
+    public Mono<PlannedMaintenanceComponentDTO> get(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String componentId) {
         return plannedMaintenanceComponentService.findOne(plannedMaintenanceId, componentId);
     }
 
@@ -107,7 +108,7 @@ public class PlannedMaintenanceComponentController {
     @PostMapping(path = "/{componentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'update')")
-    public PlannedMaintenanceComponentDTO create(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String componentId) {
+    public Mono<PlannedMaintenanceComponentDTO> create(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable @Identifier String componentId) {
         return plannedMaintenanceComponentService.create(plannedMaintenanceId, componentId);
     }
 
@@ -120,7 +121,7 @@ public class PlannedMaintenanceComponentController {
     @DeleteMapping(path = "/{componentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#plannedMaintenanceId, 'planned-maintenance', 'update')")
-    public void delete(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable String componentId) {
-        plannedMaintenanceComponentService.delete(plannedMaintenanceId, componentId);
+    public Mono<Void> delete(@PathVariable @Identifier String plannedMaintenanceId, @PathVariable String componentId) {
+        return plannedMaintenanceComponentService.delete(plannedMaintenanceId, componentId);
     }
 }
